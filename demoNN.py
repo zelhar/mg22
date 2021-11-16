@@ -1,6 +1,6 @@
 import torch
 from torch import nn
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset, TensorDataset
 from torchvision import datasets
 from torchvision.transforms import ToTensor, Lambda, Compose
 import matplotlib.pyplot as plt
@@ -31,6 +31,21 @@ for X, y in test_dataloader:
     print("Shape of X [N, C, H, W]: ", X.shape)
     print("Shape of y: ", y.shape, y.dtype)
     break
+
+# testing synthetic dataset
+x = torch.randn((100,3,28,28))
+
+d = TensorDataset(x)
+
+z = d.__getitem__(2) # retuns 1-tuple of tensor (no label) 
+z[0].shape
+
+# with labels
+y = torch.randint(low=0, high=1, size=(100,))
+d = TensorDataset(x,y)
+z = d.__getitem__(2) # retuns 1-tuple of tensor (no label) 
+z[0].shape
+z[1].shape
 
 # Get cpu or gpu device for training.
 device = "cuda" if torch.cuda.is_available() else "cpu"
