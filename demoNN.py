@@ -118,6 +118,13 @@ print("Done!")
 
 
 
+bce = nn.BCELoss(reduction="none")
+x = torch.tensor(0.5)
+y = torch.tensor(0.7)
+bce(x,y)
+
+f = lambda x, y: y * torch.log(x) + (1-y) * torch.log(1-x)
+f(x,y)
 
 
 
