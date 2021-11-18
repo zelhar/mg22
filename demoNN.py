@@ -5,6 +5,10 @@ from torchvision import datasets
 from torchvision.transforms import ToTensor, Lambda, Compose
 import matplotlib.pyplot as plt
 
+import torch.distributions as D
+
+import torch.nn.functional as F
+
 # Download training data from open datasets.
 training_data = datasets.FashionMNIST(
     root="data",
@@ -127,4 +131,42 @@ f = lambda x, y: y * torch.log(x) + (1-y) * torch.log(1-x)
 f(x,y)
 
 
+torch.softmax(torch.tensor([1,2,3]), 0, torch.float64)
 
+# generate mixed distributions
+m = D.OneHotCategorical(torch.tensor([1,2,3,6]))
+m.sample()
+m.sample_n(10)
+m.sample((3,4))
+
+m = D.Normal(torch.tensor([0,10.0]), torch.tensor([1.0,2]))
+
+m.sample((3,4))
+
+# Example of target with class indices
+loss = nn.CrossEntropyLoss()
+
+input = torch.randn(3, 5, requires_grad=True)
+target = torch.empty(3, dtype=torch.long).random_(5)
+output = loss(input, target)
+output.backward()
+
+# Example of target with class probabilities
+input = torch.randn(3, 5, requires_grad=True)
+target = torch.randn(3, 5).softmax(dim=1)
+output = loss(input, target)
+output.backward()
+
+input = torch.randn((3, 2), requires_grad=True)
+target = torch.rand((3, 2), requires_grad=False)
+loss = F.binary_cross_entropy(F.sigmoid(input), target)
+loss.backward()
+
+loss = nn.BCELoss(reduction="none")
+x = torch.tensor([0,0.25,0.5,0.75,1])
+F.binary_cross_entropy(x,x,reduction="none")
+loss(x,x)
+
+x = torch.tensor([0,25,0.5,0.75,1])
+y = torch.tensor([0,0.25,0.5,0.75,1])
+loss(x,y)

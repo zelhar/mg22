@@ -145,17 +145,48 @@ class VAE(nn.Module):
         z = self.reparameterize(mu, logvar)
         return self.decode(z), mu, logvar
 
+class AE(nn.Module):
+    def __init__(self):
+        super(AE, self).__init__()
+
+        self.fc1 = nn.Linear(400, 1000)
+        #self.fc1 = nn.Linear(784, 400)
+        self.fc2 = nn.Linear(1000, 20)
+        self.fc3 = nn.Linear(20, 1000)
+        #self.fc4 = nn.Linear(400, 784)
+        self.fc4 = nn.Linear(1000, 400)
+
+    def encode(self, x):
+        h1 = F.relu(self.fc1(x))
+        z = F.relu(self.fc2(h1))
+        return z
+
+    def decode(self, z):
+        h3 = F.relu(self.fc3(z))
+        h4 = F.relu(self.fc4(h3))
+        return torch.sigmoid(self.fc4(h4))
+
+    def forward(self, x):
+        #mu, logvar = self.encode(x.view(-1, 784))
+        z = self.encode(x.view(-1, 400))
+        return self.decode(z)
+
+def ae_loss_function(recon_x, x):
+    BCE = nn.BCELoss(reduction="mean")(recon_x, x.view(-1, 400))
+    return BCE
 
 # Reconstruction + KL divergence losses summed over all elements and batch
 def loss_function(recon_x, x, mu, logvar):
     BCE = F.binary_cross_entropy(recon_x, x.view(-1, 400), reduction='sum')
+    MSE = nn.MSELoss(reduction="sum")(recon_x, x.view(-1, 400))
     #BCE = F.binary_cross_entropy(recon_x, x.view(-1, 784), reduction='sum')
     # see Appendix B from VAE paper:
     # Kingma and Welling. Auto-Encoding Variational Bayes. ICLR, 2014
     # https://arxiv.org/abs/1312.6114
     # 0.5 * sum(1 + log(sigma^2) - mu^2 - sigma^2)
     KLD = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
-    return BCE + KLD
+    return MSE + KLD
+    #return BCE + KLD
 
 
 def train(epoch):
@@ -201,10 +232,63 @@ def test(epoch):
     test_loss /= len(test_loader.dataset)
     print('====> Test set loss: {:.4f}'.format(test_loss))
 
-def runit():
+def trainAE(epoch):
+    model.train()
+    train_loss = 0
+    #for batch_idx, (data, _) in enumerate(train_loader):
+    for batch_idx, (data, ) in enumerate(train_loader):
+        data = data.to(device)
+        optimizer.zero_grad()
+        recon_batch = model(data)
+        loss = ae_loss_function(recon_batch, data)
+        loss.backward()
+        train_loss += loss.item()
+        optimizer.step()
+        if batch_idx % log_interval == 0:
+            print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+                epoch, batch_idx * len(data), len(train_loader.dataset),
+                100. * batch_idx / len(train_loader),
+                loss.item() / len(data)))
+
+    print('====> Epoch: {} Average loss: {:.4f}'.format(
+          epoch, train_loss / len(train_loader.dataset)))
+
+def testAE(epoch):
+    model.eval()
+    test_loss = 0
+    with torch.no_grad():
+        #for i, (data, _) in enumerate(test_loader):
+        for i, (data, ) in enumerate(test_loader):
+            data = data.to(device)
+            recon_batch = model(data)
+            test_loss += ae_loss_function(recon_batch, data).item()
+            if i == 0:
+                n = min(data.size(0), 8)
+                comparison = torch.cat([data[:n],
+                                      recon_batch.view(batch_size, 400)[:n]])
+                                      #recon_batch.view(batch_size, 3, 32, 32)[:n]])
+                                      #recon_batch.view(args.batch_size, 1, 28, 28)[:n]])
+                save_image(comparison.cpu(),
+                         'results/reconstruction_' + str(epoch) + '.png', nrow=n)
+
+    test_loss /= len(test_loader.dataset)
+    print('====> Test set loss: {:.4f}'.format(test_loss))
+
+def runit(epochs):
     for epoch in range(1, epochs + 1):
         train(epoch)
         test(epoch)
+        with torch.no_grad():
+            sample = torch.randn(64, 20).to(device)
+            sample = model.decode(sample).cpu()
+            #save_image(sample.view(64, 3, 32, 32),
+            ##save_image(sample.view(64, 1, 28, 28),
+            #           'results/sample_' + str(epoch) + '.png')
+
+def runitAE(epochs, model):
+    for epoch in range(1, epochs + 1):
+        trainAE(epoch)
+        testAE(epoch)
         with torch.no_grad():
             sample = torch.randn(64, 20).to(device)
             sample = model.decode(sample).cpu()
@@ -278,27 +362,31 @@ x
 # create train/test data and train model 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-xs = DataGenerator(400, 2, 10000)
-mydata = TensorDataset(xs.data)
+xs = DataGenerator(400, 12, 10000)
+mydata = TensorDataset(torch.sigmoid(xs.data))
 
 traindata = TensorDataset(xs.data[:9000,:])
 testdata = TensorDataset(xs.data[9000:,:])
 
-batch_size = 50
-log_interval = 100
-epochs = 150
+batch_size = 100
+log_interval = 1000
+epochs = 125
 
 train_loader = DataLoader(traindata, batch_size=batch_size, shuffle=True)
 test_loader = DataLoader(testdata, batch_size=batch_size, shuffle=True)
 
 model = VAE().to(device)
+
+model = AE().to(device)
+
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
 
 
 
-runit()
+runit(epochs)
 
+runitAE(epochs, model)
 
 
 
