@@ -11,6 +11,7 @@ import torch.utils.data
 import torchvision.datasets as dset
 import torchvision.transforms as transforms
 import torchvision.utils as vutils
+from torchvision.utils import save_image
 
 
 parser = argparse.ArgumentParser()
@@ -109,6 +110,16 @@ nz = int(opt.nz)
 ngf = int(opt.ngf)
 ndf = int(opt.ndf)
 
+# dimension of a data point
+nin = 28*28
+# dimension of hidden layer 1 etc.
+nh1 = 28*28*5
+nh2 = 40
+nh3 = 28*28*5
+nh4 = 28*28
+# other parameters
+batchSize = opt.batchSize
+epochs = opt.niter
 
 # custom weights initialization called on netG and netD
 def weights_init(m):
@@ -119,84 +130,48 @@ def weights_init(m):
         torch.nn.init.normal_(m.weight, 1.0, 0.02)
         torch.nn.init.zeros_(m.bias)
 
-
 class Generator(nn.Module):
-    def __init__(self, ngpu):
+    def __init__(self, nin, nout, nh1, nh2):
         super(Generator, self).__init__()
-        self.ngpu = ngpu
-        self.main = nn.Sequential(
-            # input is Z, going into a convolution
-            nn.ConvTranspose2d(     nz, ngf * 8, 4, 1, 0, bias=False),
-            nn.BatchNorm2d(ngf * 8),
-            nn.ReLU(True),
-            # state size. (ngf*8) x 4 x 4
-            nn.ConvTranspose2d(ngf * 8, ngf * 4, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(ngf * 4),
-            nn.ReLU(True),
-            # state size. (ngf*4) x 8 x 8
-            nn.ConvTranspose2d(ngf * 4, ngf * 2, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(ngf * 2),
-            nn.ReLU(True),
-            # state size. (ngf*2) x 16 x 16
-            nn.ConvTranspose2d(ngf * 2,     ngf, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(ngf),
-            nn.ReLU(True),
-            # state size. (ngf) x 32 x 32
-            nn.ConvTranspose2d(    ngf,      nc, 4, 2, 1, bias=False),
-            nn.Tanh()
-            # state size. (nc) x 64 x 64
-        )
+
+        self.decode = nn.Sequential(
+                nn.Linear(nin, nh1),
+                nn.ReLU(),
+                nn.Linear(nh1,nh2),
+                nn.ReLU(),
+                nn.Linear(nh2, nout),
+                nn.Sigmoid()
+                )
 
     def forward(self, input):
-        if input.is_cuda and self.ngpu > 1:
-            output = nn.parallel.data_parallel(self.main, input, range(self.ngpu))
-        else:
-            output = self.main(input)
-        return output
+        return self.decode(input)
 
 
-netG = Generator(ngpu).to(device)
+
+netG = Generator(nz, nin, nh2, nh1).to(device)
 netG.apply(weights_init)
 if opt.netG != '':
     netG.load_state_dict(torch.load(opt.netG))
 print(netG)
 
-
 class Discriminator(nn.Module):
-    def __init__(self, ngpu):
+    def __init__(self, nin, nh1, nh2):
         super(Discriminator, self).__init__()
-        self.ngpu = ngpu
         self.main = nn.Sequential(
-            # input is (nc) x 64 x 64
-            nn.Conv2d(nc, ndf, 4, 2, 1, bias=False),
-            nn.LeakyReLU(0.2, inplace=True),
-            # state size. (ndf) x 32 x 32
-            nn.Conv2d(ndf, ndf * 2, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(ndf * 2),
-            nn.LeakyReLU(0.2, inplace=True),
-            # state size. (ndf*2) x 16 x 16
-            nn.Conv2d(ndf * 2, ndf * 4, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(ndf * 4),
-            nn.LeakyReLU(0.2, inplace=True),
-            # state size. (ndf*4) x 8 x 8
-            nn.Conv2d(ndf * 4, ndf * 8, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(ndf * 8),
-            nn.LeakyReLU(0.2, inplace=True),
-            # state size. (ndf*8) x 4 x 4
-            nn.Conv2d(ndf * 8, 1, 4, 1, 0, bias=False),
-            nn.Sigmoid()
-        )
+                nn.Linear(nin, nh1),
+                nn.ReLU(),
+                nn.Linear(nh1,nh2),
+                nn.ReLU(),
+                nn.Linear(nh2, 1),
+                nn.Sigmoid()
+                )
 
     def forward(self, input):
-        if input.is_cuda and self.ngpu > 1:
-            output = nn.parallel.data_parallel(self.main, input, range(self.ngpu))
-        else:
-            output = self.main(input)
-
-        return output.view(-1, 1).squeeze(1)
+        return self.main(input.view(-1, nin))
 
 
-netD = Discriminator(ngpu).to(device)
+
+netD = Discriminator(nin, nh1, nh2).to(device)
 netD.apply(weights_init)
 if opt.netD != '':
     netD.load_state_dict(torch.load(opt.netD))
@@ -204,7 +179,8 @@ print(netD)
 
 criterion = nn.BCELoss()
 
-fixed_noise = torch.randn(opt.batchSize, nz, 1, 1, device=device)
+#fixed_noise = torch.randn(opt.batchSize, nz, 1, 1, device=device)
+fixed_noise = torch.randn(opt.batchSize, nz, device=device)
 real_label = 1
 fake_label = 0
 
@@ -215,6 +191,13 @@ optimizerG = optim.Adam(netG.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
 if opt.dry_run:
     opt.niter = 1
 
+def save_random_reconstructs(model, nz, epoch):
+        with torch.no_grad():
+            sample = torch.randn(64, nz).to(device)
+            sample = model(sample).cpu()
+            save_image(sample.view(64, 1, 28, 28),
+                       'results/sample_' + str(epoch) + '.png')
+
 for epoch in range(opt.niter):
     for i, data in enumerate(dataloader, 0):
         ############################
@@ -224,7 +207,7 @@ for epoch in range(opt.niter):
         netD.zero_grad()
         real_cpu = data[0].to(device)
         batch_size = real_cpu.size(0)
-        label = torch.full((batch_size,), real_label,
+        label = torch.full((batch_size,1), real_label,
                            dtype=real_cpu.dtype, device=device)
 
         output = netD(real_cpu)
@@ -233,8 +216,11 @@ for epoch in range(opt.niter):
         D_x = output.mean().item()
 
         # train with fake
-        noise = torch.randn(batch_size, nz, 1, 1, device=device)
+        #noise = torch.randn(batch_size, nz, 1, 1, device=device)
+        noise = torch.randn(batch_size, nz, device=device)
+        #print(noise.shape)
         fake = netG(noise)
+        #print(fake.shape)
         label.fill_(fake_label)
         output = netD(fake.detach())
         errD_fake = criterion(output, label)
@@ -268,6 +254,10 @@ for epoch in range(opt.niter):
 
         if opt.dry_run:
             break
+        #print("boo\n")
+        #break
     # do checkpointing
     torch.save(netG.state_dict(), '%s/netG_epoch_%d.pth' % (opt.outf, epoch))
     torch.save(netD.state_dict(), '%s/netD_epoch_%d.pth' % (opt.outf, epoch))
+    save_random_reconstructs(netG, nz, epoch)
+

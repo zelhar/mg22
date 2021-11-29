@@ -1,4 +1,4 @@
-from __future__ import print_function
+# from https://github.com/pytorch/examples
 import argparse
 import torch
 import torch.utils.data
@@ -72,6 +72,9 @@ optimizer = optim.Adam(model.parameters(), lr=1e-3)
 # Reconstruction + KL divergence losses summed over all elements and batch
 def loss_function(recon_x, x, mu, logvar):
     BCE = F.binary_cross_entropy(recon_x, x.view(-1, 784), reduction='sum')
+    # bce with sum reduction heavily depends on the dimension of x, maybe try
+    # mean reduction?
+    # BCE = F.binary_cross_entropy(recon_x, x.view(-1, 784), reduction='mean')
 
     # see Appendix B from VAE paper:
     # Kingma and Welling. Auto-Encoding Variational Bayes. ICLR, 2014
