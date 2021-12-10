@@ -19,6 +19,8 @@ import matplotlib.pyplot as plt
 from torchvision.utils import make_grid
 import numpy as np
 import torch.distributions as D
+from torchvision import models
+
 
 def save_reconstructs(encoder, decoder, x, epoch, device="cuda"):
         with torch.no_grad():
@@ -398,3 +400,39 @@ for epoch in range(epochs):
         lossG = criterion(pred, labels_real)
         lossG.backward()
         gx_optimizer.step()
+
+##########################################################
+print(models.ResNet)
+net = models.resnet18()
+
+
+
+x = torch.rand(10, 3, 33, 35)
+x.shape
+net(x).shape
+
+net = models.resnet50()
+net
+
+net.layer1
+net.fc
+
+str | int
+
+[str, int]
+
+net.conv1(x).shape
+
+net
+
+f = nn.Conv1d(
+    in_channels=6,
+    out_channels=3,
+    kernel_size=2,
+    stride=1,
+    padding=0,
+)
+
+x = torch.rand(10, 6, 5)
+x.shape
+f(x).shape
