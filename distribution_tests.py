@@ -34,7 +34,7 @@ def mixedGaussianCircular(k=10, sigma=0.35, rho=0.75, j=0):
     T = torch.Tensor([[cos(theta), sin(theta)], [-sin(theta), cos(theta)]])
     S = torch.stack([T.matrix_power(i) for i in range(k)])
     mu = S @ v
-    cov = sigma ** 2 * ( torch.eye(2) + rho * (torch.ones(2, 2) - torch.eye(2)))
+    #cov = sigma ** 2 * ( torch.eye(2) + rho * (torch.ones(2, 2) - torch.eye(2)))
     #cov = cov @ S
     cov = torch.eye(2) * sigma ** 2
     cov[1,1] = sigma ** 2 * rho
@@ -43,8 +43,8 @@ def mixedGaussianCircular(k=10, sigma=0.35, rho=0.75, j=0):
     gauss = distributions.MultivariateNormal(loc = mu, covariance_matrix= cov)
     return gauss
 
-gauss = mixedGaussianCircular(rho=0.1, sigma=0.4, k=9, j=0)
-samples = gauss.sample((500,))
+gauss = mixedGaussianCircular(rho=0.02, sigma=3.1, k=10, j=0)
+samples = gauss.sample((2500,))
 x = samples[:,:,0].flatten()
 y = samples[:,:,1].flatten()
 plt.scatter(x,y)
