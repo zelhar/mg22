@@ -360,18 +360,120 @@ model3 = torch.load("results/vae_mix_2_5_gauss.pth")
 
 
 
+#### Testing KL estimations vs analytical solution
+kld = lambda mu, logvar : -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
+
+mu, logvar = torch.Tensor([0]), torch.Tensor([1])
+kld(mu, logvar)
+
+mu, logvar = torch.Tensor([1]), torch.Tensor([0])
+kld(mu, logvar)
+
+p = torch.Tensor([[9,12,4]])/25
+q = torch.Tensor([[1,1,1]])/3
+
+KLD = nn.KLDivLoss(reduction='batchmean', log_target=True)
+
+KLD(torch.log(p), torch.log(q))
+KLD(torch.log(q), torch.log(p))
+
+p = D.Categorical(p)
+q = D.Categorical(q)
+
+x = p.sample((10,))
+x
+p.log_prob(x).exp()
+q.log_prob(x).exp()
+
+x = p.sample((100000,))
+
+KLD(q.log_prob(x), p.log_prob(x))
+
+a = p.log_prob(x)
+b = q.log_prob(x)
+
+# good estimation of KL(P || Q):
+torch.mean((a - b))
 
 
+q = D.Normal(torch.Tensor([0]), torch.Tensor([1]))
+q.sample()
 
 
+mu, logvar = torch.Tensor([1]), torch.Tensor([0])
+p = D.Normal(mu, logvar.exp())
+
+p.sample((10,))
+
+p.cdf(mu*3)
+
+p.log_prob(mu).exp()
+
+1 / np.sqrt(2 * torch.pi)
+
+p.log_prob(p.mean).exp()
+p.mean
+p.variance
 
 
+x = p.sample((10000,2))
+KLD(p.log_prob(x), q.log_prob(x))
+torch.mean(p.log_prob(x) - q.log_prob(x))
 
 
+mu, logvar = torch.Tensor([1,1]), torch.Tensor([0,0])
+p = D.Normal(mu, logvar.exp())
+q = D.Normal(torch.zeros_like(mu), torch.ones_like(logvar))
+
+x = p.sample((10000,))
+KLD(p.log_prob(x), q.log_prob(x))
+torch.mean(p.log_prob(x) - q.log_prob(x))
+
+x = p.sample((1000,3,5))
+x.shape
+
+a = p.log_prob(x)
+b = q.log_prob(x)
+torch.mean((a - b))
+
+z = torch.ones((3,4,5,6))
+
+torch.sum(z)/6
+
+torch.sum(z, dim=(0,1,2))
+
+bce(a.exp(),b.exp())
+
+###############################
+
+bce = nn.BCELoss(reduction="sum")
+kld = lambda mu, logvar : -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
+
+model = VAE(nin, nz, 2*1024, 2*512, 2*512, 2*1024).to(device)
+optimizer = optim.Adam(model.parameters(), lr=3e-4)
 
 
-
-
-
-
-
+for epoch in range(epochs):
+    for idx, (data, _) in enumerate(train_loader):
+        batch_size = data.shape[0]
+        x = data.view(-1,nin).to(device)
+        model.train()
+        model.requires_grad_(True)
+        optimizer.zero_grad()
+        recon, mu, logvar = model(x)
+        loss_recon = bce(recon, x)
+        #loss_kld = kld(mu, logvar)
+        p = D.Normal(mu, logvar.exp())
+        q = D.Normal(torch.zeros_like(mu), torch.ones_like(logvar))
+        z = p.sample((1000,))
+        loss_kld = torch.sum(p.log_prob(z).exp() - q.log_prob(z).exp(), dim=(1,2))/1000
+        #loss_recon.backward()
+        #loss_kld.backward()
+        loss = loss_kld + loss_recon
+        loss.backward()
+        optimizer.step()
+        if idx % 100 == 0:
+            print("losses:\n",
+                    "reconstruction loss:", loss_recon.item(),
+                    "kld:", loss_kld.item()
+                    )
