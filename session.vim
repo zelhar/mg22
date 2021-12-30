@@ -8,20 +8,14 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
 set shortmess=aoO
-badd +2 aaeTest01.py
-badd +1 aaeTest02.py
-badd +309 aaeTest03.py
-badd +165 ganTest01.py
-badd +27 varTest01.py
+badd +1 justGAN00.py
+badd +326 distributionGAN00.py
 argglobal
 %argdel
-$argadd gandemo.py
-tabnew
-tabnew
-tabnew
+$argadd distribution_tests.py
 tabnew
 tabrewind
-edit aaeTest01.py
+edit distributionGAN00.py
 argglobal
 setlocal fdm=manual
 setlocal fde=0
@@ -33,97 +27,35 @@ setlocal fdn=20
 setlocal fen
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 159 - ((38 * winheight(0) + 31) / 62)
+let s:l = 326 - ((64 * winheight(0) + 32) / 65)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 159
+keepjumps 326
+normal! 07|
+lcd ~/my_gits/mg22
+tabnext
+edit ~/my_gits/mg22/justGAN00.py
+argglobal
+balt ~/my_gits/mg22/distributionGAN00.py
+setlocal fdm=manual
+setlocal fde=0
+setlocal fmr={{{,}}}
+setlocal fdi=#
+setlocal fdl=0
+setlocal fml=1
+setlocal fdn=20
+setlocal fen
+silent! normal! zE
+let &fdl = &fdl
+let s:l = 363 - ((41 * winheight(0) + 32) / 65)
+if s:l < 1 | let s:l = 1 | endif
+keepjumps exe s:l
+normal! zt
+keepjumps 363
 normal! 0
 lcd ~/my_gits/mg22
-tabnext
-edit ~/my_gits/mg22/aaeTest02.py
-argglobal
-setlocal fdm=manual
-setlocal fde=0
-setlocal fmr={{{,}}}
-setlocal fdi=#
-setlocal fdl=0
-setlocal fml=1
-setlocal fdn=20
-setlocal fen
-silent! normal! zE
-let &fdl = &fdl
-let s:l = 25 - ((24 * winheight(0) + 31) / 62)
-if s:l < 1 | let s:l = 1 | endif
-keepjumps exe s:l
-normal! zt
-keepjumps 25
-normal! 0
-lcd ~/my_gits/mg22
-tabnext
-edit ~/my_gits/mg22/aaeTest03.py
-argglobal
-balt ~/my_gits/mg22/aaeTest02.py
-setlocal fdm=manual
-setlocal fde=0
-setlocal fmr={{{,}}}
-setlocal fdi=#
-setlocal fdl=0
-setlocal fml=1
-setlocal fdn=20
-setlocal fen
-silent! normal! zE
-let &fdl = &fdl
-let s:l = 219 - ((10 * winheight(0) + 31) / 62)
-if s:l < 1 | let s:l = 1 | endif
-keepjumps exe s:l
-normal! zt
-keepjumps 219
-normal! 0
-lcd ~/my_gits/mg22
-tabnext
-edit ~/my_gits/mg22/ganTest01.py
-argglobal
-balt ~/my_gits/mg22/aaeTest03.py
-setlocal fdm=manual
-setlocal fde=0
-setlocal fmr={{{,}}}
-setlocal fdi=#
-setlocal fdl=0
-setlocal fml=1
-setlocal fdn=20
-setlocal fen
-silent! normal! zE
-let &fdl = &fdl
-let s:l = 152 - ((30 * winheight(0) + 31) / 62)
-if s:l < 1 | let s:l = 1 | endif
-keepjumps exe s:l
-normal! zt
-keepjumps 152
-normal! 015|
-lcd ~/my_gits/mg22
-tabnext
-edit ~/my_gits/mg22/varTest01.py
-argglobal
-balt ~/my_gits/mg22/ganTest01.py
-setlocal fdm=manual
-setlocal fde=0
-setlocal fmr={{{,}}}
-setlocal fdi=#
-setlocal fdl=0
-setlocal fml=1
-setlocal fdn=20
-setlocal fen
-silent! normal! zE
-let &fdl = &fdl
-let s:l = 143 - ((49 * winheight(0) + 31) / 62)
-if s:l < 1 | let s:l = 1 | endif
-keepjumps exe s:l
-normal! zt
-keepjumps 143
-normal! 025|
-lcd ~/my_gits/mg22
-tabnext 5
+tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0&& getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf
 endif
