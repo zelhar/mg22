@@ -8,11 +8,10 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
 set shortmess=aoO
-badd +1 justGAN00.py
-badd +326 distributionGAN00.py
 argglobal
 %argdel
-$argadd distribution_tests.py
+$argadd distributionGAN00.py
+$argadd justGAN00.py
 tabnew
 tabrewind
 edit distributionGAN00.py
@@ -27,16 +26,20 @@ setlocal fdn=20
 setlocal fen
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 326 - ((64 * winheight(0) + 32) / 65)
+let s:l = 1 - ((0 * winheight(0) + 31) / 62)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 326
-normal! 07|
+keepjumps 1
+normal! 0
 lcd ~/my_gits/mg22
 tabnext
 edit ~/my_gits/mg22/justGAN00.py
 argglobal
+if bufexists("~/my_gits/mg22/justGAN00.py") | buffer ~/my_gits/mg22/justGAN00.py | else | edit ~/my_gits/mg22/justGAN00.py | endif
+if &buftype ==# 'terminal'
+  silent file ~/my_gits/mg22/justGAN00.py
+endif
 balt ~/my_gits/mg22/distributionGAN00.py
 setlocal fdm=manual
 setlocal fde=0
@@ -48,19 +51,21 @@ setlocal fdn=20
 setlocal fen
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 363 - ((41 * winheight(0) + 32) / 65)
+let s:l = 1 - ((0 * winheight(0) + 31) / 62)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 363
+keepjumps 1
 normal! 0
 lcd ~/my_gits/mg22
-tabnext 1
-if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0&& getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
+tabnext 2
+badd +1 ~/my_gits/mg22/distributionGAN00.py
+badd +0 ~/my_gits/mg22/justGAN00.py
+if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf
 endif
 unlet! s:wipebuf
-set winheight=1 winwidth=20 shortmess=filnxtToOF
+set winheight=1 winwidth=20 shortmess=filnxtToOFc
 let s:sx = expand("<sfile>:p:r")."x.vim"
 if filereadable(s:sx)
   exe "source " . fnameescape(s:sx)
