@@ -4,6 +4,32 @@ import torch.optim as optim
 
 import matplotlib.pyplot as plt
 
+from math import sqrt, pi, e
+
+def fnorm(x, mu=0, s=1):
+    """
+    normal distribution function.
+    """
+    x = (x - mu) / s
+    x = x ** 2
+    x = -0.5 * x
+    x = x.exp()
+    x = x / (s * 2 * sqrt(pi) )
+    return x
+
+
+def invfnorm(x, mu=0, s=1):
+    """
+    inverse of standard normal distribution.
+    """
+    x = s * sqrt(2 * pi) * x
+    x = x.log()
+    x = -2 * x
+    x = x.sqrt()
+    x = x * s
+    x = x + mu
+    return x
+
 class Net(nn.Module):
     def __init__(self, nin, nh, nout):
         super(Net, self).__init__()

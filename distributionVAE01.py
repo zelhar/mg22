@@ -2,20 +2,22 @@ import argparse
 import numpy as np
 import os
 import time
+from math import pi, sin, cos, sqrt
 import torch
-import torch.backends.cudnn as cudnn
-import torch.nn as nn
-import torch.optim as optim
-import torch.utils.data
-import torchvision.utils as vutils
-from math import pi, sin, cos
+from torch import nn
 from torch import distributions
-from torch.nn import functional as F
+from torch import optim 
+#import torch.utils.data
+#import torchvision.utils as vutils
+#from torch.nn import functional as F
 from torchvision import datasets, transforms
 from torchvision import models
 from torchvision.utils import make_grid
 from torchvision.utils import save_image
 import matplotlib.pyplot as plt
+
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 def init_weights(m):
     classname = m.__class__.__name__
@@ -50,7 +52,6 @@ def mixedGaussianCircular(k=10, sigma=0.025, rho=3.5, j=0):
             [T.matrix_power(i+j) @ cov @ T.matrix_power(-i-j) for i in range(k)])
     gauss = distributions.MultivariateNormal(loc = mu, covariance_matrix= cov)
     return gauss
-
 
 def fclayer(nin, nout, batchnorm=True, dropout=0.2, activation=nn.ReLU()):
     """
@@ -88,13 +89,17 @@ class VAE(nn.Module):
                 nn.Linear(nz, nh3),
                 nn.ReLU(),
                 nn.Linear(nh2, nh4),
-                nn.ReLU(),
-                nn.Linear(nh4, nin),
-                nn.Sigmoid()
+                #nn.ReLU(),
+                nn.Tanh(),
+                #nn.Linear(nh4, nin),
+                #nn.Sigmoid(),
                 )
 
         self.mumap = nn.Linear(nh2, nz)
         self.logvarmap = nn.Linear(nh2, nz)
+
+        self.dmu = nn.Linear(nh4, nin)
+        self.dlv = nn.Linear(nh4, nin)
 
     def encode(self, x):
         h = self.encoder(x)
@@ -110,20 +115,24 @@ class VAE(nn.Module):
         return mu + eps*std
 
     def decode(self, z):
-        x = self.decoder(z)
-        return x
-        #h3 = F.relu(self.fc3(z))
-        #return torch.sigmoid(self.fc4(h3))
+        h = self.decoder(z)
+        mu = self.dmu(h)
+        s = self.dlv(h)
+        return h
 
     def forward(self, x):
         x = x.view(-1, self.nin)
         mu, logvar = self.encode(x)
         z = self.reparameterize(mu, logvar)
-        return self.decode(z), mu, logvar
+        h = self.decoder(z)
+        m = self.dmu(h)
+        s = self.dlv(h)
+        return m, s, mu, logvar
+
 
 # Batch size during training
 batch_size = 128
-nz = 2
+nz = 4
 #nz = 20
 num_epochs = 5
 # Learning rate for optimizers
@@ -133,70 +142,58 @@ beta1 = 0.5
 # Number of GPUs available. Use 0 for CPU mode.
 device = "cuda" if torch.cuda.is_available() else "cpu"
 #bce = nn.BCELoss()
-#mse = nn.MSELoss()
+mse = nn.MSELoss()
 bce = nn.BCELoss(reduction="sum")
 kld = lambda mu, logvar : -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
 
 model = VAE(nin=2, nz=nz, nh1=2*1024, nh2=2*512, nh3=2*512, nh4=2*1024).to(device)
 optimizer = optim.Adam(model.parameters(), lr=3e-4)
 
-gauss = mixedGaussianCircular(rho=0.01, sigma=0.5, k=10, j=0)
-#gauss.sample()
-mix = distributions.Categorical(torch.ones(10,))
-comp = distributions.Independent(gauss, 0)
-gmm = distributions.MixtureSameFamily(mix, comp)
 
-z = gmm.sample((5000,)).clip(-1,1).abs().numpy()
-z = gmm.sample((5000,)).clip(-1,1).numpy()
+def fnorm(x, mu=0, s=1):
+    """
+    normal distribution function.
+    """
+    x = (x - mu) / s
+    x = x ** 2
+    x = -0.5 * x
+    x = x.exp()
+    x = x / (s * 2 * sqrt(pi) )
+    return torch.sum(torch.log(x))
 
-z = gmm.sample((5000,)).numpy()
-z.shape
-x = z[:,0]
-y = z[:,1]
-plt.scatter(x,y)
+for epoch in range(9000):
+    model.zero_grad()
+    x = torch.randn((128,2)).to(device)
+    m,s , mu, logvar = model(x)
+    recon = m + torch.randn_like(m) * (0.5 * s).exp()
+    #loss_recon = bce(recon, x)
+    loss_recon = -fnorm(x, m, (0.5 * s).exp())
+    loss_kld = kld(mu, logvar)
+    loss = loss_kld + loss_recon
+    loss.backward()
+    optimizer.step()
+    if epoch % 250 == 0:
+        print(
+                "loss_kld = ", loss_kld.item(),
+                "loss_recon = ",
+                loss_recon.item(),
+                )
 
-###################### Training
-# Lists to keep track of progress
-img_list = []
-G_losses = []
-D_losses = []
-iters = 0
-num_epochs = 10
-rounds = 10000
 
-for epoch in range(num_epochs):
-    # For each batch in the dataloader
-    for i in range(rounds):
-    #for i, data in enumerate(train_loader, 0):
-        data = gmm.sample((batch_size,)).clip(-1,1).abs()
-        x = data.to(device)
-        model.requires_grad_(True)
-        optimizer.zero_grad()
-        recon, mu, logvar = model(x)
-        loss_recon = bce(recon, x)
-        loss_kld = kld(mu, logvar)
-        loss = loss_kld + loss_recon
-        loss.backward()
-        optimizer.step()
-        if iters % 99 == 0:
-            print("losses:\n",
-                    "reconstruction loss:", loss_recon.item(),
-                    "kld:", loss_kld.item()
-                    )
-        iters += 1
+x = torch.randn((3280,2)).to(device)
+a,b,c,d = model(x)
 
-z = gmm.sample((5000,)).clip(-1,1).abs()
-z.shape
-x = z.detach().cpu().numpy()[:,0]
-y = z.detach().cpu().numpy()[:,1]
-plt.scatter(x,y)
+z = a + torch.randn_like(a) * (0.5 * b).exp()
 
-zz, _, __ = model(z.cuda())
+xs = x.detach().cpu().numpy()
+zs = z.detach().cpu().numpy()
+u = zs[:,0]
+v = zs[:,1]
+plt.scatter(u,v)
 
-x = zz.detach().cpu().numpy()[:,0]
-y = zz.detach().cpu().numpy()[:,1]
-
-plt.scatter(x,y)
+ux = xs[:,0]
+vx = xs[:,1]
+plt.scatter(ux,vx)
 
 plt.cla()
 
