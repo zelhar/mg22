@@ -12,7 +12,7 @@ from torchvision.utils import save_image, make_grid
 import numpy as np
 import matplotlib.pyplot as plt
 from torch import Tensor
-from math import pi, sin, cos, sqrt
+from math import pi, sin, cos, sqrt, log
 
 from toolz import partial, curry
 
@@ -40,6 +40,20 @@ def fnorm(
         return x
 
 
+# This one was tested and seems correct ;)
+@curry
+def logNorm(
+        x : Tensor,
+        mu : Tensor,
+        logvar : Tensor,) -> Tensor:
+    """
+    gives log of the density of the normal distribution.
+    element-wise, no reductions.
+    """
+    y = -0.5 * (log(2 * pi) + logvar + (x - mu).pow(2) / logvar.exp() )
+    return y
+
+
 def init_weights(m: torch.nn.Module) -> None:
     """
     Initiate weights with random values, depending
@@ -54,6 +68,16 @@ def init_weights(m: torch.nn.Module) -> None:
         nn.init.constant_(m.bias.data, 0)
     elif type(m) == nn.Linear:
         torch.nn.init.xavier_uniform_(m.weight)
+
+@curry
+def replicate(x : Tensor, expand=(1,)):
+    """
+    Replicate a tensor in a new dimension (the new 0 dimension),
+    creating n=ncopies identical copies.
+    """
+    y = torch.ones(expand + x.shape).to(x.device)
+    return y * x
+
 
 
 @curry
@@ -152,6 +176,7 @@ def fclayer(
     return fc
 
 
+@curry
 def mixedGaussianCircular(k=10, sigma=0.025, rho=3.5, j=0):
     """
     Sample from a mixture of k 2d-gaussians. All have equal variance (sigma) and

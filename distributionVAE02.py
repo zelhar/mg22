@@ -23,7 +23,30 @@ from my_torch_utils import fclayer, init_weights
 from my_torch_utils import plot_images, save_reconstructs, save_random_reconstructs
 from my_torch_utils import fnorm
 
+from my_torch_utils import replicate, logNorm
+
 device = "cuda" if torch.cuda.is_available() else "cpu"
+
+#x = Tensor([1])
+#y = replicate(x, (5,))
+#x = torch.rand((10,4))
+#mu = torch.rand((5,10,4))
+#logvar = torch.rand((5,10,4)).log()
+#y = logNorm(x, mu, logvar)
+#f = distributions.Normal(loc = mu, scale=(0.5 * logvar).exp()).log_prob
+#
+#f = distributions.Normal(loc = 0, scale=1).log_prob
+#g = logNorm(mu=Tensor([0]), logvar=Tensor([0]))
+#
+#x = Tensor([0.5])
+#f(x)
+#g(x)
+
+
+
+
+
+
 
 class VAEBernoulli(nn.Module):
     """
@@ -118,9 +141,12 @@ class VAEGauss(nn.Module):
         logvar = self.logvarmap(h)
         return mu, logvar
 
-    def reparameterize(self, mu, logvar):
+    def reparameterize(self, mu, logvar, expand=()):
+        shape = expand + mu.shape
         std = torch.exp(0.5 * logvar)
-        eps = torch.randn_like(std)
+        #eps = torch.randn_like(std)
+        eps = torch.randn(shape).to(mu.device)
+        #eps = torch.randn_like(replicate(x, expand))
         return mu + eps * std
 
     def decode(self, z):
@@ -133,7 +159,7 @@ class VAEGauss(nn.Module):
     def forward(self, x):
         x = x.view(-1, self.nin)
         mu, logvar = self.encode(x)
-        z = self.reparameterize(mu, logvar)
+        z = self.reparameterize(mu, logvar, (10,))
         dmu, dlogvar = self.decode(z)
         recon = self.reparameterize(dmu, dlogvar)
         recon = recon.view(-1, 1, self.imgsize, self.imgsize)
@@ -167,7 +193,9 @@ train_loader = torch.utils.data.DataLoader(
 )
 
 
-a,b,c,d,r = model(imgs)
+model = VAEGauss(4,2,7,2)
+x = torch.rand((128,4))
+a,b,c,d,r = model(x)
 r.shape
 
 bce = nn.BCELoss(reduction="sum")
@@ -273,6 +301,11 @@ model.apply(init_weights)
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
 nin = 28**2
 
+imgs, labels = test_loader.__iter__().next()
+imgs = imgs.to(device)
+
+a,b,c,d,r = model(imgs.cuda())
+
 for epoch in range(10):
     for idx, (data, _) in enumerate(train_loader):
         batch_size = data.shape[0]
@@ -350,12 +383,11 @@ for epoch in range(10):
         model.requires_grad_(True)
         optimizer.zero_grad()
         dm, dlv, mu, logvar, r = model(x)
-
-        log_p_given_z = -torch.ones_like(x).sum(1) * log(2 * pi) / 2
-        log_p_given_z -= 
-
-        loss_recon = fnorm(x, dm, dlv.exp(), reduction="logsum")
         loss_kld = kld(mu, logvar)
+        loss_recon = - logNorm(x, dm, dlv).mean(0).sum()
+        #log_p_given_z = -torch.ones_like(x).sum(1) * log(2 * pi) / 2
+        #log_p_given_z -= 
+        #loss_recon = fnorm(x, dm, dlv.exp(), reduction="logsum")
         loss = loss_kld + loss_recon
         loss.backward()
         optimizer.step()
