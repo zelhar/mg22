@@ -146,10 +146,11 @@ def save_random_reconstructs(model,
         save_image(sample, "results/sample_" + str(epoch) + ".png")
 
 
-def plot_images(imgs, nrow=16, transform=nn.Identity()):
+def plot_images(imgs, nrow=16, transform=nn.Identity(), out=plt):
     imgs = transform(imgs)
     grid_imgs = make_grid(imgs, nrow=nrow).permute(1, 2, 0)
-    plt.imshow(grid_imgs)
+    #plt.imshow(grid_imgs)
+    out.imshow(grid_imgs)
 
 
 def fclayer(
