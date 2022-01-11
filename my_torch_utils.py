@@ -1,8 +1,8 @@
 # useful function to be re-used in throught the tests in this project.
 from typing import Callable, Iterator, Union, Optional, TypeVar
-from typing import List, Set, Dict, Tuple
+from typing import List, Set, Dict, Tuple, ClassVar
 from typing import Mapping, MutableMapping, Sequence, Iterable
-from typing import Union, Any, cast
+from typing import Union, Any, cast, NewType
 import torch
 from torch import nn, optim, distributions
 import torch.utils.data
@@ -10,9 +10,11 @@ import torchvision.utils as vutils
 from torchvision import datasets, transforms, models
 from torchvision.utils import save_image, make_grid
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from torch import Tensor
 from math import pi, sin, cos, sqrt, log
+
 
 from toolz import partial, curry
 
@@ -207,6 +209,54 @@ def mixedGaussianCircular(k=10, sigma=0.025, rho=3.5, j=0):
     gauss = distributions.MultivariateNormal(loc=mu, covariance_matrix=cov)
     return gauss
 
+class scsimDataset(torch.utils.data.Dataset):
+    def __init__(self, countspath : str, idspath : str):
+        super(scsimDataset, self).__init__()
+        fcounts = np.load(countspath, allow_pickle=True)
+        flabels = np.load(idspath, allow_pickle=True)
+        self.counts = pd.DataFrame(**fcounts)
+        self.labels = pd.DataFrame(**flabels)
+        flabels.close()
+        fcounts.close()
+
+        self._cpath = countspath
+        self._lpath = idspath
+        
+
+    def __len__(self):
+        return len(self.labels)
+
+    def __getitem__(self, idx : int):
+        counts = self.counts.iloc[idx].astype('float')
+        label = self.labels.iloc[idx, 0]
+        return torch.FloatTensor(counts), label
+
+    def __train_test_split__(self, n : int) -> Union[Tuple[Any,Any], None]:
+        if n >= self.__len__() - 1:
+            print("error, cannot split because n exceeds data length")
+            return None
+        trainD = scsimDataset(self._cpath, self._lpath)
+        trainD.counts = self.counts[0:n]
+        trainD.labels = self.labels[0:n]
+        testD= scsimDataset(self._cpath, self._lpath)
+        trainD.counts = self.counts[0:n]
+        testD.labels = self.labels[n:]
+        testD.counts = self.counts[n:]
+        return trainD, testD
+
+#cpath = "data/scrnasim/counts.npz"
+#lpath = "data/scrnasim/cellparams.npz"
+#
+#ds = scsimDataset(cpath, lpath)
+#ds.__len__()
+#ds.counts
+#ds.labels
+#ds.__getitem__(5)
+#dlen = ds.__len__()
+#
+#traind, testd = ds.__train_test_split__(7000)
+#trainloader = torch.utils.data.DataLoader(traind, batch_size=128, shuffle=True)
+#trainloader.__iter__().next()
 
 # transform = transforms.Compose(
 #    [
