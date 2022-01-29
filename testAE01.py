@@ -68,6 +68,7 @@ class AE(nn.Module):
         z = self.encoder(x)
         y = self.decode(z)
         return y, z
+
 transform = transforms.Compose([
     transforms.ToTensor(),
     #normalize,
