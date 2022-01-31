@@ -210,7 +210,7 @@ def mixedGaussianCircular(k=10, sigma=0.025, rho=3.5, j=0):
     return gauss
 
 class scsimDataset(torch.utils.data.Dataset):
-    def __init__(self, countspath : str, idspath : str):
+    def __init__(self, countspath : str, idspath : str, genepath : Optional[str] = None,):
         super(scsimDataset, self).__init__()
         fcounts = np.load(countspath, allow_pickle=True)
         flabels = np.load(idspath, allow_pickle=True)
@@ -218,18 +218,27 @@ class scsimDataset(torch.utils.data.Dataset):
         self.labels = pd.DataFrame(**flabels)
         flabels.close()
         fcounts.close()
+        if genepath:
+            fgeneparams = np.load(genepath, allow_pickle=True)
+            self.geneparams = pd.DataFrame(**fgeneparams) 
+            fgeneparams.close()
 
         self._cpath = countspath
         self._lpath = idspath
+        self._gpath = genepath
+
+        # notmalized counts:
+        self.normalized_counts = (self.counts - self.counts.mean(axis=0)) / self.counts.std(ddof=0, axis=0)
         
 
     def __len__(self):
         return len(self.labels)
 
     def __getitem__(self, idx : int):
+        ncounts = self.normalized_counts.iloc[idx].astype('float')
         counts = self.counts.iloc[idx].astype('float')
         label = self.labels.iloc[idx, 0]
-        return torch.FloatTensor(counts), label
+        return torch.FloatTensor(ncounts), torch.FloatTensor(counts), label
 
     def __train_test_split__(self, n : int) -> Union[Tuple[Any,Any], None]:
         if n >= self.__len__() - 1:
@@ -237,11 +246,12 @@ class scsimDataset(torch.utils.data.Dataset):
             return None
         trainD = scsimDataset(self._cpath, self._lpath)
         trainD.counts = self.counts[0:n]
+        trainD.normalized_counts = self.normalized_counts[0:n]
         trainD.labels = self.labels[0:n]
-        testD= scsimDataset(self._cpath, self._lpath)
-        trainD.counts = self.counts[0:n]
-        testD.labels = self.labels[n:]
+        testD = scsimDataset(self._cpath, self._lpath)
         testD.counts = self.counts[n:]
+        testD.normalized_counts = self.normalized_counts[n:]
+        testD.labels = self.labels[n:]
         return trainD, testD
 
 #cpath = "data/scrnasim/counts.npz"
