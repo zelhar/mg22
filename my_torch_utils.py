@@ -18,6 +18,37 @@ from math import pi, sin, cos, sqrt, log
 
 from toolz import partial, curry
 
+#def gaussian_nll(mu, log_sigma, x):
+#    return 0.5 * torch.pow((x - mu) / log_sigma.exp(), 2) + log_sigma + 0.5 * np.log(2 * np.pi)
+
+def log_gaussian_prob(x : torch.Tensor, 
+        mu : torch.Tensor = torch.tensor(0), 
+        logvar : torch.Tensor = torch.tensor(0)
+        ) -> torch.Tensor:
+    """
+    compute the log density function of a gaussian.
+    user must make sure that the dimensions are aligned correctly.
+    """
+    return -0.5 * (
+            log(2 * pi) + 
+            logvar +
+            (x - mu).pow(2) / logvar.exp()
+            )
+
+def softclip(tensor, min=-6.0, max=9.0):
+    """ Clips the tensor values at the minimum value min in a softway. Taken from Handful of Trials """
+    result_tensor = min + nn.functional.softplus(tensor - min)
+    result_tensor = max - nn.functional.softplus(max - result_tensor)
+    return result_tensor
+
+
+class SoftClip(nn.Module):
+    def __init__(self, min=-6.0, max=6.0):
+        super(SoftClip, self).__init__()
+        self.min = min
+        self.max = max
+    def forward(self, input):
+        return softclip(input, self.min, self.max)
 
 @curry
 def fnorm(
@@ -178,6 +209,21 @@ def fclayer(
     fc.add_module("activation", activation)
     return fc
 
+def buildNetwork(
+    layers: List[int],
+    dropout: int = 0,
+    activation: Optional[nn.Module] = nn.ReLU(),
+    #batchnorm: bool = True,
+):
+    #net = []
+    net = nn.Sequential()
+    for i in range(1, len(layers)):
+        if dropout > 0:
+            net.add_module("dropout", nn.Dropout(dropout))
+        net.add_module('linear', nn.Linear(layers[i - 1], layers[i]))
+        if activation:
+            net.add_module("activation", activation)
+    return nn.Sequential(*net)
 
 @curry
 def mixedGaussianCircular(k=10, sigma=0.025, rho=3.5, j=0):
