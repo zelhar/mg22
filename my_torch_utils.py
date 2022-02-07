@@ -18,8 +18,17 @@ from math import pi, sin, cos, sqrt, log
 
 from toolz import partial, curry
 
-#def gaussian_nll(mu, log_sigma, x):
-#    return 0.5 * torch.pow((x - mu) / log_sigma.exp(), 2) + log_sigma + 0.5 * np.log(2 * np.pi)
+def gaussian_nll(mu, log_sigma, x):
+    return 0.5 * torch.pow((x - mu) / log_sigma.exp(), 2) + log_sigma + 0.5 * np.log(2 * np.pi)
+
+#kld = lambda mu, logvar: -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
+
+
+def soft_assign(z, mu, alpha=1):
+    q = 1.0 / (1.0 + torch.sum((z.unsqueeze(1) - mu)**2, dim=2) / alpha)
+    q = q**(alpha+1.0)/2.0
+    q = q / torch.sum(q, dim=1, keepdim=True)
+    return q
 
 def log_gaussian_prob(x : torch.Tensor, 
         mu : torch.Tensor = torch.tensor(0), 
@@ -185,6 +194,29 @@ def plot_images(imgs, nrow=16, transform=nn.Identity(), out=plt):
     #plt.imshow(grid_imgs)
     out.imshow(grid_imgs)
 
+def plot_tsne(z_loc, classes, name):
+    import matplotlib
+    #matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    import numpy as np
+    from sklearn.manifold import TSNE
+    model_tsne = TSNE(n_components=2, random_state=0)
+    z_states = z_loc.detach().cpu().numpy()
+    z_embed = model_tsne.fit_transform(z_states)
+    classes = classes.detach().cpu().numpy()
+    fig = plt.figure()
+    for ic in range(10):
+        #ind_vec = np.zeros_like(classes)
+        #ind_vec[:, ic] = 1
+        #ind_class = classes[:, ic] == 1
+        ind_class = classes == ic
+        color = plt.cm.Set1(ic)
+        #plt.scatter(z_embed[ind_class, 0], z_embed[ind_class, 1], s=10, color=color)
+        plt.scatter(z_embed[ind_class, 0], z_embed[ind_class, 1], s=10, cmap="viridis")
+        plt.title(name + " Latent Variable T-SNE per Class")
+        #fig.savefig("./results/" + str(name) + "_embedding_" + str(ic) + ".png")
+    plt.legend([str(i) for i in classes])
+    #fig.savefig("./results/" + str(name) + "_embedding.png")
 
 def fclayer(
         nin: int,
@@ -213,16 +245,19 @@ def buildNetwork(
     layers: List[int],
     dropout: int = 0,
     activation: Optional[nn.Module] = nn.ReLU(),
-    #batchnorm: bool = True,
+    batchnorm: bool = False,
 ):
-    #net = []
     net = nn.Sequential()
+    # linear > batchnorm > activation > dropout
+    # or rather linear > dropout > act > batchnorm
     for i in range(1, len(layers)):
+        net.add_module('linear', nn.Linear(layers[i - 1], layers[i]))
         if dropout > 0:
             net.add_module("dropout", nn.Dropout(dropout))
-        net.add_module('linear', nn.Linear(layers[i - 1], layers[i]))
         if activation:
             net.add_module("activation", activation)
+        if batchnorm:
+            net.add_module("batchnorm", nn.BatchNorm1d(num_features=layers[i]))
     return nn.Sequential(*net)
 
 @curry
