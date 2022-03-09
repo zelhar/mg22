@@ -251,14 +251,15 @@ def buildNetwork(
     # linear > batchnorm > activation > dropout
     # or rather linear > dropout > act > batchnorm
     for i in range(1, len(layers)):
-        net.add_module('linear', nn.Linear(layers[i - 1], layers[i]))
+        net.add_module('linear' + str(i), nn.Linear(layers[i - 1], layers[i]))
         if dropout > 0:
-            net.add_module("dropout", nn.Dropout(dropout))
+            net.add_module("dropout" + str(i), nn.Dropout(dropout))
         if activation:
-            net.add_module("activation", activation)
+            net.add_module("activation" + str(i), activation)
         if batchnorm:
-            net.add_module("batchnorm", nn.BatchNorm1d(num_features=layers[i]))
-    return nn.Sequential(*net)
+            net.add_module("batchnorm" + str(i), nn.BatchNorm1d(num_features=layers[i]))
+    return net
+    #return nn.Sequential(*net)
 
 @curry
 def mixedGaussianCircular(k=10, sigma=0.025, rho=3.5, j=0):
