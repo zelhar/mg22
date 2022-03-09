@@ -96,3 +96,20 @@ auto_guide = pyro.infer.autoguide.AutoNormal(model)
 adam = pyro.optim.Adam({"lr" : 2e-3})
 elbo = pyro.infer.Trace_ELBO()
 
+
+
+
+#######
+def mymodel(x):
+    with pyro.plate("N", len(x)):
+        z = pyro.sample("z", dist.LogNormal(x.new_zeros(len(x)), 1.))
+        pyro.sample("y", dist.LogNormal(z,1), obs=y)
+        pyro.sample("x", dist.Normal(z,y), obs=x)
+
+x = torch.randn(10)
+y = torch.randn(10)
+g = pyro.render_model(mymodel, model_args=(x,y))
+
+g = pyro.render_model(mymodel, model_args=(x,))
+
+g.view()
