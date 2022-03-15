@@ -194,6 +194,15 @@ def plot_images(imgs, nrow=16, transform=nn.Identity(), out=plt):
     #plt.imshow(grid_imgs)
     out.imshow(grid_imgs)
 
+def plot_2images(img1, img2, nrow=16, transform=nn.Identity(), ):
+    img1 = transform(img1)
+    img2 = transform(img2)
+    grid_img1 = make_grid(img1, nrow=nrow).permute(1, 2, 0)
+    grid_img2 = make_grid(img2, nrow=nrow).permute(1, 2, 0)
+    fig, axs = plt.subplots(1,2)
+    axs[0].imshow(grid_img1)
+    axs[1].imshow(grid_img2)
+
 def plot_tsne(z_loc, classes, name):
     import matplotlib
     #matplotlib.use("Agg")
