@@ -300,6 +300,16 @@ def mixedGaussianCircular(k=10, sigma=0.025, rho=3.5, j=0):
     gauss = distributions.MultivariateNormal(loc=mu, covariance_matrix=cov)
     return gauss
 
+class LabeledDataset(torch.utils.data.Dataset):
+    def __init__(self, data : Tensor, labels : Tensor, labeled_portion : float):
+        super().__init__()
+        self.data = data
+        self.labels = labels
+        self.markedlabels = distributions.Bernoulli(labeled_portion).sample(labels.shape).long()
+        return
+    def __getitem__(self, idx : int):
+        return self.data[idx], self.labels[idx], self.markedlabels[idx]
+
 class scsimDataset(torch.utils.data.Dataset):
     def __init__(self, countspath : str, idspath : str, genepath : Optional[str] = None,):
         super(scsimDataset, self).__init__()
