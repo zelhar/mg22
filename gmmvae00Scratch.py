@@ -84,6 +84,133 @@ w = model.mus_xs_z(z)
 
 mu_z_x, logvar_z_x, logits_y_x, q_z, z, mus_xs_z, q_y = model(x)
 
-loss = model.loss_v1(x, mu_z_x, logvar_z_x, logits_y_x, q_z, z, mus_xs_z)
+bce , kld_y, kld_z, target = model.loss_v1(x, mu_z_x, logvar_z_x, logits_y_x, q_y, q_z, z, mus_xs_z)
 
-(loss.sum(-1) * q_y.probs).sum(-1)
+(bce.sum(-1) * q_y.probs).sum(-1)
+
+pxhat = mus_xs_z.sigmoid()
+
+bce2 = -target * pxhat.log() - (1 - target) * (1 - pxhat).log() 
+
+bce2.sum() - bce.sum()
+
+loss = bce.sum(-1)
+loss.shape
+loss = bce.sum(-1) * q_y.probs
+loss.shape
+loss.sum(-1).shape
+
+loss = (bce.sum(-1) * q_y.probs).sum(-1) + kld_y.sum(-1) + kld_z.sum(-1)
+loss.shape
+loss.mean().shape
+
+model = M.GMMClustering()
+model.fit(train_loader, num_epochs=4)
+
+z = torch.randn(128, 20)
+xs = model.mus_xs_z(z).sigmoid()
+
+x = xs[:,9,:].reshape(-1,1,28,28)
+x.shape
+plot_images(x)
+
+
+#kl test
+# both need to be normalized to get correct result
+p = torch.tensor((9,12,4.0)) / 25
+q = torch.tensor((1,1,1.0)) / 3
+# kl(p || q) = sum(p * (log p - log q)) = 0.0852
+nn.KLDivLoss(reduction='sum')(input=q.log(), target=p)
+# kl(q || p) = 0.09745
+nn.KLDivLoss(reduction='sum')(p.log(),q)
+
+
+model = M.GMMKoolooloo(nz=20, nw=30, tau=torch.tensor(0.3))
+
+model.y_prior.sample((128,)).shape
+model.w_prior.sample((128,model.nw)).shape
+
+mu_z, logvar_z, z, mu_w, logvar_w, w, y_logit = model.encode(x)
+
+mus, logvars, p_zs, zs, x_logit, choice = model.decode(w, y_logit)
+
+
+q_y = distributions.RelaxedOneHotCategorical(temperature=0.3, logits=y_logit)
+q_y.probs
+y_logit.softmax(-1)
+q_y.logits
+
+mus, logvars, p_zs, zs = model.decode_zs(w)
+
+pz = pyrodist.Normal(loc=mus, scale=(0.5*logvars).exp()).to_event(1)
+
+foo = nn.Linear(2,3)
+bar = torch.rand((50,10,2))
+foo(bar).shape
+
+q_y.rsample()
+
+
+pp = torch.distributions.Categorical(probs=torch.ones(3))
+idx = pp.sample((5,))
+idx.shape
+u = torch.rand((5,3,10))
+u
+
+v = nn.functional.gumbel_softmax(logits=torch.randn((5,3)), tau=0.3, hard=True, )
+v
+v.shape
+u.shape
+w=v.unsqueeze(-1) * u
+
+model = M.GMMKoolooloo(nz=20, nw=30, tau=torch.tensor(0.1))
+
+q_z, q_w, z, w, q_y, mus_z, logvars_z, y, logit_x = model(x)
+y.max(dim=-1)
+v = nn.functional.gumbel_softmax(logits=q_y.logits, tau=0.9, hard=True, )
+
+loss_rec = model.reconstruction_loss(logit_x, x, False)
+loss_z = model.kld_z_loss(q_z, mus_z, logvars_z, q_y)
+loss_w = model.kld_w_loss(q_w)
+
+q = q_y.probs
+p = torch.ones_like(q)/10
+nn.KLDivLoss(reduction='sum')(input=q.log(), target=p)
+
+model = M.GMMKoolooloo(nz=10, nw=10, tau=torch.tensor(0.1), nclasses=10)
+model.fit(train_loader, num_epochs=8)
+
+model.cpu()
+
+#w = model.w_prior.rsample((128,model.nw))
+w = model.w_prior.rsample((20,model.nw))
+#w = torch.zeros_like(w) + 0.2
+c = 7
+mus, logvars = model.decode_zs_w(w)
+mu_z = mus[:,c,:]
+xhat = model.decode_x_z(mu_z).reshape(-1,1,28,28)
+xhat = model.decode_x_z(mus).reshape(-1,1,28,28)
+plot_images(xhat.sigmoid(), nrow=20)
+
+xhat = xhat.reshape(-1, 20, 1,28,28).detach()
+
+plot_images(xhat[4].sigmoid(), nrow=20)
+
+z = torch.randn((40,model.nz))
+xhat = model.decode_x_z(z).reshape(-1,1,28,28)
+plot_images(xhat.sigmoid(), nrow=4)
+
+model.cpu()
+def plot_classes(model):
+    #w = model.w_prior.rsample((2 * model.nclasses,model.nw))
+    w = model.w_prior.rsample((2*model.nclasses,model.nw))
+    mus, logvars = model.decode_zs_w(w)
+    P_zs = pyrodist.Normal(loc=mus, scale=(0.5*logvars).exp()).to_event(1)
+    zs = P_zs.sample()
+    xhat = model.decode_x_z(zs).reshape(-1,1,28,28)
+    plot_images(xhat.sigmoid(), nrow=2*model.nclasses)
+plot_classes(model)
+
+z = model.generate_class(c=8, batch=30)
+xhat = model.decode_x_z(z).reshape(-1,1,28,28)
+plot_images(xhat.sigmoid(), nrow=2*model.nclasses)

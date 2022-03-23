@@ -211,7 +211,7 @@ class GMMKoolooloo(nn.Module):
         nh: int = 1024,
         nz: int = 20,
         nw: int= 30,
-        tau: Tensor = torch.tensor(0.2),
+        tau: Tensor = torch.tensor(0.3),
     ) -> None:
         super().__init__()
         self.nx = nx
@@ -301,7 +301,7 @@ class GMMKoolooloo(nn.Module):
         self.kld_unreduced = lambda mu, logvar: -0.5 * (
             1 + logvar - mu.pow(2) - logvar.exp()
         )
-        self.sigma_x = torch.nn.Parameter(torch.ones(nx), requires_grad=True)
+        self.sigma_x = torch.nn.Parameter(torch.zeros(nx), requires_grad=True)
         return
 
     def encode_Qz_x(self, x):
@@ -353,112 +353,6 @@ class GMMKoolooloo(nn.Module):
         x_logit = self.logits_x_hz(hz)
         return x_logit
 
-    def forward(self, input):
-        x = nn.Flatten()(input)
-        q_z = self.encode_Qz_x(x)
-        q_w = self.encode_Qw_x(x)
-        z = q_z.rsample()
-        w = q_w.rsample()
-        q_y = self.encode_Qy_wz(z,w)
-        mus_z, logvars_z = self.decode_zs_w(w)
-        y = q_y.rsample()
-        logit_x = self.decode_x_z(z)
-        # hard sample:
-        #yhard = F.gumbel_softmax(logits=q_y.logits, tau=self.tau, hard=True, )
-        return q_z, q_w, z, w, q_y, mus_z, logvars_z, y, logit_x
-
-    def reconstruction_loss(self, x_logit,x,isgaussian=False):
-        target = nn.Flatten()(x)
-        if not isgaussian:
-            recon_loss = nn.BCEWithLogitsLoss(reduction='none')(input=x_logit,
-                    target=target).sum(-1).mean()
-        else:
-            sigma_x = ut.softclip(self.sigma_x, -1, 1)
-            #p_x = pyrodist.Normal(loc=x_logit, scale=sigma_x)
-            #recon_loss = -p_x.log_prob(x)
-            recon_loss = (x - x_logit.sigmoid()).pow(2)/sigma_x
-            recon_loss = recon_loss.sum(dim=-1).mean()
-        return recon_loss
-
-    def kld_z_loss(self, q_z, mus_zs_w, logvars_zs_w, q_y):
-        z = q_z.rsample()
-        log_Qz_x = q_z.log_prob(z)
-        P_zs_w = pyrodist.Normal(loc=mus_zs_w,
-                scale=(0.5*logvars_zs_w).exp(),).to_event(1)
-        log_Pzs_wy = P_zs_w.log_prob(z.unsqueeze(1)) * q_y.probs
-        # normalize log probs with the y distribution
-        # shape is [B, Class, ]
-        log_Pz = log_Pzs_wy.sum(-1)
-        loss = log_Qz_x - log_Pz
-        return loss.mean()
-
-    def kld_w_loss(self, q_w):
-        # KLD(q_w || prior_w)
-        # recall prior_w ~ N(0,I)
-        mu = q_w.mean
-        var = q_w.variance
-        logvar = var.log()
-        loss = self.kld_unreduced(mu=mu, logvar=logvar).sum(-1).mean()
-        return loss
-
-    def kld_y_loss(self, q_y):
-        # KLD(q_y || p_y)
-        # recall p_y = 1/k fixed prior
-        q = q_y.probs
-        p = torch.ones_like(q) / self.nclasses
-        loss = nn.KLDivLoss(reduction='none')(input=q.log(), target=p)
-        return loss.sum(-1).mean()
-        
-    def fit(
-        self,
-        train_loader: torch.utils.data.DataLoader,
-        num_epochs=10,
-        lr=1e-3,
-        device: str = "cuda:0",
-    ) -> None:
-        self.to(device)
-        optimizer = optim.Adam(self.parameters(), lr=lr)
-        for epoch in range(num_epochs):
-            for idx, (data, labels) in enumerate(train_loader):
-                self.train()
-                self.requires_grad_(True)
-                optimizer.zero_grad()
-                x = data.flatten(1).to(device)
-                q_z, q_w, z, w, q_y, mus_z, logvars_z, y, logit_x = self.forward(x)
-                #loss_rec = self.reconstruction_loss(logit_x, x, False)
-                loss_rec = self.reconstruction_loss(logit_x, x, True)
-                loss_z = self.kld_z_loss(q_z, mus_z, logvars_z, q_y)
-                loss_w = self.kld_w_loss(q_w)
-                loss_y = self.kld_y_loss(q_y)
-                #loss = loss_rec + loss_z  + loss_w + loss_y 
-                loss = loss_rec + loss_z * 1e1 + loss_w + loss_y * 1e3
-                #loss_y = F.threshold(loss_y, 1, 1)
-                #loss = loss_rec + loss_z * 1e1 + loss_w + loss_y
-                loss.backward()
-                optimizer.step()
-                if idx % 300 == 0:
-                    print(
-                        "loss = ",
-                        loss.item(),
-                        loss_z.item(),
-                        loss_w.item(),
-                        loss_y.item(),
-                    )
-        self.cpu()
-        optimizer = None
-        print("done training")
-        return None
-
-    def generate_class(self, c : int, batch : int = 5):
-        w = self.w_prior.sample((batch, self.nw))
-        mus_z, logvars_z = self.decode_zs_w(w)
-        mu = mus_z[:,c,:]
-        logvar = logvars_z[:,c,:]
-        eps = torch.randn_like(mu)
-        z = mu + eps * (logvar * 0.5).exp()
-        return z
-
-
 
     #def decode_zs(self, w):
     #    hw = self.dec_h_w(w)
@@ -485,6 +379,19 @@ class GMMKoolooloo(nn.Module):
     #    hz = self.dec_h_z(zs)
     #    x_logit = self.logits_x_hz(hz)
     #    return mus, logvars, p_zs, zs, x_logit, choice
+
+    def reconstruction_loss(self, x_logit,x,isgaussian=False):
+        target = nn.Flatten()(x)
+        if not isgaussian:
+            recon_loss = nn.BCEWithLogitsLoss(reduction='none')(input=x_logit,
+                    target=target).sum(-1).mean()
+        else:
+            p_x = pyrodist.Normal(loc=x_logit, scale=self.sigma_x)
+            recon_loss = -p_x.log_prob(x)
+        return recon_loss
+
+    def kld_z_loss(self,mu_z, logvar_z, mus_zs_w, logvars_zs_w, y_logit ):
+        pass
 
     #def forward(self, x):
     #    mu_z, logvar_z, z, mu_w, logvar_w, w, y_logit = encodings = self.encode(x)
