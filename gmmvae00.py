@@ -52,6 +52,871 @@ print(torch.cuda.is_available())
 
 import pytorch_lightning as pl
 from pl_bolts.models.autoencoders.components import resnet18_decoder, resnet18_encoder
+
+class AE(nn.Module):
+    """
+    simple AE
+    """
+    def __init__(self, nx : int=28**2,
+            nclusters : int=16,
+            nz : int=16,
+            nh : int=3000,
+            adversarial_loss_scale : float=0.9,
+            ) -> None:
+        super().__init__()
+        self.nx = nx
+        self.nh = nh
+        self.nz = nz
+        self.nclasses = nclusters
+        self.encoder = nn.Sequential(
+                nn.Flatten(),
+                nn.Linear(nx, nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh,nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh, nz),
+                nn.Tanh(),
+                #nn.Sigmoid(),
+                #nn.Linear(nh, nz),
+                )
+        self.categorical_encoder = nn.Sequential(
+                nn.Flatten(),
+                nn.Linear(nx, nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh,nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh,nz),
+                nn.Softmax(dim=-1),
+                )
+        self.decoder = nn.Sequential(
+                nn.Linear(nz, nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh,nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh,nx),
+                nn.Sigmoid(),
+                )
+        return
+
+    def encode(self, x):
+        z = self.encoder(x)
+        c = self.categorical_encoder(x)
+        return z,c
+    def decode(self, z):
+        x = self.decoder(z)
+        return x
+    def reconstruction_loss(self, x, xhat):
+        loss = nn.MSELoss(reduction="none")(x, xhat)
+        loss = loss.sum(dim=-1).mean()
+        return loss
+
+    def forward(self, input):
+        x = nn.Flatten()(input)
+        z,c = self.encode(x)
+        xhat = self.decode(z+c)
+        recon_loss = self.reconstruction_loss(x, xhat)
+        cat_loss = -c.max(dim=-1)[0].mean() #min is 1
+        loss = recon_loss + 10*cat_loss
+        output = {
+                "xhat" : xhat,
+                "z" : z,
+                "loss" : loss,
+                "cat loss" : cat_loss
+                }
+        return output
+    def fit(
+        self,
+        train_loader: torch.utils.data.DataLoader,
+        num_epochs=10,
+        lr=1e-3,
+        device: str = "cuda:0",
+    ) -> None:
+        self.to(device)
+        optimizer = optim.Adam(self.parameters(), lr=lr)
+        for epoch in range(num_epochs):
+            for idx, (data, labels) in enumerate(train_loader):
+                self.train()
+                self.requires_grad_(True)
+                optimizer.zero_grad()
+                x = data.flatten(1).to(device)
+                output = self.forward(x)
+                loss = output['loss']
+                loss.backward()
+                optimizer.step()
+                if idx % 300 == 0:
+                    print(
+                        "loss = ",
+                        loss.item(),
+                    )
+        self.cpu()
+        optimizer = None
+        print("done training")
+        return None
+
+class AAE(nn.Module):
+    """
+    simple AAE
+    """
+    def __init__(self, nx : int=28**2,
+            nclusters : int=16,
+            nz : int=16,
+            nh : int=3000,
+            adversarial_loss_scale : float=0.9,
+            ) -> None:
+        super().__init__()
+        self.nx = nx
+        self.nh = nh
+        self.nz = nz
+        self.nclasses = nclusters
+        self.adversarial_loss_scale = adversarial_loss_scale
+        self.y_prior = distributions.OneHotCategorical(
+                probs=torch.ones(nclusters))
+        self.encoder = nn.Sequential(
+                nn.Flatten(),
+                nn.Linear(nx, nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh,nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                )
+        self.mu_z = nn.Sequential(
+                #nn.Linear(nh, nh),
+                #nn.LeakyReLU(),
+                nn.Linear(nh, nz),
+                )
+        self.logvar_z = nn.Sequential(
+                #nn.Linear(nh, nh),
+                #nn.LeakyReLU(),
+                nn.Linear(nh, nz),
+                )
+        self.gauss_discriminator = nn.Sequential(
+                nn.Linear(nz, nh),
+                nn.ReLU(),
+                nn.Linear(nh,1),
+                nn.Sigmoid(),
+                )
+        self.categorical_encoder = nn.Sequential(
+                nn.Flatten(),
+                nn.Linear(nx, nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh,nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh,nclusters),
+                nn.Softmax(dim=-1),
+                )
+        self.categorical_discriminator = nn.Sequential(
+                nn.Flatten(),
+                nn.Linear(nclusters, nh),
+                nn.ReLU(),
+                nn.Linear(nh,1),
+                nn.Sigmoid(),
+                )
+        self.decoder = nn.Sequential(
+                nn.Linear(nz, nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh,nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh,nx),
+                nn.Sigmoid(),
+                )
+        return
+
+    def encode(self, x):
+        h = self.encoder(x)
+        mu = self.mu_z(h)
+        logvar = self.logvar_z(h)
+        z = torch.randn_like(mu, requires_grad=True, device=mu.device)
+        std = (0.5 * logvar).exp()
+        z = mu + z * std
+        clusterhead = self.categorical_encoder(x)
+        z = z + clusterhead
+        return mu, logvar, z
+    def decode(self, z):
+        x = self.decoder(z)
+        return x
+    def adversarial_loss(self, z):
+        gen_adversarial_score = self.gauss_discriminator(z)
+        true_labels = torch.ones_like(gen_adversarial_score,
+                requires_grad=False, device=z.device)
+        return F.binary_cross_entropy(gen_adversarial_score, true_labels)
+    def categorical_adversarial_loss(self, x):
+        c = self.categorical_encoder(x)
+        gen_adversarial_score = self.categorical_discriminator(c)
+        true_labels = torch.ones_like(gen_adversarial_score,
+                requires_grad=False, device=c.device)
+        return F.binary_cross_entropy(gen_adversarial_score, true_labels)
+    def discriminator_loss(self, z):
+        w = torch.randn_like(z, device=z.device, requires_grad=True)
+        prior_adversarial_score = self.gauss_discriminator(w)
+        true_labels = torch.ones_like(prior_adversarial_score,
+                requires_grad=False, device=z.device)
+        fake_labels = torch.zeros_like(prior_adversarial_score,
+                requires_grad=False, device=z.device)
+        z_ = z.clone().detach().requires_grad_(True)
+        gen_adversarial_score_ = self.gauss_discriminator(z_)
+        discriminator_loss = 0.5 * (
+            F.binary_cross_entropy(
+                prior_adversarial_score, true_labels
+            )  # prior is true
+        ) + 0.5 * (
+            F.binary_cross_entropy(
+                gen_adversarial_score_, fake_labels
+            )  # generated are false
+        )
+        return discriminator_loss
+    def reconstruction_loss(self, x, xhat):
+        loss = nn.MSELoss(reduction="none")(x, xhat)
+        loss = loss.sum(dim=-1).mean()
+        return loss
+
+    def categorical_discriminator_loss(self, x):
+        y = self.y_prior.sample((x.shape[0],)).to(x.device)
+        c = self.categorical_encoder(x)
+        prior_adversarial_score = self.categorical_discriminator(y)
+        gen_adversarial_score_ = self.categorical_discriminator(c)
+        true_labels = torch.ones_like(prior_adversarial_score,
+                requires_grad=False, device=c.device)
+        fake_labels = torch.zeros_like(prior_adversarial_score,
+                requires_grad=False, device=c.device)
+        discriminator_loss = 0.5 * (
+            F.binary_cross_entropy(
+                prior_adversarial_score, true_labels
+            )  # prior is true
+        ) + 0.5 * (
+            F.binary_cross_entropy(
+                gen_adversarial_score_, fake_labels
+            )  # generated are false
+        )
+        return discriminator_loss
+
+    def forward(self, input):
+        x = nn.Flatten()(input)
+        mu, logvar, z = self.encode(x)
+        xhat = self.decode(z)
+        #xhat = self.decode(mu)
+        adversarial_loss = self.adversarial_loss(z) * self.adversarial_loss_scale
+        recon_loss = self.reconstruction_loss(x, xhat) * (1 - self.adversarial_loss_scale)
+        disc_loss = self.discriminator_loss(z)
+        cat_disc_loss = self.categorical_discriminator_loss(x)
+        cat_adv_loss = self.categorical_adversarial_loss(x)
+        loss = adversarial_loss + recon_loss + disc_loss
+        loss = loss + cat_adv_loss + cat_disc_loss
+        #loss = recon_loss
+        output = {
+                "xhat" : xhat,
+                "mu" : mu,
+                "logvar" : logvar,
+                "loss" : loss,
+                "advloss" : adversarial_loss,
+                "discloss" : disc_loss,
+                "recloss" : recon_loss,
+                }
+        return output
+    def fit(
+        self,
+        train_loader: torch.utils.data.DataLoader,
+        num_epochs=10,
+        lr=1e-3,
+        device: str = "cuda:0",
+    ) -> None:
+        self.to(device)
+        optimizer = optim.Adam(self.parameters(), lr=lr)
+        for epoch in range(num_epochs):
+            for idx, (data, labels) in enumerate(train_loader):
+                self.train()
+                self.requires_grad_(True)
+                optimizer.zero_grad()
+                x = data.flatten(1).to(device)
+                output = self.forward(x)
+                loss = output['loss']
+                loss.backward()
+                optimizer.step()
+                if idx % 300 == 0:
+                    print(
+                        "loss = ",
+                        loss.item(),
+                    )
+        self.cpu()
+        optimizer = None
+        print("done training")
+        return None
+
+class VAE(nn.Module):
+    """
+    VAE
+    """
+    def __init__(self, nx : int=28**2,
+            nclusters : int=16,
+            nz : int=16,
+            nh : int=3000,
+            ) -> None:
+        super().__init__()
+        self.nx = nx
+        self.nh = nh
+        self.nz = nz
+        self.nclasses = nclusters
+        #self.logsigma_x = torch.nn.Parameter(torch.zeros(nx), requires_grad=True)
+        self.encoder = nn.Sequential(
+                nn.Flatten(),
+                nn.Linear(nx, nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh,nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                )
+        self.mu_z = nn.Sequential(
+                #nn.Linear(nh, nh),
+                #nn.LeakyReLU(),
+                nn.Linear(nh, nz),
+                )
+        self.logvar_z = nn.Sequential(
+                #nn.Linear(nh, nh),
+                #nn.LeakyReLU(),
+                nn.Linear(nh, nz),
+                )
+        self.decoder = nn.Sequential(
+                nn.Linear(nz, nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh,nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh,nx),
+                nn.Sigmoid(),
+                )
+        self.kld_unreduced = lambda mu, logvar: -0.5 * (
+            1 + logvar - mu.pow(2) - logvar.exp()
+        )
+        return
+    def encode(self, x):
+        h = self.encoder(x)
+        mu = self.mu_z(h)
+        logvar = self.logvar_z(h)
+        std = (logvar * 0.5).exp()
+        q_z = pyrodist.Normal(loc=mu, scale=std).to_event(1)
+        return mu, logvar, q_z
+    def decode(self, z):
+        x = self.decoder(z)
+        return x
+    def forward(self, input):
+        x = nn.Flatten()(input)
+        mu, logvar, q_z = self.encode(x)
+        z = q_z.rsample()
+        std = (logvar * 0.5).exp()
+        eps = torch.randn_like(mu)
+        #z = mu + std*eps
+        kld_z = self.kld_unreduced(mu, logvar).sum(-1).mean()
+        x_hat = self.decode(z)
+        recon_loss = nn.MSELoss(reduction="none")(x_hat, x).sum(-1).mean()
+        #logsigma_x = ut.softclip(self.logsigma_x, -2, 2)
+        #sigma_x = logsigma_x.exp()
+        #q_x = pyrodist.Normal(loc=x_hat, scale=sigma_x).to_event(1)
+        #recon_loss = -q_x.log_prob(x).mean()
+        #recon_loss = -ut.log_gaussian_prob(x, x_hat, sigma_x).sum(-1).mean()
+        loss = recon_loss + kld_z
+        output = {
+                "mu" : mu,
+                "logvar" : logvar,
+                "z" : z,
+                "kld_z" : kld_z,
+                "recon_loss" : recon_loss,
+                "loss" : loss,
+                "q_z" : q_z,
+                "x_hat" : x_hat,
+                #"sigma_x" : sigma_x,
+                #"q_x" : q_x,
+                }
+        return output
+    def fit(
+        self,
+        train_loader: torch.utils.data.DataLoader,
+        num_epochs=10,
+        lr=1e-3,
+        device: str = "cuda:0",
+    ) -> None:
+        self.to(device)
+        optimizer = optim.Adam(self.parameters(), lr=lr)
+        for epoch in range(num_epochs):
+            for idx, (data, labels) in enumerate(train_loader):
+                self.train()
+                self.requires_grad_(True)
+                optimizer.zero_grad()
+                x = data.flatten(1).to(device)
+                output = self.forward(x)
+                loss = output['loss']
+                loss.backward()
+                optimizer.step()
+                if idx % 300 == 0:
+                    print(
+                        "loss = ",
+                        loss.item(),
+                    )
+        self.cpu()
+        optimizer = None
+        print("done training")
+        return None
+
+class VanillaVAE(nn.Module):
+    """
+    just your vanilla type VAE.
+    """
+    def __init__(self, nx : int=28**2,
+            nclusters : int=16,
+            nz : int=16,
+            nh : int=3000,
+            ) -> None:
+        super().__init__()
+        self.nx = nx
+        self.nh = nh
+        self.nz = nz
+        self.nclasses = nclusters
+        self.logsigma_x = torch.nn.Parameter(torch.zeros(nx), requires_grad=True)
+        self.encoder = nn.Sequential(
+                nn.Flatten(),
+                nn.Linear(nx, nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh,nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                )
+        self.mu_z = nn.Sequential(
+                #nn.Linear(nh, nh),
+                #nn.LeakyReLU(),
+                nn.Linear(nh, nz),
+                )
+        self.logvar_z = nn.Sequential(
+                #nn.Linear(nh, nh),
+                #nn.LeakyReLU(),
+                nn.Linear(nh, nz),
+                )
+        self.decoder = nn.Sequential(
+                nn.Linear(nz, nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh,nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh,nx),
+                nn.Sigmoid(),
+                )
+        self.kld_unreduced = lambda mu, logvar: -0.5 * (
+            1 + logvar - mu.pow(2) - logvar.exp()
+        )
+        return
+    def encode(self, x):
+        h = self.encoder(x)
+        mu = self.mu_z(h)
+        logvar = self.logvar_z(h)
+        std = (logvar * 0.5).exp()
+        q_z = pyrodist.Normal(loc=mu, scale=std).to_event(1)
+        return mu, logvar, q_z
+    def decode(self, z):
+        x = self.decoder(z)
+        return x
+
+    def forward(self, input):
+        x = nn.Flatten()(input)
+        mu, logvar, q_z = self.encode(x)
+        z = q_z.rsample()
+        kld_z = self.kld_unreduced(mu, logvar).sum(-1).mean()
+        x_hat = self.decode(z)
+        #recon_loss = nn.MSELoss(reduction="none")(x_hat, x).sum(-1).mean()
+        logsigma_x = ut.softclip(self.logsigma_x, -2, 2)
+        sigma_x = logsigma_x.exp()
+        q_x = pyrodist.Normal(loc=x_hat, scale=sigma_x).to_event(1)
+        recon_loss = -q_x.log_prob(x).mean()
+        #recon_loss = -ut.log_gaussian_prob(x, x_hat, sigma_x).sum(-1).mean()
+        loss = recon_loss + kld_z
+        output = {
+                "mu" : mu,
+                "logvar" : logvar,
+                "z" : z,
+                "kld_z" : kld_z,
+                "recon_loss" : recon_loss,
+                "loss" : loss,
+                "q_z" : q_z,
+                "q_x" : q_x,
+                "x_hat" : x_hat,
+                "sigma_x" : sigma_x,
+                }
+        return output
+        
+    def fit(
+        self,
+        train_loader: torch.utils.data.DataLoader,
+        num_epochs=10,
+        lr=1e-3,
+        device: str = "cuda:0",
+    ) -> None:
+        self.to(device)
+        optimizer = optim.Adam(self.parameters(), lr=lr)
+        for epoch in range(num_epochs):
+            for idx, (data, labels) in enumerate(train_loader):
+                self.train()
+                self.requires_grad_(True)
+                optimizer.zero_grad()
+                x = data.flatten(1).to(device)
+                output = self.forward(x)
+                loss = output['loss']
+                loss.backward()
+                optimizer.step()
+                if idx % 300 == 0:
+                    print(
+                        "loss = ",
+                        loss.item(),
+                    )
+        self.cpu()
+        optimizer = None
+        print("done training")
+        return None
+
+    def fit2(
+        self,
+        train_loader: torch.utils.data.DataLoader,
+        num_epochs=10,
+        lr=1e-3,
+        device: str = "cuda:0",
+    ) -> None:
+        self.to(device)
+        optimizer1 = optim.Adam(self.parameters(), lr=lr)
+        optimizer2 = optim.Adam(self.parameters(), lr=lr)
+        for epoch in range(num_epochs):
+            for idx, (data, labels) in enumerate(train_loader):
+                self.train()
+                self.requires_grad_(True)
+                optimizer1.zero_grad()
+                optimizer2.zero_grad()
+                x = data.flatten(1).to(device)
+                output = self.forward(x)
+                recon_loss = output['recon_loss']
+                recon_loss.backward()
+                optimizer1.step()
+                optimizer1.zero_grad()
+                optimizer2.zero_grad()
+                x = data.flatten(1).to(device)
+                output = self.forward(x)
+                kld_z = output['kld_z']
+                kld_z.backward()
+                optimizer2.step()
+                if idx % 300 == 0:
+                    print(
+                        "loss = ",
+                        recon_loss.item(),
+                        kld_z.item(),
+                    )
+        self.cpu()
+        optimizer = None
+        print("done training")
+        return None
+
+
+
+class VAE_with_Clusterheads(nn.Module):
+    """
+    simple VAE with categorical clusterhead encoder.
+    """
+    def __init__(self, nx : int=28**2,
+            nclusters : int=16,
+            nz : int=16,
+            nh : int=3000,
+            ) -> None:
+        super().__init__()
+        self.nx = nx
+        self.nh = nh
+        self.nz = nz
+        self.nclasses = nclusters
+        self.sigma_x = torch.nn.Parameter(torch.ones(nx), requires_grad=True)
+        self.y_prior = distributions.OneHotCategorical(
+                probs=torch.ones(nclusters))
+        self.encoder = nn.Sequential(
+                nn.Flatten(),
+                nn.Linear(nx, nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh,nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                )
+        self.mu_z = nn.Sequential(
+                #nn.Linear(nh, nh),
+                #nn.LeakyReLU(),
+                nn.Linear(nh, nz),
+                )
+        self.logvar_z = nn.Sequential(
+                #nn.Linear(nh, nh),
+                #nn.LeakyReLU(),
+                nn.Linear(nh, nz),
+                )
+        self.categorical_encoder = nn.Sequential(
+                nn.Flatten(),
+                nn.Linear(nx, nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh,nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh,nclusters),
+                nn.Softmax(dim=-1),
+                )
+        self.decoder = nn.Sequential(
+                nn.Linear(nz, nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh,nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh,nx),
+                nn.Sigmoid(),
+                )
+        self.kld_unreduced = lambda mu, logvar: -0.5 * (
+            1 + logvar - mu.pow(2) - logvar.exp()
+        )
+        return
+    def encode(self, x):
+        h = self.encoder(x)
+        mu = self.mu_z(h)
+        logvar = self.logvar_z(h)
+        clusterhead = self.categorical_encoder(x)
+        #z = z + clusterhead
+        return mu, logvar, clusterhead
+    def decode(self, z):
+        x = self.decoder(z)
+        return x
+    def cluster_distribution(self, x):
+        c = self.categorical_encoder(x)
+        prior = distributions.OneHotCategorical(probs=torch.ones_like(c)/self.nclasses)
+        posterior = distributions.OneHotCategorical(probs=c)
+        return prior, posterior
+
+    def forward(self, input):
+        x = nn.Flatten()(input)
+        mu, logvar, c = self.encode(x)
+        z = torch.randn_like(mu, requires_grad=True, device=mu.device)
+        std = (0.5 * logvar).exp()
+        z = mu + z * std
+        kld_z = self.kld_unreduced(mu, logvar).sum(-1).mean()
+        x_hat = self.decode(z + c)
+        recon_loss = nn.MSELoss(reduction="none")(x_hat, x).sum(-1).mean()
+        prior = distributions.OneHotCategorical(probs=torch.ones_like(c)/self.nclasses)
+        posterior = distributions.OneHotCategorical(probs=c)
+        # kld_y = (q.probs * (q.logits - p.logits)), q=posterior...
+        kld_y = nn.KLDivLoss(reduction="none")(
+                input = prior.logits, target=posterior.probs).sum(-1).mean()
+        cat_loss = -c.max(dim=-1)[0].mean() #min is 1
+        loss = recon_loss + kld_z + kld_y + cat_loss
+        output = {
+                "mu" : mu,
+                "logvar" : logvar,
+                "z" : z,
+                "kld_z" : kld_z,
+                "kld_y" : kld_y,
+                "recon_loss" : recon_loss,
+                "loss" : loss,
+                "y_prior" : prior,
+                "y_posterior" : posterior,
+                "cat_loss" : cat_loss,
+                }
+        return output
+        
+    def fit(
+        self,
+        train_loader: torch.utils.data.DataLoader,
+        num_epochs=10,
+        lr=1e-3,
+        device: str = "cuda:0",
+    ) -> None:
+        self.to(device)
+        optimizer = optim.Adam(self.parameters(), lr=lr)
+        for epoch in range(num_epochs):
+            for idx, (data, labels) in enumerate(train_loader):
+                self.train()
+                self.requires_grad_(True)
+                optimizer.zero_grad()
+                x = data.flatten(1).to(device)
+                output = self.forward(x)
+                loss = output['loss']
+                loss.backward()
+                optimizer.step()
+                if idx % 300 == 0:
+                    print(
+                        "loss = ",
+                        loss.item(),
+                    )
+        self.cpu()
+        optimizer = None
+        print("done training")
+        return None
+
+
+class VAE_with_Clusterheadsv2(nn.Module):
+    """
+    simple VAE with categorical clusterhead encoder.
+    """
+    def __init__(self, nx : int=28**2,
+            nclusters : int=16,
+            nz : int=16,
+            nh : int=3000,
+            ) -> None:
+        super().__init__()
+        self.nx = nx
+        self.nh = nh
+        self.nz = nz
+        self.nclasses = nclusters
+        self.logsigma_x = torch.nn.Parameter(torch.zeros(nx), requires_grad=True)
+        #self.y_prior = distributions.OneHotCategorical(
+        #        probs=torch.ones(nclusters))
+        self.y_prior = distributions.RelaxedOneHotCategorical(
+                temperature=0.2, probs=torch.ones(nclusters))
+        self.encoder = nn.Sequential(
+                nn.Flatten(),
+                nn.Linear(nx, nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh,nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                )
+        self.mu_z = nn.Sequential(
+                nn.Linear(nh, nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh, nz),
+                )
+        self.logvar_z = nn.Sequential(
+                nn.Linear(nh, nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh, nz),
+                )
+        self.categorical_encoder = nn.Sequential(
+                nn.Flatten(),
+                nn.Linear(nx, nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh,nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh,nclusters),
+                nn.Softmax(dim=-1),
+                )
+        self.decoder = nn.Sequential(
+                nn.Linear(nz, nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh,nh),
+                nn.BatchNorm1d(nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh,nx),
+                nn.Sigmoid(),
+                )
+
+        self.kld_unreduced = lambda mu, logvar: -0.5 * (
+            1 + logvar - mu.pow(2) - logvar.exp()
+        )
+
+        return
+    def encode(self, x):
+        h = self.encoder(x)
+        mu = self.mu_z(h)
+        logvar = self.logvar_z(h)
+        clusterhead = self.categorical_encoder(x)
+        #z = z + clusterhead
+        return mu, logvar, clusterhead
+    def decode(self, z):
+        x = self.decoder(z)
+        return x
+    def cluster_distribution(self, x):
+        c = self.categorical_encoder(x)
+        #prior = distributions.OneHotCategorical(probs=torch.ones_like(c)/self.nclasses)
+        #posterior = distributions.OneHotCategorical(probs=c)
+        prior = distributions.RelaxedOneHotCategorical(temperature=0.2, probs=torch.ones_like(c)/self.nclasses)
+        posterior = distributions.RelaxedOneHotCategorical(temperature=0.2, probs=c)
+        return prior, posterior
+
+    def forward(self, input):
+        x = nn.Flatten()(input)
+        mu, logvar, c = self.encode(x)
+        z = torch.randn_like(mu, requires_grad=True, device=mu.device)
+        std = (0.5 * logvar).exp()
+        z = mu + z * std
+        kld_z = self.kld_unreduced(mu, logvar).sum(-1).mean()
+        x_hat = self.decode(z + c)
+        recon_loss = nn.MSELoss(reduction="none")(x_hat, x).sum(-1).mean()
+        prior = distributions.OneHotCategorical(probs=torch.ones_like(c)/self.nclasses)
+        posterior = distributions.OneHotCategorical(probs=c)
+        # kld_y = (q.probs * (q.logits - p.logits)), q=posterior...
+        batch_size = x.shape[0]
+        p = prior.probs.sum(0)/batch_size
+        eps=1e-6
+        q = posterior.probs.sum(0)/batch_size
+        q += eps
+        q /= q.sum()
+        kld_y = torch.sum(p * (p.log() - q.log())
+                )
+        #kld_y = nn.KLDivLoss(reduction="none")(
+        #        input = prior.logits, target=posterior.probs).sum(-1).mean()
+        cat_loss = -c.max(dim=-1)[0].mean() #min is -1
+        loss = recon_loss + kld_z + kld_y + cat_loss
+        output = {
+                "mu" : mu,
+                "logvar" : logvar,
+                "z" : z,
+                "kld_z" : kld_z,
+                "kld_y" : kld_y,
+                "recon_loss" : recon_loss,
+                "loss" : loss,
+                "y_prior" : prior,
+                "y_posterior" : posterior,
+                "cat_loss" : cat_loss,
+                "x_hat" : x_hat,
+                }
+        return output
+        
+    def fit(
+        self,
+        train_loader: torch.utils.data.DataLoader,
+        num_epochs=10,
+        lr=1e-3,
+        device: str = "cuda:0",
+    ) -> None:
+        self.to(device)
+        optimizer = optim.Adam(self.parameters(), lr=lr)
+        for epoch in range(num_epochs):
+            for idx, (data, labels) in enumerate(train_loader):
+                self.train()
+                self.requires_grad_(True)
+                optimizer.zero_grad()
+                x = data.flatten(1).to(device)
+                output = self.forward(x)
+                loss = output['loss']
+                loss.backward()
+                optimizer.step()
+                if idx % 300 == 0:
+                    print(
+                        "loss = ",
+                        loss.item(),
+                    )
+        self.cpu()
+        optimizer = None
+        print("done training")
+        return None
+
+
+
+
+
+
 class GMMClustering(nn.Module):
     """
     simple model for clustering using mixed gaussian model.
@@ -168,7 +1033,7 @@ class GMMClustering(nn.Module):
                 mu_z_x, logvar_z_x, logits_y_x, q_z, z, mus_xs_z, q_y = self.forward(x)
                 bce , kld_y, kld_z, target = self.loss_v1(x, mu_z_x, logvar_z_x, logits_y_x, q_y, q_z, z, mus_xs_z)
                 #recon_loss = (bce.sum(-1) * q_y.probs).sum(-1).mean()
-                y = q_y.sample()
+                y = q_y.rsample()
                 recon_loss = (bce.sum(-1) * y).sum(-1).mean()
                 kld_y = kld_y.sum(-1).mean()
                 #kld_y = torch.max(torch.tensor(10), kld_y)
@@ -430,8 +1295,8 @@ class GMMKoolooloo(nn.Module):
                 loss_z = self.kld_z_loss(q_z, mus_z, logvars_z, q_y)
                 loss_w = self.kld_w_loss(q_w)
                 loss_y = self.kld_y_loss(q_y)
-                #loss = loss_rec + loss_z  + loss_w + loss_y 
-                loss = loss_rec + loss_z * 1e1 + loss_w + loss_y * 1e3
+                loss = loss_rec + loss_z  + loss_w + loss_y 
+                #loss = loss_rec + loss_z * 1e1 + loss_w + loss_y * 1e3
                 #loss_y = F.threshold(loss_y, 1, 1)
                 #loss = loss_rec + loss_z * 1e1 + loss_w + loss_y
                 loss.backward()
@@ -515,3 +1380,138 @@ class GMMKoolooloo(nn.Module):
 
 
 
+class SigmaVAE(nn.Module):
+    def __init__(
+        self,
+        nz: int = 20,
+        nh: int = 2*1024,
+        nin: int = 28 ** 2,
+        imgsize: Optional[int] = 28,
+    ) -> None:
+        super(self.__class__, self).__init__()
+        self.nin = nin
+        self.nz = nz
+        self.imgsize = imgsize
+        self.encoder = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(nin, nh),
+            nn.Dropout(0.2),
+            nn.ReLU(),
+            nn.BatchNorm1d(num_features=nh),
+            nn.Linear(nh, nh),
+            nn.Dropout(0.2),
+            nn.ReLU(),
+            nn.BatchNorm1d(num_features=nh),
+        )
+        self.decoder = nn.Sequential(
+            nn.Linear(nz, nh),
+            nn.Dropout(0.2),
+            nn.ReLU(),
+            nn.BatchNorm1d(num_features=nh),
+            nn.Linear(nh, nh),
+            nn.Dropout(0.2),
+            nn.ReLU(),
+            nn.BatchNorm1d(num_features=nh),
+        )
+        self.xmu = nn.Sequential(
+                nn.Linear(nh,nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh,nin),
+                )
+        self.zmu =  nn.Sequential(
+                nn.Linear(nh,nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh,nz),
+                )
+        self.zlogvar =  nn.Sequential(
+                nn.Linear(nh,nh),
+                nn.LeakyReLU(),
+                nn.Linear(nh,nz),
+                )
+        #self.log_sigma = torch.nn.Parameter(torch.zeros(1)[0], requires_grad=True)
+        # per pixel sigma:
+        self.log_sigma = torch.nn.Parameter(torch.zeros(nin), requires_grad=True)
+        self.kld_unreduced = lambda mu, logvar: -0.5 * (
+            1 + logvar - mu.pow(2) - logvar.exp()
+        )
+
+    def reparameterize(self, mu, logsig, ):
+        eps = torch.randn(mu.shape).to(mu.device)
+        sigma = (logsig).exp()
+        return mu + sigma * eps
+
+    def encode(self, x):
+        h = self.encoder(x)
+        mu = self.zmu(h)
+        logvar = self.zlogvar(h)
+        return mu, logvar
+
+    def decode(self, z):
+        h = self.decoder(z)
+        mu = self.xmu(h)
+        return mu
+
+    def forward(self, x):
+        zmu, zlogvar = self.encode(x)
+        z = self.reparameterize(zmu, 0.5*zlogvar)
+        xmu = self.decode(z)
+        return zmu, zlogvar, xmu
+
+    def reconstruction_loss(self, x, xmu, log_sigma):
+        # log_sigma is the parameter for 'global' variance on x
+        #result = gaussian_nll(xmu, xlogsig, x).sum()
+        #result = -ut.log_gaussian_prob(x, xmu, log_sigma).sum()
+        q_x = pyrodist.Normal(loc=xmu, scale=log_sigma.exp()).to_event(1)
+        result = -q_x.log_prob(x).sum(-1).mean()
+        return result
+    
+    def loss_function(self, x, xmu, log_sigma, zmu, zlogvar):
+        #batch_size = x.size(0)
+        #rec = self.reconstruction_loss(x, xmu, log_sigma) / batch_size
+        rec = self.reconstruction_loss(x, xmu, log_sigma)
+        kl = self.kld_unreduced(zmu, zlogvar).sum(-1).mean()
+        return rec, kl
+
+    def init_kmeans(self, nclusters, data):
+        """
+        initiate the kmeans cluster heads
+        """
+        self.cpu()
+        lattent_data, _ = self.encode(data)
+        kmeans = KMeans(nclusters, n_init=20)
+        y_pred = kmeans.fit_predict(lattent_data.detach().numpy())
+        #self.mu.data.copy_(torch.Tensor(kmeans.cluster_centers_))
+        self.y_pred = y_pred
+        #self.q = q = self.soft_assign(lattent_data)
+        #self.p = p = self.target_distribution(q)
+        self.kmeans = kmeans
+
+    def fit(self, train_loader, num_epochs=10, lr=1e-3,
+            optimizer = None):
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        self.to(device)
+        if not optimizer:
+            optimizer = optim.Adam(self.parameters(), lr=lr)
+        for epoch in range(10):
+            for idx, (data, labels) in enumerate(train_loader):
+                self.train()
+                self.requires_grad_(True)
+                optimizer.zero_grad()
+                log_sigma = ut.softclip(self.log_sigma, -2, 2)
+                #self.log_sigma.fill_(log_sigma)
+                x = data.flatten(1).to(device)
+                zmu, zlogvar, xmu = self.forward(x)
+                rec, kl = self.loss_function(x, xmu, log_sigma, zmu, zlogvar)
+                loss = rec + kl
+                loss.backward()
+                optimizer.step()
+                if idx % 300 == 0:
+                    print("loss = ",
+                            loss.item(),
+                            kl.item(),
+                            rec.item(),
+                            )
+        self.cpu()
+        optimizer = None
+        print('done training')
+        return None
