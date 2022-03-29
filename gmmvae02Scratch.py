@@ -1,14 +1,13 @@
-import gdown
+#import gdown
 import matplotlib.pyplot as plt
 import numpy as np
-import os
+#import os
 import pandas as pd
 import pyro
 import pyro.distributions as pyrodist
 import scanpy as sc
 import seaborn as sns
-import time
-
+#import time
 import torch
 import torch.utils.data
 import torchvision.utils as vutils
@@ -31,7 +30,6 @@ from typing import Callable, Iterator, Union, Optional, TypeVar
 from typing import List, Set, Dict, Tuple
 from typing import Mapping, MutableMapping, Sequence, Iterable
 from typing import Union, Any, cast, IO, TextIO
-
 # my own sauce
 from my_torch_utils import denorm, normalize, mixedGaussianCircular
 from my_torch_utils import fclayer, init_weights, buildNetwork
@@ -159,7 +157,82 @@ zs = z.unsqueeze(1) + cz
 zs = zs.reshape(5*10, 16)
 xs = model.decoder(zs)
 
-zs = cz[8] + z
+zs = cz[9] + z
 xs = model.decoder(zs)
 ut.plot_images(xs.reshape(-1,1,28,28), nrow=5)
 
+
+### VAE models
+c = torch.eye(10)
+model = M.VAEGMM(nx=28**2, nh=1024, nz=16, nclasses=10)
+model.apply(init_weights)
+model.generate_class(c).shape
+output = model(x)
+model.printDict(output["losses"])
+model.fit(train_loader)
+
+output = model(x)
+
+rec = output["xhat"].reshape(-1,1,28,28)
+
+ut.plot_2images(x,rec)
+
+output["y"][y==0].max(-1)
+
+
+# M2 tests
+model = M.VAEM2(nx=28**2, nh=1024, nz=26, nclasses=10)
+model.apply(init_weights)
+model.fit(train_loader, num_epochs=6)
+
+output = model(x)
+
+ys  = torch.eye(10)
+xs = model.generate_class(y)
+xs = xs.reshape(-1,1,28,28)
+
+ut.plot_images(xs)
+
+cz = model.clusterhead_embedding_z_y(y)
+cx = model.decoder(cz).reshape(-1,1,28,28)
+ut.plot_images(cx)
+
+
+
+## Dilo GMM tests
+model = M.VAE_Dilo(nclasses=20)
+model.apply(init_weights)
+
+output=model(x)
+
+#for k,v in output.items():
+#    print(k, v.shape)
+model.fit(train_loader)
+
+q_y = output["q_y_probs"]
+
+x, y = test_loader.__iter__().__next__()
+output=model(x)
+
+ut.plot_2images(x, output["rec"].reshape(-1,1,28,28))
+
+output["q_y"].max(-1)
+
+output["q_y"][y==0].max(-1)
+
+output["q_y"][y==1].max(-1)
+
+output["q_y"][y==2].max(-1)
+
+
+q_w = output["q_w"]
+
+ws = distributions.Normal(0,1).sample((20,150))
+ws.shape
+mus_logvars_z_w = model.P_z_wy(ws).reshape(-1, model.nclasses, 2*model.nz)
+mus_z_w = mus_logvars_z_w[:,:,:model.nz]
+logvars_z_w = mus_logvars_z_w[:,:,model.nz:]
+xs = model.Px_z(mus_z_w)
+xs = xs.reshape(-1,10,1,28,28)
+xs.shape
+ut.plot_images(xs.reshape(-1,1,28,28), model.nclasses)
