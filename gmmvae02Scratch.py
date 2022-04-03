@@ -217,12 +217,16 @@ output=model(x)
 ut.plot_2images(x, output["rec"].reshape(-1,1,28,28))
 
 output["q_y"].max(-1)
-
 output["q_y"][y==0].max(-1)
-
 output["q_y"][y==1].max(-1)
-
 output["q_y"][y==2].max(-1)
+output["q_y"][y==3].max(-1)
+output["q_y"][y==4].max(-1)
+output["q_y"][y==5].max(-1)
+output["q_y"][y==6].max(-1)
+output["q_y"][y==7].max(-1)
+output["q_y"][y==8].max(-1)
+output["q_y"][y==9].max(-1)
 
 
 q_w = output["q_w"]
@@ -236,3 +240,27 @@ xs = model.Px_z(mus_z_w)
 xs = xs.reshape(-1,10,1,28,28)
 xs.shape
 ut.plot_images(xs.reshape(-1,1,28,28), model.nclasses)
+
+
+#### Dilo_modified
+#model=M.VAE_Dilo(nclasses=16)
+#model = M.VAE_DiloModified(nz=20, nw=15, nclasses=10)
+#model = M.VAE_DiloModified(nz=20, nw=25, nclasses=16)
+model = M.VAE_DiloModified(nz=200, nw=150, nclasses=16)
+#model = M.VAE_DiloModified(nz=200, nw=150, nclasses=10)
+model.apply(init_weights)
+model.fit(train_loader, num_epochs=1)
+
+x, y = test_loader.__iter__().__next__()
+
+w = torch.zeros(1,model.nw)
+mus_logvars = model.Pz_w(w).reshape(-1, model.nclasses, 2*model.nz)
+mus_logvars = model.P_z_wy(w).reshape(-1, model.nclasses, 2*model.nz)
+mus_z = mus_logvars[:,:,:model.nz]
+xs = model.Px_z(mus_z.flatten(0,1))
+xs=xs.reshape(-1,1,28,28)
+ut.plot_images(xs,5)
+
+output=model(x)
+output["q_y"].max(-1)
+ut.plot_2images(x, output['rec'].reshape(-1,1,28,28))
