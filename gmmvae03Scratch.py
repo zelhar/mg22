@@ -127,3 +127,104 @@ model = M.AE3(nz=20, nclasses=10)
 model.apply(init_weights)
 #model.fit_v2(train_loader)
 model.fit(train_loader)
+
+x, y = test_loader.__iter__().__next__()
+output = model(x)
+rec = output["rec"].reshape(-1,1,28,28)
+ut.plot_2images(x, rec)
+
+mu, logvar = output["mu_z"], output["logvar_z"]
+
+c = torch.eye(model.nclasses)
+#c = c + torch.randn_like(c)
+c = model.C.clusterhead_embedding(c)
+#cx = model.Px(c+c).reshape(-1,1,28,28)
+cx = model.P(c).reshape(-1,1,28,28)
+ut.plot_images(cx)
+
+z = output["mu_z"]
+model.assignCluster(c)
+model.assignCluster(z)
+
+#zs = distributions.Normal(loc=c, scale=1.0).sample((5,))
+zs = distributions.Normal(loc=c, scale=0.1).sample((5,))
+xs = model.P(zs).reshape(-1,1,28,28)
+#ut.plot_images(xs, 16)
+ut.plot_images(xs, model.nclasses)
+
+
+## Dilo3
+model = M.VAE_Dilo3(nz=20, nw=25, nh=1024, nclasses=10)
+
+model = M.VAE_Dilo3(nz=37, nw=47, nh=1024*2, nclasses=18)
+
+model = M.VAE_Dilo3(nz=37, nw=47, nh=1024*2, nclasses=21)
+
+model.apply(init_weights)
+model.fit(train_loader, num_epochs=10)
+
+x, y = test_loader.__iter__().__next__()
+output = model(x)
+Pz = output["Pz"]
+Qz = output["Qz"]
+z = output["z"]
+w = output["w"]
+q_y = output["q_y"]
+mu_z = output["mu_z"]
+logvar_z = output["logvar_z"]
+losses = output["losses"]
+losses
+q_y.max(-1)
+
+w = torch.zeros(2, model.nw)
+z = model.Pz(w)
+mu = z[:,:,:model.nz].reshape(2*model.nclasses, model.nz)
+rec = model.Px(mu).reshape(-1,1,28,28)
+ut.plot_images(rec, model.nclasses)
+
+#for k,v in output.items():
+#    print(v.shape)
+
+w = model.w_prior.sample((5, ))
+z = model.Pz(w)
+mu = z[:,:,:model.nz].reshape(5*model.nclasses, model.nz)
+rec = model.Px(mu).reshape(-1,1,28,28)
+ut.plot_images(rec, model.nclasses)
+
+model = M.VAE_Dilo3(nz=20, nw=25, nh=1024, nclasses=20)
+model = M.VAE_Dilo3(nz=80, nw=95, nh=4024, nclasses=20)
+model.apply(init_weights)
+model.fit(train_loader, num_epochs=10)
+
+
+## AE4
+model = M.AE2(nh=1024, nz=20, nclasses=10)
+
+model = M.AE4(nh=1024*2, nz=45, nclasses=23)
+
+model.apply(init_weights)
+model.fit(train_loader, num_epochs=10, lr=5e-4)
+
+x, y = test_loader.__iter__().__next__()
+output = model(x)
+q_y = output["q_y"]
+q_y
+
+f = nn.Threshold(threshold=0.51, value=0.)
+g = nn.Threshold(threshold=-0.1, value=1.)
+f(q_y)
+g(-f(q_y))
+
+
+c = torch.eye(model.nclasses)
+c = model.clusterhead_embedding(c)
+cx = model.Px(c).reshape(-1,1,28,28)
+ut.plot_images(cx)
+
+c = torch.eye(model.nclasses)
+c = model.clusterhead_embedding(c)
+cx = model.Px(c).reshape(-1,1,28,28)
+zs = distributions.Normal(loc=c, scale=0.5).sample((5,)).reshape((-1,model.nz))
+xs = model.Px(zs).reshape(-1,1,28,28)
+ut.plot_images(xs, model.nclasses)
+

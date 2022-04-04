@@ -23,6 +23,22 @@ def gaussian_nll(mu, log_sigma, x):
 
 #kld = lambda mu, logvar: -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
 
+def kld2normal(
+    mu: Tensor,
+    logvar: Tensor,
+    mu2: Tensor,
+    logvar2: Tensor,
+):
+    """
+    unreduced KLD KLD(p||q) for two diagonal normal distributions.
+    """
+    result = 0.5 * (
+        -1
+        + (logvar.exp().pow(2) + (mu - mu2).pow(2)) / logvar2.exp().pow(2)
+        + logvar2
+        - logvar
+    )
+    return result
 
 def soft_assign(z, mu, alpha=1):
     q = 1.0 / (1.0 + torch.sum((z.unsqueeze(1) - mu)**2, dim=2) / alpha)
