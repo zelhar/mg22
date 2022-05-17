@@ -12,6 +12,7 @@ from torchvision.utils import save_image, make_grid
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 from torch import Tensor
 from math import pi, sin, cos, sqrt, log
 
@@ -31,10 +32,11 @@ def kld2normal(
 ):
     """
     unreduced KLD KLD(p||q) for two diagonal normal distributions.
+    https://stats.stackexchange.com/questions/7440/kl-divergence-between-two-univariate-gaussians
     """
     result = 0.5 * (
         -1
-        + (logvar.exp().pow(2) + (mu - mu2).pow(2)) / logvar2.exp().pow(2)
+        + (logvar.exp() + (mu - mu2).pow(2)) / logvar2.exp()
         + logvar2
         - logvar
     )
@@ -273,18 +275,72 @@ def buildNetwork(
     batchnorm: bool = False,
 ):
     net = nn.Sequential()
-    # linear > batchnorm > activation > dropout
+    # linear > batchnorm > dropout > activation
     # or rather linear > dropout > act > batchnorm
     for i in range(1, len(layers)):
         net.add_module('linear' + str(i), nn.Linear(layers[i - 1], layers[i]))
         if dropout > 0:
             net.add_module("dropout" + str(i), nn.Dropout(dropout))
-        if activation:
-            net.add_module("activation" + str(i), activation)
         if batchnorm:
             net.add_module("batchnorm" + str(i), nn.BatchNorm1d(num_features=layers[i]))
+        if activation:
+            net.add_module("activation" + str(i), activation)
     return net
     #return nn.Sequential(*net)
+
+def buildNetworkv2(
+    layers: List[int],
+    dropout: float = 0,
+    activation: Optional[nn.Module] = nn.ReLU(),
+    batchnorm: bool = False,
+):
+    """
+    build a fully connected multilayer NN.
+    The output layer is always linear
+    """
+    net = nn.Sequential()
+    # linear > batchnorm > dropout > activation
+    # or rather linear > dropout > act > batchnorm
+    for i in range(1, len(layers)-1):
+        net.add_module('linear' + str(i), nn.Linear(layers[i - 1], layers[i]))
+        if dropout > 0:
+            net.add_module("dropout" + str(i), nn.Dropout(dropout))
+        if batchnorm:
+            net.add_module("batchnorm" + str(i), nn.BatchNorm1d(num_features=layers[i]))
+        if activation:
+            net.add_module("activation" + str(i), activation)
+    n = len(layers) - 1
+    net.add_module("output_layer", nn.Linear(layers[n-1], layers[n]))
+    return net
+    #return nn.Sequential(*net)
+
+def buildNetworkv3(
+    layers: List[int],
+    dropout: float = 0,
+    activation: Optional[nn.Module] = nn.ReLU(),
+    layernorm: bool = False,
+):
+    """
+    build a fully connected multilayer NN.
+    The output layer is always linear
+    """
+    net = nn.Sequential()
+    # linear > batchnorm > dropout > activation
+    # or rather linear > dropout > act > batchnorm
+    for i in range(1, len(layers)-1):
+        net.add_module('linear' + str(i), nn.Linear(layers[i - 1], layers[i]))
+        if dropout > 0:
+            net.add_module("dropout" + str(i), nn.Dropout(dropout))
+        if layernorm:
+            #net.add_module("batchnorm" + str(i), nn.BatchNorm1d(num_features=layers[i]))
+            net.add_module("layernotm" + str(i), nn.LayerNorm(layers[i],))
+        if activation:
+            net.add_module("activation" + str(i), activation)
+    n = len(layers) - 1
+    net.add_module("output_layer", nn.Linear(layers[n-1], layers[n]))
+    return net
+    #return nn.Sequential(*net)
+
 
 @curry
 def mixedGaussianCircular(k=10, sigma=0.025, rho=3.5, j=0):
@@ -440,3 +496,136 @@ class scsimDataset(torch.utils.data.Dataset):
 # y = samples[:,1]
 # plt.scatter(x,y)
 # plt.legend(['star'])
+
+class Blobs:
+    """
+    samples gaussian blobs.
+    """
+    def __init__(
+            self,
+            means: Tensor = torch.rand(5,2) * 5e0,
+            scales: Tensor = torch.rand(5,2) * 2e-1,
+            ) -> None:
+        self.means = means
+        self.scales = scales
+        self.nclasses = means.shape[0]
+        self.ndim = means.shape[1]
+        self.comp = distributions.Normal(means, scales)
+        self.mix = distributions.Categorical(torch.ones((self.nclasses,)))
+        return
+    def sample(self, batch_size=(100,)):
+        l = self.mix.sample(batch_size)
+        x = self.comp.sample(batch_size)
+        s = torch.vstack(
+                [x[i,l[i]] for i in range(len(x))]
+                )
+        return s, l, x
+    def plotSample(self, batch_size=(300,)):
+        s, l, x = self.sample(batch_size)
+        sns.scatterplot(x=s[:,0], y=s[:,1], hue=l,)
+        return
+
+
+class SynteticSampler:
+    """
+    An object which samples from a mixture distribution.
+    Should contain methods that return batched samples.
+    """
+
+    def __init__(
+        self,
+        means: torch.Tensor = torch.rand(5, 2),
+        logscales: torch.Tensor = torch.randn(5) * 5e-1,
+        noiseLevel: float = 5e-2,
+    ) -> None:
+        self.means = means
+        self.logscales = logscales
+        self.scales = logscales.exp()
+        self.n_dim = means.shape[1]
+        self.n_classes = means.shape[0]
+        #self.m = m = distributions.Normal(
+        #    loc=means,
+        #    scale=logscales.exp(),
+        #)
+        self.noiseLevel = noiseLevel
+        return
+
+    def sample(self, batch_size=(100,)):
+        m = distributions.Categorical(probs=torch.ones(self.n_classes))
+        labels = m.sample(batch_size)
+        locs = torch.stack(
+                [self.means[labels[i]] for i in range(len(labels))], dim=0)
+        scales = torch.stack(
+                [self.scales[labels[i]] for i in range(len(labels))],
+                dim=0).unsqueeze(1)
+        noise = torch.randn_like(locs) * self.noiseLevel
+        theta = torch.rand_like(labels*1e-1) * pi * 2
+        data = torch.zeros_like(locs)
+        data[:,0] = theta.cos()
+        data[:,1] = theta.sin()
+        data = data * scales + locs + noise
+        return data, labels, locs, scales
+
+    def plotData(
+        self,
+    ) -> None:
+        # data = self.m.sample((1000,))
+        data = torch.rand((300, self.n_classes)) * pi * 2
+        fig = plt.figure()
+        for idx in range(self.n_classes):
+            color = plt.cm.Set1(idx)
+            # x = data[:,idx,0]
+            # y = data[:,idx,1]
+            x = (
+                data[:, idx].cos()
+                * self.logscales[idx].exp()
+                + self.means[idx, 0]
+                + torch.randn(300) * self.noiseLevel
+            )
+            y = (
+                data[:, idx].sin()
+                * self.logscales[idx].exp()
+                + self.means[idx, 1]
+                + torch.randn(300) * self.noiseLevel
+            )
+            plt.scatter(
+                x,
+                y,
+                color=color,
+                s=10,
+                cmap="viridis",
+            )
+        plt.legend([str(i) for i in range(self.n_classes)])
+        plt.title("data plot")
+
+    def plotSampleData(
+        self,
+    ) -> None:
+        data, labels, _, _  = self.sample((1000,))
+        fig = plt.figure()
+        for idx in range(self.n_classes):
+            color = plt.cm.Set1(idx)
+            # x = data[:,idx,0]
+            # y = data[:,idx,1]
+            x = data[labels == idx][:, 0]
+            y = data[labels == idx][:, 1]
+            plt.scatter(
+                x,
+                y,
+                color=color,
+                s=10,
+                cmap="viridis",
+            )
+        plt.legend([str(i) for i in range(self.n_classes)])
+        plt.title("data plot")
+
+class SynteticDataSet(torch.utils.data.Dataset):
+    def __init__(self, data : Tensor, labels : Tensor,):
+        super().__init__()
+        self.data = data
+        self.labels = labels
+        return
+    def __getitem__(self, idx : int):
+        return self.data[idx], self.labels[idx]
+    def __len__(self):
+        return len(self.labels)

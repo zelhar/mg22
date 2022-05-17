@@ -932,3 +932,608 @@ class VAE_Dilo3(nn.Module):
         optimizer = None
         print("done training")
         return None
+
+class VAE_Dilo3AnnData(nn.Module):
+    """
+    P(x,y,z,w,l) = P(x|z)P(z|w,y)P(w)P(y|l)P(l)
+    using P(y|l)=P(l|y)=delta(x,y),
+    P(l)~Cat(1/K), P(w)~N(0,I)
+    Q(y,z,w,l|x) = Q(z|x)Q(w|z)Q(y|z,w)Q(l|y)
+    """
+
+    def __init__(
+        self,
+        nx: int = 28 ** 2,
+        nh: int = 1024,
+        nz: int = 200,
+        nw: int = 150,
+        nclasses: int = 10,
+    ) -> None:
+        super().__init__()
+        self.nx = nx
+        self.nh = nh
+        self.nz = nz
+        self.nw = nw
+        self.nclasses = nclasses
+        self.logsigma_x = torch.nn.Parameter(torch.zeros(nx), requires_grad=True)
+        self.kld_unreduced = lambda mu, logvar: -0.5 * (
+            1 + logvar - mu.pow(2) - logvar.exp()
+        )
+        #self.y_prior = distributions.OneHotCategorical(probs=torch.ones(nclasses))
+        self.y_prior = distributions.RelaxedOneHotCategorical(
+                probs=torch.ones(nclasses), temperature=0.1,)
+        self.w_prior = distributions.Normal(
+            loc=torch.zeros(nw),
+            scale=torch.ones(nw),
+        )
+        ## P network
+        self.Px = nn.Sequential(
+            nn.Linear(nz, nh),
+            nn.Dropout(p=0.2),
+            nn.BatchNorm1d(
+                num_features=nh,
+            ),
+            nn.LeakyReLU(),
+            nn.Linear(nh, nh),
+            nn.BatchNorm1d(
+                num_features=nh,
+            ),
+            nn.Dropout(p=0.2),
+            nn.LeakyReLU(),
+            nn.Linear(nh, nx),
+            #nn.Sigmoid(),
+        )
+        self.Pz = nn.Sequential(
+            nn.Linear(nw, nh),
+            nn.Dropout(p=0.2),
+            nn.BatchNorm1d(
+                num_features=nh,
+            ),
+            nn.LeakyReLU(),
+            nn.Linear(nh, nh),
+            nn.Dropout(p=0.2),
+            nn.BatchNorm1d(
+                num_features=nh,
+            ),
+            nn.LeakyReLU(),
+            nn.Linear(nh, 2 * nclasses * nz),
+            nn.Unflatten(1, (nclasses, 2*nz)),
+            # nn.Tanh(),
+        )
+        ## Q network
+        self.Qwz = nn.Sequential(
+            nn.Linear(nx, nh),
+            nn.Dropout(p=0.2),
+            nn.BatchNorm1d(
+                num_features=nh,
+            ),
+            nn.LeakyReLU(),
+            #nn.Tanh(),
+            nn.Linear(nh, nh),
+            nn.Dropout(p=0.2),
+            nn.BatchNorm1d(
+                num_features=nh,
+            ),
+            nn.LeakyReLU(),
+            #nn.Tanh(),
+            nn.Linear(nh, 2 * nw + 2 * nz),
+            nn.Unflatten(1, (2, nz + nw)),
+        )
+        self.Qy = nn.Sequential(
+            nn.Linear(nw + nz, nh),
+            nn.Dropout(p=0.2),
+            nn.BatchNorm1d(
+                num_features=nh,
+            ),
+            nn.LeakyReLU(),
+            nn.Linear(nh, nh),
+            nn.Dropout(p=0.2),
+            nn.BatchNorm1d(
+                num_features=nh,
+            ),
+            nn.LeakyReLU(),
+            nn.Linear(nh, nclasses),
+            nn.Softmax(dim=-1),
+        )
+
+        return
+
+    def printDict(self, d: dict):
+        for k, v in d.items():
+            print(k + ":", v.item())
+        return
+
+    def forward(self, input):
+        x = nn.Flatten()(input)
+        logsigma_x = ut.softclip(self.logsigma_x, -2, 2)
+        losses = {}
+        output = {}
+        sigma_x = logsigma_x.exp()
+        wz = self.Qwz(x)
+        mu_w = wz[:,0,:self.nw]
+        #logvar_w = wz[:,1,:self.nw]
+        logvar_w = wz[:,1,:self.nw].tanh()
+        std_w = (0.5 * logvar_w).exp()
+        noise = torch.randn_like(mu_w).to(x.device)
+        w = mu_w + noise * std_w
+        Qw = distributions.Normal(loc=mu_w, scale=std_w)
+        mu_z = wz[:,0,self.nw:]
+        #logvar_z = wz[:,1,self.nw:]
+        logvar_z = wz[:,1,self.nw:].tanh()
+        std_z = (0.5 * logvar_z).exp()
+        noise = torch.randn_like(mu_z).to(x.device)
+        z = mu_z + noise * std_z
+        Qz = distributions.Normal(loc=mu_z, scale=std_z)
+        output["wz"] = wz
+        output["mu_z"] = mu_z
+        output["mu_w"] = mu_w
+        output["logvar_z"] = logvar_z
+        output["logvar_w"] = logvar_w
+        #q_y = self.Qy(wz[:,0,:])
+        q_y = self.Qy(torch.cat([w,z], dim=1))
+        Qy = distributions.RelaxedOneHotCategorical(
+                temperature=0.1, probs=q_y)
+        y = Qy.rsample().to(x.device)
+        output["q_y"] = q_y
+        output["w"]=w
+        output["z"]=z
+        output["y"] = y
+        rec = self.Px(z)
+        #loss_rec = nn.MSELoss(reduction='none')(rec,x).sum(-1).mean()
+        Qx = distributions.Normal(loc=rec, scale=sigma_x)
+        loss_rec = -Qx.log_prob(x).sum(-1).mean()
+        output["rec"]= rec
+        losses["rec"] = loss_rec
+        z_w = self.Pz(w)
+        mu_z_w = z_w[:,:,:self.nz]
+        #logvar_z_w = z_w[:,:,self.nz:]
+        logvar_z_w = z_w[:,:,self.nz:].tanh()
+        std_z_w = (0.5*logvar_z_w).exp()
+        Pz = distributions.Normal(
+                loc=mu_z_w,
+                scale=std_z_w,
+                )
+        output["Pz"] = Pz
+        output["Qz"] = Qz
+        #loss_z = Qz.log_prob(z).unsqueeze(1).sum(-1) 
+        #loss_z = loss_z - Pz.log_prob(z.unsqueeze(1)).sum(-1)
+        #loss_z = (q_y*loss_z).sum(-1).mean()
+        loss_z = ut.kld2normal(
+                mu=mu_z.unsqueeze(1),
+                logvar=logvar_z.unsqueeze(1),
+                mu2=mu_z_w,
+                logvar2=logvar_z_w,
+                ).sum(-1)
+        loss_z = (q_y*loss_z).sum(-1).mean()
+        losses["loss_z"] = loss_z
+        loss_w = self.kld_unreduced(
+                mu=mu_w,
+                logvar=logvar_w).sum(-1).mean()
+        lp_y = self.y_prior.logits.to(x.device)
+        loss_l = (q_y.mean(0) * (
+                q_y.mean(0).log() - lp_y)).sum()
+        ## bad idea:
+        #loss_l = (q_y * (
+        #        q_y.log() - lp_y)).mean(-1).sum()
+        losses["loss_l"] = loss_l
+        #loss_y = -(q_y * q_y.log() ).sum(-1).mean()
+        loss_y = -1e0 * q_y.max(-1)[0].mean()
+        losses["loss_y"] = loss_y
+        losses["loss_w"]=loss_w
+        total_loss = (loss_rec
+                + loss_z 
+                + loss_w
+                #+ 1e1 * loss_y
+                + 1e1 * loss_l
+                )
+        losses["total_loss"] = total_loss
+        output["losses"] = losses
+        return output
+
+
+    def fit(
+        self,
+        train_loader: torch.utils.data.DataLoader,
+        num_epochs=10,
+        lr=1e-3,
+        device: str = "cuda:0",
+    ) -> None:
+        self.to(device)
+        optimizer = optim.Adam(self.parameters(), lr=lr, weight_decay=1e-4)
+        for epoch in range(num_epochs):
+            for idx, data in enumerate(train_loader):
+                x = data.layers['logcounts'].float().to(device)
+                #x = data.X.float().to(device)
+                self.train()
+                self.requires_grad_(True)
+                output = self.forward(x)
+                loss = output["losses"]["total_loss"]
+                # loss = output["losses"]["rec_loss"]
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
+                if idx % 1500 == 0:
+                    self.printDict(output["losses"])
+                    print()
+                    # print(
+                    #    "loss = ",
+                    #    loss.item(),
+                    # )
+        self.cpu()
+        optimizer = None
+        print("done training")
+        return None
+
+class VAE_Dirichlet(nn.Module):
+    """
+    """
+
+    def __init__(
+        self,
+        nx: int = 28 ** 2,
+        nh: int = 3024,
+        nz: int = 200,
+        nw: int = 150,
+        nclasses: int = 10,
+    ) -> None:
+        super().__init__()
+        self.nx = nx
+        self.nh = nh
+        self.nz = nz
+        self.nw = nw
+        self.nclasses = nclasses
+        # Dirichlet constant prior:
+        self.l = 1e-3
+        self.dir_prior = distributions.Dirichlet(1e-3*torch.ones(nclasses))
+        self.logsigma_x = torch.nn.Parameter(torch.zeros(nx), requires_grad=True)
+        self.kld_unreduced = lambda mu, logvar: -0.5 * (
+            1 + logvar - mu.pow(2) - logvar.exp()
+        )
+        #self.y_prior = distributions.OneHotCategorical(probs=torch.ones(nclasses))
+        self.y_prior = distributions.RelaxedOneHotCategorical(
+                probs=torch.ones(nclasses), temperature=0.1,)
+        self.w_prior = distributions.Normal(
+            loc=torch.zeros(nw),
+            scale=torch.ones(nw),
+        )
+        ## P network
+        self.Px = nn.Sequential(
+            nn.Linear(nz, nh),
+            nn.Dropout(p=0.2),
+            nn.BatchNorm1d(
+                num_features=nh,
+            ),
+            nn.LeakyReLU(),
+            nn.Linear(nh, nh),
+            nn.BatchNorm1d(
+                num_features=nh,
+            ),
+            nn.Dropout(p=0.2),
+            nn.LeakyReLU(),
+            nn.Linear(nh, nx),
+            nn.Sigmoid(),
+        )
+        self.Pz = nn.Sequential(
+            nn.Linear(nw, nh),
+            nn.Dropout(p=0.2),
+            nn.BatchNorm1d(
+                num_features=nh,
+            ),
+            nn.LeakyReLU(),
+            nn.Linear(nh, nh),
+            nn.Dropout(p=0.2),
+            nn.BatchNorm1d(
+                num_features=nh,
+            ),
+            nn.LeakyReLU(),
+            nn.Linear(nh, 2 * nclasses * nz),
+            nn.Unflatten(1, (nclasses, 2*nz)),
+            # nn.Tanh(),
+        )
+        ## Q network
+        self.Qwz = nn.Sequential(
+            nn.Linear(nx, nh),
+            nn.Dropout(p=0.2),
+            nn.BatchNorm1d(
+                num_features=nh,
+            ),
+            nn.LeakyReLU(),
+            #nn.Tanh(),
+            nn.Linear(nh, nh),
+            nn.Dropout(p=0.2),
+            nn.BatchNorm1d(
+                num_features=nh,
+            ),
+            nn.LeakyReLU(),
+            #nn.Tanh(),
+            nn.Linear(nh, 2 * nw + 2 * nz),
+            nn.Unflatten(1, (2, nz + nw)),
+        )
+        self.Qy = nn.Sequential(
+            nn.Linear(nw + nz, nh),
+            nn.Dropout(p=0.2),
+            nn.BatchNorm1d(
+                num_features=nh,
+            ),
+            nn.LeakyReLU(),
+            nn.Linear(nh, nh),
+            nn.Dropout(p=0.2),
+            nn.BatchNorm1d(
+                num_features=nh,
+            ),
+            nn.LeakyReLU(),
+            nn.Linear(nh, nclasses),
+            #nn.Softmax(dim=-1),
+        )
+        self.Qp = nn.Sequential(
+            nn.Linear(nw + nz, nh),
+            nn.Dropout(p=0.2),
+            nn.BatchNorm1d(
+                num_features=nh,
+            ),
+            nn.LeakyReLU(),
+            nn.Linear(nh, nh),
+            nn.Dropout(p=0.2),
+            nn.BatchNorm1d(
+                num_features=nh,
+            ),
+            nn.LeakyReLU(),
+            nn.Linear(nh, nclasses),
+        )
+
+        return
+
+    def printDict(self, d: dict):
+        for k, v in d.items():
+            print(k + ":", v.item())
+        return
+
+    def forward(self, input):
+        x = nn.Flatten()(input)
+        logsigma_x = ut.softclip(self.logsigma_x, -2, 2)
+        losses = {}
+        output = {}
+        eps=1e-5
+        sigma_x = logsigma_x.exp()
+        wz = self.Qwz(x)
+        mu_w = wz[:,0,:self.nw]
+        logvar_w = wz[:,1,:self.nw].tanh()
+        std_w = (0.5 * logvar_w).exp()
+        noise = torch.randn_like(mu_w).to(x.device)
+        w = mu_w + noise * std_w
+        Qw = distributions.Normal(loc=mu_w, scale=std_w)
+        mu_z = wz[:,0,self.nw:]
+        logvar_z = wz[:,1,self.nw:].tanh()
+        std_z = (0.5 * logvar_z).exp()
+        noise = torch.randn_like(mu_z).to(x.device)
+        z = mu_z + noise * std_z
+        Qz = distributions.Normal(loc=mu_z, scale=std_z)
+        output["wz"] = wz
+        output["mu_z"] = mu_z
+        output["mu_w"] = mu_w
+        output["logvar_z"] = logvar_z
+        output["logvar_w"] = logvar_w
+        #q_y = self.Qy(wz[:,0,:])
+        q_y_logits = self.Qy(torch.cat([w,z], dim=1))
+        q_y = nn.Softmax(dim=-1)(q_y_logits)
+        #d = self.Qp(torch.cat([w,z], dim=1)).exp()
+        #d = self.Qp(torch.cat([w,z,q_y], dim=1)).clamp(1e-3,1e3)
+        d_logits = self.Qp(torch.cat([w,z], dim=1))
+        D_y = distributions.Dirichlet(d_logits.exp().clamp(1e-2, 1e8))
+        #q_y = D_y.rsample().to(x.device)
+        Qy = distributions.RelaxedOneHotCategorical(
+                temperature=0.1, probs=q_y)
+        y = Qy.rsample().to(x.device)
+        output["q_y"] = q_y
+        output["w"]=w
+        output["z"]=z
+        output["y"] = y
+        rec = self.Px(z)
+        loss_rec = nn.MSELoss(reduction='none')(rec,x).sum(-1).mean()
+        #loss_rec = nn.BCELoss(reduction="none")(x, rec).sum(-1).mean()
+        #loss_rec = nn.BCELoss(reduction="none")(rec, x).sum(-1).mean()
+        output["rec"]= rec
+        losses["rec"] = loss_rec
+        z_w = self.Pz(w)
+        mu_z_w = z_w[:,:,:self.nz]
+        #logvar_z_w = z_w[:,:,self.nz:]
+        logvar_z_w = z_w[:,:,self.nz:].tanh()
+        std_z_w = (0.5*logvar_z_w).exp()
+        Pz = distributions.Normal(
+                loc=mu_z_w,
+                scale=std_z_w,
+                )
+        output["Pz"] = Pz
+        output["Qz"] = Qz
+        loss_z = ut.kld2normal(
+                mu=mu_z.unsqueeze(1),
+                logvar=logvar_z.unsqueeze(1),
+                mu2=mu_z_w,
+                logvar2=logvar_z_w,
+                ).sum(-1)
+        loss_z = (q_y*loss_z).sum(-1).mean()
+        losses["loss_z"] = loss_z
+        loss_w = self.kld_unreduced(
+                mu=mu_w,
+                logvar=logvar_w).sum(-1).mean()
+        losses["loss_w"]=loss_w
+        lp_y = self.y_prior.logits.to(x.device)
+        loss_l = (q_y.mean(0) * (
+                q_y.mean(0).log() - lp_y)).sum()
+        losses["loss_l"] = loss_l
+        loss_l_alt = (q_y * (
+                (eps+q_y).log() - lp_y)).sum(-1).mean()
+        losses["loss_l_alt"] = loss_l_alt
+        loss_y = -1e0 * q_y.max(-1)[0].mean()
+        losses["loss_y"] = loss_y
+        Pd = distributions.Dirichlet(torch.ones_like(q_y)*1e-2)
+        loss_d = 1e1 * distributions.kl_divergence(D_y, Pd).mean()
+        #loss_d = (D_y.log_prob(q_y) - Pd.log_prob(q_y)).mean()
+        losses["loss_d"]=loss_d
+        p_y = D_y.rsample()
+        loss_p = (p_y * (
+            p_y.log() - q_y.log())).sum(-1).mean()
+        losses["loss_p"] = loss_p
+        # alt loss_y:
+        #Qy = distributions.OneHotCategorical(probs=q_y)
+        p_y = D_y.rsample()
+        loss_y_alt = (q_y * (
+                (eps+q_y).log() - (eps+p_y).log())).sum(-1).mean()
+        losses["loss_y_alt"] = loss_y_alt
+        total_loss = (loss_rec
+                + loss_z 
+                + loss_w
+                + loss_d
+                #+ 1e1 * loss_y
+                #+ 1e1 * loss_l
+                #+ 1e0 * loss_l_alt
+                #+ loss_p
+                + loss_y_alt
+                )
+        losses["total_loss"] = total_loss
+        output["losses"] = losses
+        return output
+
+    def forward_old(self, input):
+        x = nn.Flatten()(input)
+        logsigma_x = ut.softclip(self.logsigma_x, -2, 2)
+        losses = {}
+        output = {}
+        sigma_x = logsigma_x.exp()
+        wz = self.Qwz(x)
+        mu_w = wz[:,0,:self.nw]
+        #logvar_w = wz[:,1,:self.nw]
+        logvar_w = wz[:,1,:self.nw].tanh()
+        std_w = (0.5 * logvar_w).exp()
+        noise = torch.randn_like(mu_w).to(x.device)
+        w = mu_w + noise * std_w
+        Qw = distributions.Normal(loc=mu_w, scale=std_w)
+        mu_z = wz[:,0,self.nw:]
+        #logvar_z = wz[:,1,self.nw:]
+        logvar_z = wz[:,1,self.nw:].tanh()
+        std_z = (0.5 * logvar_z).exp()
+        noise = torch.randn_like(mu_z).to(x.device)
+        z = mu_z + noise * std_z
+        Qz = distributions.Normal(loc=mu_z, scale=std_z)
+        output["wz"] = wz
+        output["mu_z"] = mu_z
+        output["mu_w"] = mu_w
+        output["logvar_z"] = logvar_z
+        output["logvar_w"] = logvar_w
+        #q_y = self.Qy(wz[:,0,:])
+        q_y = self.Qy(torch.cat([w,z], dim=1))
+        #d = self.Qp(torch.cat([w,z], dim=1)).exp()
+        d = self.Qp(torch.cat([w,z], dim=1)).clamp(1e-3,1e3)
+        D_y = distributions.Dirichlet(d)
+        #q_y = D_y.rsample().to(x.device)
+        Qy = distributions.RelaxedOneHotCategorical(
+                temperature=0.1, probs=q_y)
+        y = Qy.rsample().to(x.device)
+        output["q_y"] = q_y
+        output["w"]=w
+        output["z"]=z
+        output["y"] = y
+        rec = self.Px(z)
+        loss_rec = nn.MSELoss(reduction='none')(rec,x).sum(-1).mean()
+        output["rec"]= rec
+        losses["rec"] = loss_rec
+        z_w = self.Pz(w)
+        mu_z_w = z_w[:,:,:self.nz]
+        #logvar_z_w = z_w[:,:,self.nz:]
+        logvar_z_w = z_w[:,:,self.nz:].tanh()
+        std_z_w = (0.5*logvar_z_w).exp()
+        Pz = distributions.Normal(
+                loc=mu_z_w,
+                scale=std_z_w,
+                )
+        output["Pz"] = Pz
+        output["Qz"] = Qz
+        #loss_z = Qz.log_prob(z).unsqueeze(1).sum(-1) 
+        #loss_z = loss_z - Pz.log_prob(z.unsqueeze(1)).sum(-1)
+        #loss_z = (q_y*loss_z).sum(-1).mean()
+        loss_z = ut.kld2normal(
+                mu=mu_z.unsqueeze(1),
+                logvar=logvar_z.unsqueeze(1),
+                mu2=mu_z_w,
+                logvar2=logvar_z_w,
+                ).sum(-1)
+        #loss_z = (q_y*loss_z).sum(-1).mean()
+        f = nn.Threshold(threshold=0.51, value=0.)
+        g = nn.Threshold(threshold=-0.1, value=1.)
+        y = g(-f(q_y.exp().exp().exp().softmax(-1)))
+        loss_z = (y*loss_z).sum(-1).mean()
+        losses["loss_z"] = loss_z
+        loss_w = self.kld_unreduced(
+                mu=mu_w,
+                logvar=logvar_w).sum(-1).mean()
+        lp_y = self.y_prior.logits.to(x.device)
+        loss_l = (q_y.mean(0) * (
+                q_y.mean(0).log() - lp_y)).sum()
+        ## bad idea:
+        #loss_l = (q_y * (
+        #        q_y.log() - lp_y)).mean(-1).sum()
+        #loss_l = (q_y * (
+        #        q_y.log() - lp_y)).sum(-1).mean()
+        losses["loss_l"] = loss_l
+        loss_l_alt = (1e1/self.nclasses * (
+                q_y.mean(0).log() - lp_y)).sum()
+        loss_l_alt = (1e1*q_y.mean(0) * (
+                q_y.mean(0).log() - lp_y)).sum()
+        losses["loss_l_alt"] = loss_l_alt
+        #loss_y = -(q_y * q_y.log() ).sum(-1).mean()
+        loss_y = -1e0 * q_y.max(-1)[0].mean()
+        losses["loss_y"] = loss_y
+        losses["loss_w"]=loss_w
+        Pd = distributions.Dirichlet(torch.ones_like(q_y)*1e-3)
+        loss_d = distributions.kl_divergence(D_y, Pd).mean()
+        losses["loss_d"]=loss_d
+        p_y = Pd.rsample()
+        loss_p = (q_y * (
+            q_y.log() - p_y.log())).sum(-1).mean()
+        losses["loss_p"] = loss_p
+        total_loss = (loss_rec
+                + loss_z 
+                + loss_w
+                #+ loss_d
+                #+ 1e1 * loss_y
+                #+ 1e1 * loss_l
+                + 1e0 * loss_l_alt
+                #+ loss_p
+                )
+        losses["total_loss"] = total_loss
+        output["losses"] = losses
+        return output
+
+
+    def fit(
+        self,
+        train_loader: torch.utils.data.DataLoader,
+        num_epochs=10,
+        lr=1e-3,
+        device: str = "cuda:0",
+    ) -> None:
+        self.to(device)
+        optimizer = optim.Adam(self.parameters(), lr=lr, weight_decay=1e-4)
+        for epoch in range(num_epochs):
+            for idx, (data, labels) in enumerate(train_loader):
+                x = data.flatten(1).to(device)
+                # x = data.to(device)
+                self.train()
+                self.requires_grad_(True)
+                output = self.forward(x)
+                loss = output["losses"]["total_loss"]
+                # loss = output["losses"]["rec_loss"]
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
+                if idx % 1500 == 0:
+                    self.printDict(output["losses"])
+                    print()
+                    # print(
+                    #    "loss = ",
+                    #    loss.item(),
+                    # )
+        self.cpu()
+        optimizer = None
+        print("done training")
+        return None

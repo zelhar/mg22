@@ -228,3 +228,135 @@ zs = distributions.Normal(loc=c, scale=0.5).sample((5,)).reshape((-1,model.nz))
 xs = model.Px(zs).reshape(-1,1,28,28)
 ut.plot_images(xs, model.nclasses)
 
+
+
+### VAE_dirichlet
+# best model so far:
+model = M.VAE_Dilo3(nz=20, nw=25, nh=1024, nclasses=20)
+model = M.VAE_Dilo3(nz=20, nw=25, nh=1024, nclasses=10)
+
+model = M.VAE_Dirichlet(nz=20, nw=25, nh=2*1024, nclasses=20)
+
+model = M.VAE_Dirichlet(nz=30, nw=35, nh=2*1024, nclasses=25)
+
+model = M.VAE_Dirichlet(nz=20, nw=25, nh=2*1024, nclasses=10)
+
+model.apply(init_weights)
+model.fit(train_loader, num_epochs=8)
+
+
+w = torch.zeros(3, model.nw)
+z = model.Pz(w)
+mu = z[:,:,:model.nz].reshape(3*model.nclasses, model.nz)
+rec = model.Px(mu).reshape(-1,1,28,28)
+ut.plot_images(rec, model.nclasses)
+
+#for k,v in output.items():
+#    print(v.shape)
+
+w = model.w_prior.sample((5, ))
+
+w = distributions.Normal(loc=torch.zeros_like(w)*1.5e0,
+        scale=torch.ones_like(w)).sample()
+z = model.Pz(w)
+mu = z[:,:,:model.nz].reshape(5*model.nclasses, model.nz)
+rec = model.Px(mu).reshape(-1,1,28,28)
+ut.plot_images(rec, model.nclasses)
+
+f = nn.Threshold(threshold=0.51, value=0.)
+g = nn.Threshold(threshold=-0.1, value=1.)
+y = g(-f(q_y.exp().exp().exp().softmax(-1)))
+y
+
+a = torch.ones(5)*1e-2
+b = torch.ones(5)*1e-2
+b[0] = 1
+
+f=distributions.Dirichlet(a)
+g=distributions.Dirichlet(b)
+distributions.kl_divergence(f,g)
+
+c = torch.randn(5)
+h = distributions.RelaxedOneHotCategorical(temperature=0.02, logits=c)
+
+mu = torch.randn(4,5)
+mu2 = torch.randn(4,5)
+lv = torch.randn(4,5)
+lv2 = torch.randn(4,5)
+p = distributions.Normal(loc=mu, scale=(0.5*lv).exp())
+q = distributions.Normal(loc=mu2, scale=(0.5*lv2).exp())
+
+distributions.kl_divergence(p,q)
+ut.kld2normal(mu, lv, mu2, lv2)
+
+### Dirichlet Bug
+a = torch.ones(3)*1e-2
+b = torch.ones(3)*1e-3
+f=distributions.Dirichlet(a)
+g=distributions.Dirichlet(b)
+f.sample((10,)).max(-1)
+g.sample((10,)).max(-1)
+
+
+### scRNAseq data set
+cdata = sc.read("./data/limb_sce_alternative.h5ad",)
+n_conds = len(cdata.obs['subtissue'].cat.categories)
+n_classes = len(cdata.obs['cell_ontology_class'].cat.categories)
+n_dims = cdata.shape[1]
+enc = OneHotEncoder(sparse=False, dtype=np.float32)
+enc.fit(cdata.obs['subtissue'].to_numpy()[:,None])
+enc_ct = LabelEncoder()
+enc_ct.fit(cdata.obs['cell_ontology_class'])
+use_cuda = torch.cuda.is_available()
+convert = {
+        'obs' : {
+            'subtissue' : lambda s: enc.transform(s.to_numpy()[:, None]),
+            'cell_ontology_class': enc_ct.transform,
+            }
+        }
+
+cdataloader = AnnLoader(cdata, batch_size=128, shuffle=True, convert=convert,
+        use_cuda=use_cuda)
+
+temp = cdataloader.dataset[:10]
+temp.obs['subtissue']
+temp.obs['cell_ontology_class']
+
+foo = cdataloader.__iter__().next()
+foo.layers['logcounts']
+
+for idx, data in  enumerate(cdataloader):
+    print(idx)
+    break
+
+model = M.VAE_Dilo3AnnData(nx = n_dims, nh=1024, nz=50, nw=50, nclasses=8)
+
+model = M.VAE_Dilo3AnnData(nx = n_dims, nh=1024, nz=50, nw=50, nclasses=18)
+model.apply(init_weights)
+model.fit(cdataloader, num_epochs=100)
+
+labels = cdataloader.dataset.obs['cell_ontology_class']
+labels = enc_ct.transform(labels)
+
+
+
+output = model(foo.layers['logcounts'].cpu().float())
+
+output = model(foo.X.cpu().float())
+
+y = foo.obs['cell_ontology_class']
+y
+
+output["q_y"].max(-1)
+output["q_y"][y==0].max(-1)
+output["q_y"][y==2].max(-1)
+output["q_y"][y==3].max(-1)
+output["q_y"][y==4].max(-1)
+output["q_y"][y==5].max(-1)
+output["q_y"][y==6].max(-1)
+output["q_y"][y==7].max(-1)
+
+
+
+
+
