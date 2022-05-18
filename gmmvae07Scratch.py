@@ -238,3 +238,294 @@ enc_ct.fit(adata.obs["prep"])
 prep = torch.IntTensor(
         enc_ct.transform(adata.obs["prep"]))
 prep = F.one_hot(prep.long(), num_classes=enc_ct.classes_.size).float()
+
+
+
+
+#### Semisuper tests
+adatac = sc.read("./data/GTEx_8_tissues_snRNAseq_atlas_071421.public_obs.h5ad",)
+adata = sc.read("./data/GTEx_8_tissues_snRNAseq_atlas_071421.public_obs.h5ad",)
+sc.pp.highly_variable_genes(adata, n_top_genes=1000, inplace=True, subset=True,)
+
+
+data = torch.FloatTensor(adata.X.toarray())
+enc_ct.fit(adata.obs["Granular cell type"])
+labels = torch.IntTensor(
+        enc_ct.transform(adata.obs["Granular cell type"]))
+labels = F.one_hot(labels.long(), num_classes=enc_ct.classes_.size).float()
+dataset = ut.SynteticDataSet(data, labels)
+data_loader = torch.utils.data.DataLoader(
+        dataset=dataset,
+        batch_size=256,
+        shuffle=True,
+        )
+
+#dataset = ut.SynteticDataSet(data, labels)
+labeled_loader = torch.utils.data.DataLoader(
+        dataset=ut.SynteticDataSet(data[:5600], labels[:5600]),
+        batch_size=256,
+        shuffle=True,
+        )
+unlabeled_loader = torch.utils.data.DataLoader(
+        dataset=ut.SynteticDataSet(data[5600:-5500], labels[5600:-5500]),
+        batch_size=256,
+        shuffle=True,
+        )
+test_loader = torch.utils.data.DataLoader(
+        dataset=ut.SynteticDataSet(data[-5500:], labels[-5500:]),
+        batch_size=256,
+        shuffle=True,
+        )
+
+
+model_gmmdvae = M6.VAE_Dilo_Type601(nx=1000, nh=1064, nz=64,
+        nclasses=74,)
+
+model_gmmdvae = M7.VAE_Stacked_Dilo_Anndata_Type701(nx=1000, nh=1024,
+        nz=64, nw=15, nclasses=74,)
+model_gmmdvae = M7.VAE_Dirichlet_Type705(nx=1000, nh=1024, nz=64, nw=15,
+        nclasses=74,)
+
+model_gmmdvae.apply(init_weights)
+
+M6.trainSemiSuper(model_gmmdvae, labeled_loader, unlabeled_loader, test_loader, 
+        num_epochs=100, lr=1e-3, wt=0, do_unlabeled=True,)
+
+model_gmmdvae.eval()
+output = model_gmmdvae(data)
+adata.obsm["z_gmmdvae"] = output["z"].detach().numpy()
+adata.obs["predict_gmmdvae"] = output["q_y"].detach().argmax(-1).numpy().astype(str)
+sc.pp.neighbors(adata, use_rep="z_gmmdvae", n_neighbors=10,)
+sc.tl.umap(adata,)
+
+sc.pl.umap(adata, color=["predict_gmmdvae", "Granular cell type",])
+
+sc.pl.umap(adata, color=["Cell types level 2", "Broad cell type",])
+
+
+adata = sc.read("./data/gtex_v7_SMTS_PP_1k.h5ad",)
+adata
+
+data = torch.FloatTensor(adata.X)
+enc_ct.fit(adata.obs["smts"])
+labels = torch.IntTensor(
+        enc_ct.transform(adata.obs["smts"]))
+labels = F.one_hot(labels.long(), num_classes=enc_ct.classes_.size).float()
+dataset = ut.SynteticDataSet(data, labels)
+data_loader = torch.utils.data.DataLoader(
+        dataset=dataset,
+        batch_size=256,
+        shuffle=True,
+        )
+
+#dataset = ut.SynteticDataSet(data, labels)
+labeled_loader = torch.utils.data.DataLoader(
+        dataset=ut.SynteticDataSet(data[:1600], labels[:1600]),
+        batch_size=256,
+        shuffle=True,
+        )
+unlabeled_loader = torch.utils.data.DataLoader(
+        dataset=ut.SynteticDataSet(data[1600:-1500], labels[1600:-1500]),
+        batch_size=256,
+        shuffle=True,
+        )
+test_loader = torch.utils.data.DataLoader(
+        dataset=ut.SynteticDataSet(data[-1500:], labels[-1500:]),
+        batch_size=256,
+        shuffle=True,
+        )
+
+model_gmmdvae = M7.VAE_Dirichlet_Type705(nx=1000, nh=1024, nz=64, nw=15,
+        nclasses=enc_ct.classes_.size,)
+model_gmmdvae.apply(init_weights)
+
+M6.basicTrain(model_gmmdvae, unlabeled_loader, test_loader, num_epochs=20,
+        wt=0, lr=1e-3,)
+
+M6.trainSemiSuper(model_gmmdvae, labeled_loader, unlabeled_loader, test_loader, 
+        num_epochs=100, lr=1e-3, wt=0, do_unlabeled=True,)
+
+model_gmmdvae.eval()
+output = model_gmmdvae(data)
+adata.obsm["z_gmmdvae"] = output["z"].detach().numpy()
+adata.obs["predict_gmmdvae"] = output["q_y"].detach().argmax(-1).numpy().astype(str)
+
+sc.pl.umap(adata, color=["smts", "predict_gmmdvae"],)
+
+sc.pp.neighbors(adata, use_rep="z_gmmdvae", n_neighbors=10,)
+sc.tl.umap(adata,)
+
+sc.pl.umap(adata, color=["smts", "predict_gmmdvae"],)
+
+# so gtex v7 is sort of easy and unsup training produces nice latent and okay
+# predicts. Semisup can perfectly learn the smts classes. On the other hand
+# with gtex v9, much more complex scRNAseq, harder to learn. Semisup doesn't
+# really work with this one.
+
+#  trying unfilterred data set (all genes)
+adata = sc.read("./data/gtex_v7_SMTS.h5ad")
+
+sc.pp.filter_cells(adata, min_genes=200, inplace=True,)
+sc.pp.filter_genes(adata, min_cells=20, inplace=True,)
+sc.pp.normalize_total(adata, target_sum=1e4, inplace=True,)
+sc.pp.log1p(adata, )
+
+data = torch.FloatTensor(adata.X)
+enc_ct.fit(adata.obs["smts"])
+labels = torch.IntTensor(
+        enc_ct.transform(adata.obs["smts"]))
+labels = F.one_hot(labels.long(), num_classes=enc_ct.classes_.size).float()
+dataset = ut.SynteticDataSet(data, labels)
+data_loader = torch.utils.data.DataLoader(
+        dataset=dataset,
+        batch_size=256,
+        shuffle=True,
+        )
+
+sc.pp.pca(adata,)
+sc.pp.neighbors(adata, use_rep="X_pca", n_neighbors=10,)
+sc.tl.umap(adata,)
+sc.pl.umap(adata, color=["smts", "predict_gmmdvae"],)
+
+
+#dataset = ut.SynteticDataSet(data, labels)
+labeled_loader = torch.utils.data.DataLoader(
+        dataset=ut.SynteticDataSet(data[:1600], labels[:1600]),
+        batch_size=256,
+        shuffle=True,
+        )
+unlabeled_loader = torch.utils.data.DataLoader(
+        dataset=ut.SynteticDataSet(data[1600:-1500], labels[1600:-1500]),
+        batch_size=256,
+        shuffle=True,
+        )
+test_loader = torch.utils.data.DataLoader(
+        dataset=ut.SynteticDataSet(data[-1500:], labels[-1500:]),
+        batch_size=256,
+        shuffle=True,
+        )
+
+model_gmmdvae = M7.VAE_Dirichlet_Type705(nx=adata.n_vars, nh=1024, nz=64, nw=15,
+        nclasses=enc_ct.classes_.size,)
+
+model_gmmdvae = M7.VAE_Dirichlet_Type705(nx=adata.n_vars, nh=1024, nz=64, nw=15,
+        nclasses=enc_ct.classes_.size*4,)
+
+model_gmmdvae = M7.VAE_Stacked_Dilo_Anndata_Type701(nx=adata.n_vars, nh=1024,
+        nz=64, nw=15, nclasses=enc_ct.classes_.size,)
+
+model_gmmdvae.apply(init_weights)
+
+M6.basicTrain(model_gmmdvae, unlabeled_loader, test_loader, num_epochs=20,
+        wt=0, lr=1e-3,)
+
+model_gmmdvae.eval()
+output = model_gmmdvae(data)
+adata.obsm["z_gmmdvae"] = output["z"].detach().numpy()
+adata.obs["predict_gmmdvae"] = output["q_y"].detach().argmax(-1).numpy().astype(str)
+
+sc.pp.neighbors(adata, use_rep="z_gmmdvae", n_neighbors=10,)
+sc.tl.umap(adata,)
+sc.pl.umap(adata, color=["smts", "predict_gmmdvae"],)
+
+
+M6.trainSemiSuper(model_gmmdvae, labeled_loader, unlabeled_loader, test_loader, 
+        num_epochs=100, lr=1e-3, wt=0, do_unlabeled=True,)
+
+## gtexv9
+adata = sc.read("./data/GTEx_8_tissues_snRNAseq_atlas_071421.public_obs.h5ad",)
+
+
+data = torch.FloatTensor(adata.X.toarray())
+enc_ct.fit(adata.obs["Granular cell type"])
+labels = torch.IntTensor(
+        enc_ct.transform(adata.obs["Granular cell type"]))
+labels = F.one_hot(labels.long(), num_classes=enc_ct.classes_.size).float()
+dataset = ut.SynteticDataSet(data, labels)
+data_loader = torch.utils.data.DataLoader(
+        dataset=dataset,
+        batch_size=256,
+        shuffle=True,
+        )
+
+#dataset = ut.SynteticDataSet(data, labels)
+labeled_loader = torch.utils.data.DataLoader(
+        dataset=ut.SynteticDataSet(data[:1600], labels[:1600]),
+        batch_size=256,
+        shuffle=True,
+        )
+unlabeled_loader = torch.utils.data.DataLoader(
+        dataset=ut.SynteticDataSet(data[1600:-1500], labels[1600:-1500]),
+        batch_size=256,
+        shuffle=True,
+        )
+test_loader = torch.utils.data.DataLoader(
+        dataset=ut.SynteticDataSet(data[-1500:], labels[-1500:]),
+        batch_size=256,
+        shuffle=True,
+        )
+
+model = M7.VAE_Dirichlet_Type705(nx=adata.n_vars, nh=1024,
+        nz=64, nw=15, nclasses=enc_ct.classes_.size,)
+model.apply(init_weights)
+
+M6.basicTrain(model, unlabeled_loader, test_loader, num_epochs=20,
+        wt=0, lr=1e-3,)
+
+model.eval()
+output = model(data)
+adata.obsm["z_gmmdvae"] = output["z"].detach().numpy()
+adata.obs["predict_gmmdvae"] = output["q_y"].detach().argmax(-1).numpy().astype(str)
+
+sc.pp.neighbors(adata, use_rep="z_gmmdvae", n_neighbors=10,)
+sc.tl.umap(adata,)
+sc.pl.umap(adata, color=["Granular cell type", "predict_gmmdvae"],)
+
+
+M6.trainSemiSuper(model, labeled_loader, unlabeled_loader, test_loader, 
+        num_epochs=100, lr=1e-3, wt=0, do_unlabeled=True,)
+
+## 2 moons
+X,y = skds.make_moons(n_samples=20000, noise=3e-2, )
+X = torch.FloatTensor(X)
+y = torch.IntTensor(y)
+adata = sc.AnnData(X=X.numpy(), )
+adata = sc.AnnData(X=X.numpy(), )
+adata.obs["y"] = y.numpy()
+
+sc.tl.tsne(adata, )
+sc.pl.tsne(adata, color="y")
+sc.pp.neighbors(adata, n_neighbors=10, )
+sc.tl.umap(adata, )
+sc.pl.umap(adata, color="y")
+sc.pl.scatter(adata, color="y", x='0',y='1')
+
+
+dataset = ut.SynteticDataSet(X, y)
+data_loader = torch.utils.data.DataLoader(
+        dataset=dataset,
+        shuffle=True,
+        batch_size=256,
+        )
+
+model = M7.VAE_Dirichlet_Type705(nx=2, nh=1024, nz=32, nw=15, nclasses=2,)
+model.apply(init_weights)
+M6.basicTrain(model, data_loader , num_epochs=20,
+        wt=0, lr=1e-3,)
+
+model.eval()
+output = model(X)
+adata.obsm["z_gmmdvae"] = output["z"].detach().numpy()
+adata.obs["predict_gmmdvae"] = output["q_y"].detach().argmax(-1).numpy().astype(str)
+
+adata.obsm["rec"] = output["rec"].detach().numpy()
+
+sc.pp.neighbors(adata, use_rep="z_gmmdvae", n_neighbors=10,)
+sc.tl.umap(adata,)
+sc.pl.umap(adata, color=["y", "predict_gmmdvae"],)
+
+sc.pl.scatter(adata, color="predict_gmmdvae", x='0',y='1')
+
+sns.scatterplot(data=pd.DataFrame(output['rec'].detach().numpy()), x=0, y=1, hue=y)
+
+sc.tl.louvain(adata,)
