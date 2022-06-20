@@ -479,6 +479,7 @@ class VAE_Stacked_Dilo_Anndata_Type701(nn.Module):
                 + self.nclasses * loss_l
                 )
         losses["total_loss"] = total_loss
+        losses["num_clusters"] = torch.sum(torch.threshold(q_y, 0.5, 0).sum(0) > 0)
         output["losses"] = losses
         return output
 
@@ -627,6 +628,7 @@ class VAE_Dirichlet_Type705(nn.Module):
         eps = 1e-6
         q_y = (eps/self.nclasses +  (1 - eps) * q_y)
         d_logits = self.Qp(torch.cat([w,z], dim=1))
+        output["d_logits"] = d_logits
         D_y = distributions.Dirichlet(d_logits.exp().clamp(1e-2, 1e8))
         Qy = distributions.RelaxedOneHotCategorical(
                 temperature=0.1, probs=q_y)
@@ -710,6 +712,7 @@ class VAE_Dirichlet_Type705(nn.Module):
                 + loss_y_alt
                 )
         losses["total_loss"] = total_loss
+        losses["num_clusters"] = torch.sum(torch.threshold(q_y, 0.5, 0).sum(0) > 0)
         output["losses"] = losses
         return output
 

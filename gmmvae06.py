@@ -647,6 +647,7 @@ class VAE_Dilo_Type601(nn.Module):
                 + 1e1 * loss_l
                 )
         losses["total_loss"] = total_loss
+        losses["num_clusters"] = torch.sum(torch.threshold(q_y, 0.5, 0).sum(0) > 0)
         output["losses"] = losses
         return output
 
@@ -875,6 +876,7 @@ class VAE_Dirichlet_Type05(nn.Module):
                 + loss_y_alt
                 )
         losses["total_loss"] = total_loss
+        losses["num_clusters"] = torch.sum(torch.threshold(q_y, 0.5, 0).sum(0) > 0)
         output["losses"] = losses
         return output
 
