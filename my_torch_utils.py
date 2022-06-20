@@ -16,6 +16,8 @@ import seaborn as sns
 from torch import Tensor
 from math import pi, sin, cos, sqrt, log
 
+import networkx as nx
+
 
 from toolz import partial, curry
 
@@ -211,15 +213,25 @@ def plot_images(imgs, nrow=16, transform=nn.Identity(), out=plt):
     grid_imgs = make_grid(imgs, nrow=nrow).permute(1, 2, 0)
     #plt.imshow(grid_imgs)
     out.imshow(grid_imgs)
+    out.grid(False)
+    out.axis("off")
+    plt.pause(0.05)
+    return grid_imgs
 
 def plot_2images(img1, img2, nrow=16, transform=nn.Identity(), ):
     img1 = transform(img1)
     img2 = transform(img2)
     grid_img1 = make_grid(img1, nrow=nrow).permute(1, 2, 0)
     grid_img2 = make_grid(img2, nrow=nrow).permute(1, 2, 0)
-    fig, axs = plt.subplots(1,2)
+    fig, axs = plt.subplots(2,1)
     axs[0].imshow(grid_img1)
     axs[1].imshow(grid_img2)
+    axs[0].grid(False)
+    axs[0].axis("off")
+    axs[1].grid(False)
+    axs[1].axis("off")
+    plt.pause(0.05)
+    return grid_img1, grid_img2
 
 def plot_tsne(z_loc, classes, name):
     import matplotlib
@@ -340,6 +352,268 @@ def buildNetworkv3(
     net.add_module("output_layer", nn.Linear(layers[n-1], layers[n]))
     return net
     #return nn.Sequential(*net)
+
+def buildNetworkv4(
+    layers: List[int],
+    dropout: float = 0,
+    activation: Optional[nn.Module] = nn.ReLU(),
+    batchnorm: bool = False,
+):
+    """
+    build a fully connected multilayer NN.
+    The output layer is always linear
+    """
+    net = nn.Sequential()
+    # linear > batchnorm > dropout > activation
+    # or rather linear > dropout > act > batchnorm
+    for i in range(1, len(layers)-1):
+        net.add_module('linear' + str(i), nn.Linear(layers[i - 1], layers[i]))
+        if dropout > 0:
+            net.add_module("dropout" + str(i), nn.Dropout(dropout))
+        if batchnorm:
+            #net.add_module("batchnorm" + str(i), nn.BatchNorm1d(num_features=layers[i]))
+            net.add_module("layernotm" + str(i), nn.LayerNorm(layers[i],))
+        if activation:
+            net.add_module("activation" + str(i), activation)
+    n = len(layers) - 1
+    net.add_module("output_layer", nn.Linear(layers[n-1], layers[n]))
+    return net
+    #return nn.Sequential(*net)
+
+def buildNetworkv5(
+    layers: List[int],
+    dropout: float = 0,
+    activation: Optional[nn.Module] = nn.ReLU(),
+    batchnorm: bool = False,
+):
+    """
+    build a fully connected multilayer NN.
+    The output layer is always linear
+    """
+    net = nn.Sequential()
+    # linear > batchnorm > dropout > activation
+    # or rather linear > dropout > act > batchnorm
+    for i in range(1, len(layers)-1):
+        net.add_module('linear' + str(i), nn.Linear(layers[i - 1], layers[i]))
+        if dropout > 0:
+            net.add_module("dropout" + str(i), nn.Dropout(dropout))
+        if batchnorm:
+            net.add_module("batchnorm" + str(i), nn.BatchNorm1d(num_features=layers[i]))
+            #net.add_module("layernotm" + str(i), nn.LayerNorm(layers[i],))
+        if activation:
+            net.add_module("activation" + str(i), activation)
+    n = len(layers) - 1
+    net.add_module("output_layer", nn.Linear(layers[n-1], layers[n]))
+    return net
+    #return nn.Sequential(*net)
+
+def buildCNetworkv1(
+    nc : int = 1,
+    nin : int = 28**2,
+    nf : int = 32,
+    nout : int = 2**12,
+    dropout: float = 0,
+    #activation: Optional[nn.Module] = nn.LeakyReLU(),
+    #batchnorm: bool = False,
+):
+    """
+    build a 1d CNN.
+    maps 1d input into initial size 2**12,
+    each conv reduces size by a factor of 4.
+    rturns output 1d of size nout.
+    The output layer is always linear
+    """
+    net = nn.Sequential(
+            nn.Linear(nin, 2**12,),
+            nn.Dropout(p=dropout),
+            nn.BatchNorm1d(num_features=2**12,),
+            nn.LeakyReLU(),
+            nn.Unflatten(1, (nc,2**12)),
+            nn.Conv1d(nc, nf, kernel_size=8, stride=4, padding=2,),
+            nn.BatchNorm1d(num_features=nf,),
+            nn.LeakyReLU(),
+            nn.Conv1d(nf, nf*2, kernel_size=8, stride=4, padding=2,),
+            nn.BatchNorm1d(num_features=nf*2,),
+            nn.LeakyReLU(),
+            nn.Conv1d(nf*2, nf*4, kernel_size=8, stride=4, padding=2,),
+            nn.BatchNorm1d(num_features=nf*4,),
+            nn.LeakyReLU(),
+            nn.Conv1d(nf*4, nf*8, kernel_size=8, stride=4, padding=2,),
+            nn.BatchNorm1d(num_features=nf*8,),
+            nn.LeakyReLU(),
+            nn.Conv1d(nf*8, nf*16, kernel_size=8, stride=4, padding=2,),
+            nn.BatchNorm1d(num_features=nf*16,),
+            nn.LeakyReLU(),
+            nn.Conv1d(nf*16, nf*32, kernel_size=8, stride=4, padding=2,),
+            nn.BatchNorm1d(num_features=nf*32,),
+            nn.LeakyReLU(),
+            nn.Flatten(1),
+            nn.Linear(nf*32, nout),
+            )
+    # linear > batchnorm > dropout > activation
+    # or rather linear > dropout > act > batchnorm
+    return net
+
+def buildCNetworkv2(
+    nc : int = 1,
+    nin : int = 28**2,
+    nf : int = 32,
+    nout : int = 2**10,
+    dropout: float = 0,
+    #activation: Optional[nn.Module] = nn.LeakyReLU(),
+    #batchnorm: bool = False,
+):
+    """
+    build a 1d CNN.
+    maps 1d input into initial size 2**10,
+    each conv reduces size by a factor of 4.
+    rturns output 1d of size nout.
+    The output layer is always linear
+    """
+    net = nn.Sequential(
+            nn.Linear(nin, 2**10,),
+            nn.Dropout(p=dropout),
+            nn.BatchNorm1d(num_features=2**10,),
+            nn.LeakyReLU(),
+            nn.Unflatten(1, (nc,2**10)),
+            nn.Conv1d(nc, nf, kernel_size=8, stride=4, padding=2,),
+            nn.BatchNorm1d(num_features=nf,),
+            nn.LeakyReLU(),
+            nn.Conv1d(nf, nf*2, kernel_size=8, stride=4, padding=2,),
+            nn.BatchNorm1d(num_features=nf*2,),
+            nn.LeakyReLU(),
+            nn.Conv1d(nf*2, nf*4, kernel_size=8, stride=4, padding=2,),
+            nn.BatchNorm1d(num_features=nf*4,),
+            nn.LeakyReLU(),
+            nn.Conv1d(nf*4, nf*8, kernel_size=8, stride=4, padding=2,),
+            nn.BatchNorm1d(num_features=nf*8,),
+            nn.LeakyReLU(),
+            nn.Conv1d(nf*8, nf*16, kernel_size=8, stride=4, padding=2,),
+            nn.BatchNorm1d(num_features=nf*16,),
+            nn.LeakyReLU(),
+            nn.Flatten(1),
+            nn.Linear(nf*16, nout),
+            )
+    # linear > batchnorm > dropout > activation
+    # or rather linear > dropout > act > batchnorm
+    return net
+
+def buildTCNetworkv1(
+    # nc : int = 1,
+    nin: int = 28 ** 2,
+    nf: int = 32,
+    nout: int = 2 ** 12,
+    dropout: float = 0,
+    # activation: Optional[nn.Module] = nn.LeakyReLU(),
+    # batchnorm: bool = False,
+):
+    """
+    conv1t network, each step doubles or quadrupels input size.
+    """
+    net = nn.Sequential(
+        nn.Unflatten(1, (1, nin)),
+        nn.ConvTranspose1d(
+            1,
+            nf * 32,
+            kernel_size=8,
+            stride=4,
+            padding=2,
+        ),
+        nn.BatchNorm1d(
+            num_features=nf * 32,
+        ),
+        nn.LeakyReLU(),
+        nn.ConvTranspose1d(
+            nf * 32,
+            nf * 16,
+            kernel_size=8,
+            stride=4,
+            padding=2,
+        ),
+        nn.BatchNorm1d(
+            num_features=nf * 16,
+        ),
+        nn.LeakyReLU(),
+        nn.ConvTranspose1d(
+            nf * 16,
+            nf * 8,
+            kernel_size=4,
+            stride=2,
+            padding=1,
+        ),
+        nn.BatchNorm1d(
+            num_features=nf * 8,
+        ),
+        nn.LeakyReLU(),
+        nn.ConvTranspose1d(
+            nf * 8,
+            1,
+            kernel_size=4,
+            stride=2,
+            padding=1,
+        ),
+        nn.BatchNorm1d(
+            num_features=1,
+        ),
+        nn.LeakyReLU(),
+        nn.Flatten(1),
+        nn.Linear(nin*4*4*2*2, nout),
+    )
+    return net
+
+def buildTCNetworkv2(
+    # nc : int = 1,
+    nin: int = 28 ** 2,
+    nf: int = 32,
+    nout: int = 2 ** 12,
+    dropout: float = 0,
+    # activation: Optional[nn.Module] = nn.LeakyReLU(),
+    # batchnorm: bool = False,
+):
+    """
+    conv1t network, each step doubles or quadrupels input size.
+    """
+    net = nn.Sequential(
+        nn.Dropout(p=dropout),
+        nn.Unflatten(1, (1, nin)),
+        nn.ConvTranspose1d(
+            1,
+            nf * 32,
+            kernel_size=8,
+            stride=4,
+            padding=2,
+        ),
+        nn.BatchNorm1d(
+            num_features=nf * 32,
+        ),
+        nn.LeakyReLU(),
+        nn.ConvTranspose1d(
+            nf * 32,
+            nf * 16,
+            kernel_size=8,
+            stride=4,
+            padding=2,
+        ),
+        nn.BatchNorm1d(
+            num_features=nf * 16,
+        ),
+        nn.LeakyReLU(),
+        nn.ConvTranspose1d(
+            nf * 16,
+            1,
+            kernel_size=4,
+            stride=2,
+            padding=1,
+        ),
+        nn.BatchNorm1d(
+            num_features=1,
+        ),
+        nn.LeakyReLU(),
+        nn.Flatten(1),
+        nn.Linear(nin*4*4*2, nout),
+    )
+    return net
+
 
 
 @curry
@@ -497,6 +771,21 @@ class scsimDataset(torch.utils.data.Dataset):
 # plt.scatter(x,y)
 # plt.legend(['star'])
 
+def randomSubset(
+        s : int,
+        r: float,
+        ):
+    """
+    returns a numpy boolean 1d array of size size,
+    with approximately ratio of r*s True values.
+    s must be positive integer
+    r must be in the range [0,1]
+    """
+    x = np.random.rand(s)
+    x = x <= r
+    return x
+
+
 class Blobs:
     """
     samples gaussian blobs.
@@ -629,3 +918,77 @@ class SynteticDataSet(torch.utils.data.Dataset):
         return self.data[idx], self.labels[idx]
     def __len__(self):
         return len(self.labels)
+
+def diffMatrix(A : np.ndarray, alpha : float = 0.25):
+    """
+    Returns the diffusion Kernel K for a given adjacency matrix 
+    A, and restart pobability alpha.
+    K = α[I - (1 - α)AD^-1]^-1
+    """
+    #D = np.diag(A.sum(0))
+    T = A / A.sum(0)
+    I = np.eye(A.shape[0])
+    K = alpha * np.linalg.inv(I - (1 - alpha)*T)
+    return K
+
+def diffCluster(
+        A : np.ndarray,
+        num_clusters : int = 3,
+        alpha : float=0.25, ):
+    """
+    A : adj matrix
+    alpha: restart prob
+    """
+    G = nx.Graph()
+    G.add_nodes_from(np.arange(len(A)))
+    K = diffMatrix(A, alpha)
+    # pageranking (increasing)
+    pr = np.argsort(
+            K @ np.ones(len(A)))
+    n = len(K)
+    nodes = list(np.arange(n))
+    i = 0
+    K = K.T
+    #while n > num_clusters:
+    while nx.number_connected_components(G) > num_clusters:
+        s = pr[i]
+        nodes.remove(s)
+        t = K[s,nodes].argmax()
+        x = nodes[t]
+        G.add_edge(s, x)
+        i = i+1
+    clusters = np.zeros(len(A))
+    i = 0
+    for c in nx.connected_components(G):
+        for j in c:
+            clusters[j] = i
+        i = i+1
+    return G, clusters
+
+def diffCluster2(
+        A : np.ndarray,
+        num_neighbors: int = 3,
+        alpha : float=0.25, ):
+    """
+    A : adj matrix
+    alpha: restart prob
+    """
+    G = nx.Graph()
+    G.add_nodes_from(np.arange(len(A)))
+    K = diffMatrix(A, alpha)
+    # pageranking (increasing)
+    n = len(K)
+    nodes = list(np.arange(n))
+    K = K.T
+    i = 0
+    for i in range(n):
+       l = np.argpartition(-K[i], num_neighbors)[:num_neighbors]
+       for j in l:
+           G.add_edge(i,j)
+    clusters = np.zeros(len(A))
+    i = 0
+    for c in nx.connected_components(G):
+        for j in c:
+            clusters[j] = i
+        i = i+1
+    return G, clusters
