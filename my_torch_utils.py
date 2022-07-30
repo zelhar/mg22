@@ -15,6 +15,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from torch import Tensor
 from math import pi, sin, cos, sqrt, log
+import json
+import pickle
 
 import networkx as nx
 
@@ -406,6 +408,34 @@ def buildNetworkv5(
     net.add_module("output_layer", nn.Linear(layers[n-1], layers[n]))
     return net
     #return nn.Sequential(*net)
+
+def buildNetworkv6(
+    layers: List[int],
+    dropout: float = 0,
+    activation: Optional[nn.Module] = nn.ReLU(),
+    batchnorm: bool = False,
+):
+    """
+    build a fully connected multilayer NN.
+    The output layer is always linear
+    """
+    net = nn.Sequential()
+    # linear > batchnorm > dropout > activation
+    # or rather linear > dropout > act > batchnorm
+    # just one dropout layer
+    for i in range(1, len(layers)-1):
+        if dropout > 0 and i==1:
+            net.add_module("dropout" + str(i-1), nn.Dropout(dropout))
+        net.add_module('linear' + str(i), nn.Linear(layers[i - 1], layers[i]))
+        if batchnorm:
+            net.add_module("batchnorm" + str(i), nn.BatchNorm1d(num_features=layers[i]))
+            #net.add_module("layernotm" + str(i), nn.LayerNorm(layers[i],))
+        if activation:
+            net.add_module("activation" + str(i), activation)
+    n = len(layers) - 1
+    net.add_module("output_layer", nn.Linear(layers[n-1], layers[n]))
+    return net
+
 
 def buildCNetworkv1(
     nc : int = 1,
@@ -919,6 +949,24 @@ class SynteticDataSet(torch.utils.data.Dataset):
     def __len__(self):
         return len(self.labels)
 
+class SynteticDataSetV2(torch.utils.data.Dataset):
+    """
+    with arbitrary number of variables.
+    """
+    def __init__(self, dati : List[Tensor], ):
+        super().__init__()
+        self.dati = dati
+        self.numvars = len(dati)
+        return
+    def __getitem__(self, idx : int):
+        #ret = [x[idx] for x in self.dati]
+        #ret = tuple(ret)
+        #return ret
+        #return tuple([x[idx] for x in self.dati])
+        return [x[idx] for x in self.dati]
+    def __len__(self):
+        return len(self.dati[0])
+
 def diffMatrix(A : np.ndarray, alpha : float = 0.25):
     """
     Returns the diffusion Kernel K for a given adjacency matrix 
@@ -992,3 +1040,309 @@ def diffCluster2(
             clusters[j] = i
         i = i+1
     return G, clusters
+
+def softArgMaxOneHot(
+        x : torch.Tensor,
+        factor : float = 1.2e2,
+        a : float = 4,
+        #one_hot : bool = True,
+        ) -> torch.Tensor:
+    """
+    x: 1d float tensor or batch of vectors.
+    factor: larger factor will make the returned result
+    more similar to pure argmax (less smooth).
+    returns a nearly one-hot vector indicating
+    the maximal value of x. 
+    Possible not currently implemented feature:
+    if one_hot==False,
+    returns apprixmately the argmax index itselg.
+    """
+    #z = 1.2e1 * x / x.norm(1)
+    #z = z.exp().softmax(-1)
+    #z = factor * x / x.norm(1, dim=-1).unsqueeze(-1)
+    z = factor * (1 + x / x.norm(1, dim=-1).unsqueeze(-1))
+    z = z.pow(a).softmax(-1)
+    return z
+
+class SoftArgMaxOneHot(nn.Module):
+    """
+    class version of the eponymous function.
+    """
+    def __init__(self, factor=1.2e2,):
+        super().__init__()
+        self.factor = factor
+    def forward(self, input):
+        return softArgMaxOneHot(input, self.factor)
+
+def mutualInfo(p : torch.Tensor, q : torch.Tensor,):
+    """
+    p,q : n×y (batches of categorical distributions over y).
+    returns their mutual information:
+    I(p,q) = \int \log(P(x,y) - \logp(x) - \logq(y)dP(x,y)
+    """
+    batch_size, y = p.size()
+    pp = p.reshape(batch_size, y, 1)
+    qq = q.reshape(batch_size, 1, y)
+    P = pp @ qq
+    P = P.mean(0) # P(x,y)
+    Pi = P.sum(1).reshape(y,1)
+    Pj = P.sum(0).reshape(1,y)
+    #Q = Pi @ Pj #P(x)P(y)
+    #I = torch.sum(
+    #        P * (P.log() - Q.log())
+    #        )
+    # alternatively:
+    #I(X,Y) = H(X) + H(Y) - H(X,Y)
+    HP = -torch.sum(
+            P * P.log()
+            )
+    HPi = -torch.sum(
+            Pi * Pi.log()
+            )
+    HPj = -torch.sum(
+            Pj * Pj.log()
+            )
+    Ia = HPi + HPj - HP
+    #return I, P, Q, Ia
+    return Ia
+
+def urEntropy(p : torch.Tensor,):
+    """
+    returns -p * log(p) (element-wise, so unreduced).
+    """
+    return -p * p.log()
+
+def mutualInfo2(p : torch.Tensor, q : torch.Tensor,):
+    """
+    p,q : n×y (batches of categorical distributions over y).
+    returns their mutual information:
+    I(p,q) = \int \log(P(x,y) - \logp(x) - \logq(y)dP(x,y)
+    """
+    batch_size, n = p.size()
+    #p(x,y):
+    P = torch.einsum("...x,...y -> ...xy", p, q).mean(0)
+    #p(x):
+    #Px = torch.einsum("xy -> x", P)
+    Px = P.sum(1,keepdim=True) #(n,1)
+    #p(y):
+    #Py = torch.einsum("xy -> y", P)
+    Py = P.sum(0,keepdim=True) #(1,n)
+    #p(x | y):
+    Px_y = P / Py
+    #p(y | x):
+    #Py_x = P / Px
+    #H(X)
+    Hx = urEntropy(Px).sum()
+    #H(X|Y)
+    Hx_y = -(P * Px_y.log()).sum()
+    return Hx - Hx_y
+
+def mutualInfo3(p : torch.Tensor, q : torch.Tensor, r : torch.Tensor):
+    """
+    p,q,r : n×y (batches of categorical distributions over y).
+    returns their mutual information:
+    I(p,q,r) = I(p,q) - I(p,q|r)
+    be warned it can be negative and is hard to interpret,
+    """
+    Ipq = mutualInfo2(p,q)
+    # p(x,y,z):
+    P = torch.einsum("...x,...y,...z -> ...xyz", p, q,r).mean(0)
+    # p(x,z):
+    Pxz = P.sum(1, keepdim=True)
+    # p(y,z)
+    Pyz = P.sum(0, keepdim=True)
+    # p(z):
+    Pz = P.sum((0,1), keepdim=True)
+    # I(x,y | z):
+    #Ipq_r = (P * (P * Pz / Pxz / Pyz).log()).sum()
+    temp = (P.log() + Pz.log() - Pxz.log() - Pyz.log())
+    temp = temp * P
+    Ipq_r = temp.sum()
+    return Ipq - Ipq_r
+
+def totalCorrelation3(p,q,r):
+    """
+    returns 
+    Dkl(p(x,y,z) || p(x)p(y)p(z))
+    """
+    #p(x,y,z):
+    P = torch.einsum("...x,...y,...z -> ...xyz", p, q,r).mean(0)
+    Px = P.sum((1,2), keepdim=True)
+    Py = P.sum((0,2), keepdim=True)
+    Pz = P.sum((0,1), keepdim=True)
+    #p(x)p(y)p(z):
+    Q = Px * Py * Pz
+    tc = P * (P.log() - Q.log())
+    return tc.sum()
+
+
+
+
+
+def estimateClusterImpurity(
+        model,
+        x,
+        labels,
+        device : str = "cpu",
+        ):
+    model.eval()
+    model.to(device)
+    output = model(x.to(device))
+    model.cpu()
+    y = output["q_y"].detach().to("cpu")
+    del output
+    n = y.shape[1] # number of clusters
+    r = -np.ones(n) # homogeny index
+    #r = np.zeros(n) # homogeny index
+    #p = np.zeros(n) # label assignments to the clusters
+    p = -np.ones(n) # label assignments to the clusters
+    s = -np.ones(n) # label assignments to the clusters
+    for i in range(n):
+        c = labels[y.argmax(-1) == i]
+        if c.shape[0] > 0:
+            r[i] = c.sum(0).max().item() / c.shape[0] 
+            p[i] = c.sum(0).argmax().item()
+            s[i] = c.shape[0]
+    return r, p, s
+
+def estimateClusterImpurityHelper(
+        model,
+        x,
+        labels,
+        device : str = "cpu",
+        ):
+    model.eval()
+    model.to(device)
+    output = model(x.to(device))
+    model.cpu()
+    y = output["q_y"].detach().to("cpu")
+    del output
+    return y
+
+
+def estimateClusterImpurityLoop(
+        model,
+        xs,
+        labels,
+        device : str = "cpu",
+        ):
+    y = []
+    model.eval()
+    model.to(device)
+    data_loader = torch.utils.data.DataLoader(
+            dataset=SynteticDataSet(
+                data=xs,
+                labels=labels,
+                ),
+            batch_size=128,
+            shuffle=False,
+            )
+    for x, label in data_loader.__iter__():
+        x.to(device)
+        q_y = estimateClusterImpurityHelper(model, x, label, device,)
+        y.append(q_y.cpu())
+    y = torch.concat(y, dim=0)
+    n = y.shape[1] # number of clusters
+    r = -np.ones(n) # homogeny index
+    p = -np.ones(n) # label assignments to the clusters
+    s = -np.ones(n) # label assignments to the clusters
+    for i in range(n):
+        c = labels[y.argmax(-1) == i]
+        if c.shape[0] > 0:
+            r[i] = c.sum(0).max().item() / c.shape[0] 
+            p[i] = c.sum(0).argmax().item()
+            s[i] = c.shape[0]
+    return r, p, s
+
+def do_plot_helper(model, device : str = "cpu",):
+    """
+    ploting helper function for 
+    training procedures
+    """
+    model.cpu()
+    model.eval()
+    w = model.w_prior.sample((16,))
+    z = model.Pz(torch.cat([w, ], dim=-1))
+    mu = z[:, :, : model.nz].reshape(16 * model.nclasses, model.nz)
+    rec = model.Px(torch.cat([mu, ],dim=-1)).reshape(-1, 1, 28, 28)
+    if model.reclosstype == "Bernoulli":
+        rec = rec.sigmoid()
+    plot_images(rec, model.nclasses )
+    plt.pause(0.05)
+    plt.savefig("tmp.png")
+    #model.train()
+    #model.to(device)
+    return
+
+def test_accuracy_helper(model, x, y, device : str = "cpu",):
+    model.cpu()
+    model.eval()
+    #r, p, s = estimateClusterImpurityLoop(
+    r, p, s = estimateClusterImpurity(
+        model,
+        x,
+        y,
+        device,
+    )
+    print(p, "\n", r.mean(), "\n", r)
+    print(
+        (r * s).sum() / s.sum(),
+        "\n",
+    )
+    #model.train()
+    #model.to(device)
+    return
+
+def is_jsonable(x) -> bool:
+    try:
+        json.dumps(x)
+        return True
+    except:
+        return False
+
+def is_pickleable(x) -> bool:
+    try:
+        pickle.dumps(x)
+        return True
+    except:
+        return False
+
+def is_serializeable(x, method="json",) -> bool:
+    if method == "json":
+        return is_jsonable(x)
+    else:
+        return is_pickleable(x)
+
+
+def saveModelParameters(
+    model: nn.Module,
+    fpath: str,
+    method: str = "json",
+) -> Dict:
+    d = {}
+    for k, v in model.__dict__.copy().items():
+        if is_serializeable(v, method):
+            d[k] = v
+    if method == "json":
+        f = open(fpath, "w")
+        json.dump(d, f)
+        f.close()
+    else:  # use pickle
+        f = open(fpath, "wb")
+        pickle.dump(d, f)
+        f.close()
+    return d
+
+def loadModelParameter(
+        fpath : str,
+        method : str = "json",
+        ) -> Dict:
+    if method == "json":
+        f = open(fpath, "r")
+        params = json.load(f)
+        f.close()
+    else: # use pickle
+        f = open(fpath, "rb")
+        params = pickle.load(f,)
+        f.close()
+    return params

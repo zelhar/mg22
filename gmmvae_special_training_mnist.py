@@ -55,6 +55,9 @@ import gmmvae09 as M9
 import gmmvae10 as M10
 print(torch.cuda.is_available())
 
+#import gmmvae11 as M11
+import gmmvae12 as M12
+
 #matplotlib.use("QtCairo")
 plt.ion()
 sc.settings.verbosity = 3
@@ -163,6 +166,43 @@ model = M10.VAE_Dirichlet_Type1004R(
         bn=True,
         )
 
+model = M10.VAE_Dirichlet_Type1004R(
+        nx=28**2,
+        nh=1024,
+        nw=32,
+        nz=64,
+        nclasses=10,
+        concentration=1.0e-0,
+        #concentration=1.0e-0,
+        numhidden=2,
+        dropout=0.3,
+        reclosstype="Bernoulli",
+        bn=True,
+        )
+model.apply(init_weights)
+
+M10.basicTrainLoop(
+        model, 
+        data_loader,
+        #num_epochs=50,
+        #lrs = [1e-5, 5e-5, 1e-4, 1e-4, 1e-4, 1e-4, 1e-4, 1e-4, 1e-4, 5e-5, 5e-5,
+        #    1e-5, 1e-5],
+        num_epochs=500,
+        lrs = [5e-5, 1e-5, 1e-5],
+        wt=0e0,
+        report_interval=3,
+        do_plot=True,
+        test_accuracy=True,
+        )
+
+r,p,s = M10.estimateClusterImpurityLoop(model, test_data, test_labels, "cuda", )
+print(p, "\n", r.mean(), "\n", r)
+print((r*s).sum() / s.sum())
+
+torch.save(
+        model.state_dict(),
+        "./results/model_m10T004R(2nd try)_mnist_h1024_w32_z64_nh2_10C_B.state.1.pt",
+        )
 
 #best ever
 #torch.save(
