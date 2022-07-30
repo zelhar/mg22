@@ -2338,6 +2338,7 @@ def basicTrain(
         report_interval : int = 3,
         best_loss : float = 1e6,
         do_plot : bool = False,
+        test_accuracy : bool = False,
         ) -> None:
     model.train()
     model.to(device)
@@ -2367,9 +2368,9 @@ def basicTrain(
                 if do_plot:
                     model.cpu()
                     model.eval()
-                    w = model.w_prior.sample((5, ))
+                    w = model.w_prior.sample((16, ))
                     z = model.Pz(w)
-                    mu = z[:,:,:model.nz].reshape(5*model.nclasses, model.nz)
+                    mu = z[:,:,:model.nz].reshape(16*model.nclasses, model.nz)
                     rec = model.Px(mu).reshape(-1,1,28,28)
                     if model.reclosstype == "Bernoulli":
                         rec = rec.sigmoid()
@@ -2378,6 +2379,16 @@ def basicTrain(
                     plt.savefig("tmp.png")
                     model.train()
                     model.to(device)
+                if test_accuracy:
+                    model.eval()
+                    #model.cpu()
+                    #r,p,s = estimateClusterImpurityLoop(model, x.cpu(), y.cpu(), "cpu", )
+                    r,p,s = estimateClusterImpurityLoop(model, x, y, device, )
+                    print(p, "\n", r.mean(), "\n", r)
+                    print((r*s).sum() / s.sum(), "\n",)
+                    model.train()
+                    model.to(device)
+
     model.cpu()
     optimizer = None
     model.load_state_dict(best_result)
@@ -2428,9 +2439,9 @@ def trainSemiSuper(
                 if do_plot:
                     model.cpu()
                     model.eval()
-                    w = model.w_prior.sample((5, ))
+                    w = model.w_prior.sample((16, ))
                     z = model.Pz(w)
-                    mu = z[:,:,:model.nz].reshape(5*model.nclasses, model.nz)
+                    mu = z[:,:,:model.nz].reshape(16*model.nclasses, model.nz)
                     rec = model.Px(mu).reshape(-1,1,28,28)
                     if model.reclosstype == "Bernoulli":
                         rec = rec.sigmoid()
@@ -2500,8 +2511,10 @@ def basicTrainLoop(
     loss_type: str = "total_loss",
     report_interval: int = 3,
     do_plot : bool = False,
+    test_accuracy : bool = False,
 ) -> None:
     for lr in lrs:
+        print("epoch's lr = ", lr,)
         basicTrain(
             model,
             train_loader,
@@ -2513,6 +2526,7 @@ def basicTrainLoop(
             loss_type,
             report_interval,
             do_plot = do_plot,
+            test_accuracy=test_accuracy,
         )
 
 

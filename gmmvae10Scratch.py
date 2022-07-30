@@ -774,7 +774,9 @@ M9.trainSemiSuperLoop(
 # further MNIST tests
 
 model.eval()
+
 output = model(test_data)
+#output = model(test_data, test_labels)
 bdata.obsm["z"] = output["z"].detach().numpy()
 bdata.obs["predict"] = output["q_y"].detach().argmax(-1).numpy().astype(str)
 bdata.obs["predict2"] = output["d_logits"].detach().argmax(-1).numpy().astype(str)
@@ -783,11 +785,13 @@ del(output)
 #sc.pp.pca(adata,)
 sc.pp.neighbors(bdata, use_rep="z", n_neighbors=11,)
 sc.tl.umap(bdata,)
+
 sc.tl.louvain(bdata, )
 #sc.tl.leiden(adata, )
 #sc.pl.umap(adata, color=["leiden"], size=5,)
 sc.pl.umap(bdata, color=["labels"], size=5)
 sc.pl.umap(bdata, color=["louvain",], size=5,)
+
 sc.pl.umap(bdata, color=["predict", ],size=5)
 sc.pl.umap(bdata, color=["predict2", ],size=5)
 
@@ -993,7 +997,9 @@ model = M10.CVAE_Type1008(
         nx=28**2, nz=32, nh=1024, ny=10, dropout=0.25, 
         reclosstype="Bernoulli", )
 
+model.eval()
 z = torch.randn(10,model.nz)*1.01
+z = torch.randn(10,model.nz)*0.81
 y = torch.eye(10)
 zy = torch.cat([z,y], dim=-1)
 rec = model.Px(zy).reshape(-1,1,28,28)
