@@ -1031,3 +1031,46 @@ ut.loadModelParameter(
         "./results/semi_super_1503_model_params_granular.json",
         method="json",
         )
+
+
+
+############3 Pancreas
+# https://drive.google.com/drive/folders/1v3qySFECxtqWLRhRTSbfQDFqdUCAXql3
+adata = sc.read("./data/pancreas.h5ad")
+bdata = sc.read("./data/pancreas_2.h5ad")
+
+bdata
+sc.pp.filter_cells(bdata, min_genes=200)
+sc.pp.filter_genes(bdata, min_cells=3)
+bdata
+
+
+##### Other sh*t
+D = distributions.Dirichlet(concentration=torch.ones(5))
+p = D.sample()
+p
+
+r = D.sample()
+
+Q = distributions.Dirichlet(concentration=p)
+q = Q.sample((20,))
+q
+q.max(-1)
+
+S = distributions.Dirichlet(concentration=p * 1e-3)
+s = Q.sample((20,))
+s
+s.max(-1)
+
+
+M = distributions.Multinomial(total_count=2, probs=torch.ones(5))
+t = M.sample()
+t
+M.log_prob(t).exp()
+
+N = distributions.NegativeBinomial(total_count=1, probs=torch.ones(3)*0.75)
+N = distributions.NegativeBinomial(total_count=1, logits=torch.ones(3)*-11)
+t=N.sample()
+t
+N.log_prob(t).exp()
+

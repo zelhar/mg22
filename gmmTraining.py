@@ -895,6 +895,83 @@ def trainSemiSuperLoopCond(
             test_accuracy=test_accuracy,
         )
 
+def trainSuperCond(
+    model,
+    train_loader_labeled: torch.utils.data.DataLoader,
+    num_epochs=15,
+    lr=1e-3,
+    device: str = "cuda:0",
+    wt=1e-4,
+    report_interval: int = 3,
+    best_loss: float = 1e6,
+) -> None:
+    """
+    conditional version of trainSemiSuper
+    """
+    model.train()
+    model.to(device)
+    optimizer = optim.Adam(
+        model.parameters(),
+        lr=lr,
+        weight_decay=wt,
+    )
+    best_result = model.state_dict()
+    for epoch in range(num_epochs):
+        for idx, data in enumerate(train_loader_labeled):
+            x = data[0].flatten(1).to(device)
+            y = data[1].to(device)
+            if len(data) > 2:
+                cond1 = data[2].to(device)
+            else:
+                cond1 = None
+            model.train()
+            model.requires_grad_(True)
+            output = model.forward(x, cond1=cond1, y=y)
+            loss = output["losses"]["total_loss"]
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            if loss < best_loss:
+                best_result = model.state_dict()
+            if epoch % report_interval == 0 and idx % 1500 == 0:
+                print("epoch " + str(epoch))
+                print("labeled phase")
+                model.printDict(output["losses"])
+                print()
+    model.cpu()
+    model.load_state_dict(best_result)
+    del optimizer
+    print("done training")
+    return None
+
+
+def trainSuperLoopCond(
+    model,
+    train_loader_labeled: torch.utils.data.DataLoader,
+    num_epochs=15,
+    lrs: Iterable[float] = [
+        1e-3,
+    ],
+    device: str = "cuda:0",
+    wt=1e-4,
+    report_interval: int = 3,
+) -> None:
+    """
+    Tandem training for two models
+    """
+    for lr in lrs:
+        trainSuperCond(
+            model,
+            train_loader_labeled,
+            num_epochs,
+            lr,
+            device,
+            wt,
+            report_interval,
+        )
+
+
+
 def basicTandemTrain(
     model,
     model2,
