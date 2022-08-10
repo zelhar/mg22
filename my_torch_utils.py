@@ -1175,6 +1175,21 @@ def totalCorrelation3(p,q,r):
     tc = P * (P.log() - Q.log())
     return tc.sum()
 
+@curry
+def checkCosineDistance(
+        x : torch.Tensor,
+        model : nn.Module,
+        ) -> torch.Tensor:
+    """
+    x : the input tensor
+    model: the Autoencoder to feed x into.
+    outputs mean cosDistance(x, y)
+    where y = reconstruction of x by model.
+    """
+    #model.to(x.device)
+    y = model(x.flatten(1),)['rec']
+    cosD = torch.cosine_similarity(x.flatten(1), y, dim=-1).mean()
+    return cosD
 
 
 
@@ -1320,6 +1335,7 @@ def saveModelParameters(
     method: str = "json",
 ) -> Dict:
     d = {}
+    d['myName'] = str(model.__class__)
     for k, v in model.__dict__.copy().items():
         if is_serializeable(v, method):
             d[k] = v

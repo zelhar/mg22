@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
 # import pyro
-# import pyro.distributions as pyrodist
+import pyro.distributions as pyrodist
 import scanpy as sc
 import seaborn as sns
 
@@ -63,6 +63,7 @@ import gmmvae12 as M12
 import gmmvae13 as M13
 import gmmvae14 as M14
 import gmmvae15 as M15
+import gmmvae16 as M16
 import gmmTraining as Train
 
 print(torch.cuda.is_available())
@@ -1074,3 +1075,121 @@ t=N.sample()
 t
 N.log_prob(t).exp()
 
+####
+adata = sc.datasets.paul15()
+
+adata = sc.read("./data/pancreas.h5ad")
+
+#adata.X = adata.raw.X
+
+sc.pp.scale(adata, max_value=10.5,)
+
+data = torch.FloatTensor(adata.X)
+#enc_ct.fit(adata.obs["Granular cell type"])
+#enc_ct.fit(adata.obs["paul15_clusters"])
+enc_ct.fit(adata.obs["cell_type"])
+#labels = torch.IntTensor(
+#        enc_ct.transform(adata.obs["paul15_clusters"]))
+labels = torch.IntTensor(
+        enc_ct.transform(adata.obs["cell_type"]))
+labels = F.one_hot(labels.long(), num_classes=enc_ct.classes_.size).float()
+dataset = ut.SynteticDataSet(data, labels)
+data_loader = torch.utils.data.DataLoader(
+        dataset=dataset,
+        batch_size=128,
+        shuffle=True,
+        )
+
+model = M16.AE_Type1600G(
+        nx = adata.n_vars,
+        nh=1024*2,
+        nhq=1024*2,
+        nhp=1024*2,
+        nz=64,
+        dropout=0.15,
+        eps=1e-7,
+        )
+model.apply(init_weights)
+
+
+model = M15.AE_Type1500(
+        nx = adata.n_vars,
+        nh=1024*2,
+        nhq=1024*2,
+        nhp=1024*2,
+        nz=64,
+        dropout=0.25,
+        eps=1e-7,
+        reclosstype="mse",
+        )
+model.apply(init_weights)
+
+model = M15.VAE_Dirichlet_GMM_Type1502(
+        nx = adata.n_vars,
+        nh=1024*2,
+        nhq=1024*2,
+        nhp=1024*2,
+        nz=64,
+        nw=32,
+        dropout=0.0,
+        eps=1e-7,
+        reclosstype="mse",
+        nclasses=20,
+        concentration=1.0e0,
+        )
+model.apply(init_weights)
+
+Train.basicTrainLoop(
+        model,
+        data_loader,
+        None,
+        num_epochs=20,
+        lrs = [1e-6, 1e-5, 1e-4, 1e-4, 1e-3, 1e-3, 1e-3, 1e-4, 1e-5],
+        device="cuda",
+        wt=1e-3,
+        report_interval=7,
+        do_plot=False,
+        test_accuracy=False,
+        )
+
+
+model.cpu()
+model.eval()
+output = model(data, y=None)
+
+adata.obsm["z"] = output["mu_z"].detach().numpy()
+
+adata.obsm["z"] = output["z"].detach().numpy()
+
+adata.obs["pred"] = output["q_y"].detach().argmax(-1).numpy().astype(str)
+
+del output
+
+sc.pp.neighbors(adata, use_rep="z",)
+sc.tl.umap(adata,)
+sc.pl.umap(adata, color=["study"],)
+sc.pl.umap(adata, color=["cell_type", ], size=15)
+sc.pl.umap(adata, color=["cell_type", "pred",], size=15)
+
+
+
+
+
+x,y = data_loader.__iter__().next()
+output = model(x)
+
+
+model = M16.VAE_GMM_Type1603(
+        do_cc=True,)
+model.justCC()
+
+w = torch.randn(128, model.nw)
+z = model.Pz(w)[:,:,:model.nz]
+r = model.Px(z.reshape(-1,model.nz))
+c = torch.eye(model.nclasses).tile(128,1)
+p = model.justPredict(r)
+w.shape
+z.shape
+r.shape
+c.shape
+p.shape
