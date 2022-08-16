@@ -6,8 +6,16 @@
 #	biber $(fname)
 #	pdflatex $(fname)
 name = topic_list
+slides = slides_test
+
 
 topic_list.pdf:
 	pdflatex $(name)
 	biber $(name)
 	pdflatex $(name)
+
+slides_test.pdf:
+	pdflatex $(slides)
+	biber $(slides)
+	pdflatex $(slides)
+	
