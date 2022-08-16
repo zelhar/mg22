@@ -287,7 +287,8 @@ class AE_Type1600G(nn.Module):
         return output
 # reconstruiction error.
 
-class VAE_Dirichlet_GMM_Type1602(nn.Module):
+# added suffix 'xz' and replaced classifier from xwz to xz
+class VAE_Dirichlet_GMM_Type1602xz(nn.Module):
     """
     made some changes to the forward functions,
     loss_y_alt, not tanh on logvars
@@ -434,7 +435,8 @@ class VAE_Dirichlet_GMM_Type1602(nn.Module):
             resnet_y.conv1 = nn.Conv2d(1, 64, (7,7), (2,2), (3,3), bias=False)
             self.Qy = nn.Sequential(
                     #nn.Linear(nx+nz+nw, 64**2),
-                    nn.Linear(nx+nz+nw, nhq),
+                    #nn.Linear(nx+nz+nw, nhq),
+                    nn.Linear(nx+nz, nhq),
                     #nn.Sigmoid(),
                     activation,
                     nn.Linear(nhq, 64**2),
@@ -445,7 +447,8 @@ class VAE_Dirichlet_GMM_Type1602(nn.Module):
                     )
         else:
             self.Qy = ut.buildNetworkv5(
-                    [nx + nw + nz] + numhiddenq*[nhq] + [nclasses],
+                    [nx + nz] + numhiddenq*[nhq] + [nclasses],
+                    #[nx + nw + nz] + numhiddenq*[nhq] + [nclasses],
                     dropout=dropout, 
                     #activation=nn.LeakyReLU(),
                     #activation=nn.Sigmoid(),
@@ -459,7 +462,8 @@ class VAE_Dirichlet_GMM_Type1602(nn.Module):
             resnet_d.conv1 = nn.Conv2d(1, 64, (7,7), (2,2), (3,3), bias=False)
             self.Qd = nn.Sequential(
                     #nn.Linear(nw+nz, 64**2),
-                    nn.Linear(nw+nz, nhq),
+                    #nn.Linear(nw+nz, nhq),
+                    nn.Linear(nx+nz, nhq),
                     #nn.Sigmoid(),
                     activation,
                     nn.Linear(nhq, 64**2),
@@ -470,7 +474,8 @@ class VAE_Dirichlet_GMM_Type1602(nn.Module):
                     )
         else:
             self.Qd = ut.buildNetworkv5(
-                    [nw + nz] + numhiddenq*[nhq] + [nclasses],
+                    #[nw + nz] + numhiddenq*[nhq] + [nclasses],
+                    [nx + nz] + numhiddenq*[nhq] + [nclasses],
                     dropout=dropout, 
                     #activation=nn.LeakyReLU(),
                     activation=activation,
@@ -533,12 +538,14 @@ class VAE_Dirichlet_GMM_Type1602(nn.Module):
         output["mu_w"] = mu_w
         output["logvar_z"] = logvar_z
         output["logvar_w"] = logvar_w
-        q_y_logits = self.Qy(torch.cat([w,z,x,], dim=1))
+        #q_y_logits = self.Qy(torch.cat([w,z,x,], dim=1))
+        q_y_logits = self.Qy(torch.cat([z,x,], dim=1))
         q_y = nn.Softmax(dim=-1)(q_y_logits)
         if self.softargmax:
             q_y = ut.softArgMaxOneHot(q_y,)
         q_y = (eps/self.nclasses +  (1 - eps) * q_y)
-        d_logits = self.Qd(torch.cat([w,z,], dim=1))
+        #d_logits = self.Qd(torch.cat([w,z,], dim=1))
+        d_logits = self.Qd(torch.cat([z,x,], dim=1))
         output["d_logits"] = d_logits
         D_y = distributions.Dirichlet(d_logits.exp())
         if self.relax:
@@ -722,14 +729,15 @@ class VAE_Dirichlet_GMM_Type1602(nn.Module):
         output["mu_w"] = mu_w
         output["logvar_z"] = logvar_z
         output["logvar_w"] = logvar_w
-        q_y_logits = self.Qy(torch.cat([w,z,x,], dim=1))
+        #q_y_logits = self.Qy(torch.cat([w,z,x,], dim=1))
+        q_y_logits = self.Qy(torch.cat([z,x,], dim=1))
         q_y = nn.Softmax(dim=-1)(q_y_logits)
         if self.softargmax:
             q_y = ut.softArgMaxOneHot(q_y,)
         q_y = (eps/self.nclasses +  (1 - eps) * q_y)
         return q_y
 
-class VAE_Dirichlet_GMM_Type1602Temp(nn.Module):
+class VAE_Dirichlet_GMM_Type1602z(nn.Module):
     """
     made some changes to the forward functions,
     loss_y_alt, not tanh on logvars
@@ -1182,7 +1190,8 @@ class VAE_Dirichlet_GMM_Type1602Temp(nn.Module):
         q_y = (eps/self.nclasses +  (1 - eps) * q_y)
         return q_y
 
-class VAE_GMM_Type1603(nn.Module):
+# added suffix 'xz' and replaced classifier from xwz to xz
+class VAE_GMM_Type1603xz(nn.Module):
     """
     made some changes to the forward functions,
     loss_y_alt, not tanh on logvars
@@ -1324,7 +1333,8 @@ class VAE_GMM_Type1603(nn.Module):
             resnet_y.conv1 = nn.Conv2d(1, 64, (7,7), (2,2), (3,3), bias=False)
             self.Qy = nn.Sequential(
                     #nn.Linear(nx+nz+nw, 64**2),
-                    nn.Linear(nx+nz+nw, nhq),
+                    #nn.Linear(nx+nz+nw, nhq),
+                    nn.Linear(nx+nz, nhq),
                     #nn.LeakyReLU(),
                     #nn.Sigmoid(),
                     activation,
@@ -1336,7 +1346,8 @@ class VAE_GMM_Type1603(nn.Module):
                     )
         else:
             self.Qy = ut.buildNetworkv5(
-                    [nx + nw + nz] + numhiddenq*[nhq] + [nclasses],
+                    #[nx + nw + nz] + numhiddenq*[nhq] + [nclasses],
+                    [nx + nz] + numhiddenq*[nhq] + [nclasses],
                     dropout=dropout, 
                     #activation=nn.LeakyReLU(),
                     #activation=nn.Sigmoid(),
@@ -1401,7 +1412,8 @@ class VAE_GMM_Type1603(nn.Module):
         output["mu_w"] = mu_w
         output["logvar_z"] = logvar_z
         output["logvar_w"] = logvar_w
-        q_y_logits = self.Qy(torch.cat([w,z,x,], dim=1))
+        #q_y_logits = self.Qy(torch.cat([w,z,x,], dim=1))
+        q_y_logits = self.Qy(torch.cat([z,x,], dim=1))
         q_y = nn.Softmax(dim=-1)(q_y_logits)
         if self.softargmax:
             q_y = ut.softArgMaxOneHot(q_y,)
@@ -1584,14 +1596,16 @@ class VAE_GMM_Type1603(nn.Module):
         output["mu_w"] = mu_w
         output["logvar_z"] = logvar_z
         output["logvar_w"] = logvar_w
-        q_y_logits = self.Qy(torch.cat([w,z,x,], dim=1))
+        #q_y_logits = self.Qy(torch.cat([w,z,x,], dim=1))
+        q_y_logits = self.Qy(torch.cat([z,x,], dim=1))
         q_y = nn.Softmax(dim=-1)(q_y_logits)
         if self.softargmax:
             q_y = ut.softArgMaxOneHot(q_y,)
         q_y = (eps/self.nclasses +  (1 - eps) * q_y)
         return q_y
 
-class VAE_GMM_Type1603Temp(nn.Module):
+# replaces the 'Temp' suffix with 'z'
+class VAE_GMM_Type1603z(nn.Module):
     """
     made some changes to the forward functions,
     loss_y_alt, not tanh on logvars

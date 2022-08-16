@@ -274,7 +274,7 @@ Train.basicTrainLoop(
 )
 
 
-r,p,s = ut.estimateClusterImpurityLoop(modela, test_data, test_labels, "cuda", )
+r,p,s = ut.estimateClusterImpurityLoop(model, test_data, test_labels, "cuda", )
 print(p, "\n", r.mean(), "\n", r)
 print((r*s).sum() / s.sum())
 
@@ -283,12 +283,9 @@ model.eval()
 x,y = test_loader.__iter__().next()
 
 
-output = model(x)
 
-qy = output['q_y'].detach().argmax(-1)
-qy
 
-model = M16.VAE_Dirichlet_GMM_Type1602Temp(
+model = M16.VAE_Dirichlet_GMM_Type1602z(
     nx=28**2,
     nclasses=10,
     nh=1024,
@@ -317,7 +314,7 @@ model = M16.VAE_Dirichlet_GMM_Type1602Temp(
 )
 model.apply(init_weights)
 
-modela = M16.VAE_GMM_Type1603Temp(
+modela = M16.VAE_GMM_Type1603z(
     nx=28**2,
     nclasses=10,
     nh=1024,
@@ -345,9 +342,95 @@ modela = M16.VAE_GMM_Type1603Temp(
 )
 modela.apply(init_weights)
 
-model.do_cc = True
-model.cc_scale = 1
-model.cc_radius = 0e-1
+#model.do_cc = True
+#model.cc_scale = 1
+#model.cc_radius = 0e-1
+
+model = M16.VAE_GMM_Type1603z(
+    nx=28**2,
+    nclasses=10,
+    nh=1024,
+    nhp=1024,
+    nhq=1024,
+    nz=6,
+    nw=6,
+    numhidden=2,
+    numhiddenp=2,
+    numhiddenq=2,
+    dropout=0.3,
+    bn=True,
+    yscale=1e0,
+    zscale=1e0,
+    wscale=1e0,
+    reclosstype="Bernoulli",
+    #reclosstype="mse",
+    relax=False,
+    use_resnet=True,
+    restrict_w=True,
+    restrict_z=True,
+    do_cc=True,
+    cc_radius=0.05,
+    cc_scale=1e1,
+)
+model.apply(init_weights)
+
+# great sucees
+model = M16.VAE_GMM_Type1603z(
+    nx=28**2,
+    nclasses=20,
+    nh=1024,
+    nhp=1024,
+    nhq=1024,
+    nz=6,
+    nw=6,
+    numhidden=2,
+    numhiddenp=2,
+    numhiddenq=2,
+    dropout=0.005,
+    bn=True,
+    yscale=2e0,
+    zscale=1e0,
+    wscale=1e0,
+    reclosstype="Bernoulli",
+    #reclosstype="mse",
+    relax=True,
+    #use_resnet=True,
+    restrict_w=True,
+    restrict_z=True,
+    #do_cc=True,
+    #cc_radius=0.05,
+    #cc_scale=1e1,
+)
+model.apply(init_weights)
+
+
+# great sucees
+model = M16.VAE_Dirichlet_GMM_Type1602z(
+    nx=28 ** 2,
+    #concentration=2e0,
+    concentration=1e-0,
+    nclasses=20,
+    nh=1024,
+    nhp=1024,
+    nhq=1024,
+    nz=8,
+    nw=8,
+    numhidden=2,
+    numhiddenp=2,
+    numhiddenq=2,
+    dropout=0,
+    bn=True,
+    yscale=1e0,
+    zscale=1e0,
+    wscale=1e0,
+    reclosstype="Bernoulli",
+    # reclosstype="mse",
+    relax=True,
+    # use_resnet=True,
+    restrict_w=True,
+    restrict_z=True,
+)
+model.apply(init_weights)
 
 
 
@@ -381,17 +464,66 @@ Train.basicTrainLoop(
     test_accuracy=True,
 )
 
+Train.basicTrainLoop(
+    model,
+    data_loader,
+    None,
+    num_epochs=50,
+    #lrs=[1e-5,1e-4,1e-3,1e-3,1e-4,1e-5],
+    #lrs=[1e-4,1e-4,1e-4,1e-4],
+    #lrs=[1e-3,1e-3,1e-4,1e-5], #great success
+    lrs=[1e-3,1e-4,1e-5],
+    wt=1e-3,
+    #report_interval=10,
+    report_interval=1,
+    do_plot=True,
+    test_accuracy=True,
+)
+
+
+Train.basicTrainLoop(
+    model,
+    data_loader,
+    None,
+    num_epochs=150,
+    #lrs=[1e-5,1e-4,1e-3,1e-3,1e-4,1e-5],
+    #lrs=[1e-4,1e-4,1e-4,1e-4],
+    #lrs=[1e-3,1e-3,1e-4,1e-5], #great success
+    lrs=[1e-3,1e-4,1e-5],
+    wt=1e-3,
+    #report_interval=10,
+    report_interval=1,
+    do_plot=True,
+    test_accuracy=True,
+)
+
+Train.basicTrainLoop(
+    model,
+    data_loader,
+    test_loader,
+    num_epochs=50,
+    #lrs=[1e-5,1e-4,1e-3,1e-3,1e-4,1e-5],
+    #lrs=[1e-4,1e-4,1e-4,1e-4],
+    #lrs=[1e-3,1e-3,1e-4,1e-5], #great success
+    lrs=[1e-5,1e-5,1e-6],
+    wt=1e-3,
+    #report_interval=10,
+    report_interval=1,
+    do_plot=True,
+    test_accuracy=True,
+)
+
 
 adata = sc.AnnData(X = test_data.flatten(1).detach().numpy())
 adata.obs['labels'] = test_labels.argmax(-1).numpy().astype(str)
-
-output = modela(test_data, )
+output = model(test_data, )
 adata.obsm["z"] = output["mu_z"].detach().numpy()
-
 adata.obs["pred"] = output["q_y"].detach().argmax(-1).numpy().astype(str)
+del output
 
 sc.pp.neighbors(adata, n_neighbors=15, use_rep="z")
 sc.tl.umap(adata,)
+sc.tl.louvain(adata,)
 
 sc.settings.set_figure_params(
     #dpi=80,
@@ -403,22 +535,47 @@ sc.pl.umap(adata, color = "pred")
 
 sc.pl.umap(adata, color = ["labels", "pred"],)
 
+sc.pl.umap(adata, color = ["labels", "pred", "louvain"],)
+
 modela.load_state_dict(
         torch.load("./results/1660135620.387979modela_state.pt",))
+
 ut.checkCosineDistance(x, modela) #0.9
 
-plt.cla()
-plt.clf()
+ut.checkCosineDistance(x, model) #0.9
 
 plt.savefig("./temp_figure.png",)
 
+plt.savefig("./tmp_20.png",)
+
+
+plt.savefig("./tmp_20_d.png",)
+
+plt.savefig("./tmp_20_umap.png",)
+
+plt.savefig("./tmp_20_d__umap.png",)
+
+plt.savefig("./tmp_fmnist_d.png_20_2.png",)
+
+plt.savefig("./tmp_fmnist_d.png_20_umap.png",)
+
+plt.savefig("./tmp_fmnist_d.png_20_umap2.png",)
+
+plt.savefig("./tmp_fmnist_d.png_20_2_umap.png",)
+
+plt.savefig("./tmp_fmnist_d.png_10_ss_umap.png",)
+
+plt.savefig("./tmp_mnist_d.png_10_ss_umap.png",)
+
 plt.savefig("./tmp.png",)
 
+plt.cla()
+plt.clf()
 plt.close()
 
 d = ut.loadModelParameter("./results/1660132764.221625model_params.pt")
 
-model1 = M16.VAE_GMM_Type1603Temp(
+model1 = M16.VAE_GMM_Type1603z(
     nx=28**2,
     nclasses=10,
     nh=1024,
@@ -445,7 +602,7 @@ model1 = M16.VAE_GMM_Type1603Temp(
     #cc_scale=1e1,
 )
 model1.apply(init_weights)
-model2 = M16.VAE_GMM_Type1603Temp(
+model2 = M16.VAE_GMM_Type1603z(
     nx=28**2,
     nclasses=10,
     nh=1024,
@@ -473,47 +630,23 @@ model2 = M16.VAE_GMM_Type1603Temp(
 )
 model2.apply(init_weights)
 
-model = M16.VAE_GMM_Type1603Temp(
-    nx=28**2,
-    nclasses=10,
-    nh=1024,
-    nhp=1024,
-    nhq=1024,
-    nz=6,
-    nw=6,
-    numhidden=2,
-    numhiddenp=2,
-    numhiddenq=2,
-    dropout=0.3,
-    bn=True,
-    yscale=1e0,
-    zscale=1e0,
-    wscale=1e0,
-    reclosstype="Bernoulli",
-    #reclosstype="mse",
-    relax=False,
-    use_resnet=True,
-    restrict_w=True,
-    restrict_z=True,
-    do_cc=True,
-    cc_radius=0.05,
-    cc_scale=1e1,
-)
-model.apply(init_weights)
 
 Train.basicDuoTrainLoop(
-        model1,
-        model2,
-        data_loader,
-        test_loader,
-        num_epochs=50,
-        lrs = [1e-4,1e-4,],
-        wt=1e-3,
-        report_interval=1,
-        do_plot=True,
-        test_accuracy=True,
-        mi_scale=1e1,
-        )
+    model1,
+    model2,
+    data_loader,
+    test_loader,
+    num_epochs=50,
+    lrs=[
+        1e-4,
+        1e-4,
+    ],
+    wt=1e-3,
+    report_interval=1,
+    do_plot=True,
+    test_accuracy=True,
+    mi_scale=1e1,
+)
 
 Train.basicTandemTrainLoop(
         model1,
@@ -527,4 +660,284 @@ Train.basicTandemTrainLoop(
         do_plot=True,
         test_accuracy=True,
         mi_scale=1e1,
+        )
+
+
+#### FashionMnist
+# https://github.com/zalandoresearch/fashion-mnist
+# categories (in label order): 
+#                              0:t-shirt, 1:trouser, 2:pullover, 3:dress, 4:coat, 
+#                              5:sandal, 6:shirt, sneaker, 8:bag, 9:ankle boot.
+transform = transforms.Compose(
+    [
+        transforms.ToTensor(),
+    ]
+)
+train_dataset = datasets.FashionMNIST(
+    "data/",
+    train=True,
+    download=True,
+    transform=transform,
+)
+test_dataset = datasets.FashionMNIST(
+    "data/",
+    train=False,
+    download=True,
+    transform=transform,
+)
+train_data = train_dataset.data.float() / 255
+test_data = test_dataset.data.float() / 255
+train_labels = F.one_hot(
+    train_dataset.targets.long(),
+    num_classes=10,
+).float()
+test_labels = F.one_hot(
+    test_dataset.targets.long(),
+    num_classes=10,
+).float()
+
+data_loader = torch.utils.data.DataLoader(
+    dataset=ut.SynteticDataSetV2(
+        dati=[
+            train_data,
+            train_labels,
+        ],
+    ),
+    batch_size=128,
+    shuffle=True,
+)
+test_loader = torch.utils.data.DataLoader(
+    dataset=ut.SynteticDataSetV2(
+        dati=[
+            test_data,
+            test_labels,
+        ],
+    ),
+    batch_size=128,
+    shuffle=True,
+)
+
+subset = ut.randomSubset(s=len(train_labels), r=0.1)
+labeled_data_loader = torch.utils.data.DataLoader(
+        dataset=ut.SynteticDataSet(
+            data=train_data[subset],
+            labels=train_labels[subset],
+            ),
+        batch_size=128,
+        shuffle=True,
+        )
+unlabeled_data_loader = torch.utils.data.DataLoader(
+        dataset=ut.SynteticDataSet(
+            data=train_data[subset == False],
+            labels=train_labels[subset == False],
+            ),
+        batch_size=128,
+        shuffle=True,
+        )
+
+model = M16.VAE_Dirichlet_GMM_Type1602z(
+    nx=28 ** 2,
+    #concentration=2e0,
+    concentration=1e-0,
+    nclasses=20,
+    nh=1024,
+    nhp=1024,
+    nhq=1024,
+    nz=8,
+    nw=8,
+    numhidden=2,
+    numhiddenp=2,
+    numhiddenq=2,
+    dropout=0,
+    bn=True,
+    yscale=1e0,
+    zscale=1e0,
+    wscale=1e0,
+    reclosstype="Bernoulli",
+    # reclosstype="mse",
+    relax=True,
+    # use_resnet=True,
+    restrict_w=True,
+    restrict_z=True,
+)
+model.apply(init_weights)
+
+output = model(x,)
+rec = output['rec']
+ut.plot_2images(x.reshape(-1,1,28,28),
+        rec.reshape(-1,1,28,28),)
+plt.savefig("tmp_rec.png")
+
+# less good than the non-resnet
+#model = M16.VAE_Dirichlet_GMM_Type1602z(
+model = M16.VAE_Dirichlet_GMM_Type1602xz(
+    nx=28 ** 2,
+    concentration=2e0,
+    #concentration=1e-0,
+    #nclasses=20,
+    nclasses=30,
+    nh=1024,
+    nhp=1024,
+    nhq=1024,
+    #nz=16,
+    #nw=16,
+    nz=32,
+    nw=18,
+    numhidden=2,
+    numhiddenp=2,
+    numhiddenq=2,
+    dropout=0.1,
+    bn=True,
+    yscale=1e0,
+    zscale=1e0,
+    wscale=1e0,
+    reclosstype="Bernoulli",
+    # reclosstype="mse",
+    relax=True,
+    #use_resnet=True,
+    restrict_w=True,
+    restrict_z=True,
+)
+model.apply(init_weights)
+
+model = M16.VAE_Dirichlet_GMM_Type1602xz(
+    nx=28 ** 2,
+    concentration=3.5e0,
+    #concentration=1e-0,
+    #nclasses=20,
+    #nclasses=30,
+    nclasses=10,
+    nh=1024,
+    nhp=1024,
+    nhq=1024,
+    #nz=16,
+    #nw=16,
+    nz=64,
+    nw=32,
+    numhidden=2,
+    numhiddenp=2,
+    numhiddenq=2,
+    dropout=0.25,
+    bn=True,
+    yscale=1e0,
+    zscale=1e0,
+    wscale=1e0,
+    reclosstype="Bernoulli",
+    #reclosstype="mse",
+    #relax=True,
+    use_resnet=True,
+    restrict_w=True,
+    restrict_z=True,
+)
+model.apply(init_weights)
+
+
+Train.basicTrainLoop(
+    model,
+    data_loader,
+    None,
+    num_epochs=15,
+    #lrs=[1e-5,1e-4,1e-3,1e-3,1e-4,1e-5],
+    #lrs=[1e-4,1e-4,1e-4,1e-4],
+    lrs=[1e-5,1e-5,1e-4,1e-4,1e-4,1e-5,1e-6],
+    wt=1e-3,
+    #report_interval=10,
+    report_interval=1,
+    do_plot=True,
+    test_accuracy=True,
+)
+
+Train.basicTrainLoop(
+    model,
+    data_loader,
+    None,
+    num_epochs=15,
+    #lrs=[1e-5,1e-4,1e-3,1e-3,1e-4,1e-5],
+    #lrs=[1e-4,1e-4,1e-4,1e-4],
+    lrs=[1e-3,1e-3,1e-3,1e-3,1e-4,1e-5,1e-6],
+    wt=1e-3,
+    #report_interval=10,
+    report_interval=1,
+    do_plot=True,
+    test_accuracy=True,
+)
+
+Train.basicTrainLoop(
+    model,
+    data_loader,
+    None,
+    num_epochs=5,
+    #lrs=[1e-5,1e-4,1e-3,1e-3,1e-4,1e-5],
+    #lrs=[1e-4,1e-4,1e-4,1e-4],
+    lrs=[1e-5,],
+    wt=1e-3,
+    #report_interval=10,
+    report_interval=3,
+    do_plot=True,
+    test_accuracy=True,
+)
+
+
+
+### semisuprvised
+model = M16.VAE_Dirichlet_GMM_Type1602z(
+    nx=28 ** 2,
+    #concentration=2e0,
+    concentration=1e-0,
+    nclasses=10,
+    nh=1024,
+    nhp=1024,
+    nhq=1024,
+    nz=32,
+    nw=32,
+    numhidden=2,
+    numhiddenp=2,
+    numhiddenq=2,
+    dropout=0,
+    bn=True,
+    yscale=1e0,
+    zscale=1e0,
+    wscale=1e0,
+    reclosstype="Bernoulli",
+    # reclosstype="mse",
+    #relax=True,
+    # use_resnet=True,
+    restrict_w=True,
+    restrict_z=True,
+)
+model.apply(init_weights)
+
+Train.trainSemiSuperLoop(
+        model,
+        labeled_data_loader,
+        unlabeled_data_loader,
+        test_loader,
+        num_epochs=50,
+        lrs = [1e-3,1e-3,1e-4,1e-5,],
+        wt=0,
+        do_unlabeled=True,
+        do_plot=True,
+        do_validation=True,
+        test_accuracy=True,
+        report_interval=5,
+        )
+
+ut.saveModelParameters(
+        model,
+        "./results/" + str(datetime.timestamp(datetime.now())) + "ss_fmnist__model_params.pt",
+        method="json",
+        )
+torch.save(
+        model.state_dict(),
+        "./results/" + str(datetime.timestamp(datetime.now())) + "ss_fmnist_model_state.pt",
+        )
+
+ut.saveModelParameters(
+        model,
+        "./results/" + str(datetime.timestamp(datetime.now())) + "ss_mnist__model_params.pt",
+        method="json",
+        )
+torch.save(
+        model.state_dict(),
+        "./results/" + str(datetime.timestamp(datetime.now())) + "ss_mnist_model_state.pt",
         )

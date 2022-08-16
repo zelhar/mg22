@@ -42,7 +42,6 @@ from typing import List, Set, Dict, Tuple
 from typing import Mapping, MutableMapping, Sequence, Iterable
 from typing import Union, Any, cast, IO, TextIO
 
-import keyboard
 
 # my own sauce
 # from my_torch_utils import denorm, normalize, mixedGaussianCircular
