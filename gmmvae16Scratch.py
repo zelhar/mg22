@@ -274,14 +274,6 @@ Train.basicTrainLoop(
 )
 
 
-r,p,s = ut.estimateClusterImpurityLoop(model, test_data, test_labels, "cuda", )
-print(p, "\n", r.mean(), "\n", r)
-print((r*s).sum() / s.sum())
-
-model.eval()
-
-x,y = test_loader.__iter__().next()
-
 
 
 
@@ -662,6 +654,210 @@ Train.basicTandemTrainLoop(
         mi_scale=1e1,
         )
 
+######
+
+#model = M16.VAE_Dirichlet_GMM_Type1602xz(
+model = M16.VAE_Dirichlet_GMM_Type1602xzMNIST(
+        nx=28**2,
+        nh=1024,
+        nw=32,
+        nz=64,
+        nclasses=10,
+        concentration=1.5e-0,
+        #concentration=0.5e-1,
+        #yscale=1e1,
+        numhidden=2,
+        dropout=0.15,
+        reclosstype="Bernoulli",
+        use_resnet_y=True,
+        bn=True,
+        #restrict_w=True,
+        #restrict_z=True,
+        )
+model.apply(init_weights)
+
+#best ever
+model = M10.VAE_Dirichlet_Type1004R(
+        nx=28**2,
+        nh=1024,
+        nw=32,
+        nz=64,
+        nclasses=10,
+        #concentration=1.5e-0,
+        concentration=1.0e-0,
+        numhidden=2,
+        dropout=0.3,
+        reclosstype="Bernoulli",
+        bn=True,
+        )
+model.apply(init_weights)
+
+model = M16.VAE_GMM_Type1603xz(
+    nx=28**2,
+    nclasses=10,
+    nh=1024,
+    nhp=1024,
+    nhq=1024,
+    nz=8,
+    nw=8,
+    numhidden=2,
+    numhiddenp=2,
+    numhiddenq=2,
+    dropout=0.05,
+    bn=True,
+    yscale=1e0,
+    zscale=1e0,
+    wscale=1e0,
+    reclosstype="Bernoulli",
+    #reclosstype="mse",
+    #relax=True,
+    #use_resnet=True,
+    restrict_w=True,
+    restrict_z=True,
+    #do_cc=True,
+    #cc_radius=0.05,
+    #cc_scale=1e1,
+)
+model.apply(init_weights)
+
+# super geil
+# this model initially placed 0 in 2 cluster, and I think 7 and 9,4 were in 
+# two shared cluster and with lr=1e-3 and wt=1e-3 It got stuck on
+# this state.
+# I then ran 10-20 rounds with wt=5e-2 and lr=5e-3, then wt=1e-2 lr=1e-2 and
+# amazingly one of the 0 clusters was broken off, gradually it became a 4
+# cluster, the 9 and 7 clusters became purer.
+# then refined the result with a lower lr and wt.
+model = M16.VAE_Dirichlet_GMM_Type1602xz(
+    nx=28 ** 2,
+    #concentration=2e0,
+    concentration=1e-0,
+    nclasses=10,
+    nh=1024,
+    nhp=1024,
+    nhq=1024,
+    nz=8,
+    nw=8,
+    numhidden=2,
+    numhiddenp=2,
+    numhiddenq=2,
+    dropout=0,
+    bn=True,
+    yscale=1e0,
+    zscale=1e0,
+    wscale=1e0,
+    reclosstype="Bernoulli",
+    # reclosstype="mse",
+    relax=True,
+    # use_resnet=True,
+    restrict_w=True,
+    restrict_z=True,
+)
+model.apply(init_weights)
+
+model = M16.VAE_Dirichlet_GMM_Type1602z(
+    nx=28 ** 2,
+    #concentration=2e0,
+    concentration=1e-0,
+    nclasses=16,
+    nh=128*5,
+    nhp=128*5,
+    nhq=128*5,
+    nz=8*2,
+    nw=8*2,
+    numhidden=2,
+    numhiddenp=2,
+    numhiddenq=2,
+    dropout=0.30,
+    bn=True,
+    yscale=1e0,
+    zscale=1e0,
+    wscale=1e0,
+    reclosstype="Bernoulli",
+    # reclosstype="mse",
+    relax=True,
+    # use_resnet=True,
+    #restrict_w=True,
+    #restrict_z=True,
+)
+model.apply(init_weights)
+
+
+model.eval()
+r,p,s = ut.estimateClusterImpurityLoop(model, test_data, test_labels, "cuda", )
+print(p, "\n", r.mean(), "\n", r)
+print((r*s).sum() / s.sum())
+
+
+x,y = test_loader.__iter__().next()
+
+
+Train.basicTrainLoop(
+    model,
+    data_loader,
+    test_loader,
+    num_epochs=100,
+    #lrs=[1e-5,1e-4,1e-3,1e-3,1e-4,1e-5],
+    #lrs=[1e-4,1e-4,1e-4,1e-4],
+    #lrs=[1e-3,1e-3,1e-4,1e-5], #great success
+    #lrs=[1e-4, ],
+    #lrs=[1e-3, ],
+    lrs=[1e-4, ],
+    wt=1e-4,
+    #report_interval=10,
+    report_interval=1,
+    do_plot=True,
+    test_accuracy=True,
+)
+
+
+M10.basicTrainLoop(
+    model,
+    data_loader,
+    test_loader,
+    num_epochs=5,
+    lrs=[1e-5,5e-5,1e-4,5e-4,5e-4,1e-4],
+    #lrs=[1e-4,1e-4,1e-4,1e-4],
+    #lrs=[1e-3,1e-3,1e-4,1e-5], #great success
+    #lrs=[1e-4, 1e-4, 1e-3],
+    wt=1e-3,
+    #report_interval=10,
+    report_interval=1,
+    do_plot=True,
+    test_accuracy=True,
+)
+
+#model.load_state_dict(
+#    torch.load(
+#        "./results/model_m10T004R_mnist_h1024_w32_z64_nh2_10C_B.state.2.pt",
+#    )
+#)
+#
+#ut.saveModelParameters(
+#    model,
+#    "./results/"
+#    + str(datetime.timestamp(datetime.now()))
+#    + "mnist_1004R_best"
+#    + "model_params.pt",
+#    method="json",
+#)
+#torch.save(
+#    model.state_dict(),
+#    "./results/"
+#    + str(datetime.timestamp(datetime.now()))
+#    + "mnist_1004R_best"
+#    + "model_state.pt",
+#)
+
+ut.saveModelParameters(
+        model,
+        "./results/model_d_xz_mnist10" + str(datetime.timestamp(datetime.now())) + "model_params.pt",
+        method="json",
+        )
+torch.save(
+        model.state_dict(),
+        "./results/model_d_xz_mnist10" + str(datetime.timestamp(datetime.now())) + "model_state.pt",
+        )
 
 #### FashionMnist
 # https://github.com/zalandoresearch/fashion-mnist
