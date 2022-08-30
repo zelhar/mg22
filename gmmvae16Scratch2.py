@@ -471,7 +471,8 @@ sc.tl.louvain(xdata,)
 sc.pl.umap(xdata, color=["base_type", "predict", "louvain",], frameon=False, legend_loc='on data',
         legend_fontsize=9,)
 
-sc.pl.umap(xdata, color=["paul15_clusters", "predict", "louvain",], frameon=False, legend_loc='on data',
+sc.pl.umap(xdata, color=["paul15_clusters", "predict", "louvain",],
+        frameon=False, legend_loc='on data',
         legend_fontsize=9,)
 
 plt.savefig("./tmp.png",)
@@ -484,9 +485,5 @@ plt.savefig("./tmp.png",)
 #xdata = sc.read("./data/pbmc3k_processed.h5ad")
 #xdata = sc.read_10x_mtx("./data/filtered_gene_bc_matrices/hg19/",  )
 #xdata = sc.datasets.paul15()
-
-bdata = sc.read("./data/scgen/scGen_datasets/pancreas.h5ad")
-
-bdata
 
 
