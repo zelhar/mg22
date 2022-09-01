@@ -106,6 +106,9 @@ enc_ct = LabelEncoder()
 adata = sc.read_h5ad("./data/scgen/scGen_datasets/train_study.h5ad")
 bdata = sc.read_h5ad("./data/scgen/scGen_datasets/valid_study.h5ad")
 
+adata.X = adata.X.toarray()
+bdata.X = bdata.X.toarray()
+
 adata = ad.concat([adata, bdata], label="dataset",)
 
 #sc.pp.filter_cells(adata, min_genes=200)
