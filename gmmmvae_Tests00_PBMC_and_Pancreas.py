@@ -27,9 +27,13 @@ import sklearn
 from sklearn import datasets as skds
 from sklearn.cluster import KMeans
 from sklearn.metrics.cluster import normalized_mutual_info_score
-from sklearn.preprocessing import OneHotEncoder, LabelEncoder
+from sklearn.preprocessing import OneHotEncoder, LabelEncoder, OrdinalEncoder
 from sklearn import mixture
+import operator
+from operator import add, abs, mul, ge, gt
+import toolz
 from toolz import partial, curry
+from toolz import groupby, count, reduce, reduceby, countby
 from torch import nn, optim, distributions, Tensor
 from torch.nn.functional import one_hot
 from torchvision import datasets, transforms, models
@@ -743,3 +747,21 @@ sc.pl.umap(xdata, color=["condition", "cell_type",],
 
 plt.savefig("./tmp.png",)
 
+
+
+
+
+
+#####
+adata = sc.datasets.paul15()
+
+adata.obs["type"] = [re.sub("[0-9]", "", s) for s in adata.obs["paul15_clusters"]]
+
+adata.obs["cluster_num"] = [re.sub("[a-zA-Z]", "", s) for s in adata.obs["paul15_clusters"]]
+
+countby(lambda x:x, adata.obs["type"])
+
+xdata = ut.balanceAnnData(adata, "type", noreps=True,)
+
+
+countby("type", xdata.obs)

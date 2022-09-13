@@ -18,11 +18,19 @@ from torch import Tensor
 from math import pi, sin, cos, sqrt, log
 import json
 import pickle
+import anndata as ad
+import scanpy as sc
 
 import networkx as nx
 
+from datetime import datetime
 
+import toolz
 from toolz import partial, curry
+from toolz import groupby, count, reduce, reduceby, countby
+
+import operator
+from operator import add, mul
 
 def gaussian_nll(mu, log_sigma, x):
     return 0.5 * torch.pow((x - mu) / log_sigma.exp(), 2) + log_sigma + 0.5 * np.log(2 * np.pi)
@@ -1365,8 +1373,69 @@ def loadModelParameter(
         f.close()
     return params
 
+def balanceAnnData(
+    adata: ad._core.anndata.AnnData,
+    catKey: str,
+    numSamples: int = 2500,
+    noreps: bool = False,
+) -> ad._core.anndata.AnnData:
+    """
+    creates a balanced set with numSamples objects per each
+    category in the selected catKey category class
+    by random selection with repetitions.
+    IF noreps == True, numSamples is ignored and instead
+    from each group m samples without repetitions are choses,
+    where m is the size of the smallest group.
+    """
+    andata_list = []
+    cats = list(np.unique(adata.obs[catKey]))
+    m = 0
+    if noreps:
+        m = np.min(list(countby(lambda x: x, adata.obs[catKey]).values()))
+    for c in cats:
+        marker = adata.obs[catKey] == c
+        n = np.sum(marker)
+        if not noreps:
+            s = np.random.randint(0, n, numSamples)  # select with repetitions
+        else:
+            s = np.random.permutation(n)[:m]
+        andata_list.append(
+            adata[marker][s].copy(),
+        )
+    xdata = ad.concat(
+        andata_list,
+        join="outer",
+        label="set",
+    )
+    xdata.obs_names_make_unique()
+    return xdata
+    
+
+def randomString(
+        n : int = 8,
+        pad : str ="_",
+        ) -> str:
+    """
+    generate a random ascii string of length n, 
+    padded from both ends with pad.
+    """
+    ls = np.random.randint(ord("A"), ord("z")+1, n)
+    ls = [chr(i) for i in ls]
+    ls = reduce(add, ls)
+    cs = toolz.concatv(
+            np.arange(ord("A"), ord("Z")+1,1),
+            np.arange(ord("a"), ord("z")+1,1),
+            )
+    cs = list(cs)
+    ls = np.random.choice(cs, n)
+    ls = reduce(
+            add, toolz.map(chr, ls))
+    ls = pad + ls + pad
+    return ls
 
 
+def timeStamp() -> str:
+    return str(datetime.timestamp(datetime.now()))
 
 
 

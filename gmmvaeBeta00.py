@@ -35,6 +35,9 @@ from sklearn import mixture
 from sklearn.cluster import KMeans
 from sklearn.metrics.cluster import normalized_mutual_info_score
 from sklearn.preprocessing import OneHotEncoder, LabelEncoder
+import operator
+from operator import add, abs, mul, ge, gt
+import toolz
 from toolz import partial, curry
 from torch import nn, optim, distributions, Tensor
 from torch.nn.functional import one_hot, binary_cross_entropy_with_logits
@@ -1952,6 +1955,7 @@ class VAE_Dirichlet_GMM_TypeB1602xzC(nn.Module):
 class VAE_Dirichlet_GMM_TypeB1602xzCv2(nn.Module):
     """
     conditional version
+    everything is conditioned in this version
     """
 
     def __init__(
@@ -1986,6 +1990,7 @@ class VAE_Dirichlet_GMM_TypeB1602xzCv2(nn.Module):
         recloss_min: float = 0,
         nc1: int = 5,
         learned_prior: bool = False,
+        positive_rec : bool = False,
     ) -> None:
         super().__init__()
         self.nx = nx
@@ -2036,6 +2041,9 @@ class VAE_Dirichlet_GMM_TypeB1602xzCv2(nn.Module):
             activation=activation,
             batchnorm=bn,
         )
+        if positive_rec:
+            self.Px.add_module(
+                    "relu", nn.ReLU(),)
         self.Pz = ut.buildNetworkv5(
             #[nw] + numhiddenp * [nhp] + [2 * nclasses * nz],
             [nw + nc1] + numhiddenp * [nhp] + [2 * nclasses * nz],
