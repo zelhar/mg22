@@ -3,6 +3,8 @@
 %\documentclass[11pt, twoside]{report}
 \documentclass[11pt, a4paper]{report}
 %\documentclass[a4paper,11pt]{scrartcl}
+\usepackage{syntonly}
+%\syntaxonly
 \usepackage[utf8]{inputenc}
 \usepackage[backend=biber]{biblatex}
 \addbibresource{mybib.bib}
@@ -22,9 +24,24 @@
 %\usepackage[a4paper, width=150mm, top=5mm, bottom=5mm]{geometry}
 \usepackage[a4paper, width=150mm, top=25mm, bottom=25mm]{geometry}
 \usepackage{fancyhdr}
-\setlength{\headheight}{12pt}
-%\pagestyle{fancy}
+%\setlength{\headheight}{12pt}
+%\setlength{\headheight}{15.2pt}
 %\pagestyle{empty}
+%\pagestyle{myheadings}
+%\pagestyle{headings}
+%\pagestyle{plain}
+\pagestyle{fancy}
+\fancyhf{}
+%\fancyhead[L]{\leftmark:}
+%\fancyhead[L]{\chapter~\thechapter:}
+%\fancyhead[L]{\thechapter}
+\fancyhead[C]{\rightmark}
+%\fancyhead[R]{\thesection}
+\fancyfoot[C]{\thepage}
+
+\setlength{\parskip}{1.0em}
+\setlength{\parindent}{1em}
+
 \usepackage{lipsum}
 
 \theoremstyle{plain}
@@ -37,8 +54,25 @@
 \theoremstyle{remark}
 \newtheorem{remark}{Remark}[chapter]
 
+
+%newcommands
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\E}{\mathbf{E}}
+\newcommand{\F}{\mathbb{F}}
+%\newcommand{\B}{\{-1,1\}}
+\newcommand{\bvec}[1]{\mathbf{#1}}
+\newcommand{\bv}[1]{\mathbf{#1}}
+\newcommand{\ceil}[1]{\lceil{#1}\rceil}
+\newcommand{\floor}[1]{\lfloor{#1}\rfloor}
+\newcommand{\gt}{>}
+\newcommand{\lt}{<}
+\newcommand{\tuple}[1]{\langle #1 \rangle}
+
 \begin{document}
-\pagestyle{fancy}
+%\pagestyle{fancy}
 \begin{titlepage}
 \begin{center}
 {\includegraphics{images/MPIMG_RGB_gruen.png}}\\
@@ -80,6 +114,9 @@ punkt.
 punkt.
 punkt.
 \nocite{bishop2006pattern}
+\nocite{serre2001matrices}
+\nocite{kingma2013auto}
+\nocite{lotfollahi2018generative}
 
 \chapter*{Acknowledgement}
 punkt.\cite{kingma2013auto}
@@ -96,6 +133,79 @@ punkt.
 punkt.
 
 \chapter{Autoencoders, VAEs, and Variance inference}
+
+\section{Some basic definitions and concepts}
+\begin{mydef}
+\label{def:datamatrix}
+A \textit{data matrix} is simply a real valued matrix $X \in \R^{N \times n}$
+which represent a set of $N$ $n$-dimensional data points.
+The $N$ rows are also called \textit{observations} and the $n$ columns are
+\textit{variables}.
+For example $X$ may represent $N$ cells over $n$ genes in the case of
+single-cells RNAseq data.
+\end{mydef}
+
+
+\begin{mydef}
+\label{def:NN}
+A \textit{feed forward neural network} is simply a differentiable map $\phi :
+\R^n \to \R^m$.
+Normally $\phi$ is a sequence of composition of some more simple functions which
+we call \textit{layers}. A layer is composed of a single affine function,
+followed by $0$ or more dimension preserving functions such as normalization
+functions or activation functions. An activation function is a real values
+non-linear function which is applied element-wise over the input later.
+For example the sigmoid function anb the ReLU (rectified linear unit) are
+probably the most well-known activation functions.
+
+\end{mydef}
+
+Usually together with a neural network comes an associated differentiable
+function which is the \textit{loss function} $\mathcal{L} : \R^m \to \R$.
+
+The basic functions which comprise $\phi$ are parametrized. For example each
+affine function has the form $f:x \to a\dot x + b$. $a$ and $b$ are its
+trainable parameters, whereas the input is treated as fixed (the data we are
+trying to explain). The set of parameters of $\phi$ (coming from all the
+functions comprising it) is also referred to as its \textit{weights}. We can
+therefore treat $\phi$ as a parametrized function $\phi_w$ where $w$ represents
+the set of trainable weights.
+
+
+
+Trining the neural network means finding the weights that minimize the loss function 
+applied on the training set $X$, in other words minimizing 
+$\min_{w} (\mathcal{L}(\phi_w(X))$.
+During a training step the network is applied on a batch $X_k$ (a subset of size
+$k \leq N$ of $X$, $X_k$ is therefore a $k\times n$ data matrix). 
+Then the the loss function is applied at the output and a gradient
+(with relation to the weights) is taken. This gradient is used for the wieght
+update rule, which varies depending on the specific training algorithm (for
+example SGD or Adam).
+
+
+
+\section{Autoencoders}
+An \textit{Autoencoder} (AE) is a neural network $\phi = D \circ E$ with a "bottleneck" layer which
+approximates the identity function on the training input.
+We call the part which maps the input into the bottleneck the \textit{encoder} and the
+part which maps the bottleneck into the input-spce the \textit{decoder}.
+
+Them loss function for the AE is usually 
+$\mathcal{L}(X;\phi) = \|X - \phi(X)\| = \|X - D \circ E (X) \|$.
+
+In fact, for centered data $X$ (every variable has $0$ sample mean), the first
+$k \leq R(X)$ principle components $P$ are the soloution for 
+$P = \text{argmin}_{W^T W = I_k} (\|X - XWW^T\|_F^2)$, whereas a linear autoencoder
+solves $E,D = \text{argmin}_{E,D}(\|X - XED\|_F^2)$, and it can be shown than
+it must hold that $E = D^{\dagger}$ (the encoder must be the Moore-Penrose
+inverse of the decoder).
+
+A linear autoencoder (an AE where $\phi$ is linear) is therefore almost equivalent to
+PCA~\cite{plaut2018principal}, in that in the optimum, a bottleneck space of dimension $k$
+is spanned by the first $k$ principle components of the input $X$.
+In general, an AE can be seen a PCA-like, but non-linear method for
+dimensionality resuction.
 
 \section{Variational Inference}
 Here we briefly explain the idea behind variational inference and introduce the

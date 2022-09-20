@@ -10,9 +10,12 @@ slides = slides_test
 
 
 topic_list.pdf:
-	pdflatex $(name)
+	#pdflatex $(name)
+	#biber $(name)
+	#pdflatex $(name)
+	pdflatex -interaction=nonstopmode $(name)
 	biber $(name)
-	pdflatex $(name)
+	pdflatex -interaction=nonstopmode $(name)
 
 slides_test.pdf:
 	pdflatex $(slides)
