@@ -135,19 +135,18 @@ punkt.
 \chapter{Autoencoders, VAEs, and Variance inference}
 
 \section{Some basic definitions and concepts}
-\begin{mydef}
-\label{def:datamatrix}
+%\begin{mydef}
+%\label{def:datamatrix}
 A \textit{data matrix} is simply a real valued matrix $X \in \R^{N \times n}$
 which represent a set of $N$ $n$-dimensional data points.
 The $N$ rows are also called \textit{observations} and the $n$ columns are
 \textit{variables}.
 For example $X$ may represent $N$ cells over $n$ genes in the case of
 single-cells RNAseq data.
-\end{mydef}
+%\end{mydef}
 
-
-\begin{mydef}
-\label{def:NN}
+%\begin{mydef}
+%\label{def:NN}
 A \textit{feed forward neural network} is simply a differentiable map $\phi :
 \R^n \to \R^m$.
 Normally $\phi$ is a sequence of composition of some more simple functions which
@@ -158,7 +157,7 @@ non-linear function which is applied element-wise over the input later.
 For example the sigmoid function anb the ReLU (rectified linear unit) are
 probably the most well-known activation functions.
 
-\end{mydef}
+%\end{mydef}
 
 Usually together with a neural network comes an associated differentiable
 function which is the \textit{loss function} $\mathcal{L} : \R^m \to \R$.
@@ -170,7 +169,6 @@ trying to explain). The set of parameters of $\phi$ (coming from all the
 functions comprising it) is also referred to as its \textit{weights}. We can
 therefore treat $\phi$ as a parametrized function $\phi_w$ where $w$ represents
 the set of trainable weights.
-
 
 
 Trining the neural network means finding the weights that minimize the loss function 
@@ -191,9 +189,18 @@ approximates the identity function on the training input.
 We call the part which maps the input into the bottleneck the \textit{encoder} and the
 part which maps the bottleneck into the input-spce the \textit{decoder}.
 
-Them loss function for the AE is usually 
-$\mathcal{L}(X;\phi) = \|X - \phi(X)\| = \|X - D \circ E (X) \|$.
+A typical loss function for the AE is usually the mean sum of squares (MSE)
+$\mathcal{L}(X;\phi) = \frac{1}{N}\|X - \phi(X)\|_F^2 = \frac{1}{N}\|X - D \circ
+E (X) \|_F^2$.
 
+Note that the MSE can be interpreted probabilitically, if we assume our input
+comes from a random diagonal Gaussian with constant unit variant, we can interpret
+$D(E(X)) = \mu_x$ and the mean square error is $\log \mathcal{N}(x ; mu_x, 1)$
+(up to some scaling factor). Where $\log \mathcal{N}(\cdot ; \mu_x, 1)$ is the 
+log-density function for diagonal Gaussian with mean $\mu_x$ and unit variance. 
+
+
+\subsection{Relation between PCA and AE}
 In fact, for centered data $X$ (every variable has $0$ sample mean), the first
 $k \leq R(X)$ principle components $P$ are the soloution for 
 $P = \text{argmin}_{W^T W = I_k} (\|X - XWW^T\|_F^2)$, whereas a linear autoencoder
@@ -208,6 +215,8 @@ In general, an AE can be seen a PCA-like, but non-linear method for
 dimensionality resuction.
 
 \section{Variational Inference}
+
+
 Here we briefly explain the idea behind variational inference and introduce the
 ELBO which is the loss function we'll use throughout this text.
 For more details see~\fullcite{bishop2006pattern}.
@@ -307,7 +316,7 @@ So from equation~\ref{eq:elbokl} we again see that by finding the parameters
 $\phi$, $\theta$ that maximize the elbo we approach the real log evidence as much
 as we can within the limits of the parametrized family of distributions we use.
 
-\subsection{Using NN for the parametrization}
+\subsection{Using neural networks for the parametrization}
 In this text we deal with variational autoencoders (VAE).
 A VAE is a neural network which is used to define and optimize the parameters
 $\phi$ and $\theta$.
