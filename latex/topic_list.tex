@@ -132,7 +132,7 @@ punkt.
 punkt.
 punkt.
 
-\chapter{Autoencoders, VAEs, and Variance inference}
+\chapter{Autoencoders, variance inference and variational autoencoders}
 
 \section{Some basic definitions and concepts}
 %\begin{mydef}
@@ -216,7 +216,6 @@ dimensionality resuction.
 
 \section{Variational Inference}
 
-
 Here we briefly explain the idea behind variational inference and introduce the
 ELBO which is the loss function we'll use throughout this text.
 For more details see~\fullcite{bishop2006pattern}.
@@ -290,7 +289,8 @@ Equation~\ref{eq:elbokl} shows the the elbo minus the kl-divergence are constant
 and equal the log evidence. Therefore minimizing the kl-divergence (which is
 always non-negative) simultaneously maximizes the elbo and vicer-versa.
 
-\section{Adding parameters}
+\section{Variational Autoencoder}
+\subsection{Adding parameters}
 
 Our models will not be fully Bayesian, but rather parametrized.
 In this case let $\theta$ represent the set of parameters for $p$, and $\phi$
@@ -342,7 +342,7 @@ However $q_{\phi}(Z)$ is meant to approximate the intractable $p(Z|X)$ and
 that's presumably the reason for the abused notation.
 
 
-\section{Graphical representation}
+\subsection{Graphical representation}
 
 %punkt.
 %punkt.
@@ -436,7 +436,14 @@ with some examples from publications and my own tests.
 \label{fig:myfig}
 \end{figure}
 
-\chapter{Datasets which were tested and results}
+\subsection{Relation between AE and VAE}
+
+\subsection{Conditional VAE}
+
+\chapter{Experiments and results}
+\section{Tests with MNIST and FMNIST}
+
+\section{Tests with scRNAseq Data}
 some words about (sc)RNAseq and published papers where 
 AE and VAE models have been applied.
 What we were hoping to achieve and compare with.
