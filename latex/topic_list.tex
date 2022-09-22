@@ -147,28 +147,32 @@ single-cells RNAseq data.
 
 %\begin{mydef}
 %\label{def:NN}
-A \textit{feed forward neural network} is simply a differentiable map $\phi :
-\R^n \to \R^m$.
-Normally $\phi$ is a sequence of composition of some more simple functions which
-we call \textit{layers}. A layer is composed of a single affine function,
-followed by $0$ or more dimension preserving functions such as normalization
-functions or activation functions. An activation function is a real values
-non-linear function which is applied element-wise over the input later.
-For example the sigmoid function anb the ReLU (rectified linear unit) are
-probably the most well-known activation functions.
+A \textit{feed forward neural network} is simply a parameterized differentiable
+map $\phi : \R^n \to \R^m$. $\phi$ is differentiable both in its input variable as well as
+in its parameters.
+Normally $\phi$ is a sequence of composition of some
+more simple functions. We call such more basic unit a \textit{layer}.
+A layer itself is compoisited function, with 
+single affine map, followed by $0$ or more dimension preserving functions
+such as normalization functions or activation functions. An activation function
+is a real values non-linear function which is applied element-wise over the
+input later. For example the sigmoid function anb the ReLU (rectified linear
+unit) are probably the most well-known activation functions.
+
+
 
 %\end{mydef}
 
 Usually together with a neural network comes an associated differentiable
 function which is the \textit{loss function} $\mathcal{L} : \R^m \to \R$.
 
-The basic functions which comprise $\phi$ are parametrized. For example each
-affine function has the form $f:x \to a\dot x + b$. $a$ and $b$ are its
-trainable parameters, whereas the input is treated as fixed (the data we are
-trying to explain). The set of parameters of $\phi$ (coming from all the
-functions comprising it) is also referred to as its \textit{weights}. We can
-therefore treat $\phi$ as a parametrized function $\phi_w$ where $w$ represents
-the set of trainable weights.
+As mentioned $\phi$ is parametrized. For example each affine function has the
+form $f:x \to a\dot x + b$. $a$ and $b$ are its trainable parameters, whereas
+the input is treated as fixed (the data we are trying to explain). The set of
+parameters of $\phi$ (coming from all the functions comprising it) is also
+referred to as its \textit{weights}. We can therefore treat $\phi$ as a
+parametrized function $\phi_w: x \to \phi_w(x)$ where $w$ represents the set of
+trainable weights.
 
 
 Trining the neural network means finding the weights that minimize the loss function 
