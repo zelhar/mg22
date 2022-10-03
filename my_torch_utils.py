@@ -56,6 +56,10 @@ def kld2normal(
     return result
 
 def soft_assign(z, mu, alpha=1):
+    """
+    Returns a nearly one-hot vector that indicates the nearest centroid
+    to z.
+    """
     q = 1.0 / (1.0 + torch.sum((z.unsqueeze(1) - mu)**2, dim=2) / alpha)
     q = q**(alpha+1.0)/2.0
     q = q / torch.sum(q, dim=1, keepdim=True)
@@ -76,13 +80,18 @@ def log_gaussian_prob(x : torch.Tensor,
             )
 
 def softclip(tensor, min=-6.0, max=9.0):
-    """ Clips the tensor values at the minimum value min in a softway. Taken from Handful of Trials """
+    """
+    softly clips the tensor values at the minimum/maximimum value.
+    """
     result_tensor = min + nn.functional.softplus(tensor - min)
     result_tensor = max - nn.functional.softplus(max - result_tensor)
     return result_tensor
 
 
 class SoftClip(nn.Module):
+    """
+    object oriented version of softclip
+    """
     def __init__(self, min=-6.0, max=6.0):
         super(SoftClip, self).__init__()
         self.min = min
@@ -95,7 +104,8 @@ def fnorm(
     x: Tensor,
     mu: Union[float, Tensor] = 1.0,
     sigma: Union[float, Tensor] = 1.0,
-    reduction: str = "sum",
+    #reduction: str = "sum",
+    reduction: Optional[str] = "None",
 ) -> Tensor:
     """
     normal distribution density (elementwise) with optional reduction (logsum/sum/mean)
@@ -193,6 +203,10 @@ def save_reconstructs(encoder,
                       nz=20,
                       device="cuda",
                       normalized=False):
+    """
+    saves reconstruction output of the decoder as .png immage,
+    not a very useful function, just here for legacy.
+    """
     with torch.no_grad():
         x = x.to(device)
         y = encoder(x)
@@ -210,6 +224,9 @@ def save_random_reconstructs(model,
                              epoch,
                              device="cuda",
                              normalized=False):
+    """
+    Legacy function.
+    """
     with torch.no_grad():
         # sample = torch.randn(64, nz).to(device)
         sample = torch.randn(64, nz).to(device)
@@ -220,6 +237,14 @@ def save_random_reconstructs(model,
 
 
 def plot_images(imgs, nrow=16, transform=nn.Identity(), out=plt):
+    """
+    plots input immages in a grid.
+    imgs: tensor of images with dimensions (batch, channell, height, widt)
+    nrow: number of rows in the grid
+    out: matplotlib plot object
+    outputs grid_imgs: the image grid ready to be ploted.
+    also plots the result with 'out'.
+    """
     imgs = transform(imgs)
     grid_imgs = make_grid(imgs, nrow=nrow).permute(1, 2, 0)
     #plt.imshow(grid_imgs)
@@ -230,6 +255,10 @@ def plot_images(imgs, nrow=16, transform=nn.Identity(), out=plt):
     return grid_imgs
 
 def plot_2images(img1, img2, nrow=16, transform=nn.Identity(), ):
+    """
+    just like plot_images but takes two image sets and creates two image grids,
+    which are also plotted side by side.
+    """
     img1 = transform(img1)
     img2 = transform(img2)
     grid_img1 = make_grid(img1, nrow=nrow).permute(1, 2, 0)
@@ -245,6 +274,9 @@ def plot_2images(img1, img2, nrow=16, transform=nn.Identity(), ):
     return grid_img1, grid_img2
 
 def plot_tsne(z_loc, classes, name):
+    """
+    Legacy function. just use your favorite plotting tool.
+    """
     import matplotlib
     #matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -1435,6 +1467,9 @@ def randomString(
 
 
 def timeStamp() -> str:
+    """
+    generates a timestap string.
+    """
     return str(datetime.timestamp(datetime.now()))
 
 
