@@ -18,8 +18,11 @@
 \usepackage{blindtext}
 \usepackage{mathtools}
 \usepackage{amssymb}
+\usepackage{amsbsy}
 \usepackage{amsfonts}
 \usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{IEEEtrantools}
 %\usepackage{showframe}
 %\usepackage[a4paper, width=150mm, top=5mm, bottom=5mm]{geometry}
 \usepackage[a4paper, width=150mm, top=25mm, bottom=25mm]{geometry}
@@ -60,11 +63,15 @@
 \newcommand{\C}{\mathbb{C}}
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\Z}{\mathbb{Z}}
-\newcommand{\E}{\mathbf{E}}
 \newcommand{\F}{\mathbb{F}}
+\newcommand{\E}{\mathbf{E}}
+\newcommand{\X}{\mathbf{X}}
 %\newcommand{\B}{\{-1,1\}}
-\newcommand{\bvec}[1]{\mathbf{#1}}
-\newcommand{\bv}[1]{\mathbf{#1}}
+%\newcommand{\bvec}[1]{\mathbf{#1}}
+%\newcommand{\bv}[1]{\mathbf{#1}}
+%\newcommand{\b}[1]{\boldsymbol{#1}}
+\newcommand{\bv}[1]{\boldsymbol{#1}}
+\newcommand{\bvec}[1]{\boldsymbol{#1}}
 \newcommand{\ceil}[1]{\lceil{#1}\rceil}
 \newcommand{\floor}[1]{\lfloor{#1}\rfloor}
 \newcommand{\gt}{>}
@@ -130,85 +137,274 @@ punkt.
 
 \chapter{Introduction}
 punkt.
-punkt.
+\emph{punkt}, \textit{punkt}.
+
+\chapter{Basic notations and definitions}
+%\section{Basic Definitions}
+
+Throughout this paper (modulo typing errors) we use capital bold math 
+Latin or Greek letters ($\bv{X, \Sigma}$)
+to represent matrices, bold small math letters ($\bv{x}$) represent (usually
+row) vectors, but
+in cases where it makes sense may also represent a matrices such as a batch
+of several vectors (each row is a different data point).
+Or another example,
+$\bv{\sigma}$ may represent both
+the covariance matrix and the variance vector of a diagonal Gaussian
+distribution.
+Non-bold math letters ($x, \sigma$, \dots) may represent scalar or vectors in some cases
+and hopefully it is clear from the context or explicitly stated.
+
+
+\section{The data}
+we are assuming that the input data unless otherwise
+stated is real and 2-dimensional. Its rows represent \emph{samples}, for
+example---cells in the case of scRNAseq dataset, 
+while its columns represent \emph{variables}, for example---genes in
+scRNAseq dataset. 
+
+In addition to $\bv{X}$ there may be additional data with information about
+class or conditions. We use \emph{one-hot encoding} to represent such
+information.
+
+
+\begin{mydef}
+\label{def:datamatrix}
+A \emph{data matrix} is simply a real valued matrix $\bv{X} \in \R^{N \times n}$
+which represent a set of $N$ $n$-dimensional data points.
+The $N$ rows are also called \emph{observations} and the $n$ columns are
+\emph{variables}.
+\end{mydef}
+
+\begin{mydef}
+\label{def:classmatrix}
+A \emph{class matrix}, or also \emph{condition matrix}
+$\bv{C} \in \R^{\N \times c}$ is simply a real matrix which
+represents one-hot encoding of $c$ classes or conditions over $N$ samples.
+For example if sample $i$ has class $j$, then 
+$(\forall k\in 1, \dots, c) \bv{C}[i,k] = \delta_{jk}$.
+
+We say that that $\bv{C}$ is a \emph{class probability matrix} or \emph{relaxed
+class matrix} (same with condition)
+if instead of being one-hot it is a distribution matrix, namely each row is
+non-negative and sums up to $1$.
+\end{mydef}
+
+Usually if the input data includes class/condition information, it comes as a
+class matrix (pure one-hot) but the output (the prediction) is naturally 
+probabilistic and hence is relaxed.
+
+\chapter{Linear algebra preliminary}
+
+\section{SVD and PCA}
+Let $\bv{X} \in \R^{N \times n}$ be a real-valued matrix
+representing $N$ samples of some
+$n$-dimensional data points and let
+$r= \text{rank}(X) \leq \min(n,N)$. 
+
+$\X \X^T$ and $\X^T \X$ are both symmetric and positive semi-definite.
+Their eigenvalues are non-negative, and they both have
+the same positive 
+eigenvalues, exactly $r$ such, which we mark
+$s_1^2 \geq s_2^2 \geq \dots s_r^2 \gt 0$. The values
+$s_1 \dots s_r$ are called the \emph{singular values} of $\bv{X}$.
+
+Let $\bv{S} = 
+\begin{pmatrix}
+s_1 & & &\\
+& s_2 & &\\
+& & \ddots &\\
+& & & s_r
+\end{pmatrix} \in \R^{r \times r}
+$
+
+Let $\bv{U} \in \R^{N \times N}$ be the (column) eigenvectors of $\X \X^T$ sorted
+by their eigenvalues. 
+Then $\bv{U} = (\bv{U}_r, \bv{U}_k)$ where $\bv{U}_r \ \in \R^{N \times r}$ are the first $r$
+eigenvectors corresponding to the non-zero eigenvalues, and $\bv{U}_k$ are the
+eigenvectors corresponding to the $N-r$ $0$-eigenvalues.
+Similarly, and let 
+$\bv{V}  = (\bv{V}_r, \bv{V}_k)\in \R^{n \times n}$ be the (column) eigenvectors of $\X^T \X$, sorted
+by the eigenvalues, where $\bv{V}_r \ \in \R^{n \times r}$ are the firs $r$
+eigenvalues and $\bv{V}_k$ are the $n-r$ null-eigenvectors.
+
+Then the \textit{singular value decomposition (SVD)} of $\X$ is 
+
+\begin{equation}
+\label{eq:svd}
+\X = \bv{U} \bv{D} \bv{V}^T
+\end{equation}
+where 
+$\bv{D} =
+\left(
+\begin{array}{c | c}
+\bv{S} & \bv{0} \\
+\hline
+\bv{0} & \bv{0}
+\end{array}
+\right) \in \R^{N \times n}
+$ is diagonal.
+
+
+$\bv{V}_r$ are called the \textit{(right) principle components} of $\X$.
+Note that $\bv{V}_r^T \bv{V}_r = \bv{I}_r$ and that 
+$\X = \X \bv{V}_r \bv{V}_r^T$. If one looks at the second expression, 
+it means that the each row of $\X$ is spanned by the orthogonal
+basis $\bv{V}_r$ (because the other vectors of $\bv{V}$ are in $\text{ker}(\X)$.
+
+More generally
+For every $l \leq r$, let $\bv{V}_l \in \R^{N \times l}$ be the first $l$ components,
+Then $\X\bv{V}_l \bv{V}_l^T$ is as close as we can get to $\X$ within an
+$l$-dimensional subspace of $R^n$, and $\bv{V_l}$ minimizes
+
+\begin{equation}
+\label{eqn:pca}
+\bv{V}_l = \text{argmin} \{
+\|\X - \X \bv{W}\bv{W}^T\|_F^2 \quad : \quad \bv{W} \in \R^{n \times l}, \bv{W}^T \bv{W} =
+\bv{I}_l\}
+\end{equation} 
+
+Where $\| \cdot \|_F^2$ is simply the sum of squares of the matrix' entries.
+
+If we consider the more general
+minimization problems: 
+
+%\begin{subequations}
+\begin{IEEEeqnarray}{C}
+\label{eqn:pca2}
+%\begin{aligned}
+\min\{\|\X - \X \bv{E}\bv{D}\|_F^2 \quad : 
+\quad \bv{E,D^T} \in \R^{n \times
+l},\} \\
+\min\{\|\X - \X \bv{W}\bv{W}^{\dagger}\|_F^2 \quad : 
+\quad \bv{W} \in \R^{n \times
+l},\}
+%\end{aligned}
+\end{IEEEeqnarray}
+%\end{subequations} 
+
+It can be shown~\cite{plaut2018principal} that the 
+last two problems are equivalent
+and that for any solution $E,D$ it must hold that 
+$\bv{D}=\bv{E}^{\dagger}$. ($\bv{D}$ is the Moore-Penrose generalized
+inverse of $\bv{E}$).
+Moreover,
+$\bv{V}_l$ still minimizes the general problem~\ref{eqn:pca2} and for every
+solution $\bv{W}$, it must hold that $\text{span}\{\bv{W}\} =
+\text{span}\{\bv{V}_l\}$ (but it isn't necessarily an orthogonal matrix).
 
 \chapter{Autoencoders, variance inference and variational autoencoders}
-
 \section{Some basic definitions and concepts}
 %\begin{mydef}
 %\label{def:datamatrix}
-A \textit{data matrix} is simply a real valued matrix $X \in \R^{N \times n}$
-which represent a set of $N$ $n$-dimensional data points.
-The $N$ rows are also called \textit{observations} and the $n$ columns are
-\textit{variables}.
-For example $X$ may represent $N$ cells over $n$ genes in the case of
-single-cells RNAseq data.
+%A \textit{data matrix} is simply a real valued matrix $\bv{X} \in \R^{N \times n}$
+%which represent a set of $N$ $n$-dimensional data points.
+%The $N$ rows are also called \textit{observations} and the $n$ columns are
+%\textit{variables}.
+%For example $\bv{X}$ may represent $N$ cells over $n$ genes in the case of
+%single-cells RNAseq data.
 %\end{mydef}
 
-%\begin{mydef}
-%\label{def:NN}
-A \textit{feed forward neural network} is simply a parameterized differentiable
-map $\phi : \R^n \to \R^m$. $\phi$ is differentiable both in its input variable as well as
-in its parameters.
-Normally $\phi$ is a sequence of composition of some
-more simple functions. We call such more basic unit a \textit{layer}.
-A layer itself is compoisited function, with 
+\begin{mydef}
+\label{def:NN}
+A \emph{feed forward neural network} is simply a parameterized differentiable
+map $\phi_{w} : \R^n \to \R^m$. $\phi_w(x)$ is differentiable both in its input
+variable $x$ as well as in its parameters $w$, which is also called its
+\emph{weights}.
+
+For example each affine function has the
+form $f:x \to a \cdot x + b$. $a$ and $b$ are its trainable parameters (weights).
+The input is treated as fixed (the data we are trying to explain).
+
+Normally $\phi$ is a sequence of compositions of
+more simple functions. We call such more basic unit in a composition sequence 
+a \emph{layer}.
+Each layer is itself a composition, with exactly a
 single affine map, followed by $0$ or more dimension preserving functions
-such as normalization functions or activation functions. An activation function
+such as normalization functions or activation functions.
+An \emph{activation function}
 is a real values non-linear function which is applied element-wise over the
-input later. For example the sigmoid function anb the ReLU (rectified linear
-unit) are probably the most well-known activation functions.
+input later. For example the sigmoid function and the ReLU (rectified linear
+unit) are well-known and often used activation functions.
+\end{mydef}
 
-
-
-%\end{mydef}
-
+\begin{mydef}
+\label{def:lossfunc}
 Usually together with a neural network comes an associated differentiable
 function which is the \textit{loss function} $\mathcal{L} : \R^m \to \R$.
 
-As mentioned $\phi$ is parametrized. For example each affine function has the
-form $f:x \to a\dot x + b$. $a$ and $b$ are its trainable parameters, whereas
-the input is treated as fixed (the data we are trying to explain). The set of
-parameters of $\phi$ (coming from all the functions comprising it) is also
-referred to as its \textit{weights}. We can therefore treat $\phi$ as a
-parametrized function $\phi_w: x \to \phi_w(x)$ where $w$ represents the set of
-trainable weights.
+Typically the loss function is additive on the dimension, meaning it has the
+form $\mathcal{L}(\bv{x}) = \sum_{i=1}^m \psi(x_i)$
+
+An example for such a loss function is the square error $x \to \frac{1}\|x\|_2^2$
+\end{mydef}
+
+\begin{mydef}
+\label{def:batch}
+Let $\bv{X} \in  \R^{N \times n}$ be a data matrix. A \emph{batch}
+$\bv{x} \in \R^{b \times n}$ is any subset of $b$ rows of $\bv{X}$.
+
+Batch $\bv{x} \in \R^{b \times n}$ represents a subset of $b$ samples out of the
+total of $N$ samples in the dataset. The operations of $\phi$ and $\mathcal{L}$
+\emph{extend naturally} to batches (note that in this case $\bv{x}$ is a matrix and
+$\bv{x}_i$ is a vector representing a single sample of the batch)--- we collect
+for $\phi$ and we average for $\mathcal{L}$, namely: $\phi(\bv{x}) =
+(\phi(\bv{x}_i)_{i=1}^m \in \R^{b \times m}$, and 
+$\mathcal{L}(x) = \frac{1}{b}\sum_{i=1}^b
+\mathcal{L}(\bv{x}_i)$.
+
+If $\mathcal{L}$ is the square error function $\| \cdot \|_2^2$ on vectors,
+then its expansion to batches is $\frac{1}{b}\| \cdot \|_F^2$. The reason why we
+sum and don't average over the dimensions will be cleared later when we get into
+variational inference.
+\end{mydef}
 
 
-Trining the neural network means finding the weights that minimize the loss function 
-applied on the training set $X$, in other words minimizing 
+Training the neural network $\phi_w$ means finding the weights that minimize the
+loss function applied on the training set $X$, in other words minimizing
 $\min_{w} (\mathcal{L}(\phi_w(X))$.
-During a training step the network is applied on a batch $X_k$ (a subset of size
-$k \leq N$ of $X$, $X_k$ is therefore a $k\times n$ data matrix). 
-Then the the loss function is applied at the output and a gradient
-(with relation to the weights) is taken. This gradient is used for the wieght
-update rule, which varies depending on the specific training algorithm (for
-example SGD or Adam).
+
+During a training step the network is applied on a batches $x$. Then the loss
+function is applied at the output and a gradient (with relation to the weights)
+is taken. This gradient is used for the weight update rule, which varies
+depending on the specific training algorithm. Typical training algorithms are
+SGD (stochastic gradient decent) and Adam, which is the one used throughout this
+work.
+
+We only need to define the network, the loss function and the specific training
+algorithm. The rest (derivation, weight update etc.) is taken care for us by
+the backend of the software (Pytorch) and can be regarded as a black box.
 
 
 
 \section{Autoencoders}
-An \textit{Autoencoder} (AE) is a neural network $\phi = D \circ E$ with a "bottleneck" layer which
+\begin{mydef}
+\label{def:autoencoder}
+An \textit{Autoencoder} (AE) is a neural network $\phi = D \circ E$ with a "bottleneck" layer 
+and which
 approximates the identity function on the training input.
-We call the part which maps the input into the bottleneck the \textit{encoder} and the
-part which maps the bottleneck into the input-spce the \textit{decoder}.
 
-A typical loss function for the AE is usually the mean sum of squares (MSE)
-$\mathcal{L}(X;\phi) = \frac{1}{N}\|X - \phi(X)\|_F^2 = \frac{1}{N}\|X - D \circ
-E (X) \|_F^2$.
+We call $E$ which projects into the bottleneck, the \emph{encoder}, and $D$
+which expands back into the input dimensions, the \emph{decoder}.
+\end{mydef}
 
-Note that the MSE can be interpreted probabilitically, if we assume our input
-comes from a random diagonal Gaussian with constant unit variant, we can interpret
-$D(E(X)) = \mu_x$ and the mean square error is $\log \mathcal{N}(x ; mu_x, 1)$
-(up to some scaling factor). Where $\log \mathcal{N}(\cdot ; \mu_x, 1)$ is the 
-log-density function for diagonal Gaussian with mean $\mu_x$ and unit variance. 
+%A typical loss function for the AE is usually the mean sum of squares (MSE)
+%$\mathcal{L}(X;\phi) = \frac{1}{N}\|X - \phi(X)\|_F^2 = \frac{1}{N}\|X - D \circ
+%E (X) \|_F^2$.
 
+%Note that the MSE can be interpreted probabilitically, if we assume our input
+%comes from a random diagonal Gaussian with constant unit variant, we can interpret
+%$D(E(X)) = \mu_x$ and the mean square error is $\log \mathcal{N}(x ; mu_x, 1)$
+%(up to some scaling factor). Where $\log \mathcal{N}(\cdot ; \mu_x, 1)$ is the 
+%log-density function for diagonal Gaussian with mean $\mu_x$ and unit variance. 
 
 \subsection{Relation between PCA and AE}
-In fact, for centered data $X$ (every variable has $0$ sample mean), the first
-$k \leq R(X)$ principle components $P$ are the soloution for 
-$P = \text{argmin}_{W^T W = I_k} (\|X - XWW^T\|_F^2)$, whereas a linear autoencoder
-solves $E,D = \text{argmin}_{E,D}(\|X - XED\|_F^2)$, and it can be shown than
+For centered data $X$ (every variable, column, has $0$ sample mean), the first
+$k \leq R(X)$ principle components $P$ are the solution for
+equation~\ref{eqn:pca},
+whereas a \textbf{linear} autoencoder
+solves equation~\ref{eqn:pca2}.
+As mentioned,
 it must hold that $E = D^{\dagger}$ (the encoder must be the Moore-Penrose
 inverse of the decoder).
 
@@ -216,7 +412,7 @@ A linear autoencoder (an AE where $\phi$ is linear) is therefore almost equivale
 PCA~\cite{plaut2018principal}, in that in the optimum, a bottleneck space of dimension $k$
 is spanned by the first $k$ principle components of the input $X$.
 In general, an AE can be seen a PCA-like, but non-linear method for
-dimensionality resuction.
+dimensionality reduction.
 
 \section{Variational Inference}
 
