@@ -139,9 +139,10 @@ punkt.
 punkt.
 \emph{punkt}, \textit{punkt}.
 
-\chapter{Basic notations and definitions}
+\chapter{Notations and definitions, preliminary concepts}
 %\section{Basic Definitions}
 
+\section{Basic notations}
 Throughout this paper (modulo typing errors) we use capital bold math 
 Latin or Greek letters ($\bv{X, \Sigma}$)
 to represent matrices, bold small math letters ($\bv{x}$) represent (usually
@@ -194,9 +195,8 @@ Usually if the input data includes class/condition information, it comes as a
 class matrix (pure one-hot) but the output (the prediction) is naturally 
 probabilistic and hence is relaxed.
 
-\chapter{Linear algebra preliminary}
-
-\section{SVD and PCA}
+\section{Linear algebra preliminary: SVD and PCA}
+%\section{SVD and PCA}
 Let $\bv{X} \in \R^{N \times n}$ be a real-valued matrix
 representing $N$ samples of some
 $n$-dimensional data points and let
@@ -276,6 +276,7 @@ minimization problems:
 \min\{\|\X - \X \bv{E}\bv{D}\|_F^2 \quad : 
 \quad \bv{E,D^T} \in \R^{n \times
 l},\} \\
+\label{eqn:pca3}
 \min\{\|\X - \X \bv{W}\bv{W}^{\dagger}\|_F^2 \quad : 
 \quad \bv{W} \in \R^{n \times
 l},\}
@@ -284,7 +285,7 @@ l},\}
 %\end{subequations} 
 
 It can be shown~\cite{plaut2018principal} that the 
-last two problems are equivalent
+last two problems~\ref{eqn:pca2},~\ref{eqn:pca3} are equivalent
 and that for any solution $E,D$ it must hold that 
 $\bv{D}=\bv{E}^{\dagger}$. ($\bv{D}$ is the Moore-Penrose generalized
 inverse of $\bv{E}$).
@@ -293,8 +294,9 @@ $\bv{V}_l$ still minimizes the general problem~\ref{eqn:pca2} and for every
 solution $\bv{W}$, it must hold that $\text{span}\{\bv{W}\} =
 \text{span}\{\bv{V}_l\}$ (but it isn't necessarily an orthogonal matrix).
 
-\chapter{Autoencoders, variance inference and variational autoencoders}
-\section{Some basic definitions and concepts}
+%\chapter{Neural networks, autoencoders,  variance inference and variational autoencoders}
+%\section{Some basic definitions and concepts}
+\section{Neural networks}
 %\begin{mydef}
 %\label{def:datamatrix}
 %A \textit{data matrix} is simply a real valued matrix $\bv{X} \in \R^{N \times n}$
@@ -399,95 +401,137 @@ which expands back into the input dimensions, the \emph{decoder}.
 %log-density function for diagonal Gaussian with mean $\mu_x$ and unit variance. 
 
 \subsection{Relation between PCA and AE}
-For centered data $X$ (every variable, column, has $0$ sample mean), the first
-$k \leq R(X)$ principle components $P$ are the solution for
-equation~\ref{eqn:pca},
-whereas a \textbf{linear} autoencoder
-solves equation~\ref{eqn:pca2}.
-As mentioned,
-it must hold that $E = D^{\dagger}$ (the encoder must be the Moore-Penrose
-inverse of the decoder).
+For \textbf{centered} data, meaning every variable (column of $\bv{X}$)
+has $0$ sample mean, the first $k \leq \text{rank}(\bv{X})$ principle components
+$\bv{P}$ are the solution for equation~\ref{eqn:pca}; Whereas a \textbf{linear}
+autoencoder solves equation~\ref{eqn:pca3}. As mentioned, it must hold that $E =
+D^{\dagger}$ (the encoder must be the Moore-Penrose inverse of the decoder).
 
 A linear autoencoder (an AE where $\phi$ is linear) is therefore almost equivalent to
 PCA~\cite{plaut2018principal}, in that in the optimum, a bottleneck space of dimension $k$
-is spanned by the first $k$ principle components of the input $X$.
+is spanned by the first $k$ principle components of the input $\bv{X}$.
 In general, an AE can be seen a PCA-like, but non-linear method for
 dimensionality reduction.
 
+\chapter{Variance inference and variational autoencoders}
 \section{Variational Inference}
 
 Here we briefly explain the idea behind variational inference and introduce the
 ELBO which is the loss function we'll use throughout this text.
 For more details see~\fullcite{bishop2006pattern}.
 
-We have a set of observation $X = \{x_1, \dots , x_N\}$ which we try to explain
-by a probabilitic model. 
-$X$ is called the data or the observation (or something similar). We assume that
-the $x_i$'s are i.i.d with some distribution function $p(x)$ and therefore for
-the entire dataset it holds that $p(X) = \prod x_i$.
+We treat the data matrix as a set of independent observations (its rows)
+$\bv{X} = \{\bv{x}_1, \dots
+, \bv{x}_N\}$ which we try to explain by a probabilistic model. 
+We assume that
+the $\bv{x}_i$'s are i.i.d with some distribution function $p(\bv{x})$ and therefore for
+the entire dataset it holds that $p(\bv{X}) = \prod p(\bv{x}_i)$.
 
-We have some reason to believe that behind the scences there is some hidden
-(latent) shot caller $Z = \{z_1 \dots z_N\}$ that determines the fate of $X$.
-In other words we think that $X$ is conditioned on $Z$ and and we can speak of
-the joint distribution $p(X,Z) = p(X|Z)p(Z)$ and all said distributions factor
-over the individual samples multiplicatively, i.e.
-$p(X|Z) = \prod p(z_i | x_i)$.
+\begin{mydef}
+\label{def:logevidence}
+Let $\bv{X} \in \R^{Nn}$ be a data matrix and let $\{\bv{x}_i\}_1^n$ be its
+rows, which we assume to be i.i.d with some (unknown) distribution $p(\bv{x})$.
+Then $\log p(\bv{X}) = \sum_1^N p(\bv{x}_i)$ is called the \emph{log evidence} of our
+data.
+\end{mydef}
+
+The r.vs $\bv{X}$ are high dimensional however
+we have some reason to believe that behind the scenes there are some hidden
+(latent), smaller dimensional, r.vs
+$\bv{Z} = \{\bv{z}_1 \dots \bv{z}_N\}$ that generate the observations $\bv{X}$.
+In other words we think that $\bv{X}$ is conditioned on $\bv{Z}$ and we can speak of
+the joint distribution $p(\bv{X},\bv{Z}) = p(\bv{X}|\bv{Z})p(\bv{Z})$.
+Because we assume i.i.d for both $\bv{X}$ and $\bv{Z}$ all the distributions factor
+over the individual samples multiplicatively, e.g.
+$p(\bv{X}|\bv{Z}) = \prod p(\bv{x}_i | \bv{z}_i)$.
 
 Suppose that we have a fully Bayesian model. In this case there are no
 parameters because the parameters are themselves stochastic variables with some
 suitable priors. We can therefore pack all the latent variables and stochastic
-parameters into one latent "meta variable" $Z = (z_1, z_2, \dots )$, each $z_i$
+parameters into one latent "meta variable" $\bv{Z} = (\bv{z}_1, \bv{z}_2, \dots )$,
+where each $\bv{z}_i$
 is some multidimensional r.v and possibly composed of several simpler r.vs (for
-example a categotical and a normal r.vs).
-We similarly pack all the observed variables into one meta variable $X$.
-Together we have a distribution $p(X,Z)$ and the working assumption is that it
-is easy to factorize $p(X,Z) = p(X|Z)p(Z)$, however $p(Z|X)$ is intractable and
-$p(X)$ is unknown.
+example a categorical and a normal r.vs).
+We similarly pack all the observed variables into one meta variable $\bv{X}$.
+Together we have a distribution $p(\bv{X},\bv{Z})$ and the working assumption is that it
+is easy to factorize $p(\bv{X},\bv{Z}) = p(\bv{X}|\bv{Z})p(\bv{Z})$,
+however $p(\bv{Z}|\bv{X})$ is intractable and
+$p(\bv{X})$ is unknown.
 
-We are being Bayesian here so we consider $X = (x_1, x_2, \dots)$ to really be
-constant, a set of observation and we want to best explain $p(X)$ by finding as
-high as possible lower boud (or rather to $\log p(X)$, the log evidence).
-A second goal is to approximate the intractable $p(Z|X)$ by some simpler
-distribution $q(Z)$ taken from some family of distributions.
+We are being Bayesian here so we consider $\bv{X} = (\bv{x}_1, \bv{x}_2, \dots)$ to be
+a constant a set of observations and we want to best explain $p(\bv{X})$ by finding as
+high as possible lower bound for it (or rather to $\log p(\bv{X})$, the \emph{log
+evidence}).
+A second goal is to approximate the intractable $p(\bv{Z}|\bv{X})$ by some simpler
+distribution $q(\bv{Z})$ taken from some family of distributions.
 
-The following equation finds a lower bound (elbo) for the log evidence.
+\begin{mydef}
+Let $\bv{x},\bv{z}$ be random variables with joint
+distribution $p(\bv{x},\bv{z})$ and let $q(\bv{z})$ be any distribution.
+The \emph{evidence lower bound (ELBO)} with respect to $p,q$ is:
+\begin{equation}
+\label{def:elbo}
+\mathcal{L}(q) = 
+\triangleq \int \log \frac{p(\bv{x},\bv{z})}{q(\bv{z})} d q(\bv{z})
+\end{equation}
+\end{mydef}
+
+The following equation shows that the \emph{ELBO} is a lower bound for the \emph{log
+evidence}.
 (using Jensen's inequality)
 
-\begin{equation}\label{eq:elbo}
+\begin{equation}
+\label{eq:elbo}
 \begin{aligned}
-\log p(X) &= \log \int p(X,Z) dZ = \log \int \frac{p(X,Z)}{q(Z)} q(Z)dZ \\
-&= \log \int \frac{p(X,Z)}{q(Z)}dq(Z) 
-\geq \int \log \frac{p(X,Z)}{q(Z)}dq(Z) 
+\log p(\bv{X}) &= \log \int p(\bv{X},\bv{Z}) d\bv{Z} 
+= \log \int \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})} q(\bv{Z})d\bv{Z} \\
+&= \log \int \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})}dq(\bv{Z}) 
+\geq \int \log \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})}dq(\bv{Z}) 
 \triangleq \mathcal{L}(q)
 \end{aligned}
 \end{equation}
 
 In equation~\ref{eq:elbo} we found a lower bound $\mathcal{L}(q)$ for the log
-evidence $\log p(X)$, which we call "evidence lower bound" or elbo for short.
-Whatever distribution $q$ we put in elbo will not be
+evidence $\log p(\bv{X})$, the \emph{ELBO}.
+Whatever distribution $q$ we put in ELBO will not be
 greater than the real log evidence so we are looking for the $q$ which
-maximizes it.
+\textbf{maximizes} it.
 
-Now we show that maximizing actually obtains the log evidence and it is
-equivalent to minimizing $KL(q(Z) \| p(Z|X)$:
+Now we show that maximizing the ELBO actually obtains the log evidence and it is
+equivalent to minimizing $KL(q(\bv{Z}) \| p(\bv{Z}|\bv{X})$:
 
 \begin{equation}\label{eq:kl_bound}
 \begin{aligned}
-\mathcal{L}(q) &\triangleq \int \log \frac{p(X,Z)}{q(Z)} d q(Z)
-= \int \log \frac{p(Z|X)p(X)}{q(Z)} d q(Z) \\
-&= \int \log p(X) dq(Z) - \int \log \frac{q(Z)}{p(Z|X)} dq(Z) 
-= \log p(X) - KL(q(Z) \| p(Z|X)
+\mathcal{L}(q) &\triangleq \int \log \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})} d
+q(\bv{Z})
+= \int \log \frac{p(\bv{Z}|\bv{X})p(\bv{X})}{q(\bv{Z})} d q(\bv{Z}) \\
+&= \int \log p(\bv{X}) dq(\bv{Z}) - \int \log \frac{q(\bv{Z})}{p(\bv{Z}|\bv{X})}
+dq(\bv{Z}) 
+= \log p(\bv{X}) - KL(q(\bv{Z}) \| p(\bv{Z}|\bv{X})
 \end{aligned}
 \end{equation}
 
 We can rewrite equation~\ref{eq:kl_bound} as:
 \begin{equation}\label{eq:elbokl}
-\log p(X) = \mathcal{L}(q) - KL(q(Z) \| p(Z|X))
+\log p(\bv{X}) = \mathcal{L}(q) - KL(q(\bv{Z}) \| p(\bv{Z}|\bv{X}))
 \end{equation}
 
-Equation~\ref{eq:elbokl} shows the the elbo minus the kl-divergence are constant
+Equation~\ref{eq:elbokl} shows that the ELBO minus the kl-divergence are constant
 and equal the log evidence. Therefore minimizing the kl-divergence (which is
-always non-negative) simultaneously maximizes the elbo and vicer-versa.
+always non-negative) simultaneously maximizes the ELBO and vicer-versa.
+
+In reality we can't search in the set of \textbf{all} possible distributions 
+$q(\bv{Z})$. Instead we limit our search to some parameterized family of simple distributions
+$\{q_\alpha(\bv{Z})\}_{\alpha}$ where $\alpha$ is the parameter set. For a simple
+one dimensional concrete example, we can consider the set of all
+Gaussian distributions $\{\mathcal{N}(\bv{z} ; \mu, \sigma)\}_{\mu,\sigma}$.
+
+The task therefore is to use the data $\bv{X}$ to find the best parameter 
+$\hat\alpha$ that maximizes $\mathcal{L}(q_{\alpha})$:
+\begin{equation}
+\label{eq:alphahat}
+\hat\alpha \triangleq \text{arg max}_{\alpha}(\mathcal{L}(q_{\alpha}) 
+\end{equation}
 
 \section{Variational Autoencoder}
 \subsection{Adding parameters}

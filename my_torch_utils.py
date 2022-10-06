@@ -1315,6 +1315,7 @@ def do_plot_helper(model, device : str = "cpu",):
     """
     ploting helper function for 
     training procedures
+    for gmm model
     """
     model.cpu()
     model.eval()
@@ -1330,6 +1331,32 @@ def do_plot_helper(model, device : str = "cpu",):
     #model.train()
     #model.to(device)
     return
+
+def do_plot_helper_cmm(model, device : str = "cpu",):
+    """
+    ploting helper function for 
+    training procedures
+    for cmm model
+    """
+    model.cpu()
+    model.eval()
+    w = model.w_prior.sample((16,))
+    w = w.repeat_interleave(repeats=model.nclasses,dim=0)
+    y = torch.eye(model.nclasses)
+    y = y.repeat(16, 1)
+    wy = torch.cat([w,y], dim=1)
+    z = model.Pz(torch.cat([wy, ], dim=-1))
+    mu = z[:, : model.nz]
+    rec = model.Px(torch.cat([mu, ],dim=-1)).reshape(-1, 1, 28, 28)
+    if model.reclosstype == "Bernoulli":
+        rec = rec.sigmoid()
+    plot_images(rec, model.nclasses )
+    plt.pause(0.05)
+    plt.savefig("tmp.png")
+    #model.train()
+    #model.to(device)
+    return
+
 
 def test_accuracy_helper(model, x, y, device : str = "cpu",):
     model.cpu()

@@ -765,3 +765,29 @@ xdata = ut.balanceAnnData(adata, "type", noreps=True,)
 
 
 countby("type", xdata.obs)
+
+
+
+
+#### scratch
+
+ny=3
+nz=4 
+b=2 
+nx=5
+x = torch.randn(b, nx)
+y=torch.zeros(b,ny)
+y[0,1]=1
+y[1,1]=1
+y = torch.eye(ny)
+y
+y=y.repeat(b,1)
+y
+# we want to create a (b*ny, nx+ny) array, for every row x_i create 3 new raws 
+# in the new array by concatenating x_i with all ny one-hot conditions.
+h=x.repeat_interleave(repeats=3, dim=0)
+h
+xy = torch.cat([h,y], dim=1)
+xy
+
+
