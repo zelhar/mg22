@@ -1,0 +1,100 @@
+:q
+:q
+swap (+) 1 2
+(+)
+swap add 1 2
+\x,y->x+y
+\x\y->x+y
+swap = \f\x\y->(f y x)
+\x->x+1
+swap = \f\x\y:(f y x)
+:q
+Node { "5", []}
+Node { 5, []}
+:info rootLabel 
+:info Node
+Node 4
+:info Tree
+:m Data.Tree 
+:browse System.IO
+:m System.IO
+:browse System.IO
+:browse Data.Tree
+:browse Data.Map
+getCPUTime 
+getCPUTime 
+getCPUTime 
+:m System.CPUTime 
+:browse System.CPUTime 
+os
+arch
+:info Info
+Info
+:browse! System.Info 
+CPUTime
+:m System.Info 
+:browse! System.Info 
+:browse! Control.Category 
+:browse! Control.
+:browse! Control
+:help
+main
+:r
+main
+:q
+:m MyMain
+Main
+main
+:info (<<*)
+:info (<*>)
+:info (<+>)
+:info (>>)
+:info (+)
+>>
+:t >>
+:t <<
+:t <+>
+:info <+>
+:?
+:q
+MyMain
+:r
+:r
+:l MyMain
+sayHi 
+:load Foo.hs
+:m MyMain
+:m Foo
+:q
+:help Monad
+:kind Monad
+:kind (>>=)
+:type (>>=)
+:type >>=
+:type xs
+xs
+:kind xs
+:kind >>=
+:t
+type (>>=)
+(>>=)?
+(>>=)
+xs >>= f
+f = \x -> [x, x*5, x*10]
+xs >>= f
+f = \x -> [x*10]
+xs
+xs = [1 .. 10]
+:q
+:q
+:q
+:q
+:q
+:q
+:q
+:q
+:t Map.fromList [(1,'2')]
+:t fromList [(1,'2')]
+Map 1 2
+import qualified Data.Map as Map
+:q

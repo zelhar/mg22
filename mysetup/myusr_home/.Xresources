@@ -1,0 +1,502 @@
+!~/.Xresources file
+!to reread manually: xrdb ~/.Xresources
+!to reread manually and merge with the old resources:
+!xrdb -merge ~/.Xresources
+!
+!st
+st.alpha: 1.00
+st.alphaUnfocused: 0.95
+!st.font: PragmataPro:size=11:antialias=false;
+st.font: terminess powerline:size=12:antialias=false;
+st.font2: Monospace-11;
+!st.background: #000000
+!st.foreground: #ffffff
+!st.font: Monospace-11;
+!st.font2: Monospace-11;
+!st.borderpx: 2
+!cursorColor seems to be background color
+!st.cursorColor: #222200
+!foreground is the font color?
+!st.foreground: #0000ff
+!backrougn seems to be the cursor color foo some reason
+!st.background: #ffff00
+
+!xterm-----------------------------------------------------------------------:
+!Xcursor.core:   1
+Xcursor.core:   0
+
+XTerm*autoWrap: true
+!!XTerm*cursorBlink: true
+!!XTerm*cursorUnderLine: true
+xterm*dynamicColors:      true
+xterm*eightBitInput:      true
+!!xterm*faceName:           Terminus:style=Regular:size=10
+xterm*faceName: PragmataPro:size=10:antialias=false
+!!XTerm*faceName: PragmataPro
+!!XTerm*faceSize: 13
+!!xterm*font:              -*-dina-medium-r-*-*-16-*-*-*-*-*-*-*
+!XTerm*font: -*-terminus-medium-*-*-*-18-*-*-*-*-*-iso10646-*
+XTerm*font: xft:Monospace:size=10
+!xterm*font: 7x13
+xterm*jumpScroll:         true
+XTerm*locale: true
+xterm*multiScroll:        true
+!!xterm*rightScrollBar:     true
+!xterm*saveLines:          512
+XTerm*saveLines:  32768
+!!xterm*scrollBar:          true
+xterm*scrollKey:          true
+xterm*scrollTtyOutput:    false
+XTerm*termName: xterm-256color-italic
+!xterm*toolBar:            false
+!!xterm*utf8:               2
+XTerm*utf8: 1
+xterm*VT100.geometry:     80x25
+
+
+
+! Background color
+xterm*background: black
+
+! Font color
+xterm*foreground: white
+
+!cursor colors
+!xterm*cursorColor:                  red 
+!this option only works in urxvt
+!xterm*cursorColor2:                 yellow  
+
+! Other colors
+xterm*color0: black
+xterm*color1: red3
+xterm*color2: green3
+xterm*color3: yellow3
+xterm*color4: blue2
+xterm*color5: magenta3
+xterm*color6: cyan3
+xterm*color7: gray90
+xterm*color8: grey50
+xterm*color9: red
+xterm*color10: green
+xterm*color11: yellow
+xterm*color12: blue
+xterm*color13: magenta
+xterm*color14: cyan
+xterm*color15: white
+
+!URxvt-----------------------------------------------------------------------:
+!To Enable C-S bindings:
+URxvt.iso14755: false
+URxvt.iso14755_52: false
+URxvt.perl-ext:         default
+URxvt.perl-ext-common:  default,resize-font,matcher,fullscreen,keyboard-select
+!URxvt.perl-ext-common:  default,fullscreen,keyboard-select,resize-font,bidi,matcher
+!URxvt.perl-ext-common:  default,fullscreen,keyboard-select,font-size,bidi
+!URxvt.perl-ext-common:  default,fullscreen,keyboard-select,resize-font
+URxvt.keysym.F11:       perl:fullscreen:switch
+URxvt.keysym.M-C-f:       perl:fullscreen:switch
+URxvt*saveLines:        32768
+
+!bidi requires the Text::Bidi package, which is currently uninstallable
+!du to dependency on an older version<1 of the freebidi package... 
+
+!URxvt*kuake.hotkey: F10
+!URxvt*kuake.hotkey: F9
+
+URxvt.url-launcher: /usr/bin/xdg-open
+URxvt.matcher.button: 1
+
+URxvt*dynamicColors:      true
+
+!URxvt.resize-font.smaller: C-Down
+!URxvt.resize-font.bigger: C-Up
+
+!URxvt.keysym.C-Up:     font-size:increase
+!URxvt.keysym.C-Down:   font-size:decrease
+!URxvt.keysym.C-plus:     resize-font:increase
+!URxvt.keysym.C-minus:   resize-font:decrease
+!URxvt.keysym.C-S-Up:   resize-font:incglobal
+!URxvt.keysym.C-S-Down: resize-font:decglobal
+!URxvt.keysym.C-equal:  resize-font:reset
+!URxvt.keysym.C-slash:  resize-font:show
+
+!urxvt*font: xft:Terminus:pixelsize=12,xft:Inconsolata\ for\ Powerline:pixelsize=12
+!urxvt*font: xft:Inconsolata-dz\ for\ Powerline:size=11
+!URxvt*font: xft:Source\ Code\ Pro\ Medium:pixelsize=13:antialias=true:hinting=true,xft:Source\ Code\ Pro\ Medium:pixelsize=13:antialias=true:hinting=true
+!URxvt*font: xft:Terminus:pixelsize=10
+!URxvt*font: xft:Monospace:size=10
+URxvt*font: xft:Monospace:size=10,\
+            xft:Terminus:pixelsize=10,\
+            xft:Inconsolata\ for\ Powerline:pixelsize=10,\
+            xft:inconsolata-dz for Powerline:size=10,\
+            xft:PowerlineSymbols:size=10,\
+            xft:consolas:size=10,\
+            xft:Cousine:size=10,\
+            xft:Monospace:size=10,\
+            xft:inconsolata-dz:size=10,\
+            xft:PragmataPro:size=10,\
+            xft:Miriam Mono CLM:size=10
+
+!URxvt*font: xft:PragmataPro:size=10
+! trying to set up fonts to look nice and work with powerline too
+URxvt*letterSpace:    -1
+Xft.rgba: none
+Xft.hintstyle: hintfull
+
+URxvt*scrollBar:                     0 
+URxvt*mouseWheelScrollPage:           1
+URxvt*scrollTtyKeypress:             1 
+
+URxvt.clipboard.autocopy:       1
+URxvt*pointerBlank:             1
+URxvt*pointerBlankDelay:        5
+!
+!urxvt-perls extension settings
+URxvt.keysym.M-Escape: perl:keyboard-select:activate
+URxvt.keysym.M-s: perl:keyboard-select:search
+!Use Meta-Escape to activate selection mode, then use the following keys:
+!
+!h/j/k/l:    Move cursor left/down/up/right (also with arrow keys)
+!g/G/0/^/$/H/M/L/f/F/;/,/w/W/b/B/e/E: More vi-like cursor movement keys
+!'/'/?:      Start forward/backward search
+!n/N:        Repeat last search, N: in reverse direction
+!Ctrl-f/b:   Scroll down/up one screen
+!Ctrl-d/u:   Scroll down/up half a screen
+!v/V/Ctrl-v: Toggle normal/linewise/blockwise selection
+!y/Return:   Copy selection to primary buffer, Return: quit afterwards
+!Y:          Copy selected lines to primary buffer or cursor line and quit
+!q/Escape:   Quit keyboard selection mode
+
+!add optional bidi-support
+!URxvt.bidi.enabled:	  1
+!URxvt.keysym.F12:    perl:bidi: show
+!URxvt.keysym.M-C-b:    perl:bidi: toggle show
+!URxvt.keysym.A-0x0062:    perl:bidi toggle show
+!URxvt.keysym.C-0x0062:    perl:bidi toggle show
+!line above is supposed to define Ctrl-B as a map to toggle bidi support on/off
+!URxvt.bidi.LRE: \[([]
+!URxvt.bidi.PDF: \[)]]
+!
+!URxvt.bidi.LRE: \\\\[([]
+!URxvt.bidi.PDF: \\\\[)\\]]
+!urxvt-vimh.bidi.par: true
+!urxvt-vimh.cursorUnderline: true
+!urxvt-vimh.bidi.ParReset: ^\\s*$|^\\\\begin|^\\\\\\[
+!urxvt-vimh.bidi.ParResetAfter: ^\\\\end|\\\\\\]$
+
+!Make urxvt generate the same keycode as xterm so ctrl-arrow can work with vim
+URxvt.keysym.Control-Up:   \033[1;5A
+URxvt.keysym.Control-Down:    \033[1;5B
+URxvt.keysym.Control-Left:   \033[1;5D
+URxvt.keysym.Control-Right:    \033[1;5C
+
+!xft:Monospace:size=10\,
+!   xft:consolaz:size=10 
+! URxvt*boldFont:                       fontname
+! URxvt*italicFont:                     fontname
+! URxvt*boldItalicFont:                 fontname
+
+!!! Solarized Pallete
+
+! Solarized color scheme for the X Window System
+!
+! http://ethanschoonover.com/solarized
+! Common
+
+!#define S_yellow        #b58900
+!#define S_orange        #cb4b16
+!#define S_red           #dc322f
+!#define S_magenta       #d33682
+!#define S_violet        #6c71c4
+!#define S_blue          #268bd2
+!#define S_cyan          #2aa198
+!#define S_green         #859900
+
+! Dark
+
+!#define S_base03        #002b36
+!#define S_base02        #073642
+!#define S_base01        #586e75
+!#define S_base00        #657b83
+!#define S_base0         #839496
+!#define S_base1         #93a1a1
+!#define S_base2         #eee8d5
+!#define S_base3         #fdf6e3
+
+! Light
+
+! #define S_base03        #fdf6e3
+! #define S_base02        #eee8d5
+! #define S_base01        #93a1a1
+! #define S_base00        #839496
+! #define S_base0         #657b83
+! #define S_base1         #586e75
+! #define S_base2         #073642
+! #define S_base3         #002b36
+
+! To only apply colors to your terminal, for example, prefix
+! the color assignment statement with its name. Example:
+!
+! URxvt*background:            S_base03
+
+!URxvt*background:              S_base03
+!URxvt*foreground:              S_base0
+!URxvt*fading:                  40
+!URxvt*fadeColor:               S_base03
+!URxvt*cursorColor:             S_base1
+!URxvt*pointerColorBackground:  S_base01
+!URxvt*pointerColorForeground:  S_base1
+!
+!URxvt*color0:                  S_base02
+!URxvt*color1:                  S_red
+!URxvt*color2:                  S_green
+!URxvt*color3:                  S_yellow
+!URxvt*color4:                  S_blue
+!URxvt*color5:                  S_magenta
+!URxvt*color6:                  S_cyan
+!URxvt*color7:                  S_base2
+!URxvt*color9:                  S_orange
+!URxvt*color8:                  S_base03
+!URxvt*color10:                 S_base01
+!URxvt*color11:                 S_base00
+!URxvt*color12:                 S_base0
+!URxvt*color13:                 S_violet
+!URxvt*color14:                 S_base1
+!URxvt*color15:                 S_base3
+
+!!! END Solarized
+
+!!!Monokai
+! special
+!URxvt*.foreground:   #f8f8f2
+!URxvt*.background:   #272822
+!URxvt*.cursorColor:  #f8f8f2
+!! black
+!URxvt*.color0:       #272822
+!URxvt*.color8:       #75715e
+!! red
+!URxvt*.color1:       #f92672
+!URxvt*.color9:       #f92672
+!! green
+!URxvt*.color2:       #a6e22e
+!URxvt*.color10:      #a6e22e
+!! yellow
+!URxvt*.color3:       #f4bf75
+!URxvt*.color11:      #f4bf75
+!! blue
+!URxvt*.color4:       #66d9ef
+!URxvt*.color12:      #66d9ef
+!! magenta
+!URxvt*.color5:       #ae81ff
+!URxvt*.color13:      #ae81ff
+!! cyan
+!URxvt*.color6:       #a1efe4
+!URxvt*.color14:      #a1efe4
+!! white
+!URxvt*.color7:       #f8f8f2
+!URxvt*.color15:      #f9f8f5
+
+URxvt*foreground: white
+URxvt*background: black
+!! Brewer Dark
+!! special
+!!*URxvt.foreground:   #b7b8b9
+!*URxvt.foreground:   #ffffff
+!!*URxvt.background:   #0c0d0e
+!*URxvt.background:   #000000
+!*URxvt.cursorColor:  #b7b8b9
+!
+!! black
+!*.color0:       #0c0d0e
+!*.color8:       #737475
+!
+!! red
+!*URxvt.color1:       #e31a1c
+!*URxvt.color9:       #e31a1c
+!
+!! green
+!*URxvt.color2:       #31a354
+!*URxvt.color10:      #31a354
+!
+!! yellow
+!*URxvt.color3:       #dca060
+!*URxvt.color11:      #dca060
+!
+!! blue
+!*URxvt.color4:       #3182bd
+!*URxvt.color12:      #3182bd
+!
+!! magenta
+!*URxvt.color5:       #756bb1
+!*URxvt.color13:      #756bb1
+!
+!! cyan
+!*URxvt.color6:       #80b1d3
+!*URxvt.color14:      #80b1d3
+!
+!! white
+!*URxvt.color7:       #b7b8b9
+!*URxvt.color15:      #fcfdfe
+
+
+
+! URxvt*termName:                       string
+! URxvt*geometry:                       geometry
+! URxvt*chdir:                          string
+! URxvt*reverseVideo:                   boolean
+! URxvt*loginShell:                     boolean
+! URxvt*multiClickTime:                 number
+! URxvt*jumpScroll:                     boolean
+! URxvt*skipScroll:                     boolean
+! URxvt*pastableTabs:                   boolean
+! URxvt*scrollstyle:                    mode
+! URxvt*scrollBar:                      boolean
+! URxvt*scrollBar_right:                boolean
+! URxvt*scrollBar_floating:             boolean
+! URxvt*scrollBar_align:                mode
+! URxvt*thickness:                      number
+! URxvt*scrollTtyOutput:                boolean
+! URxvt*scrollTtyKeypress:              boolean
+! URxvt*scrollWithBuffer:               boolean
+! URxvt*inheritPixmap:                  boolean
+! URxvt*transparent:                    boolean
+! URxvt*tintColor:                      color
+! URxvt*shading:                        number
+! URxvt*blurRadius:                     HxV
+! URxvt*fading:                         number
+! URxvt*fadeColor:                      color
+! URxvt*utmpInhibit:                    boolean
+! URxvt*urgentOnBell:                   boolean
+! URxvt*visualBell:                     boolean
+! URxvt*mapAlert:                       boolean
+! URxvt*meta8:                          boolean
+! URxvt*mouseWheelScrollPage:           boolean
+! URxvt*tripleclickwords:               boolean
+! URxvt*insecure:                       boolean
+! URxvt*cursorUnderline:                boolean
+! URxvt*cursorBlink:                    boolean
+! URxvt*pointerBlank:                   boolean
+! URxvt*background:                     color
+! URxvt*foreground:                     color
+! URxvt*color0:                         color
+! URxvt*color1:                         color
+! URxvt*color2:                         color
+! URxvt*color3:                         color
+! URxvt*color4:                         color
+! URxvt*color5:                         color
+! URxvt*color6:                         color
+! URxvt*color7:                         color
+! URxvt*color8:                         color
+! URxvt*color9:                         color
+! URxvt*color10:                        color
+! URxvt*color11:                        color
+! URxvt*color12:                        color
+! URxvt*color13:                        color
+! URxvt*color14:                        color
+! URxvt*color15:                        color
+! URxvt*colorBD:                        color
+! URxvt*colorIT:                        color
+! URxvt*colorUL:                        color
+! URxvt*colorRV:                        color
+! URxvt*underlineColor:                 color
+! URxvt*scrollColor:                    color
+! URxvt*troughColor:                    color
+! URxvt*highlightColor:                 color
+! URxvt*highlightTextColor:             color
+! URxvt*cursorColor:                    color
+! URxvt*cursorColor2:                   color
+! URxvt*pointerColor:                   color
+! URxvt*pointerColor2:                  color
+! URxvt*borderColor:                    color
+! URxvt*iconFile:                       file
+! URxvt*font:                           fontname
+! URxvt*boldFont:                       fontname
+! URxvt*italicFont:                     fontname
+! URxvt*boldItalicFont:                 fontname
+! URxvt*intensityStyles:                boolean
+! URxvt*inputMethod:                    name
+! URxvt*preeditType:                    style
+! URxvt*imLocale:                       string
+! URxvt*imFont:                         fontname
+! URxvt*title:                          string
+! URxvt*iconName:                       string
+! URxvt*saveLines:                      number
+! URxvt*buffered:                       boolean
+! URxvt*depth:                          number
+! URxvt*visual:                         number
+! URxvt*transient-for:                  windowid
+! URxvt*override-redirect:              boolean
+! URxvt*hold:                           boolean
+! URxvt*externalBorder:                 number
+! URxvt*internalBorder:                 number
+! URxvt*borderLess:                     boolean
+! URxvt*lineSpace:                      number
+! URxvt*letterSpace:                    number
+! URxvt*skipBuiltinGlyphs:              boolean
+! URxvt*pointerBlankDelay:              number
+! URxvt*backspacekey:                   string
+! URxvt*deletekey:                      string
+! URxvt*print-pipe:                     string
+! URxvt*modifier:                       modifier
+! URxvt*cutchars:                       string
+! URxvt*answerbackString:               string
+! URxvt*secondaryScreen:                boolean
+! URxvt*secondaryScroll:                boolean
+! URxvt*perl-lib:                       string
+! URxvt*perl-eval:                      perl-eval
+! URxvt*perl-ext-common:                string
+! URxvt*perl-ext:                       string
+! URxvt*iso14755:                       boolean
+! URxvt*iso14755_52:                    boolean
+! URxvt*xrm:                            string
+! URxvt*keysym.sym:                     keysym
+! URxvt*background.border:              boolean
+! URxvt*background.expr:                string
+! URxvt*background.interval:            seconds
+! URxvt*bell-command:                   string
+! URxvt*kuake.hotkey:                   string
+! URxvt*matcher.button:                 string
+! URxvt*matcher.launcher:               string
+! URxvt*matcher.launcher.*:             string
+! URxvt*matcher.pattern.*:              string
+! URxvt*matcher.rend.*:                 string
+! URxvt*remote-clipboard.fetch:         string
+! URxvt*remote-clipboard.store:         string
+! URxvt*searchable-scrollback:          string
+! URxvt*selection-autotransform.*:      string
+! URxvt*selection-pastebin.cmd:         string
+! URxvt*selection-pastebin.url:         string
+! URxvt*selection.pattern-0:            string
+! URxvt*tab-bg:                         colour
+! URxvt*tab-fg:                         colour
+! URxvt*tabbar-bg:                      colour
+! URxvt*tabbar-fg:                      colour
+! URxvt*url-launcher:                   string
+!
+! Background color
+!URxvt*background: black
+!
+!!Cursor Colors
+!URxvt*cursorColor:                    red
+!URxvt*cursorColor2:                   yellow
+!
+!! Font color
+!URxvt*foreground: white
+!
+!! Other colors
+!URxvt*color0: black
+!URxvt*color1: red3
+!URxvt*color2: green3
+!URxvt*color3: yellow3
+!URxvt*color4: blue2
+!URxvt*color5: magenta3
+!URxvt*color6: cyan3
+!URxvt*color7: gray90
+!URxvt*color8: grey50
+!URxvt*color9: red
+!URxvt*color10: green
+!URxvt*color11: yellow
+!URxvt*color12: blue
+!URxvt*color13: magenta
+!URxvt*color14: cyan
+!URxvt*color15: white

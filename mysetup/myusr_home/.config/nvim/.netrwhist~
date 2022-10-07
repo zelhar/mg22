@@ -1,0 +1,7 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =5
+let g:netrw_dirhist_5='/home/ykolb/.config/coc/extensions/node_modules'
+let g:netrw_dirhist_4='/home/ykolb/.config/coc/extensions/node_modules/coc-texlab'
+let g:netrw_dirhist_3='/home/ykolb/.config/coc/extensions/node_modules'
+let g:netrw_dirhist_2='/home/ykolb/.config/coc/extensions/node_modules/coc-texlab'
+let g:netrw_dirhist_1='/home/ykolb/.config/coc/extensions/node_modules'

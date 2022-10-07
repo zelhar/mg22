@@ -1,0 +1,57 @@
+"Setting TableMode parametes to be Markdown compatible
+let g:table_mode_corner = '|'
+let g:table_mode_corner_corner = '|'
+"Turning off AutoClose only use it when I need to.
+let g:AutoCloseOn = 0
+"Setting bufferline to my liking
+let g:bufferline_echo = 1
+let g:bufferline_rotate = 1
+let g:bufferline_fname_mod = ':t'
+let g:bufferline_fixed_index =  1
+"buffer line airline 
+"let g:airline_section_b = '%{getcwd()}'
+let g:airline_section_c = '%F%m%r%h%w'
+"let g:airline#extensions#bufferline#enabled = 0
+"let g:airline#extensions#bufferline#overwrite_variables = 0
+"let g:airline#extensions#branch#enabled = 0
+"echo "After Bundles!"
+"autocmd BufWinEnter,WinEnter,InsertLeave,VimResized,CursorHold * :pwd 
+"In bufferline after file, modify the line to what is bellow so it echos current
+"working dir in addition to buffer list.
+"let line = bufferline#get_echo_string()." cwd: ".getcwd()
+"
+"As shown in 'Hacking Vim'
+function ShortTabLine()
+    let ret = ''
+    for i in range(tabpagenr('$'))
+        " select the color group for highlighting active tab
+        if i + 1 == tabpagenr()
+            let ret .= '%#errorMsg#'
+        else
+            let ret .= '%#TabLine#'
+        endif
+        " find the buffername for the tablabel
+        " note that list first index is 0 while buffers, windows and tabs start
+        " from 1
+        let buflist = tabpagebuflist(i+1)
+        let winnr = tabpagewinnr(i+1)
+        let buffername = bufname( buflist[winnr – 1] )
+        let filename = fnamemodify(buffername,':t')
+        " check if there is no name
+        if filename == ''
+            let filename = 'noname'
+        endif
+        " only show the first 6 letters of the name and
+        " .. if the filename is more than 8 letters long
+        if strlen(filename) >= 8
+            let ret .= '['. filename[0:5].'..]'
+        else
+            let ret .= '['.filename.']'
+        endif
+    endfor
+    " after the last tab fill with TabLineFill and reset tab page #
+    let ret .= '%#TabLineFill#%T'
+    return ret
+endfunction
+
+"set tabline=%!ShortTabLine()

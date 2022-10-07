@@ -1,0 +1,48 @@
+{
+    "hover.target": "float",
+    "hover.autoHide": false,
+    "suggest.noselect": true,
+    "suggest.enablePreselect": true,
+    "pyright.enable": true,
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.formatting.provider": "autopep8",
+    "python.linting.pylintArgs": [
+        "--generated-members=numpy.*, torch.*",
+        "--errors-only"
+    ],
+    "python.analysis.extraPaths": [
+        ",,",
+        "."
+    ],
+    "jedi.enable": true,
+    "jedi.startupMessage": true,
+    "jedi.markupKindPreferred": "markdown",
+    "r.lsp.path": "/home/ykolb/miniconda3/envs/mgen/bin/R",
+    "languageserver": {
+        "haskell": {
+            "command": "haskell-language-server-wrapper",
+            "args": [
+                "--lsp"
+            ],
+            "rootPatterns": [
+                "*.cabal",
+                "stack.yaml",
+                "cabal.project",
+                "package.yaml",
+                "hie.yaml"
+            ],
+            "filetypes": [
+                "hs",
+                "lhs",
+                "lhaskell",
+                "haskell"
+            ],
+            "initializationOptions": {
+                "languageServerHaskell": {}
+            }
+        }
+    },
+    "suggest.autoTrigger": "always",
+    "clangd.path": "/home/ykolb/.config/coc/extensions/coc-clangd-data/install/10.0.0/clangd_10.0.0/bin/clangd"
+}

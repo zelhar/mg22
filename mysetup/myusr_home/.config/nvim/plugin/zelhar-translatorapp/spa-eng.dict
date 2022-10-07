@@ -1,0 +1,10402 @@
+
+00-database-dictfmt-1.12.1
+Spanish-English FreeDict Dictionary
+
+Maintainer: [up for grabs]
+
+Edition: 0.2
+Size: 4502 headwords
+
+Publisher: FreeDict.
+
+
+Availability:
+
+  Copyright (C) 1999-2010 by various authors listed below. Available under
+  the terms of the GNU General Public License ver. 2.0 and any later
+  version. This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License as published
+  by the Free Software Foundation; either version 2 of the License, or (at
+  your option) any later version. This program is distributed in the hope
+  that it will be useful, but WITHOUT ANY WARRANTY; without even the
+  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  See the GNU General Public License for more details. You should have
+  received a copy of the GNU General Public License along with this
+  program; if not, write to the Free Software Foundation, Inc., 59 Temple
+  Place - Suite 330, Boston, MA 02111-1307, USA.
+
+Published at: http://freedict.org/
+ID# (svn): $Id: spa-eng.tei 1350 2015-02-27 20:01:48Z humenda $
+Publication date: 27 February 2015.
+
+Notes:
+
+ * Database Status: too small
+
+
+Source(s):
+
+  Home: http://www.travlang.com/ This Database was generated from Ergane.
+
+The Project:
+
+  This dictionary comes to you through nice people making it available for
+  free and for good. It is part of the FreeDict project,
+  http://freedict.org/. This project aims to make translating dictionaries
+  available for free. Your contributions are welcome!
+
+Changelog:
+
+ * 2015-04-27: Conversion of the TEI source file into c5 format.
+   Stylesheet ID: $Id: teiheader2txt.xsl 1095 2011-01-06 14:57:17Z bansp$
+ * 2015-02-27 Sebastian Humenda ver. 0.2:
+   remove Esperanto words in parenthesis from translations
+ * 2010-10-25 Piotr Bański:
+   Conversion of TEI P4 source into P5 via tools/freedict_P4toP5.xsl;
+   manual clean-up. We are back to version from before Michael Bunk's
+   re-import from Ergane of 2006-12-22 that was rolled back due to
+   Ergane's cryptic change of database licensing. Multi-word equivalents
+   should be split by spaces. There are also what look like Esperanto
+   equivalents tacked onto some equivalents.
+ * 2005-02-12 Michael Bunk:
+   Converted file to TEI P4
+ * 2000-04-30 Horst Eyermann:
+   Database was converted to TEI format and checked into CVS
+ * 2000-01-01 Horst Eyermann:
+   This Database was generated from ergane, http://www.travlang.com -
+   Thanks!
+Spanish-English FreeDict Dictionary ver. 0.2
+Adán
+ Adam
+Alcorán
+ Koran
+Alejandro
+ Alexander
+Alemania
+ Germany
+Alpes
+ Alps
+Amberes
+ Antwerp
+Amsterdam
+ Amsterdam
+América
+ America
+América del Sur
+ South America
+América meridional
+ South America
+América septentrional
+ NorthAmerica
+Andalucía
+ Andalusia
+Andorra
+ Andorra
+Antillas
+ Antilles
+Anunciación
+ Annunciation; LadyDay
+Apocalipsis
+ Apocalypse
+Aquisgrán
+ Aix‐la‐Chapelle
+Arabia
+ Arabia
+Argel
+ Algiers
+Argentina
+ Argentina
+Arizona
+ Arizona
+Aruba
+ Aruba
+Ascensión
+ AscensionDay
+Asia
+ Asia
+Asia Menor
+ AsiaMinor
+Asturias
+ Asturias
+Atenas
+ Athens
+Australia
+ Australia
+Austria
+ Austria
+Balkanes
+ Balkans
+Barcelona
+ 1. Barcelona
+ 2. Barcelona
+Bengala
+ Bengal
+Berlín
+ Berlin
+Biblia
+ Bible
+Blanca‐Nieve
+ LittleSnowWhite
+Bolivia
+ Bolivia
+Brasil
+ Brazil
+Bruselas
+ Brussels
+Bulgaria
+ Bulgaria
+Burdeos
+ Bordeaux
+Báltico
+ Baltic Sea
+Bélgica
+ Belgium
+Canadá
+ Canada
+Candelaria
+ Candlemas
+Castilla
+ Castile
+Cataluña
+ Catalonia
+Cenicienta
+ Cinderella
+Cenopegias
+ FeastofTabernacles
+Cerdeña
+ 1. Sardinia
+ 2. Sardinia
+ 3. Sardina
+ 4. Sardinia
+Checoeslovaquia
+ Czechoslovakia
+Chile
+ Chile
+China
+ China
+Colombia
+ Colombia
+Colonia
+ Cologne
+Colón
+ Columbus
+Costa Brava
+ CostaBrava
+Costa Rica
+ CostaRica
+Creta
+ Crete
+Cristo
+ Christ
+Cruz Roja
+ RedCross
+Cuba
+ Cuba
+Curazao
+ Curaçao
+Cáucaso
+ Caucasus
+Córcega
+ Corsica
+Córdoba
+ Cordova
+Dinamarca
+ Denmark
+Dios
+ God
+Ecuador
+ Ecuador
+Egipto
+ Egypt
+El Salvador
+ ElSalvador
+Escalda
+ Scheldt
+Escandinavia
+ 1. Scandinavia
+ 2. Scandinavia
+Escocia
+ Scotland
+España
+ Spain
+Estados Unidos
+ United States of America; USA
+Estonia
+ Estonia
+Estrasburgo
+ Strasbourg
+Estrecho de Gibraltar
+ StraitofGibraltar
+Etna
+ Etna
+Europa
+ 1. Europa
+ 2. Europe
+ 3. Europa
+Europa occidental
+ WesternEurope
+Extremadura
+ Estremadura
+Extremo Oriente
+ 1. Far East; theFarEast
+ 2. FarEast
+Fiesta de los Tabernáculos
+ FeastofTabernacles
+Finlandia
+ Finland
+Flandes
+ Flanders
+Florencia
+ Florence
+Francia
+ France
+Frisia
+ Friesland
+Gales
+ Wales
+Galicia
+ Galicia
+Gante
+ Ghent
+Gibraltar
+ Gibraltar
+Ginebra
+ Geneva
+Gran Bretaña
+ Britain; GreatBritain
+Grecia
+ Greece
+Groenlandia
+ 1. Greenland
+ 2. Greenland
+Guatemala
+ 1. Guatemala
+ 2. GuatemalaCity
+Guinea Ecuatorial
+ EquatorialGuinea
+Güeldres
+ Guelderland; Guelders
+Génova
+ Genoa
+Havana
+ Havana
+Holanda
+ 1. Holland
+ 2. Holland; theNetherlands
+Holanda septentrional
+ NorthHolland
+Honduras
+ Honduras
+Hungría
+ Hungary
+IVA
+ VAT
+India
+ India
+Indonesia
+ Indonesia
+Inglaterra
+ 1. England
+ 2. England
+Irlanda
+ Ireland
+Islandia
+ Iceland
+Islas Baleares
+ BalearicIslands
+Islas Canarias
+ CanaryIslands
+Islas Malvinas
+ Falkland Islands; Falklands
+Italia
+ Italy
+Japón
+ Japan
+Java
+ Java
+Jesucristo
+ JesusChrist
+Laponia
+ Lapland
+Latvia
+ Latvia
+La Haya
+ TheHague
+Letonia
+ Latvia
+Lieja
+ Liège
+Lisboa
+ Lisbon
+Lituania
+ Lithuania
+Livonia
+ Livonia
+Londres
+ London
+Lorena
+ Lorraine; Lothringen
+Los Países Bajos
+ Holland; the Netherlands
+Lovaina
+ Louvain
+Luxemburgo
+ 1. Luxemburg
+ 2. Luxemburg
+Madrid
+ Madrid
+Mahoma
+ Mohammed; Muhammad
+Malinas
+ Malines; Mechlin
+Mallorca
+ Majorca
+Marruecos
+ Morocco
+Marsella
+ Marseilles
+Mar Cantábrico
+ BayofBiscay
+Mediterráneo
+ Mediterranean
+Moisés
+ Moses
+Mosa
+ Meuse
+Moscú
+ Moscow
+Mosela
+ Moselle
+Munich
+ Munich
+Méjico
+ Mexico
+México
+ 1. Mexico
+ 2. MexicoCity
+Navidad
+ Christmas; Yule
+Nicaragua
+ Nicaragua
+Nilo
+ Nile
+Nimega
+ Nimwegen
+Norteamérica
+ NorthAmerica
+Noruega
+ Norway
+Noé
+ Noah
+Nuestra Señora
+ 1. OurLady
+ 2. OurLady
+Nueva Gales del Sur
+ NewSouthWales
+Nueva York
+ New Amsterdam; New York; NewYorkCity
+Nápoles
+ Naples
+Oceanía
+ Oceania; Oceanica
+Océano Pacífico
+ Pacific; PacificOcean
+Pacífico
+ Pacific; PacificOcean
+Panamá
+ Panama
+Paraguay
+ Paraguay
+París
+ Paris
+Pascua
+ Easter
+Patagonia
+ Patagonia
+País Vasco
+ BasqueCountry
+Pentecostés
+ Pentecost; Whitsunday
+Persia
+ Persia
+Perú
+ Peru
+Pirineos
+ Pyrenees
+Polonia
+ Poland
+Portugal
+ Portugal
+Prusia
+ Prussia
+Purificación
+ Candlemas
+Redentor
+ 1. Redeemer; Saviour
+ 2. Redeemer; Saviour
+ 3. Saviour
+Rin
+ Rhine
+Rio Brava
+ RioGrande
+Rio Grande del Norte
+ RioGrande
+Roma
+ Rome
+Rumania
+ 1. Romania
+ 2. Romania
+Rusia
+ Russia
+Sahara
+ Sahara
+Sajonia
+ 1. Saxe; Saxony
+ 2. Saxe; Saxony
+Salvador
+ 1. Redeemer; Saviour
+ 2. Redeemer; Saviour
+ 3. Saviour
+Satanás
+ Lucifer; Satan
+Satán
+ Lucifer; Satan
+Sevilla
+ Seville
+Siberia
+ Siberia
+Suecia
+ Sweden
+Suiza
+ Switzerland
+Surinam
+ Surinam
+Tajo
+ Tagus
+Todos los Santos
+ 1. All Hallows; AllSaints'Day
+ 2. AllSouls'Day
+Trinidad
+ Trinity
+Turquía
+ Turkey
+Támesis
+ Thames
+Túnez
+ Tunis
+Union Europea
+ EuropeanUnion
+Unión soviética
+ Soviet Union; USSR
+Uruguay
+ Uruguay
+Valencia
+ Valencia
+Venezuela
+ Venezuela
+Viena
+ Vienna
+Viernes Santo
+ GoodFriday
+Vizcaya
+ 1. Biscay
+ 2. Biscay
+Vístula
+ Vistula
+Yugoeslavia
+ Yugoslavia
+Zelandia
+ Zealand
+¿cuánto tiempo?
+ 1. howlong?
+ 2. howlong?
+¿cómo está usted?
+ how are you?; howdoyoudo?
+¿qué hora es?
+ whattimeisit?
+a
+ 1. at; to; toward; towards
+ 2. a; in; inside; into; on; per; within
+abad
+ 1. abbot
+ 2. abbot
+ 3. archimandrite
+abadesa
+ abbess
+abadía
+ abbey
+abajo
+ 1. below; downstairs; underneath
+ 2. below; underneath
+abandonar
+ 1. cede; give in; give up; give way; relinquish; yield
+ 2. abandon; forsake; desert; leave; quit
+abastacimiento
+ 1. catering
+ 2. catering
+abatido
+ dejected; depressed
+abecé
+ alphabet
+abedul
+ birch
+abeja
+ bee
+abeto
+ fir
+abierto
+ 1. open
+ 2. open
+abismo
+ abyss; chasm; gulf; precipice
+abjurar
+ abjure; forswear; swear off; renounce
+abolas
+ bearing
+abolición
+ 1. abolition; abrogation
+ 2. abolition; abrogation
+ 3. abolition
+abolir
+ 1. abolish; abrogate
+ 2. do away with; get rid of; remove
+abominable
+ abhorrent; abominable; alien; awful; hideous; horrible; gruesome
+abonado
+ subscriber
+abonar
+ fertilize
+abonarse
+ subscribe; subscribeto
+abono
+ 1. subscription
+ 2. dressing; fertilization; manuring
+abordaje
+ collision
+abordar
+ 1. land
+ 2. collide with; crashinto
+abrazar
+ 1. embrace
+ 2. embrace; hug
+abrelatas
+ can opener; tin‐opener
+abreviación
+ abbreviation
+abreviar
+ abbreviate; abridge; shorten
+abreviatura
+ abbreviation
+abridor de tapones
+ bottleopener
+abrigo
+ 1. cloak; mantle
+ 2. coat; overcoat
+ 3. coat; overcoat
+abril
+ April
+abrir
+ open; openup
+abrogar
+ 1. abolish; abrogate
+ 2. do away with; get rid of; remove
+absceso
+ abscess
+abstinencia
+ teetotalism; totalabstinence
+abuela
+ grandmother
+abuelo
+ grandfather
+aburrido
+ 1. boring; stodgy
+ 2. boring; stodgy; tiresome
+aburrir
+ bore
+acabado
+ 1. finishingoff
+ 2. completed; done; finished; over; through
+acabar
+ 1. finish; workout
+ 2. accomodate; end; finish; terminate
+ 3. finish
+ 4. useup
+ 5. useup
+ 6. waste
+academia
+ academy
+acampar
+ camp; be encamped; lie encamped; campout
+acaso
+ accidence; chance; hazard
+accidente
+ accident
+accionista
+ shareholder
+acción
+ 1. action; activity
+ 2. achievement; act; action
+ 3. share
+ 4. accomplishment; achievement; act; action
+acechar
+ set a trap; setatrapfor
+aceite
+ oil
+aceite de oliva
+ oil of olives; olive‐oil
+aceituna
+ olive
+acelerador
+ 1. accelerator; acceleratorpedal
+ 2. accelerator; acceleratorpedal
+acento
+ 1. accent; stress
+ 2. accent
+ 3. accent mark; supersign
+acentuar
+ accent; accentuate; stress
+aceptable
+ 1. acceptable
+ 2. acceptable
+aceptación
+ acceptance; admission
+aceptar
+ accept; receive; take; takein
+acera
+ pavement; sidewalk
+acercarse
+ advance; come close; come closer; comeon
+acero
+ steel
+acertar
+ catch; hit; run across; strike
+achicoria
+ chicory
+acidez de estómago
+ heartburn
+acoger
+ greet; salute
+acogida
+ greeting; salutation
+acometer
+ 1. commitaggression
+ 2. assault; attack
+ 3. assault; violate
+acometida
+ access; aggression; attack
+acomodado
+ in easy circumstances; well‐to‐do
+acomodar
+ accomodate
+acompañamiento
+ accompaniment; escort
+acompañar
+ accompany
+aconsejar
+ advise; counsel
+acontecer
+ 1. become; come about; grow; happen
+ 2. come about; happen; occur
+acontecimiento
+ chance; event; occurence; opportunity
+acordar
+ accede; agree; consent
+acordarse
+ think
+acorde
+ 1. accord; accordance; agreement; concurrence
+ 2. concord
+acordeón
+ accordion
+acortar
+ abbreviate; abridge; shorten
+acostar
+ puttobed
+acostarse
+ gotobed
+acostumbrarse
+ accustom oneself; getused
+activo
+ 1. active
+ 2. active; inaction
+ 3. assets
+ 4. active; hardworking
+ 5. transitive
+actor
+ actor
+actriz
+ actress
+actual
+ current; present; present‐day; topical; up‐to‐date
+actualmente
+ at present; now
+acuarela
+ water‐colour
+acuario
+ aquarium
+acuerdo
+ 1. accord; accordance; agreement; concurrence
+ 2. accommodation; adjustment; arrangement
+ 3. accommodation; accord; agreement
+acumulador
+ accumulator; battery; storagebattery
+acusación
+ 1. accusal; accusation
+ 2. accusation
+ 3. accusal; accusation; charge; complaint; indictment
+acusado
+ 1. accused; defendant
+ 2. accused; defendant
+acusar
+ 1. accuse
+ 2. accuse; denounce
+ 3. accuse
+adaptar
+ 1. accomodate
+ 2. affiliate
+adelantar
+ 1. overhaul; overtake; pass
+ 2. overhaul; overtake; pass
+adelante
+ ahead; foreward; on
+adelgazar
+ fall away; lose; lose flesh; loseinweight
+además
+ 1. besides; in addition; moreover
+ 2. besides; in addition; moreover
+además de
+ apart from; besides; except; exceptfor
+adiestrar
+ 1. tame; train
+ 2. break
+adivinar
+ guess
+adiós
+ adieu; farewell; bye; goodbye
+adjetivo
+ adjective
+administración
+ 1. administration; management
+ 2. administration; management
+administración del Sacramento
+ administrationofthelastsacraments
+administrador
+ 1. manager
+ 2. administrator
+administrar
+ administer; manage
+admirar
+ admire
+admisible
+ 1. acceptable
+ 2. acceptable
+admitir
+ accept; receive; take; takein
+adoptivo
+ adopted
+adoración
+ adoration; worship
+adorar
+ adore; worship
+adornado
+ adorned
+adquisición
+ 1. accession; acquisition; gain
+ 2. accession; acquisition; asset
+aduana
+ customs
+adular
+ flatter
+adverbio
+ adverb
+advertidor de incendios
+ fire‐alarm; firecall
+adyacente
+ 1. adjacent
+ 2. adjacent; adjoining
+ 3. adjacent; nearby; neighbouring
+aeroplano
+ aeroplane; airplane; plane
+aeropuerto
+ 1. aerodrome; airdrome; airfield
+ 2. airport
+ 3. airport
+aeróstato
+ 1. balloon; air‐balloon
+ 2. balloon
+afable
+ lovable
+afectación
+ 1. affectation
+ 2. affectation
+afectar
+ affect
+afectuosidad
+ 1. adherence; attachment
+ 2. adherence; affection; attachment
+ 3. attachement
+ 4. attachment
+afectuoso
+ 1. affectionate; devoted; selfless
+ 2. devoted; selfless
+afeitar
+ shave
+aficionado
+ amateur; fancier
+afligido
+ 1. sad
+ 2. bleak; dismal; dreary; gaunt; miserable; sad; somber
+ 3. dismal; gaunt; miserable; sad
+afligir
+ 1. afflict; grieve
+ 2. afflict; cause pain; cause pain to; distress; givepainto
+africana
+ Africanwoman
+africano
+ 1. African
+ 2. African
+afán
+ 1. attempt; effort
+ 2. efforts
+ 3. effort
+ 4. tension
+agarrar
+ 1. grasp
+ 2. clutch; grapple
+agencia
+ agency
+agencia de viaje
+ tourist agency; travelagency
+agenda
+ agenda; appointmentbook
+agente
+ agent
+agilidad
+ expertness; skilfulness; skill; skillfulness
+agosto
+ August
+agotado
+ exhausted; tired out; wornout
+agradable
+ 1. agreeable; enjoyable; lovely; nice; pleasant
+ 2. comfortable
+ 3. pleasing
+agradar
+ please
+agradecer
+ thank
+agrado
+ pleasure
+agrario
+ agrarian; agricultural; farm‐
+agresión
+ 1. access; aggression; attack
+ 2. assault
+agresor
+ aggressor; assailant; attacker
+agridulce
+ sweet‐and‐sour
+agrio
+ 1. acetous; acid; sour; tart
+ 2. acid
+agua
+ water
+aguardar
+ bide; abide; stay for; wait; await; waitfor
+aguas
+ spa
+agua dolce
+ freshwater
+agua dulce
+ freshwater
+agua potable
+ drinking‐water
+agudo
+ acute
+aguijón
+ sting
+aguja
+ needle
+agujero
+ hole
+agüero
+ 1. indication; omen; portent; precursor; presage; sign
+ 2. indication; omen; presage; portent; sign
+ah
+ 1. ah; aha
+ 2. oh
+ahogarse
+ drown
+ahora
+ 1. at present; now
+ 2. currently; nowadays; thesedays
+ahora mismo
+ at once; immediately; just; right away; rightnow
+ahumado
+ smoked
+aire
+ air
+aire acondicionado
+ 1. airconditioning
+ 2. airconditioning
+aislado
+ remote
+aislamiento
+ 1. insulation; isolation
+ 2. isolation; separation
+ajuar
+ furniture
+ajustar
+ 1. makeacontract
+ 2. adjust
+ají
+ chilli
+ala
+ wing
+alabar
+ commend; laud; praise
+alambre
+ 1. wire
+ 2. wire; ironwire
+alargar
+ 1. give
+ 2. hand; handover
+ 3. extend; strechout
+ 4. pass; spend
+ 5. lengthen
+ 6. convey; hand; hand over; pass
+alarma
+ alarm
+albaricoque
+ apricot
+albaricoquero
+ 1. apricot‐tree
+ 2. apricot‐tree
+albergue
+ hostel; inn
+albergue juvenil
+ youthhostel
+alcachofa
+ artichoke
+alcade
+ 1. mayor
+ 2. burgomaster; mayor; provost
+alcanzable
+ accessible
+alcanzar
+ 1. achieve; acquire; attain; get; obtain
+ 2. accomplish; achieve; attain; get; reach
+alcohol
+ 1. alcohol; booze; liquor; spirits; strongdrink
+ 2. alcohol
+alcohol de quemar
+ methylatedspirit
+alcázar
+ fortification
+aldea
+ village
+alegre
+ happy; glad
+alegría
+ gladness; joy
+alemana
+ German; Germanwoman
+alemán
+ 1. German
+ 2. German; Germanlanguage
+ 3. German
+alentar
+ encourage
+aleta
+ fin
+alfabeto
+ alphabet
+alfiler
+ pin; needle
+alfombra
+ carpet
+algo
+ anything; something
+algodón
+ 1. cotton
+ 2. cotton
+alguien
+ a; any; anybody; some; somebody; one; some one; someone
+alguno
+ a; any; anybody; some; somebody; one; some one; someone
+alhaja
+ 1. adornment; decoration; ornament
+ 2. adornment; ornament
+aliento
+ breath
+alimentar
+ feed; nourish
+alimento
+ food; nourishment
+alistar
+ 1. recruit
+ 2. recruit
+alma
+ soul
+almacén
+ warehouse
+almanaque
+ almanac
+almeja
+ mussel
+almendra
+ almond
+almirante
+ admiral
+almohada
+ 1. pillow
+ 2. cushion
+almorranas
+ haemorhoids
+almorzar
+ lunch
+almuerzo
+ lunch; snack
+almíbar
+ syrup
+alojamiento
+ accommodation
+alojarse
+ 1. be a guest of; staywith
+ 2. be on a visit; stay; stop
+alondra
+ lark
+alquilado
+ hiredout
+alquilar
+ 1. let
+ 2. hire
+ 3. let; rentout
+alquitrán
+ tar
+alrededores
+ environment; environs; surroundings
+alrededor de
+ about; round; around; towards
+altar
+ altar
+alternar
+ alternate
+alternativa
+ alternation
+altitud
+ altitude; height
+alto
+ 1. contralto; contraltovoice
+ 2. high; lofty; tall
+ 3. loud
+altura
+ height
+altura barométrica
+ barometer reading; heightofthebarometer
+alumbrado
+ lighting
+alumbrar
+ illuminate; light
+alumbre
+ alum
+aluminio
+ aluminium; aluminum
+al amanecer
+ atdaybreak
+al contrario
+ reverse; reversed
+al dorso
+ 1. attheback
+ 2. behind
+al día
+ aday
+al fin
+ at last; finally; ultimately
+al la derecha
+ ontheright
+al menos
+ atleast
+al mismo tiempo
+ atthesametime
+al norte de
+ above
+al presente
+ currently; nowadays; thesedays
+al principio
+ first; firstly; firstofall
+al revés
+ 1. reverse; reversed
+ 2. vice‐versa
+amable
+ 1. affable; friendly; good‐natured; kind
+ 2. dainty; kind; nice; pretty
+ 3. lovable
+amainar
+ 1. abate; weaken
+ 2. abate; decrease; diminish; drop; fall
+amanecer
+ dawn; daybreak
+amar
+ love
+amargo
+ acerbic; bitter
+amarillo
+ 1. yellow
+ 2. yellow
+amarradero
+ landing‐stage; pier
+amasadura
+ massage
+amazona
+ Amazon
+ambos
+ both
+amenaza
+ menace; threat
+amenazar
+ menace; threaten
+americana
+ 1. jacket
+ 2. Americanwoman
+americano
+ 1. American
+ 2. American
+ 3. American
+ 4. American; UScitizen
+amerindio
+ Indian; AmericanIndian
+amianto
+ asbestos
+amiga
+ friend
+amigo
+ friend
+amistad
+ friendship
+amnistía
+ act of grace; amnesty
+amo
+ 1. boss; chief; leader
+ 2. chief; boss
+amojonar
+ mark out; trace; traceout
+amoníaco
+ ammonia
+amor
+ affection; love
+amortiguador
+ shock‐absorber
+amortización
+ redemption
+amortizar
+ 1. amortize; deaden
+ 2. pay off; redeem
+ampliación
+ 1. aggrandizement; enlargement; increase
+ 2. enlargement; increase
+ampolla
+ 1. bulb
+ 2. blister
+ 3. blister
+amputar
+ amputate
+amén
+ amen
+amén de
+ apart from; besides; except; exceptfor
+anales
+ annals
+analfabeto
+ illiterate
+ananás
+ pineapple
+anatema
+ 1. anathema; ban; excommunication
+ 2. anathema; ban; excommunication
+ancas de rana
+ frog'slegs
+anchas
+ comfort
+ancho
+ broad
+anchoa
+ anchovy
+anchura
+ 1. width
+ 2. width
+anciano
+ old
+ancla
+ anchor
+anclar
+ anchor
+andar
+ march; walk
+andas
+ litter; strecher
+andén
+ platform; quay; wharf
+anexar
+ annex
+anexionar
+ annex
+anexión
+ annexation
+anguila
+ eel
+angustia
+ 1. agony; anguish; fear
+ 2. fright
+angustioso
+ afraid; fearful
+anillo
+ ring
+animación
+ encouragement
+animal
+ 1. animal
+ 2. animal; beast
+animar
+ 1. encourage; impel; instigate; spur on; stimulate; urge
+ 2. encourage
+ 3. cheer; fire; inspire; stimulate
+ 4. fan; fire; inspire; stimulate; stir up; urgeon
+ 5. rouse; stimulate; stirup
+ano
+ anus; arse
+anoche
+ lastnight
+anonchecer
+ dusk
+anormal
+ 1. abnormal
+ 2. abnormal
+ 3. abnormal
+ 4. abnormal
+anotación
+ annotation; note
+anotar
+ note; make a note; writedown
+anteayer
+ thedaybeforeyesterday
+antebrazo
+ lower‐arm
+antecedente
+ 1. antecedent
+ 2. antecedent
+antena
+ aerial; antenna
+anteriormente
+ ahead; formerly; previously
+antes
+ 1. before; infrontof
+ 2. first; firstly; firstofall
+antes de que
+ before; previousto
+anticongelante
+ antifreeze
+antideslizante
+ non‐skid
+antiguo
+ ancient; antique
+antigüedad
+ antiquity
+antiséptico
+ 1. antiseptic
+ 2. antiseptic
+ 3. antiseptic
+anualidad
+ instalment; repayment
+anualmente
+ annual; yearly
+anudar
+ tieon
+anular
+ 1. cancel; countermand
+ 2. abjure; abolish; abrogate; annul; cancel; remit
+anunciar
+ 1. advertise; announce; givenotice
+ 2. advise; counsel; notify
+anuncio
+ 1. announcement; notification; notice
+ 2. ad; advertisement
+ 3. notification; notice
+anzuelo
+ hook
+anécdota
+ anecdote
+anís
+ anise
+anónimo
+ 1. anonymous
+ 2. anonymous; nameless; withoutaname
+apagar
+ extinguish; putout
+aparador
+ chest; dresser
+aparador de cocina
+ dresser
+aparato
+ apparatus; device; set
+aparato para sordos
+ 1. hearingaid
+ 2. hearingaid
+aparcamiento
+ 1. parkinggarage
+ 2. car park; lay‐by; parking bay; parking garage; parkingplace
+aparcamiento de taxis
+ cab‐stand
+aparecer
+ appear; emerge; perform
+apariencia
+ appearance
+apartado
+ 1. paragraph
+ 2. remote
+apartamento
+ apartment; flat
+apartar
+ 1. divide; separate
+ 2. turnaway
+aparte
+ 1. apart; particular; separate; special
+ 2. apart; separately
+apelación
+ appeal
+apellido
+ surname
+apenas
+ barely; hardly; only just; scarcely
+aperitivo
+ dram; nip; peg; snifter; snorter
+apestar
+ reek; smell; smell bad; stink
+apetito
+ appetite
+apio
+ 1. celery
+ 2. turnip‐rootedcelery
+aplaudir
+ acclaim; applaud; clap
+aplauso
+ acclaim; acclamation; approval
+apoplejía
+ fit; apoplectic fit; seizure; stroke; strokeofapoplexy
+aporrear
+ thrash
+apostar
+ bet; wager
+apostatar
+ apostatize
+apoyarse
+ lean
+aprender
+ learn
+apresurarse
+ 1. go fast; hurry; rush
+ 2. hurry; rush
+ 3. hurry
+apretar
+ 1. press; oppress; squeeze
+ 2. fasten; tighten; turn; turnon
+aprovechar
+ 1. avail
+ 2. make use of; turn to good account; utilize
+aprovecharse
+ profit
+aprovisionamiento
+ 1. arrival; arrivals; supply
+ 2. arrival; arrivals; supply
+aproximarse
+ advance; come close; come closer; comeon
+apróximadamente
+ about; approximately
+apuntar
+ note; make a note; writedown
+apéndice
+ 1. accessory; side‐issue
+ 2. addition; adjunct
+ 3. appendix
+apócrifo
+ apocryphal
+apóstata
+ apostate
+apóstol
+ apostle
+arabesco
+ arabesque
+arado
+ plough
+araña
+ spider
+arbusto
+ bush; shrub
+arca
+ 1. ark
+ 2. box; chest
+archi‐
+ arch‐; chief‐
+archiduque
+ archduke
+archipiélago
+ 1. archipelago
+ 2. archipelago
+ 3. archipelago
+archivero
+ archivist; keeperoftherecords
+archivista
+ archivist; keeperoftherecords
+archivo
+ archive; archives; files; records
+arcilla
+ clay
+arco iris
+ rainbow
+arder
+ burn
+ardilla
+ squirrel
+arena
+ 1. arena
+ 2. sand
+arenas movedizas
+ 1. quicksand; quicksands
+ 2. quicksand; quicksands
+arenque
+ herring
+arenque ahumado
+ redherring
+argelina
+ Algerianwoman
+argelino
+ 1. Algerian
+ 2. Algerian
+argentina
+ Argentinianwoman
+argentino
+ 1. Argentine; Argentinean
+ 2. Argentine
+argumento
+ argument; plea
+aristócrata
+ aristocrat
+arma
+ weapon
+armar
+ arm
+armario
+ cabinet; closet; cupboard; sideboard
+armario para libros
+ bookcase
+armario ropero
+ clothes‐press; wardrobe
+arquitecto
+ architect
+arrancar
+ 1. pick; pluck; tearoff
+ 2. put on; start; switch on; turnon
+ 3. startrunning
+ 4. extort; wrest; wring
+ 5. abstract; takeaway
+ 6. start
+arranque
+ run
+arreglar
+ arrange; put in order; tidy
+arreglo
+ 1. accommodation; adjustment; arrangement
+ 2. accommodation; accord; agreement
+arrendar
+ hire
+arrepentimiento
+ repentance
+arrestar
+ arrest
+arresto
+ 1. apprehension; arrest; detention
+ 2. apprehension; arrest; detention
+arriba
+ above; on top; overhead; upstairs
+arriesgado
+ adventurous; hazardous; risky
+arriesgar
+ hazard; risk; venture
+arroba
+ atpersand; commercial‐at sign; snail
+arrodillarse
+ 1. kneel
+ 2. kneel
+ 3. kneel
+ 4. kneel
+arrogante
+ 1. arrogant
+ 2. arrogant
+ 3. arrogant
+ 4. arrogant
+arrojar
+ result
+arromar
+ blunt
+arroyo
+ stream
+arroz
+ rice
+arruinar
+ ruin
+arrurruz
+ curry
+arte
+ art
+arteria
+ artery
+artesanía
+ handiwork
+artificial
+ artificial
+artillero
+ 1. artilleryman; gunner
+ 2. artilleryman; gunner
+artillería
+ artillery
+artista
+ artist
+artículo
+ 1. article; commodity
+ 2. article
+ 3. article
+artículos de cuero
+ leathergoods
+artículo determinado
+ definitearticle
+artístico
+ artistic
+arzo‐
+ arch‐; chief‐
+arzobispado
+ archbishopric
+arzobispo
+ 1. archbishop
+ 2. archbishop
+as
+ ace
+asado
+ roasted
+asalter
+ assault; violate
+asar
+ roast; toast
+ascender
+ ascend; climb; scale
+ascender a
+ amountto
+ascensor
+ elevator; lift
+asediar
+ besiege
+asedio
+ siege
+asegurador
+ insurer
+asegurar
+ 1. insure
+ 2. affirm; assure
+asentir
+ affirm; assent; sayyes
+asfalto
+ asphalt
+asiento
+ seat
+asilo
+ asylum
+asir
+ 1. clutch; grab; grasp; grip; seize
+ 2. clutch; grapple
+ 3. capture; catch; grapple
+asistencias
+ alimony
+asistente
+ aid; assistant; helper
+asiático
+ 1. Asian; Asiatic
+ 2. Asian
+asma
+ asthma; shortness of breath; wheeziness
+asombrar
+ amaze
+asombrarse
+ marvel; marvel at; wonder
+aspecto
+ 1. appearance; aspect; look; sight; view
+ 2. exterior
+aspirina
+ aspirin
+aster
+ aster
+astilla
+ 1. splinter
+ 2. splinter
+astrigente antidiárrico
+ 1. adstringent
+ 2. adstringent
+ 3. adstringent
+astronauta
+ astronaut; spaceman
+astucia
+ 1. snare
+ 2. craft; craftiness; cunning; guile
+astuto
+ 1. insidious
+ 2. malicious; mischievous; nasty; vicious
+asumir
+ guess; presume; suppose; surmise
+asunto
+ affair; business; business deal; case; matter
+así
+ so; such; thus
+así así
+ soso
+así como
+ 1. and also; and ... as well; as well as; togetherwith
+ 2. and also; and ... as well; as well as; togetherwith
+atacador
+ aggressor; assailant; attacker
+atacar
+ 1. commitaggression
+ 2. assault; attack
+ataque
+ 1. access; aggression; attack
+ 2. assault
+atención
+ acuity; advertence; advertency; attention
+atender
+ advert; pay attention; pay attention to; watchoutfor
+atender a
+ 1. advert; pay attention; pay attention to; watchoutfor
+ 2. lookafter
+atentado
+ assault
+atento
+ 1. attentive
+ 2. attentive
+aterrizaje
+ landing
+aterrizar
+ land
+atleta
+ athlete
+atletismo
+ athletics
+atlántico
+ Atlantic
+atlético
+ athletic
+atmosférico
+ atmospheric
+atmósfera
+ atmosphere
+atomización
+ fission
+atornillar
+ screw
+atracar
+ land
+atractivo
+ attractive
+atraer
+ 1. attract; draw
+ 2. attract
+atrasado
+ backward; mentally deficient; retarded
+atrasarse
+ belate
+atrasos
+ arrears
+atravesar
+ 1. cross; go beyond; transfer
+ 2. gobeyond
+atrayente
+ attractive
+atreverse
+ be bold; dare
+atropallamiento
+ collision
+atropellar
+ collide; run
+atrás
+ 1. at the back; behind; intherear
+ 2. behind
+ 3. backward; backwards
+ 4. backwards
+ 5. back; backwards
+aturdir
+ 1. drug
+ 2. drug; intoxicate; stun; stupefy
+atún
+ tuna; tuna‐fish; tunny
+audiencia
+ audience
+aula magna
+ auditorium
+aumentar
+ 1. accrue; grow
+ 2. increase; freshen
+ 3. accrue; increase
+aumento
+ accretion; growth
+aunque
+ though; although
+ausencia
+ absence
+ausente
+ 1. absent
+ 2. absent
+ 3. absent
+australiano
+ Australian
+austriaco
+ 1. Austrian
+ 2. Austrian
+autobús
+ bus; autobus; omnibus
+autoestrada
+ 1. motor road; motorway
+ 2. motor road; motorway
+automático
+ 1. automatic
+ 2. automoton
+automóvil
+ car
+autopista
+ 1. motor road; motorway
+ 2. motor road; motorway
+autor
+ 1. author
+ 2. author; writer
+autoridad
+ authority
+autorización
+ authorization
+autovía
+ motorway; super highway; turnpike
+autócrata
+ absolute ruler; autocrat
+autónomo
+ autonomic; autonomous
+avalancha
+ avalanche
+ave
+ bird
+avellana
+ hazelnut
+avena
+ oats
+avenida
+ avenue
+aventajar
+ exceed; surpass
+aventura
+ adventure
+aventurero
+ 1. adventurous
+ 2. adventurous
+ 3. adventurer
+avergonzarse
+ beashamed
+averia
+ brakedown
+aversión
+ 1. abhorrence; abomination; horror
+ 2. aversion; dislike
+ 3. disgust; nausea
+avería
+ damage
+aves
+ 1. birds
+ 2. fowl; poultry
+avestruz
+ ostrich
+aviación
+ aeronautics; aviation
+avisar
+ caution; warn
+aviso
+ 1. warning
+ 2. notification; notice
+avispa
+ wasp
+avión
+ 1. aeroplane; airplane; plane
+ 2. aircraft
+axioma
+ axiom
+ay
+ 1. ah; oh; ow
+ 2. woe
+ayer
+ yesterday
+ayuda
+ 1. aid; help
+ 2. aid; help
+ayudante
+ 1. adjutant; aide‐de‐camp
+ 2. aid; assistant; helper
+ayudar
+ accomodate; aid; assist; help
+ayunar
+ fast
+ayuntamiento
+ 1. town‐hall
+ 2. city hall; townhall
+azada
+ hoe
+azafata
+ stewardess
+azteca
+ Aztec
+azucarero
+ sugar‐bowl; sugarbowl
+azul
+ 1. blue
+ 2. skyblue
+azulejo
+ tile
+azúcar
+ sugar
+aún
+ still; yet
+a bordo
+ aboard
+a cuadros
+ checked; chequered
+a eso de
+ about; approximately
+a instancias de
+ attheinstanceof
+a la cubana
+ intheCubanway
+a la izquierda
+ ontheleft
+a lo largo de
+ 1. along
+ 2. through
+a lo menos
+ 1. atleast
+ 2. atleast
+a menudo
+ frequently; often; regularly
+a propósito
+ bytheway
+a que
+ until; till
+a saber
+ thatis
+a su salud
+ cheers; goodhealth
+a tiempo
+ at the right time; intime
+a través de
+ across; beyond; ontheothersideof
+a veces
+ several times; sometimes
+año
+ year
+año bisiesto
+ leap‐year
+año nuevo
+ NewYear'sDay
+babero
+ bib
+babor
+ portside
+babosa
+ slug
+bacalao
+ cod; codfish
+bache
+ 1. pole
+ 2. cavity
+ 3. cave; cavity
+bacteria
+ bacterium
+badajo
+ clapper
+bagatela
+ trifle
+bagazo
+ bagasse
+bahía
+ bay
+bailar
+ dance
+bailarín de ballet
+ balletdancer
+baile
+ 1. ball; dance
+ 2. dance
+baja
+ 1. abatement
+ 2. decay
+bajamar
+ lowtide
+bajar
+ 1. getout
+ 2. descend; godown
+ 3. decrease; lower
+ 4. descend; get off; godown
+ 5. discount; rebate
+bajo
+ 1. bass; bassvoice
+ 2. low
+bajorrelieve
+ bas‐relief; lowrelief
+bala
+ bale
+balance
+ balancesheet
+balancear
+ 1. rock; swing
+ 2. balance; poise
+balanza
+ scales
+balaustrada
+ balustrade; banisters; parapet; railing
+balcón
+ balcony
+baliza
+ 1. buoy
+ 2. beacon
+ballena
+ 1. baleen; whalebone
+ 2. whale
+ 3. baleen; whalebone
+ 4. busk; steel
+ballet
+ ballet
+balneario
+ spa
+baloncesto
+ basketball
+balotaje
+ ballot; balloting; votingbyballot
+bambú
+ bamboo
+bancarrota quiebra
+ bankruptcy; failure
+banco
+ 1. bank
+ 2. bench
+bandeja
+ tray
+bandera
+ 1. banner; flag
+ 2. flag; standard
+bandido
+ bandit
+banquero
+ banker; bankmanager
+banquete
+ 1. banquet
+ 2. banquet; feast
+bar
+ 1. buffet
+ 2. bar; pub
+barato
+ cheap; inexpensive
+barba
+ 1. beard
+ 2. chin
+barbero
+ 1. barber
+ 2. barber
+ 3. barber
+barco
+ 1. bark; barque
+ 2. boat
+ 3. ship; vessel
+barco de remos
+ row‐boat; rowing‐boat
+barco de vapor
+ steamship
+barman
+ barman; bartender
+baronesa
+ baroness
+barraca
+ barrack; barn; shack; shanty; shed
+barra de chocolate
+ barofchocolate
+barrena
+ bore
+barrendero
+ sweeper
+barrer
+ sweep
+barricada
+ barricade
+barrio
+ district; neighbourhood; quarter
+barrio bajo
+ back street; slum
+barro
+ mud
+barítono
+ baritone
+barómetro
+ barometer
+barón
+ baron
+basalto
+ basalt; whimstone
+basar
+ base
+bastante
+ 1. a little; rather; some; somewhat; tosomeextent
+ 2. rather
+ 3. enough; sufficient
+ 4. enough; quite; rather; sufficiently
+bastar
+ suffice
+bastardo
+ bastard
+bastidor
+ flat
+basurero
+ 1. dump; refuse dump; tip; rubbishtip
+ 2. dump; refuse dump; tip; rubbishtip
+bata
+ négligé; undress
+batalla
+ action; battle; scuffle; struggle
+batallón
+ battalion
+batata
+ sweet potato; yam
+batería
+ 1. battery
+ 2. battery
+batista
+ batiste; cambric; lawn
+baya
+ berry
+bayeta
+ baize
+bazar
+ 1. bazaar; fair; market
+ 2. bazaar
+baúl
+ trunk
+bañador
+ swimmingtrunks
+bañar
+ bathe
+bañarse
+ bathe; haveabath
+bañero
+ bath superintendant; bathssuperintendant
+baño
+ 1. bath
+ 2. bath
+beber
+ drink
+bebida
+ beverage; drink
+bebé
+ baby
+beige
+ beige
+belga
+ 1. Belgian
+ 2. Belgian; Belgianwoman
+ 3. Belgian
+belleza
+ beauty
+bencina
+ gasolene; gasoline; petrol
+besar
+ kiss
+beso
+ kiss
+bestia
+ animal; beast
+bestial
+ beastly; bestial
+biblioteca
+ library
+bicarbonato
+ bicarbonateofsoda
+bicicleta
+ 1. bike; cycle; bicycle
+ 2. bike; bicycle
+bien
+ okay; well
+bienvenida
+ welcome
+bife
+ steak; beefsteak
+biftec
+ steak; beefsteak
+bigoti
+ moustache
+bilis
+ bile; gall
+billete
+ bill; ticket; note
+billete del tren
+ railway ticket; trainticket
+billete de banco
+ bank‐note
+billete de entrada
+ admissionticket
+billete de equipaje
+ luggageticket
+billete de ida y vuelta
+ return‐ticket
+billete de viaje
+ ticket
+billete por un día
+ day‐ticket
+biquini
+ bikini
+birrete
+ 1. beret
+ 2. cap
+bisnieta
+ greatgranddaughter
+bisnieto
+ greatgrandson
+bistec
+ steak; beefsteak
+bisté
+ steak; beefsteak
+bizcocho
+ 1. bicuit
+ 2. biscuit; cookie
+blanco
+ white
+bloc de notas
+ 1. notepad
+ 2. notepad
+ 3. notepad
+bloque
+ block; pad
+blusa
+ blouse
+boca
+ mouth
+bocadillo
+ 1. roll
+ 2. sandwich
+boca arriba
+ 1. backward; onone'sback
+ 2. backwards
+bocina
+ 1. hooter
+ 2. hooter; horn; klaxon
+boda
+ 1. wedding; wedding‐party
+ 2. wedding; wedding‐party
+boina
+ beret
+bola
+ 1. chunk; clod; lump
+ 2. bullet
+bolsa
+ hand‐bag
+bolsa de trabajo
+ employment exchange; labor exchange; labourexchange
+bolsa para bicicletas
+ cycle‐bag
+bolsa para señoras
+ lady's bag; vanitybag
+bolígrafo
+ ballpointpen
+bomba
+ 1. bomb
+ 2. pump
+bomba atómica
+ atombomb
+bomba incendiaria
+ incendiarybomb
+bombón
+ bonbon; bon‐bon
+bondad
+ goodness
+boniato
+ sweet potato; yam
+bonito
+ 1. affable; friendly; good‐natured; kind
+ 2. beautiful; fine; handsome; lovely
+ 3. nice
+ 4. delightful; lovely
+ 5. charming; lovely
+borde
+ border; brim; brink; edge; edging; fringe; rim
+borracho
+ drunk; intoxicated
+bosque
+ forest; woods
+bota
+ boot
+bota de montaña
+ mountaineeringboot
+botella
+ bottle
+botella de gas
+ gas cannister; gascylinder
+botica
+ chemist's shop; drugstore
+boticario
+ chemist
+botón
+ 1. button
+ 2. button
+botón de presión
+ push‐button
+boxeador
+ boxer
+boya
+ buoy
+braguitas
+ briefs
+branquia
+ gill
+brasileña
+ Brazilianwoman
+brasileño
+ 1. Brazilian
+ 2. Brazilian
+bravo
+ brave; courageous; valiant
+brazalete
+ 1. bracelet
+ 2. bracelet
+brazo
+ arm
+brema
+ bream
+brezal
+ heath
+brillar
+ shine
+britano
+ Briton
+británico
+ British
+brocha de afeitar
+ shaving‐brush
+broma
+ gag; joke
+bromear
+ jest; joke
+bronco
+ 1. abrupt
+ 2. brutal; gruff; harsh; rough; sour; surly; unkind; unpleasant
+brumoso
+ fuzzy; misty
+brusco
+ abrupt
+brusko
+ brutal; gruff; harsh; rough; sour; surly; unkind; unpleasant
+brújula
+ compass
+bucear
+ 1. dive; plunge
+ 2. dive; sink
+buenas noches
+ goodnight
+buenas tardes
+ goodevening
+bueno
+ good; nice; okay
+buenos días
+ 1. goodmorning
+ 2. goodday
+buey
+ ox
+buho
+ owl
+bujía
+ plug; sparkplug
+bula
+ indulgence
+burdel
+ brothel
+burla
+ gag; joke
+burro
+ ass; donkey
+buscar
+ 1. fetch; get; pickup
+ 2. get; lay hold of; pick up; take
+ 3. look for; seek
+butaca
+ armchair
+butifarra de hígado
+ liversausage
+buzón
+ letterbox; mailbox
+bálsamo
+ balm; balsam
+báltico
+ Baltic
+bárbaro
+ barbarian
+bázico
+ basic
+búfalo
+ buffalo
+búlgara
+ Bulgarianwoman
+búlgaro
+ 1. Bulgarian
+ 2. Bulgar; Bulgarian
+cabal
+ 1. absolute; complete
+ 2. entire; overall; whole
+caballero
+ cavalier; knight
+caballería
+ cavalry
+caballo
+ horse
+caballos
+ 1. horsepower
+ 2. horsepower
+caballo padre
+ stallion
+cabana
+ cabin; hut; shack
+cabeza
+ head; pate
+cabina
+ 1. bathingbox
+ 2. bathingbox
+ 3. barn; shed; stand
+cabina telefónica
+ call box; telephone kiosk; phone booth; telephonebooth
+cable
+ cable
+cable de remolque
+ towing‐line
+cabra
+ goat
+cabrón
+ he‐goat
+cacahuete
+ peanut
+cacahué
+ peanut
+cacao
+ cocoa
+cacerola
+ casserole; saucepan
+cacto
+ cactus
+cada vez
+ each time; everytime
+cadena
+ chain
+cadena antideslizante
+ non‐skidchain
+cadera
+ hip
+caer
+ drop; fall
+caer enfermo
+ be taken ill; fallill
+cafetera
+ 1. coffee‐pot
+ 2. coffee‐pot
+cafetería
+ cafetaria
+café
+ café; coffee‐house
+caja
+ 1. cashier's stand; fund; money box; money‐box; till
+ 2. box; chest
+ 3. box
+ 4. jug; box; container; vessel
+caja de cambios
+ 1. gear‐box; gear‐case
+ 2. gear‐box; gear‐case
+cal
+ lime
+calabacín
+ courgette; zucchini
+calabaza
+ calabash; gourd
+calamar
+ sepia
+calcetín
+ sock
+calcular
+ calculate; count; figure; workout
+caldo
+ bouillon
+calefacción
+ heating
+calefacción central
+ centralheating
+calendario
+ almanac
+calentar
+ heat; stoke
+calidad
+ property; quality
+caliente
+ 1. warm
+ 2. hot
+callarse
+ bequiet
+calle
+ street
+calleja
+ alley; lane
+callo
+ corn
+calmar
+ appease; calm; quiet; soothe; still
+calmarse
+ 1. abate; subside
+ 2. calmdown
+calor
+ heat
+caloría
+ calorie
+calumniar
+ slander
+calzador
+ shoe‐horn; shoe‐lift
+calzoncillos
+ drawers; panties; underpants
+cama
+ 1. sleeping‐accomodation; sleeping‐place
+ 2. bed
+camarera
+ 1. dressing‐gown
+ 2. waitress
+ 3. dressing‐gown
+camarero
+ waiter
+camarote
+ cabin
+cama de matrimonio
+ doublebed
+cambiar
+ 1. alter; change
+ 2. interchange; swap
+ 3. vary
+ 4. change; turn
+cambio
+ 1. variety
+ 2. change
+camello
+ camel
+camilla
+ litter; strecher
+camino
+ 1. path; road; way
+ 2. road; route; way
+camino sin salida
+ blind alley; cul‐de‐sac
+camisa
+ shirt
+camisa de deporte
+ sportsshirt
+camiseta
+ shirt
+camisón
+ night‐shirt
+camita
+ bedstead
+camita de niño
+ child's bed; cot
+camión
+ 1. lorry; truck
+ 2. lorry; truck
+camote
+ sweet potato; yam
+campamento
+ 1. camping ground; campingsite
+ 2. camp of tents; tentedcamp
+campana
+ hood; suctionapparatus
+campanilla
+ 1. bell
+ 2. bell
+ 3. blister
+campesino
+ farmer
+camping
+ camping ground; campingsite
+campo
+ 1. field
+ 2. country; countryside
+ 3. field
+campo deportivo
+ sportsground
+campo santo
+ cemetery; God's acre; graveyard
+canal
+ canal; channel
+canapé
+ couch; sofa
+canario
+ Canary
+canción
+ song
+candelero
+ candlestick
+cangrejo
+ 1. crayfish
+ 2. crab
+cansado
+ tired
+cansar
+ fag out; jade; overdrive; override
+cantar
+ sing
+cantidad
+ 1. quantity
+ 2. amount; sum
+cantor
+ singer
+cantora
+ singer; femalesinger
+cantábrico
+ Cantabrian
+caos
+ chaos; tangle
+capacidad
+ 1. ability
+ 2. ability; capability; fitness; suitability
+capaz
+ able; capable
+capital
+ 1. capital
+ 2. metropolis
+ 3. capital; capital city; metropolis
+capitanear
+ 1. govern; head up; restrain
+ 2. command; be in command; order
+capitular
+ capitulate; surrender
+capitán
+ 1. boss; chief; leader
+ 2. chief; boss
+capot
+ bonnet; hood
+cara
+ face
+caracol
+ snail
+carburador
+ carburettor
+carbón
+ charcoal
+cardo
+ thisle
+carga
+ burden; charge; load
+cargar
+ burden; load
+cargo
+ 1. accusal; accusation
+ 2. accusation
+ 3. function
+ 4. accusal; accusation; charge; complaint; indictment
+ 5. function; job; office; post
+carnada
+ bait
+carnaval
+ carnival
+carne
+ 1. flesh
+ 2. meat
+carnero
+ 1. ram; tup
+ 2. mutton
+carnestolendas
+ carnival
+carnet
+ 1. notebook
+ 2. attempt; test
+carnet de conducir
+ driving‐licence
+carne de cerdo
+ pork
+carne de cordero
+ lamb
+carne de ternera
+ veal
+carne de vaca
+ beef
+carne picada
+ mincedmeat
+carne salada
+ salt meat; saltedmeat
+carnicero
+ butcher
+carnicería
+ 1. butcher'sshop
+ 2. butcher'sshop
+carné
+ attempt; test
+caro
+ 1. dear; expensive; valuable
+ 2. dear; expensive
+ 3. costly; dear; expensive; pricey
+carrera
+ career
+carrete
+ film
+carretera
+ 1. motor road; motorway
+ 2. motor road; motorway
+carretera principal
+ 1. majorroad
+ 2. majorroad
+carretera resbaladiza
+ dangerofskidding
+carretera secundaria
+ by‐way; side‐way
+carrete de rueda
+ hub; nave
+carro
+ cart; chariot
+carrocería
+ body; coach‐work
+carroña
+ carrion
+carta
+ letter
+carta aérea
+ air letter; aerogramme
+cartearse
+ correspond
+cartel
+ notice; placard; poster
+cartera
+ 1. wallet
+ 2. briefcase; file
+cartero
+ postman
+casa
+ house
+casada
+ married
+casado
+ married
+casarse
+ 1. marry; be married; getmarried
+ 2. marry; be married; getmarried
+ 3. marry; be married; getmarried
+casa de huéspedes
+ boarding house; boardingschool
+cascada
+ 1. waterfall
+ 2. waterfall
+cascajo
+ broken stones; chippings; road‐metal; rubble; stone‐chippings
+casi
+ almost; nearly
+caso
+ affair; case; matter
+caspa
+ dandruff
+castaña
+ chestnut; horse‐chestnut
+castaño
+ 1. chestnut‐tree
+ 2. chestnut‐tree
+castellano
+ Castillian
+castigar
+ punish
+castigo
+ 1. redemption
+ 2. punishment
+castillo
+ castle
+castor
+ beaver
+catalán
+ Catalonian
+catecismo
+ catechism
+catedral
+ cathedral
+catorce
+ fourteen
+catálogo
+ catalogue; directory
+católico
+ 1. Catholic
+ 2. catholic
+cauce
+ bed; watercourse
+caucho
+ rubber
+caudillo
+ 1. boss; chief; leader
+ 2. chief; boss
+causa
+ cause; reason
+causar
+ activate; cause; giveriseto
+cavar
+ dig; grub; spade
+cazar
+ chase; hunt
+caótico
+ chaotic
+caña
+ fishingrod
+caña de pescar
+ fishingrod
+cebada
+ barley
+cebo
+ bait
+cebolla
+ onion
+cebollana
+ chive
+ceder
+ cede; give in; give up; give way; relinquish; yield
+ceja
+ brow; eyebrow
+celebrar
+ celebrate
+celebrar su cumpleaños
+ celebratingone'sbirthday
+celebrar una fiesta
+ celebrate
+celo
+ fervor; fervour; zeal
+cementerio
+ cemetery; God's acre; graveyard
+cena
+ 1. dinner; middaymeal
+ 2. evening meal; supper
+cenicero
+ ashtray
+ceniciento
+ ashen
+ceniza
+ ash; cinder
+censura
+ 1. censor
+ 2. criticism
+ 3. observation; remark; reproof
+ 4. observation; remark
+censurable
+ blameworthy; censurable; condemnable; objectionable
+censurar
+ 1. censor
+ 2. censure; criticize
+ 3. reproach; rebuke; reprove; scold
+centeno
+ rye
+central
+ central
+centro
+ 1. centre
+ 2. average; mean; middle
+centímetro
+ centimetre
+cepillar
+ brush
+cepillo
+ 1. brush
+ 2. plane
+cepillo de dientes
+ tooth‐brush
+cerca
+ close; near; nearby
+cercar
+ bar; obstruct
+cerca de
+ 1. at; beside; by; near; nearby; near to; nextto
+ 2. about; approximately
+cerda
+ sow
+cerdo
+ 1. hog; pig; swine
+ 2. boar
+cerebro
+ brain
+ceremonia
+ 1. ceremony
+ 2. ceremony
+cereso
+ cherry‐tree
+cereza
+ cherry
+cero
+ nought; zero
+cerrado
+ closed; shut
+cerradura
+ lock
+cerrar
+ 1. close; shut
+ 2. lock
+certificación
+ certificate; testimony
+certificado
+ 1. certificate; testimony
+ 2. registered
+ 3. registered
+certificar
+ record; register
+cerveza
+ ale; beer
+cerámica
+ crockery; earthenware; pottery
+cesión
+ abandonment
+cesto
+ basket
+chal
+ shawl
+chaleco
+ vest; waistcoat
+champaña
+ champagne
+champiñon
+ mushroom
+champú
+ shampoo
+chanza
+ gag; joke
+chaqueta
+ jacket
+charco
+ pool
+charlar
+ chat; chatter
+chauffeur
+ chauffeur; driver
+checo
+ 1. Czech
+ 2. Czech
+cheque
+ check; cheque
+chicle
+ chewing‐gum
+chico
+ 1. boy; lad; laddie
+ 2. diminutive; little; small
+chilena
+ Chileanwoman
+chileno
+ 1. Chilean
+ 2. Chilean
+chino
+ 1. Chinese
+ 2. Chinaman; Chinese
+chispa
+ 1. spark
+ 2. spark
+chocar kun
+ collide with; crashinto
+chocolate
+ chocolate
+choque
+ collision
+chuleta
+ cutlet
+chupar
+ suck
+chófer
+ 1. conductor; driver
+ 2. driver
+ 3. chauffeur; driver
+ciclo
+ cycle
+ciclomotor
+ moped
+ciclón
+ cyclone
+ciego
+ blind
+cielo
+ heaven; sky
+ciencia
+ science
+ciento
+ hundred; onehundred
+ciertamente
+ certainly
+cierto
+ 1. certain; sure
+ 2. a; any; anybody; some; somebody; one; some one; someone
+cifra
+ cipher; digit; figure; numeral
+cigarillo
+ cigarette
+cigarro
+ cigar
+cilindro
+ cylinder; roller
+cincel
+ chisel
+cinco
+ five
+cine
+ cinema; movietheatre
+cinta
+ 1. bond; tie
+ 2. connection; league
+ 3. ribbon
+cinta pegante
+ adhesivetape
+cinto
+ belt; girdle
+cintura
+ waist; waistline
+cinturón
+ belt; girdle
+ciprés
+ cypres
+circo
+ circus
+circuito
+ circuit
+circular
+ circular
+circuncisión
+ circumcision
+circunspecto
+ 1. thoughtful
+ 2. careful; cautious
+ 3. careful; cautious
+ 4. careful; cautious
+ciruela
+ plum
+cirujano
+ surgeon
+cita
+ 1. citation; quotation
+ 2. appointment; date; rendezvous
+citación
+ citation; quotation
+citar
+ cite; quote
+ciudad
+ city; town
+ciudadela
+ citadel
+civil
+ civil; civilian; non‐military
+civilización
+ civilization
+cizalla para setos
+ hedge clippers; hedgeshears
+claro
+ 1. bright; clear; light
+ 2. clear; distinct; plain
+clase
+ 1. class
+ 2. kind; sort
+clasificar
+ classify
+clavel
+ carnation; pink
+clavo
+ nail
+cliente
+ 1. buyer; client; purchaser
+ 2. client; customer
+clientela
+ clientèle
+clima
+ climate
+cloaca
+ sewer
+cloro
+ chlorine
+club
+ club; society
+cláusula
+ clause
+coartada
+ alibi
+cobertizo
+ 1. penthouse; shed
+ 2. penthouse; shed
+ 3. barrack; barn; shack; shanty; shed
+ 4. penthouse; shed
+cobrador
+ guard
+cobre
+ copper
+cocaína
+ cocaine
+cocer
+ bake
+coche‐cama
+ sleeping‐car
+coche
+ 1. car
+ 2. carriage; coach
+ 3. carriage; coach; railway carriage; waggon
+coche remolque
+ trailer
+cochina
+ sow
+cochinillo
+ piglet
+cocina
+ kitchen
+cocinar
+ cook
+cocinera
+ cook; femalecook
+cocinero
+ cook; malecook
+cocodrilo
+ crocodile
+codiciar
+ covet
+codicioso
+ acquisitive; eager; greedy
+codo
+ elbow
+coger
+ 1. clutch; grab; grasp; grip; seize
+ 2. clutch; grapple
+ 3. fetch; get; pickup
+ 4. capture; catch; grapple
+ 5. get; lay hold of; pick up; take
+cohete
+ rocket
+cojear
+ limp
+cojo
+ lame
+col
+ cabbage
+cola
+ 1. glue
+ 2. glue
+ 3. tail
+colcha de cama
+ bedspread; counterpane; coverlet
+colchón
+ mattress
+colecta
+ collection
+colega
+ 1. colleague
+ 2. colleague
+colegio
+ college
+coles de Bruselas
+ Brussels‐sprouts
+colgar
+ 1. droop; hang
+ 2. hang
+coliflor
+ cauliflower
+colina
+ hill
+colisión
+ collision
+colocar
+ 1. invest
+ 2. lay
+ 3. lay down; place; put; putdown
+colonia
+ colony; settlement
+color
+ colour; dye
+columna
+ column; pillar
+comadrona
+ nurse; dry‐nurse; monthlynurse
+comandante
+ 1. boss; chief; leader
+ 2. commander
+ 3. chief; boss
+comarca
+ region
+combiar
+ change
+combinación
+ 1. combination
+ 2. undergarment
+comedor
+ 1. dining‐room
+ 2. dining‐room
+comenzar
+ 1. begin; commence; start
+ 2. begin; commence; start
+comer
+ lunch
+comerciante
+ 1. merchant
+ 2. businessman; merchant
+comercio
+ business; commerce; trade
+comerse
+ eatup
+comestible
+ edible
+comestibles
+ food
+cometer
+ 1. achieve; act; do; make; perform
+ 2. accomplish; achieve; keep; observe; perform
+comida
+ 1. meal
+ 2. dinner; middaymeal
+comienzo
+ 1. beginning; commencement; start
+ 2. beginning; commencement; start
+comisaría
+ police‐station
+comisión
+ commission
+comitiva
+ procession
+comité
+ committee
+communicación
+ account; communication
+como
+ how; inwhatway
+como es debido
+ decently; properly
+como si
+ as if; as though; inaway
+compadecer a
+ have compassion on; pity
+comparar
+ compare
+compartir
+ divide; separate; share
+compañero
+ 1. colleague
+ 2. colleague
+compañía
+ company
+compensar
+ compensate
+competencia
+ competition
+competidor
+ rival
+competir
+ compete; rival
+complacer
+ meet with; satisfy
+complekso
+ complex
+completamente
+ 1. completely; entirely; through
+ 2. completely; fully
+completar
+ complete
+completo
+ 1. absolute; complete
+ 2. entire; overall; whole
+componerse
+ consistof
+compositor
+ composer
+compra
+ 1. accession; acquisition; asset
+ 2. acquisition; purchase
+comprador
+ 1. buyer; client; purchaser
+ 2. client; customer
+comprender
+ understand; realize
+comprendido
+ understood
+comprensible
+ understandable
+compromiso
+ accommodation
+computador
+ computer
+computar
+ calculate; count; figure; workout
+comunicación
+ connection
+comunicar
+ 1. communicate; report
+ 2. connect; connect up; plugin
+comunista
+ communist
+comunión
+ communion
+común
+ 1. commonplace; dismal; trite
+ 2. common; joint
+ 3. common; ordinary; usual
+con
+ with
+concernir
+ concern
+concha
+ shell
+concierto
+ concert
+concisión
+ brevity; briefness; conciseness
+conciso
+ concise
+concluir
+ accomodate; end; finish; terminate
+conclusión
+ conclusion; inference
+concordación
+ accord; accordance; agreement; concurrence
+concurso
+ competition; contest
+condenar
+ condemn; sentence
+condición
+ 1. circumstance
+ 2. condition; stipulation; terms
+condom
+ condom; rubber
+conducir
+ 1. conduct; guide; lead
+ 2. go; ride; travel
+conducirse
+ behave; conductoneself
+conejo
+ rabbit
+conejo macho
+ buck; buck‐rabbit
+conexión
+ relation
+confección
+ 1. making; manifacture
+ 2. making; manufacture
+conferencia
+ conference
+confesar
+ 1. acknowledge; admit; confess; profess
+ 2. confess
+confesión
+ 1. acknowledgement; admission; confession
+ 2. confession
+confianza
+ confidence
+confirmación
+ 1. confirmation
+ 2. confirmation
+confirmar
+ 1. affirm; assent; sayyes
+ 2. acknowledge; confirm; corroborate
+confiscar
+ confiscate
+conflicto
+ conflict
+conforme
+ agreed; okay
+congreso
+ congress; convention
+conminación
+ menace; threat
+conminar
+ menace; threaten
+conmovedor
+ 1. affecting; moving; touching
+ 2. affecting; moving; touching
+conmover
+ 1. move; stir
+ 2. affect; agitate; move
+conmovido
+ 1. seizedwithemotion
+ 2. seizedwithemotion
+conocido
+ 1. famous
+ 2. famous
+ 3. acquaintance
+conocimiento
+ acquaintance; knowledge
+conocimientos
+ fame; renown
+conquistar
+ conquer
+consecuencia
+ consequence; consistency
+consecuente
+ consistent
+consecutivo
+ following; next
+conseguir
+ succeed
+consejero
+ counsellor
+consejo
+ advice; counsel
+consentir
+ spoil
+consequir
+ achieve; acquire; attain; get; obtain
+conserje
+ porter
+conservación
+ conservation; maintenance; preservation; retention
+conservador
+ conservative
+conservar
+ conserve; keep; maintain; preserve
+conservatorio
+ academyofmusic
+considerable
+ considerable; sizable
+consideración
+ consideration; deliberation
+considerar
+ account; consider; esteem; regard; takeintoaccount
+consolar
+ comfort; console
+constipado
+ constipation
+constitución
+ constitution
+construcción
+ 1. accommodation; adjustment; arrangement
+ 2. building
+ 3. building
+construir
+ build; construct
+consulado
+ consulate
+consulta
+ consultation
+consumidor
+ consumer
+consumir
+ consume; useup
+consumo
+ demand; sale
+contable
+ book‐keeper
+contacto
+ contact
+contador público
+ accountant
+contagiado
+ contaminated; infected
+contagiar
+ 1. infect
+ 2. communicate
+contagioso
+ 1. catching; contagious; infectious
+ 2. catching; contagious; infectious
+contante
+ cash; incash
+contar
+ 1. count
+ 2. narrate; relate; tell
+contemplación
+ 1. consideration; deliberation
+ 2. examination
+contemplar
+ account; consider; esteem; regard; takeintoaccount
+contemporáneo
+ 1. current; present
+ 2. current; present
+contener
+ 1. bridle; check; restrain
+ 2. comprise; contain; include
+ 3. control; govern; restrain; rule
+contento
+ contented; pleased; satisfied
+contestación
+ answer; reply
+contestar
+ answer; reply; respond
+contestar a
+ answer
+contiguo
+ 1. adjacent
+ 2. adjacent; adjoining
+ 3. adjacent; nearby; neighbouring
+continuamente
+ 1. constantly; continually; continuously
+ 2. all the time; ceaselessly
+continuar
+ 1. continue; hold; last
+ 2. continue; endure; keep on; last
+ 3. continue; go on; proceedwith
+continuo
+ 1. abiding; lasting
+ 2. constant; continual; permanent; sustained
+ 3. lasting
+ 4. continuous
+ 5. continuous
+ 6. constant; lasting; sustained
+contra
+ across from; against; in exchange for; opposed to; opposite; upon
+contradecir
+ contradict
+contramandar
+ 1. cancel; countermand
+ 2. abjure; abolish; abrogate; annul; cancel; remit
+contraste
+ contrast
+contratar
+ 1. invite tenders for; putouttotender
+ 2. makeacontract
+contrato
+ contract
+contribución
+ tax
+contribuyente
+ ratepayer; taxpayer
+controlar
+ audit; check; check up on; supervise; verify
+conulla
+ inverted comma; quotation mark; quote
+conullas
+ 1. quotation marks; quotes
+ 2. inverted commas; quotation marks; quotes
+convencer
+ convince; persuade
+convenido
+ agreed; okay
+conveniente
+ 1. decent; fitting; proper; suitable
+ 2. appropriate; becoming; seemly; suitable
+convenio
+ 1. accord; accordance; agreement; concurrence
+ 2. accommodation; accord; agreement
+convenir
+ 1. befit; befitting
+ 2. agree
+ 3. be appropriate; suit; besuitable
+convento
+ monastery
+conversar
+ converse
+conversión
+ conversion
+convertir
+ convert
+con motivo de
+ because of; onaccountof
+copa
+ goblet
+copia
+ copy
+copiar
+ 1. copy
+ 2. print
+copla
+ verse
+copo de nieve
+ snowflake
+corazón
+ heart
+corbata
+ tie; necktie
+corcho
+ cork
+cordel
+ line
+cordero
+ lamb
+cordillera
+ chain of mountains; mountain chain; mountain range; rand
+cordón
+ shoe‐lace
+coronar
+ crown
+correcto
+ correct; right
+corregir
+ correct
+correo
+ mail; post
+correo aéreo
+ airmail
+correr
+ 1. flow
+ 2. race; run
+ 3. run
+corresponder al
+ 1. answer; answer to; comeupto
+ 2. correspondto
+corriente
+ 1. current; flow; stream
+ 2. current
+corromper
+ spoil
+corrupción
+ corruption
+cortacircuito
+ shortcircuit
+cortar
+ 1. cutoff
+ 2. pick; pluck; tearoff
+ 3. behead; decapitate
+ 4. clip; cut; shear
+ 5. cut; slice
+cortesía
+ politeness
+corteza
+ 1. bark
+ 2. bast
+cortina
+ curtain
+corto
+ 1. short
+ 2. brief; short
+cortés
+ courteous; polite; well‐mannered
+corzo
+ roe
+cosa
+ thing
+cosecha
+ harvest
+coser
+ sew
+costa
+ coast; seaside; shore
+costar
+ cost
+costear
+ bear the cost of; defray the cost of; paytheexpensesof
+costumbre
+ custom; habit; way
+costura
+ 1. seam
+ 2. seam
+costurera
+ tailor; femaletailor
+coñac
+ brandy; cognac
+crecer
+ accrue; grow
+creer
+ 1. account; accredit; believe; deem
+ 2. create
+ 3. think
+crema
+ cream
+cremallera
+ zipper
+crema para zapatos
+ polish; wax
+crepe
+ pancake
+criada
+ 1. maid; servant
+ 2. maid
+criado
+ boy; servant
+crimen
+ crime
+crisis
+ crisis; depression; emergency
+cristianismo
+ Christianity
+cristiano
+ 1. Christian
+ 2. Christian
+criticar
+ 1. censure; criticize
+ 2. judge
+cruce
+ crossroads
+crudo
+ 1. crude; raw; rough
+ 2. raw; uncooked
+cruz
+ cross
+cráneo
+ skull
+crítica
+ criticism
+crítico
+ alarming; grave; serious
+cuadra
+ stable; stall; sty
+cuadro
+ 1. bed
+ 2. painting; picture
+cuartel
+ 1. barracks
+ 2. barracks
+cuarto
+ 1. apartment; flat
+ 2. fourth
+ 3. fourth
+ 4. chamber; room
+cuarto de baño
+ bathroom
+cuatro
+ four
+cubierta
+ deck
+cubierto
+ forks; knivesandspoons
+cubierto de verdor
+ covered; grown over; overgrown
+cubo
+ bucket; pail
+cubrir
+ cover
+cucaracha
+ cockroach
+cuchara
+ spoon
+cuchichear
+ whisper
+cuchillo
+ knife
+cuello
+ 1. neck
+ 2. collar
+cuenta
+ 1. account; bill; invoice
+ 2. account; bill; calculation
+ 3. account
+cuenta bancaria
+ bank account; bankingaccount
+cuerda
+ cord; rope; string
+cuerno
+ horn
+cuero
+ leather
+cuerpo
+ body
+cuervo
+ raven
+cuesta
+ acclivity; hillside; slope
+cuesta abajo
+ down the slope; downhill
+cueva
+ 1. cave; grotto
+ 2. cave; cavern; den
+cuidado
+ care; concern
+cuidar
+ 1. attend; nurse; tendto
+ 2. care; see; take care; worry
+cuidarse de
+ care about; takecareof
+cuidar de
+ lookafter
+culpa
+ blame; fault; guilt
+culpable
+ guilty
+cultivar
+ 1. cultivate; grow
+ 2. plant
+cultivo
+ planting
+culto
+ service; worshipservice
+cultura
+ culture
+cumpleaños
+ birthday
+cumplimiento
+ 1. replacement; replenishment; supplement
+ 2. compliment
+cuna
+ cradle; placeofbirth
+cuota
+ dues; subscription
+cupón
+ coupon
+cura
+ 1. treatment
+ 2. pastor; vicar
+ 3. clergyman; pastor; priest
+curar
+ 1. care for; cure; treat
+ 2. cure; heal; remedy
+ 3. cure; heal; remedy
+curioso
+ agog; curious; inquisitive
+cursillo
+ class; course
+curso
+ 1. class; course
+ 2. exchange rate; rateofexchange
+curva
+ bend; curve
+curvar
+ 1. bend
+ 2. bend
+cáliz
+ goblet
+cámara
+ 1. camera
+ 2. camera
+cámara de películas
+ camera
+cándido
+ guileless; inoffensive
+cápsula
+ capsule; firing‐cap
+cáscara
+ bark; husk; peel; shell
+célula
+ cell
+címbalo
+ cymbal
+cínico
+ cynical
+círculo
+ circle
+cítara
+ zither
+código
+ code
+cólera
+ cholera
+cómico
+ amusing; entertaining; funny
+cómo
+ how; inwhatway
+cómodo
+ 1. homy
+ 2. close; intimate
+cónsul
+ consul
+dado que
+ supposingthat
+dama
+ lady
+damas
+ 1. checkers
+ 2. checkers
+danés
+ 1. Danish
+ 2. Dane
+dar
+ give
+darse de baja
+ quit; resign
+darse tono
+ attitudinize; pose; putonairs
+dar a destajo
+ invite tenders for; putouttotender
+dar a la bomba
+ pump
+dar a luz
+ bear; givebirthto
+dar dentelladas a
+ snap at; snarl at; snub
+dar de comer
+ feed
+dar el pésame a
+ expresscondolences
+dar gracias a
+ thank
+dar la bienvenida
+ welcome
+dar lugar a
+ cause; causetotakeplace
+dar parte de
+ issue; proclaim
+dañar a
+ 1. be detrimental to; detract from; doharmto
+ 2. harm
+daño
+ 1. damage
+ 2. damage
+ 3. harm
+de
+ 1. from; of
+ 2. from; outof
+debajo de
+ below; beneath; under; underneath
+deber
+ 1. duty; obligation
+ 2. owe
+debutante
+ beginner
+decadencia
+ decay
+decentar
+ 1. cutinto
+ 2. begin; commence; start
+decidirse
+ decide
+decir
+ say; tell
+decisivo
+ decisive
+decisión
+ decision
+declaración
+ 1. declaration; proclamation; statement
+ 2. acknowledgement; admission; confession
+ 3. agreement; consent; permission
+declarar
+ 1. declare; state
+ 2. acknowledge; admit; confess; profess
+ 3. accede; agree; consent
+declararse en huelga
+ strike
+decorar
+ adorn; decorate; ornament
+decrecer
+ abate; decrease; diminish; drop; fall
+decrépito
+ decayed; decrepit; dilapidated; lapsed; rickety
+decudir
+ 1. abstract; deduce; gather
+ 2. abstract; induce; gather; infer
+decímetro
+ decimetre
+dedo
+ finger
+dedo de pie
+ toe
+deducción
+ demand; sale
+deducir
+ countdown
+defecto
+ damage
+defender
+ protect
+defensa
+ 1. defence; defense
+ 2. protection
+definir
+ define; determine
+dejar
+ 1. allow; leave; let; release
+ 2. leavebehind
+dejar en pos
+ leavebehind
+dejo
+ accent
+delante
+ ahead; formerly; previously
+delante de
+ before; infrontof
+delatar
+ accuse; denounce
+delegar
+ 1. delegate
+ 2. depute
+deletrear
+ spell
+demandar
+ ask; ask for; beg; bid; request
+demasiado
+ too; toomuch
+demoler
+ break down; demolish; pull down; takedown
+demolición
+ 1. demolition
+ 2. demolition
+demontar
+ takeapart
+demostrable
+ apparent
+demás
+ besides; in addition; moreover
+dengoso
+ prudish
+dentista
+ dentist
+dentro
+ inside
+dentro de
+ 1. a; in; inside; into; on; per; within
+ 2. inside; within
+denuncia
+ accusation
+denunciar
+ 1. accuse
+ 2. accuse; denounce
+ 3. accuse
+departamento
+ 1. compartment; coupé
+ 2. section
+departamento de fumar
+ smokers
+dependencia
+ dependence
+depender
+ depend
+depender de
+ be dependent on; dependonldependupon
+dependienta
+ saleswoman
+dependiente
+ 1. dependent
+ 2. clerk
+deplorable
+ 1. regrettable
+ 2. dismal; miserable; pitiful; poor
+deplorar
+ 1. be sorry about; regret
+ 2. begrudge; regret
+ 3. mourn
+deporte
+ sport
+depositar
+ deposit
+depósito
+ depository
+depósito de gasolina
+ 1. gas tank; petroltank
+ 2. fueltank
+derecho
+ 1. claim; presumption; pretence
+ 2. right
+ 3. direct; straight
+derechos de consumo
+ excise; excise‐duty
+derivación
+ derivation
+derivar
+ derive
+derivar del rumbo
+ drift; beadrift
+derramar
+ pour; scatter; shed
+derretir
+ melt
+derretirse
+ melt
+derribar
+ break down; demolish; pull down; takedown
+derribos
+ rubbish; oldmaterials
+derrota
+ defeat
+derruirse
+ crumble; crumble away; crumbleoff
+desaconsejar
+ advise against; dissuadefrom
+desacostumbrar
+ break of a habit; teach
+desagüe
+ draining
+desanimado
+ dejected; depressed
+desaprender
+ unlearn
+desaprobación
+ censure; condemnation; disapprobation; disapproval
+desaprobar
+ 1. condemn; disapprove; disapprove of; rebuke
+ 2. reproach; rebuke; reprove; scold
+desarrollar
+ 1. account for; explain
+ 2. account for; clarify; explain
+desatinar
+ drivel; twaddle
+desayuno
+ breakfast
+descalzo
+ barefoot
+descansar
+ repose; rest
+descanso
+ 1. break; intermission; pause; recess
+ 2. repose; rest
+descargar
+ 1. writeoff
+ 2. abreact
+ 3. unload
+descendencia
+ 1. lineage
+ 2. origin
+descender
+ 1. accrue; come; derive; originate; result
+ 2. descend; get off; godown
+descendiente
+ offspring; successor
+descolgar
+ abstract; takeaway
+desconcharse
+ flake off; peel off; scaleoff
+desconocido
+ unknown
+descortés
+ rude
+describir
+ describe
+descripción
+ account; description
+descubrimiento
+ discovery
+descubrir
+ discover; uncover
+descuento
+ abatement; discount; rebate
+descuidado
+ 1. careless; negligent
+ 2. careless; negligent
+descuidar
+ neglect
+desde
+ from; since
+desear
+ 1. ache
+ 2. desire; wish
+desechos
+ 1. clippings; cuttings; parings; refuse; rubbish; waste; windfall
+ 2. remainder; rest
+ 3. debris; rubbish; rubble
+desembarcadero
+ 1. landing‐stage; pier
+ 2. landing‐stage; pier
+ 3. landing‐stage; pier
+desembocadura
+ mouth
+desempeñar
+ occupy; take
+desenfrenado
+ lawless; licentious; riotous
+desentenderse de
+ ignore; leaveoutofaccount
+deseo
+ 1. avidity; covetousness; eagerness; greediness
+ 2. desire; want; wish
+deserción
+ apostasy; defection
+desertar
+ apostatize; desert; secede
+desfiladero
+ pass
+desgastarse
+ wear away; wear off; wearout
+desgracia
+ accident
+desgraciadamente
+ 1. unfortunately
+ 2. unfortunately
+deshielo
+ melting; thaw
+deshonesto
+ nasty
+desierto
+ desert
+designar
+ 1. indicate; suggest
+ 2. indicate; point out; show
+desigual
+ 1. bumpy
+ 2. different
+ 3. coarse; rough
+desinteresado
+ disinterested
+desistir de
+ relinquish; renounce; waive
+deslumbar
+ dazzle
+desmayado
+ unconscious
+desmayarse
+ faint; swoon
+desmayo
+ faint; swoon
+desmejorarse
+ decline; go back; falloff
+desmoronarse
+ crumble; crumble away; crumbleoff
+desnatar
+ cream; skim
+desnudo
+ bare; naked; nude
+despachar
+ 1. dispatch; send off; ship
+ 2. conclude; dispatch; expedite; finnish; settle
+ 3. dismiss; turnaway
+ 4. send; transmit
+despacho
+ demand; sale
+despedida
+ farewell; goodbye; good‐bye
+despedir
+ 1. dismiss; turnaway
+ 2. discharge; dismiss; fire; sack
+ 3. discard
+despedirse
+ say goodbye; say goodbye to; take leave; takeleavefrom
+despeñadero
+ abyss; chasm; gulf; precipice
+despojar
+ rob
+despreciar
+ despise
+desprecio
+ contempt
+desprendimiento de tierras
+ 1. landslide
+ 2. landslide
+despuntar
+ blunt
+después
+ 1. after; behind
+ 2. afterwards; next; subsequently
+ 3. beyond; next; then; thereafter
+destajar
+ makeacontract
+destajista
+ builder; contractor; building contractor; masterbuilder
+destajo
+ 1. contract
+ 2. tender
+desterrado
+ exile
+destierro
+ exile
+destinatario
+ consignee; recipient
+destino
+ destiny; fate
+destituir
+ depose
+destornillador
+ screwdriver
+destreza
+ expertness; skilfulness; skill; skillfulness
+destruir
+ destroy; quash
+desviar
+ divert
+desviarse
+ 1. deviate
+ 2. turn
+ 3. deflect; diverge; wander
+desván
+ attic
+desvío
+ aberrance; aberration
+detalle
+ detail
+detective
+ detective
+detención
+ 1. apprehension; arrest; detention
+ 2. apprehension; arrest; detention
+detener
+ arrest
+detenido
+ arrested person; prisoner
+deterioración
+ 1. corruption; decay; depravation; taint
+ 2. decay
+deteriorar
+ damage; injure; spoil
+deterioro
+ damage
+determinar
+ determine; fix
+detestar
+ abhor; abominate; loathe
+detrimento
+ harm
+detrito
+ 1. clippings; cuttings; parings; refuse; rubbish; waste; windfall
+ 2. remainder; rest
+ 3. debris; rubbish; rubble
+detrás
+ 1. at the back; behind; intherear
+ 2. behind
+detrás de
+ behind; after
+deuda
+ debt
+deudo
+ relative
+devanar
+ 1. unroll; unwind; windoff
+ 2. unroll
+devolver
+ give back; return
+de acuerdo
+ agreed; okay
+de aire acondicionado
+ airconditioned
+de confianza
+ reliable; trustworthy
+de cuando en cuando
+ nowandthen
+de dia
+ 1. by day; duringtheday
+ 2. by day; during the day; inthedaytime
+de espaldas
+ 1. backward; onone'sback
+ 2. backwards
+de golpe
+ all of a sudden; suddenly
+de hierro
+ iron
+de madera
+ wooden
+de mala fama
+ ofillrepute
+de memoria
+ byheart
+de nilón
+ nylon
+de ninguna manera
+ by no means; in no way; not at all; notonanyaccount
+de ningún modo
+ notatall
+de nuevo
+ 1. afresh; again; all over again; anew
+ 2. afresh; again; oncemore
+de otra manera
+ 1. differently; else
+ 2. differently
+de paso
+ bytheway
+de poca profundidad
+ shallow; superficial
+de prisa
+ fast; quickly; swiftly
+de propósito
+ deliberately; onpurpose
+de repente
+ all of a sudden; suddenly
+de segunda mano
+ second hand; secondhand
+de sopetón
+ all of a sudden; suddenly
+de todos los días
+ daily
+de veras
+ absolutely; genuinly; indeed; really; truly
+diabetes
+ diabetes
+diamante
+ diamond
+diariamente
+ daily
+diario
+ daily
+diarrea
+ diarrhoea
+dibujar
+ design; draw
+diccionario
+ dictionary; vocabulary
+dicho
+ concerned; inquestion
+diciembre
+ December
+dieciocho
+ eighteen
+diestro
+ adroit; clever; dexterous; skillful
+dieta
+ diet
+dietario
+ agenda; appointmentbook
+diez
+ ten
+diez y nueve
+ nineteen
+diez y ocho
+ eighteen
+diez y seis
+ sixteen
+diez y siete
+ seventeen
+diferencia
+ difference
+diferente
+ different
+diferir
+ differ; bedifferent
+dificil
+ difficult; hard; inconvenient
+dificultar
+ hamper; hinder; thwart
+difundir
+ send; transmit
+digestión
+ digestion
+digresar
+ stray from one's subject; wanderfromone'ssubject
+dimensión
+ dimension; measurement
+dimitir
+ 1. resign
+ 2. quit; resign
+dinamarqués
+ 1. Danish
+ 2. Dane
+dinero
+ money
+dinero del embase
+ pledge; security
+diputado
+ 1. delegate
+ 2. delegate; deputy; representative
+diputar
+ 1. delegate
+ 2. depute
+dirección
+ 1. address
+ 2. direction
+directamente
+ at once; instantly; immediately; withoutdelay
+director
+ director; manager
+directorio
+ addresslist
+dirigir
+ 1. address
+ 2. conduct; guide; lead
+dirigirse
+ go
+dirigirse a
+ accost; address
+dirigir la palabra a
+ accost; address
+disco
+ grammophonedisc
+discreto
+ discrete
+discriminación
+ discrimination
+disculpa
+ apology
+disculparse
+ apologize
+disferente
+ different
+disfrutar
+ delight in; enjoy
+disminuir
+ 1. abate; decrease; diminish
+ 2. abate; decrease; diminish; drop; fall
+disponible
+ available
+disposición
+ ability; capability; fitness; suitability
+disputar
+ quarrel; wrangle
+dispénseme
+ excuseme
+distancia
+ distance; offset
+distinguir
+ distinguish
+distinto
+ 1. different
+ 2. different
+distracción
+ 1. distraction; diversion
+ 2. distraction; diversion
+distraer
+ distract; divert; entertain
+distraído
+ absent‐minded; abstracted; distracted
+distribuir
+ distribute
+distrito
+ district
+divergente
+ different
+diversión
+ amusement; fun
+divertido
+ amusing; entertaining; funny
+divertimento
+ amusement; fun
+divertir
+ amuse
+divertirse
+ enjoy oneself; haveagoodtime
+dividir
+ divide; separate; share
+divorcio
+ divorce
+divulgar
+ 1. publish; reveal
+ 2. acquaint; let know; inform
+diámetro
+ diameter
+doblar
+ 1. fold
+ 2. bend
+ 3. bend
+doble
+ double; dual
+doce
+ twelve
+doctor
+ doctor; physician
+documento
+ document; paper
+doler
+ ache; be painful; hurt
+dolerse por
+ have compassion on; pity
+dolor
+ ache; pain
+dolor de muelas
+ toothache
+domesticado
+ tame
+domicilio
+ 1. abode; dwelling‐place; residence
+ 2. abode; dwelling‐place‐residence
+dominga de Ramos
+ PalmSunday
+domingo
+ Sunday
+donde
+ where
+dormir
+ be asleep; sleep
+dos
+ two
+dosis
+ dose
+dos veces
+ twice
+dotado
+ 1. gifted; talented
+ 2. accomplished; talented
+ 3. gifted; talented
+dotar
+ endow
+dromedario
+ dromedary
+ducha
+ shower
+ducharse
+ takeashower
+duda
+ 1. hesitation; wavering
+ 2. hesitation
+dudar
+ doubt
+dueño
+ 1. boss; chief; leader
+ 2. boss; master
+ 3. owner
+dueño de sí mismo
+ composed; restrained; self‐possessed
+dulce
+ 1. gentle; soft; sweet; tender
+ 2. delicacy; tidbit; sweet
+durar
+ continue; endure; keep on; last
+duro
+ 1. hard
+ 2. leather
+ 3. hard
+dyschatell
+ couch; divan
+dátil
+ date
+débil
+ faint; light; weak
+día
+ day
+día del Corpus
+ CorpusChristi
+dólar
+ dollar
+dómine
+ pastor
+ebrio
+ drunk; intoxicated
+echar
+ throw
+echar a perder
+ spoil
+echar la siesta
+ doze; nap; slumber
+económico
+ thrifty
+edad
+ age
+edad media
+ MiddleAges
+edecán
+ adjutant; aide‐de‐camp
+edificar
+ 1. erect; establish
+ 2. erect; establish; found
+ 3. build; construct
+edificio
+ building
+edificio anexo
+ annexation
+editor
+ publisher
+eficaz
+ effective; effectual; efficacious
+efigie
+ effigy; head
+egipcio
+ 1. Egyptian
+ 2. Egyptian
+egipcíaco
+ 1. Egyptian
+ 2. Egyptian
+egoísta
+ 1. self‐interested; selfish
+ 2. self‐interested; selfish
+eje
+ axis; axle
+ejemplo
+ example
+ejercicio
+ exercise; practice
+ejército
+ 1. army
+ 2. army
+el
+ the
+elección
+ choice; election
+electricidad
+ electricity
+elefante
+ elephant
+elegante
+ 1. elegant
+ 2. chic
+elegir
+ choose; elect; pickout
+elevación
+ altitude; height
+ella
+ her; she
+eléctrico
+ electric
+el día de Todos los Santos
+ AllSouls'Day
+embajada
+ 1. embassy
+ 2. embassy
+embajador
+ 1. ambassador
+ 2. ambassador; emissary; envoy; messenger
+embalsamar
+ 1. embalm
+ 2. embalm
+embarcación
+ ship; vessel
+embarcarse
+ embark
+embargar
+ confiscate
+embelesar
+ charm
+embotado
+ 1. blunt
+ 2. dull; obtuse
+embragar
+ couple
+embriaguez
+ drunkenness; inebriety
+embudo
+ funnel
+embuste
+ swindle
+embustero
+ cheat; deceiver; imposter
+emigrar
+ emigrate
+emigrarse
+ emigrate
+emoción
+ emotion
+empacar
+ pack; package; wrapup
+empalmar
+ correspond
+empalme
+ connection
+empezar
+ 1. begin; commence; start
+ 2. begin; commence; start
+empleado
+ 1. employee
+ 2. clerk
+ 3. officer; official
+emplear
+ apply; practice
+empleo
+ post
+emprender
+ undertake
+empresa
+ industry
+empujar
+ push; thrust
+en
+ 1. a; in; inside; into; on; per; within
+ 2. on; upon
+enamorarse de
+ fallinlovewith
+encadenación
+ order
+encadenamiento
+ order
+encajar
+ palmoffon
+encaje
+ lace
+encamado
+ bedridden; confined to one's bed; laidup
+encantador
+ charming; lovely
+encantar
+ 1. attract; draw
+ 2. charm
+encanto
+ charm
+encargarse de
+ undertake
+encendedor
+ lighter
+encender
+ 1. burn
+ 2. kindle; light
+ 3. light
+ 4. illuminate; light
+encentar
+ cutinto
+enciclopedia
+ encyclopaedia
+encima de
+ above; over
+encogido
+ afraid; timid
+encontrar
+ 1. come across; encounter; meet; see
+ 2. find
+encontrarse
+ 1. be found; be located; findoneself
+ 2. be found; be located; findoneself
+encuadernación
+ binding; cover
+encuentro
+ encounter
+encuesta
+ inquiry; investigation
+encía
+ gum
+endrino
+ 1. sledge; sleigh
+ 2. sledge; sleigh
+enemigo
+ adversary; enemy
+enero
+ January
+enfermedad venérea
+ venerealdisease
+enfermera
+ nurse
+enfrenar
+ brake
+enfrente de
+ 1. opposite
+ 2. opposite
+enfriar
+ 1. cool; cooldown
+ 2. getcold
+engañar
+ 1. fool; hoax; mystify; trick
+ 2. takein
+ 3. cheat; deceive
+engaño
+ swindle
+engañoso
+ 1. deceptive; delusive; fallacious
+ 2. deceitful
+enjugar
+ 1. dry
+ 2. delete; wipe; wipeoff
+enlace
+ 1. startingpoint
+ 2. connection
+enmohecerse
+ getmouldy
+enorme
+ enormous
+enrollar
+ envelop
+ensalada
+ salad
+ensangrentado
+ 1. blood‐stained; coveredwithblood
+ 2. blood‐stained; coveredwithblood
+enseñar
+ 1. indicate; suggest
+ 2. teach
+ 3. teach
+ 4. indicate; point out; show
+enteblar
+ begin; commence; start
+entender
+ understand; realize
+enteramente
+ at all; entirely; quite; wholly
+entero
+ entire; overall; whole
+enterramiento
+ 1. burial; funeral; interment
+ 2. burial; funeral; interment
+enterrar
+ 1. bury
+ 2. bury; entomb; inter
+ 3. flood; overwhelm
+entierro
+ 1. burial; funeral; interment
+ 2. burial; funeral; interment
+entonar
+ intone; raise
+entonces
+ 1. then
+ 2. then
+entrada
+ 1. entrance; portal
+ 2. access; admission; admittance
+entrante
+ 1. future
+ 2. close; near; nearby; next
+ 3. following; next
+ 4. next
+entrar
+ go in; enter; perform
+entrar en cuenta
+ be considered; count
+entre
+ among; between
+entrecortado
+ broken
+entrega
+ 1. delivery
+ 2. delivery
+entregar
+ 1. hand; handover
+ 2. deliver; furnish; supply
+ 3. pass; spend
+ 4. convey; hand; hand over; pass
+entretener
+ amuse
+entristecer
+ 1. afflict; grieve
+ 2. afflict; cause pain; cause pain to; distress; givepainto
+envejecer
+ be on the decline; go downhill; gooff
+envenenar
+ poison
+enviar
+ 1. dispatch; send off; ship
+ 2. dismiss; turnaway
+ 3. send; transmit
+envidia
+ envy
+envidiar
+ envy
+envidioso
+ envious
+envolver
+ pack; package; wrapup
+en alta voz
+ loudly
+en casa
+ athome
+en cuanto a
+ 1. about; concerning
+ 2. about; concerning; on; upon
+ 3. as to; as regards; concerning
+en cuestón
+ concerned; inquestion
+en efecto
+ 1. absolutely; actually; infact
+ 2. absolutely; genuinly; indeed; really; truly
+en el acto
+ at once; immediately; just; right away; rightnow
+en el extranjero
+ abroad
+en el fondo
+ below; downstairs; underneath
+en ninguna parte
+ nowhere
+en orden
+ agreed; okay
+en otra parte
+ elsewhere
+en parte
+ partially; partly
+en pos
+ 1. at the back; behind; intherear
+ 2. behind
+en primer lugar
+ first; firstly; firstofall
+en principio
+ inprinciple
+en realidad
+ absolutely; genuinly; indeed; really; truly
+en seguida
+ 1. at once; instantly; immediately; withoutdelay
+ 2. at once; immediately; just; right away; rightnow
+en su mayor parte
+ 1. for the greater part; forthemostpart
+ 2. for the greater part; forthemostpart
+en todas partes
+ 1. all about; everywhere
+ 2. everywhere
+en todos conceptos
+ 1. ineveryway
+ 2. in all respects; in every respect; ineveryway
+en torno de
+ about; round; around; towards
+en un principio
+ 1. at first; at the outset; inthebeginning
+ 2. at first; at the outset; inthebeginning
+en vano
+ invain
+equipaje
+ baggage; luggage
+equipajes
+ baggage; luggage
+equis
+ X
+equivocación
+ aberration; error; mistake
+equivocarse
+ err; makeamistake
+error
+ aberration; error; mistake
+escala
+ ladder
+escalar
+ ascend; climb; scale
+escalera
+ staircase; stairs
+escama
+ scale
+escandaloso
+ aggravating
+escandálo
+ 1. offence; scandal
+ 2. commotion; scandal
+escaparate
+ showwindow
+escarola
+ endive
+escarpado
+ abrupt; steep
+escaño
+ bank
+esclusa
+ lock; sluice
+escocés
+ 1. Scottish
+ 2. Scot; Scotsman
+escoger
+ choose; elect; pickout
+escombro
+ mackerel
+escopeta
+ gun; rifle
+escribir
+ write
+escribir a máquina
+ type
+escrupuloso
+ accurate; scrupulous
+escuchar
+ listen
+escuela
+ school
+escultor
+ sculptor
+escupir
+ 1. spit
+ 2. spit
+esforzarse por
+ aim; attempt; endeavour; take steps; undertake
+eslavo
+ 1. Slavic
+ 2. Slav
+eso
+ that; that over there; those
+espacio
+ room; space
+espalda
+ back
+espantar
+ deter; discourage; scare
+espanto
+ fright
+esparadrapo
+ plaster
+español
+ 1. Spanish
+ 2. Spanish; Spanishlanguage
+ 3. Spaniard
+española
+ Spanishwoman
+especia
+ spice
+especial
+ particular; special
+especie
+ kind; sort
+espejo
+ looking‐glass; mirror
+esperanto
+ Esperanto
+esperanza
+ hope
+esperar
+ 1. foresee
+ 2. abide; expect; wait; await; waitfor
+ 3. hope
+ 4. bide; abide; stay for; wait; await; waitfor
+espiga
+ ear
+espinaca
+ spinach
+espina dorsal
+ spine
+espolear
+ 1. encourage; impel; instigate; spur on; stimulate; urge
+ 2. incite; rouse; spur; stimulate; stirup
+esponja
+ sponge
+esposa
+ wife
+esposo
+ husband
+espuma
+ foam; froth
+esputo
+ mucus; phlegm
+espárrago
+ asparagus
+esqueleto
+ 1. skeleton
+ 2. skeleton
+esquiar
+ ski
+esquimal
+ Eskimo
+esquina
+ corner
+esquí
+ ski
+esta
+ 1. these; this; thishere
+ 2. these; this; thishere
+establo
+ stable; stall; sty
+estación
+ 1. season
+ 2. station
+estación balnearia
+ spa
+estación de servicio
+ fillingstation
+estado
+ state
+estafar
+ fleece
+estandarte
+ flag; standard
+estanque
+ pond
+estar
+ 1. be
+ 2. be
+ 3. be found; be located; findoneself
+estar ...ando
+ busyoneself
+estar de acuerdo con
+ agreeto
+estar de pie
+ stand
+estar sentado
+ sit
+estar tendido
+ lie; recline
+estatua
+ statue
+esta mañana
+ thismorning
+esta tarde
+ thisevening
+estaño
+ tin
+este
+ east; East
+estima
+ 1. esteem; regard
+ 2. esteem; regard; respect
+estimación
+ 1. esteem; regard
+ 2. esteem; regard; respect
+estimar
+ 1. esteem; thinkwellof
+ 2. appraise; estimate; rate
+estimular
+ rouse; stimulate; stirup
+estipular
+ set conditions; stipulate
+estofado de carne húngaro
+ goulash; stew
+estorbar
+ 1. bar; inhibit; prevent
+ 2. bar; hinder; inhibit; prevent
+estornudar
+ sneeze
+estrecho
+ 1. narrow
+ 2. close; cramped
+ 3. strait
+estrella
+ star
+estrofa
+ verse
+estropeado
+ broken; damaged
+estuche
+ jug; box; container; vessel
+estudiante
+ academic; student
+estudiar
+ 1. learn
+ 2. study
+estudio
+ study
+estufa
+ furnace; kiln; oven; stove
+estómago
+ stomach
+es decir
+ thatis
+es una lástima
+ 1. alas; regrettably; unfortunately
+ 2. that's too bad; whatapity
+europeo
+ 1. European
+ 2. European
+evidente
+ clear; distinct; plain
+evidentemente
+ apparently; obviously
+evitar
+ avoid; evade
+exacción
+ exaction; extortion
+exacto
+ exact
+exagerar
+ exaggerate
+examen
+ investigation; examination; test
+examinar
+ examine
+excelente
+ fine; great
+excepto
+ apart from; but; except; otherthan
+excluir
+ exclude
+excursión
+ excursion; outing; sightseeingtrip
+excusado
+ toilet
+exhortación
+ admonition; exhortation
+exhortar
+ admonish; scold
+exigir
+ demand; postulate; require
+existencia
+ existence
+existir
+ exist
+expedir
+ 1. dispatch; send off; ship
+ 2. dismiss; turnaway
+experiencia
+ experience
+experto
+ 1. experienced; expert; skilful; skilled; skillful; practised
+ 2. adroit; clever; dexterous; skillful
+expiración
+ end; terminate
+expirar
+ end; come to an end; end up; expire
+explicación
+ 1. account; explanation
+ 2. account; explanation
+explicar
+ 1. account for; explain
+ 2. account for; clarify; explain
+explotar
+ exploit; utilize
+exposición
+ exhibition; exposition
+exterior
+ external; outer; outside
+externo
+ external; outer; outside
+extorsión
+ exaction; extortion
+extra
+ additional; extra
+extracto
+ extract; infusion
+extranjero
+ 1. alien; foreigner
+ 2. alien; foreign
+ 3. foreigner
+extraviarse
+ go astray; strayoff
+extremamente
+ 1. extremely
+ 2. most
+fabricación
+ 1. making; manifacture
+ 2. making; manufacture
+fabricar
+ 1. fabricate; manufacture
+ 2. achieve; act; do; make; perform
+faisán
+ pheasant
+falaz
+ 1. deceptive; delusive; fallacious
+ 2. deceitful
+falda
+ skirt
+falta
+ absence; lack; shortage; shortcoming
+faltar
+ be lacking; bemissing
+familia
+ family
+familiar
+ relative
+famoso
+ 1. famous
+ 2. famous
+ 3. famous; glorious
+ 4. famous
+fardo
+ bale
+farmacia
+ chemist's shop; drugstore
+farmacéutico
+ chemist
+faro
+ headlight
+farol
+ lantern
+farsante
+ attitudinizer; poseur
+fatal
+ fateful; ill‐fated
+fatigar
+ fag out; jade; overdrive; override
+favor
+ favor; favour
+favorable
+ advantageous; favourable
+favorecer
+ favor; favour
+faz
+ face
+febrero
+ February
+fecha
+ date
+federal
+ federal
+felicitar
+ congratulate
+feminino
+ female; feminine
+fender
+ split
+fenomenal
+ phenomenal
+feo
+ nasty; ugly
+fidedigno
+ 1. plausible
+ 2. plausible
+fiebre
+ ague; fever
+fiel
+ faithful
+fiero
+ savage; wild
+fiesta
+ celebration; festival; party
+figurado
+ figurative
+figurarse
+ fancy; imagine
+fijar
+ attach; determine; fasten; fix; affix; make fast; secure
+fijo
+ 1. fixed
+ 2. fast; firm; stable
+fila
+ grade; rank; rate
+filete
+ slice
+filtro
+ filter
+fin
+ 1. aim; goal; purpose; target
+ 2. end; ending
+final
+ end; ending
+finalmente
+ at last; finally; ultimately
+finca
+ estate; farm; property; ranch
+finesa
+ Finnish; Finnishwoman
+fingir
+ 1. give as an excuse; pretend
+ 2. feign; pretend
+finlandesa
+ Finnish; Finnishwoman
+finlandés
+ 1. Finnish
+ 2. Finnish; Finnishlanguage
+ 3. Finn
+fino
+ 1. dainty; delicate; fine; refined
+ 2. gaunt; lean; slender; thin
+finés
+ 1. Finnish
+ 2. Finnish; Finnishlanguage
+ 3. Finn
+firma
+ 1. company; firm
+ 2. signature
+firmar
+ sign
+fisonomía
+ face
+flamenco
+ 1. Flemmish
+ 2. Flemming
+flan
+ cream
+flauta
+ flute
+flecha
+ arrow
+flema
+ mucus; phlegm
+flor
+ bloom; flower
+florin
+ guilder; gulden
+foca
+ seal; sea‐dog
+folleto
+ leaflet; pamphlet; paperback
+fondear
+ anchor
+fondo
+ 1. background
+ 2. background
+formulario
+ blank; form
+forrar
+ cover; overlay
+forro
+ lining
+forta leza
+ fortress
+forzar
+ compel; force
+foto
+ 1. photograph
+ 2. photograph
+fotografía
+ 1. photograph
+ 2. photograph
+fotógrafo
+ 1. photographer
+ 2. photographer
+frambuesa
+ raspberry
+francesa
+ Frenchwoman
+francés
+ 1. French
+ 2. French; Frenchlanguage
+ 3. Frenchman
+franela
+ flannel
+franqueo
+ postage
+frase
+ sentence
+fregadero
+ dresser
+fregar
+ washup
+freir
+ fry
+freno
+ brake
+freno de emergencia
+ communication‐cord
+frente
+ forehead
+fresa
+ strawberry
+fresco
+ 1. fresh; recent
+ 2. cool
+fresno
+ ash
+friolera
+ trifle
+frisio
+ 1. Frisian
+ 2. Frisian
+ 3. Frisian
+frisona
+ Frisian; Frisianwoman
+frisón
+ 1. Frisian
+ 2. Frisian
+ 3. Frisian
+frontera
+ boundary; frontier; limit
+frontón
+ 1. façade
+ 2. front; battlefront; frontage
+frotar
+ rub
+fruta
+ fruit
+frutal
+ fruit‐tree
+frío
+ 1. bleak; chilly; cold
+ 2. bleak; chilly; cold
+ 3. bleak; chilly; cold
+fuego
+ fire
+fuente
+ 1. fountain
+ 2. fountain; source; spring
+ 3. basin; bowl; pelvis
+fuera
+ abroad; out; outside
+fuera de
+ outside; outsideof
+fuerte
+ 1. strong
+ 2. firm; robust; sturdy
+ 3. firm; solid
+fuerza
+ force; strength; vigour
+fuerza de caballos
+ 1. horsepower
+ 2. horsepower
+fulminante
+ acute
+fumar
+ smoke
+funcionar
+ function; operate; run; work
+funcionario
+ officer; official
+función
+ function; job; office; post
+fundar
+ 1. base
+ 2. erect; establish; found
+furgón
+ luggage‐van
+fusilar
+ shootdead
+fábrica
+ 1. factory
+ 2. factory
+fácil
+ easy; facile
+fácilmente
+ easily
+fécula
+ potatoflour
+fécula de patata
+ potatoflour
+fértil
+ fertile
+física
+ physics
+fósforo
+ match
+gafas
+ glasses; spectacles
+gafas oscuras
+ sun‐glasses
+gallego
+ Galician
+galleta
+ biscuit; cookie
+gallina
+ chicken; fowl
+gallo
+ cock; rooster
+ganado
+ livestock
+ganancia
+ 1. accession; acquisition; gain
+ 2. accession; acquisition; asset
+ganar
+ earn; gain; win
+gancho
+ hook
+ganso
+ goose
+garaje
+ garage
+garantía
+ guarantee; warrant
+garganta
+ throat
+garra
+ claw
+garrafa
+ carafe; decanter
+gas
+ gas
+gasolina
+ gasolene; gasoline; petrol
+gastado
+ worn
+gastar
+ pay out; spend
+gastos
+ charge; cost; expense
+gas natural
+ naturalgas
+gata
+ femalecat
+gato
+ 1. cat
+ 2. jack
+gaviota
+ seagull
+gemelos
+ 1. twins
+ 2. twin
+gemir
+ groan; moan
+general
+ general; usual
+generalmente
+ generally
+gente
+ people
+geografía
+ 1. geographic; geographical
+ 2. geography
+gerente
+ 1. manager
+ 2. administrator
+ 3. manager
+geógrafo
+ 1. geographer
+ 2. geographer
+ginebra
+ gin
+girar
+ 1. turn
+ 2. endorse
+giro postal
+ moneyorder
+globo terráqueo
+ globe; worldglobe
+gobernar
+ control; govern; restrain; rule
+gobierno
+ administration; government
+godo
+ Goth
+golondrina
+ swallow
+golpe
+ blow
+golpear
+ beat; hit; strike
+goma
+ 1. rubber
+ 2. rubber
+gordo
+ fat; fatty; greasy
+gorrión
+ sparrow
+gorro
+ 1. cap
+ 2. cap
+gota
+ 1. arthritis
+ 2. drip; drop
+ 3. gout
+grabado
+ image; picture
+gracia
+ charm
+gracias
+ 1. gratitude; thanks
+ 2. thank you; thanks
+gracioso
+ affable; friendly; good‐natured; kind
+grado
+ degree; grade
+gram
+ gram; gramme
+gramática
+ grammar
+grande
+ big; great; large
+granero
+ barn; shed; stand
+granito
+ granite
+granizo
+ hail
+granja
+ estate; farm; property; ranch
+grasa
+ fat; grease
+gratitud
+ gratitude
+gratuito
+ free
+grave
+ 1. important; serious
+ 2. court; yard; courtyard
+ 3. alarming; grave; serious
+greda
+ chalk
+grieco
+ Greek
+griega
+ Greekwoman
+griego
+ 1. Greek
+ 2. Greek
+grieta
+ 1. crack; crevice
+ 2. burst; crack; flaw
+grifo
+ faucet; tap
+gripe
+ flu; grip; influenza
+gris
+ grey
+gritar
+ cry out; scream; shout
+grito
+ cry; shout
+grosella
+ 1. gooseberry
+ 2. currant
+ 3. currant; redcurrant
+grosero
+ rude
+grueso
+ 1. bold; corpulent; fat; thick
+ 2. fat; fatty; greasy
+grupo
+ 1. bevy; collection; group; heap; herd; set
+ 2. group
+guadaña
+ scythe
+guante
+ glove; mitten
+guardabarros
+ mudguard
+guardar
+ 1. guard; preserve; protect; save
+ 2. conserve; keep; maintain; preserve
+ 3. protect
+ 4. shelter; protect
+guardarropa
+ cloakroom
+guardavía
+ signalman
+guardia
+ 1. guard
+ 2. policeman
+ 3. policeman
+guardiamarina
+ middy; midshipsman; navalcadet
+guerra
+ war
+guiar
+ conduct; direct; guide; head; lead
+guisante
+ pea
+gusano
+ worm
+gustar
+ 1. please
+ 2. appreciate; like
+gusto
+ taste
+guía
+ 1. leader
+ 2. guide
+ 3. handbook; guide; guidebook
+gámba
+ prawn
+gótico
+ Gothic
+haba
+ bean
+haber
+ credit
+habilidad
+ ability
+habitación
+ chamber; room
+habitante
+ 1. inhabitant
+ 2. inhabitant
+habitar
+ dwell; live
+habituarse
+ accustom oneself; getused
+hablar
+ speak; talk
+hacer
+ 1. achieve; act; do; make; perform
+ 2. accomplish; achieve; keep; observe; perform
+hacerse
+ 1. become; come about; grow; happen
+ 2. become; get; grow
+hacer dimisión
+ quit; resign
+hacer incribir
+ register
+hacer las compras
+ shop
+hacer la manicura
+ manicure
+hacer uso de
+ employ; use; makeuseof
+hace ...
+ ...ago
+hace poco
+ just; justnow
+hacha
+ axe
+hacia atrás
+ backward; backwards
+halcón
+ falcon
+hallar
+ 1. come across; encounter; meet; see
+ 2. find
+hallarse
+ 1. be found; be located; findoneself
+ 2. be found; be located; findoneself
+hambre
+ 1. fame; hearsay; renown; repute; rumor; rumour
+ 2. hunger
+harina
+ 1. flour
+ 2. flour; meal
+hasta la vista
+ bye; goodbye; solong
+hasta luego
+ bye; goodbye; solong
+hasta que
+ until; till
+hay
+ there is; thereare
+haya
+ beech
+haz el favor
+ please
+haz favor
+ please
+hebilla
+ buckle
+hebraico
+ 1. Hebrew; Jewish
+ 2. Hebrew; Jew
+hebreo
+ 1. Hebrew; Jewish
+ 2. Hebrew; Jew
+ 3. Israelite
+hecho
+ fact
+hectolitro
+ hectolitre
+helada
+ 1. freezing cold; frost
+ 2. frost
+hemorroides
+ haemorhoids
+hendedura
+ 1. crack; crevice
+ 2. burst; crack; flaw
+henderse
+ 1. burst; split
+ 2. burst
+hendidura
+ ravine
+heno
+ hay
+heredar
+ inherit
+herida
+ injury; wound
+herido
+ injured; wounded
+herir
+ hurt; wound
+hermana
+ sister
+hermano
+ brother
+hermanos
+ brothers and sisters; siblings
+hermoso
+ lovely
+herramienta
+ agent; means; tool
+hervir
+ boil
+hiedra
+ ivy
+hielo
+ ice
+hiena
+ hyaena
+hierba
+ grass
+hierro
+ iron
+higo
+ fig
+higuera
+ 1. fig‐tree
+ 2. fig‐tree
+hija
+ daughter
+hijo
+ son
+hilo
+ thread
+hinchable
+ airbed; airmattress
+hindú
+ Hindu
+hipopótamo
+ hippo; hippopotamus
+historia
+ story; history
+hoja
+ 1. leaf; sheet
+ 2. blank; form
+hojalata
+ sheet metal; tin; tinplate
+hoja de afeitar
+ razor‐blade
+holandés
+ 1. Dutch
+ 2. Dutchman; Hollander
+ 3. Dutch
+ 4. Dutchman
+holgazán
+ lazy
+hombre
+ 1. man; humanbeing
+ 2. fellow; man
+hombre de ciencia
+ scientist
+hombre político
+ politician
+hombro
+ shoulder
+homenaje
+ honor; honour
+hongo
+ mushroom
+honor
+ honor; honour
+honorable
+ respectable
+honrado
+ above‐board; honest
+hora
+ hour; o'clock; time
+horario
+ schedule; time‐table
+horizonte
+ horizon
+hormiga
+ ant; emmet
+hormigón
+ concrete
+hornada
+ bakedgoods
+horrible
+ 1. abhorrent; abominable; alien; awful; hideous; horrible; gruesome
+ 2. bleak; dismal; dreary; horrible; ghastly; grisly; nasty
+ 3. dismal; dreary; horrible; nasty
+ 4. agonizing; hideous; horrible; ghastly
+horror
+ 1. abhorrence; abomination; horror
+ 2. abhorrence; horror
+horroroso
+ 1. abhorrent; abominable; alien; awful; hideous; horrible; gruesome
+ 2. dismal; dreary; horrible; nasty
+ 3. agonizing; hideous; horrible; ghastly
+hospital
+ hospital
+hospitalidad
+ hospitality
+hotel
+ hotel
+hoy
+ today
+hoy día
+ currently; nowadays; thesedays
+hueco
+ 1. fantastic; offantasy
+ 2. frivolous
+ 3. concave; hollow
+ 4. cavity
+ 5. hollow
+ 6. cave; cavity
+ 7. airy‐fairy
+ 8. conceited; frivolous; vain
+ 9. chimerical
+huelga
+ strike
+hueso
+ bone
+huevas
+ spawn
+huevo
+ egg
+huevo frito
+ boiledegg
+huir
+ flee; runaway
+humear
+ smoke
+humedo
+ 1. damp; humid; moist
+ 2. moist
+humillante
+ humiliating
+hurtar
+ rob
+huésped
+ guest
+hábil
+ 1. experienced; expert; skilful; skilled; skillful; practised
+ 2. able; capable
+ 3. adroit; clever; dexterous; skillful
+hígado
+ liver
+húngara
+ Hungarian; Hungarianwoman
+húngaro
+ 1. Hungarian
+ 2. Hungarian
+ibérico
+ Iberian
+idea
+ 1. idea
+ 2. concept; idea
+ideal
+ ideal
+idem
+ equally; likewise
+identificar
+ identify
+idolatría
+ 1. idolatry; idolworship
+ 2. idolatry; idolworship
+iglesia
+ church; church‐building; house of worship; placeofworship
+ignición
+ ignition
+igual
+ equal; even; level
+igualdad
+ draw; equality
+iguana
+ iguana
+imagen
+ image; picture
+imitación
+ imitation
+imitar
+ imitate
+impedimento
+ handicap; impediment; obstacle
+impedir
+ 1. bar; inhibit; prevent
+ 2. bar; hinder; inhibit; prevent
+imperdible
+ safety‐pin; safetypin
+imperio
+ empire
+implorar
+ implore; invoke
+imponer
+ tax
+importancia
+ concern
+importante
+ important; serious
+importar
+ amountto
+importe
+ amount; sum
+imposible
+ impossible
+impresión
+ trace; track
+imprimir
+ print
+impuesto
+ tax
+imán
+ magnet
+incendio
+ conflagration; fire
+incitar
+ 1. encourage; impel; instigate; spur on; stimulate; urge
+ 2. cheer; fire; inspire; stimulate
+ 3. fan; fire; inspire; stimulate; stir up; urgeon
+ 4. rouse; stimulate; stirup
+inclemente
+ severe; strict
+inclinado
+ oblique; slanting
+incluído
+ including; inclusively
+incomodar
+ bother; disturb; hinder; trouble
+inconveniente
+ difficulty; trouble
+incremento
+ accretion; growth
+increíble
+ incredible
+incrustación
+ fur; scale
+indeciso
+ indecisive
+indemnizar
+ compensate
+indicación
+ 1. index
+ 2. indication
+indicar
+ 1. indicate; suggest
+ 2. indicate; point out; show
+indicio
+ 1. index
+ 2. indication
+indico
+ Indian
+indigencia
+ 1. misery
+ 2. destitution; distress; indigence; need; penury
+indigente
+ 1. miserable; poor
+ 2. miserable; needy
+indio
+ 1. Indian
+ 2. Indian
+ 3. Indian; RedIndian
+indio americano
+ Indian; AmericanIndian
+indispuesta
+ not well; upset
+individuo
+ individual
+indole
+ character; nature; personality
+indonesio
+ Indonesian
+indonésico
+ Indonesian
+indulgencia
+ indulgence
+indígena
+ 1. aboriginal; domestic
+ 2. aboriginal; native
+infamar
+ slander
+infección
+ infection
+infectar
+ infect
+infeliz
+ unhappy
+inferior
+ inferior
+inficionar
+ 1. infect
+ 2. communicate
+inflamación
+ inflammation
+inflar
+ inflate
+influir en
+ act; affect; influence
+información
+ account; information
+informar
+ 1. acquaint; inform; report
+ 2. communicate; report
+ 3. acquaint; let know; inform
+ingeniero
+ engineer
+ingenuo
+ guileless; inoffensive
+inglesa
+ English; Englishwoman
+inglés
+ 1. English
+ 2. English; Englishlanguage
+ 3. Englishman; Sassenach
+ingrediente
+ component; element; ingredient; part
+iniciador
+ pioneer
+inicial
+ initial
+injuria
+ 1. abuse; insult
+ 2. abuse
+injuriar
+ 1. abuse; insult; offend
+ 2. jeer; jeer at; taunt
+inmediatamente
+ at once; immediately; just; right away; rightnow
+inmóvil
+ motionless
+innato
+ 1. congenital; inborn; inbred; innate; native
+ 2. congentital; inborn; inbred; innate; native
+innovador
+ pioneer
+inocente
+ guiltless; innocent
+inpulsar
+ encourage; impel; instigate; spur on; stimulate; urge
+inquieto
+ agitated; anxious
+inscribir
+ 1. enter
+ 2. record; register
+insecto
+ bug; insect
+insectos dañinos
+ vermin
+insistencia
+ 1. insistence; pressure; urgency
+ 2. insistence; pressure; urgency
+insistir
+ insist
+insolente
+ rude
+inspector
+ checker; controller
+instancia
+ 1. insistence; pressure; urgency
+ 2. insistence; pressure; urgency
+instar
+ insist
+instigador
+ firebrand; instigator
+instigar
+ 1. abet; excite; incite; provoke; rouse; stimulate; stirup
+ 2. initiate; start
+ 3. activate; cause; giveriseto
+instinto
+ 1. access; impetus; impulse
+ 2. instinct
+instruir
+ teach
+instrumento
+ agent; means; tool
+insultar
+ 1. jeer; jeer at; taunt
+ 2. abuse; insult; offend
+insulto
+ abuse; insult
+inteligencia
+ 1. notion; sense; realization
+ 2. understanding
+inteligible
+ understandable
+intención
+ intention; meaning; plan
+intentar
+ attempt; test; try
+interesante
+ interesting
+interesar
+ interest
+interior
+ inner; inside; internal
+interna
+ inner; inside; internal
+interprete
+ interpreter
+interrumpir
+ interrupt
+interruptor
+ switch
+interés
+ 1. interest
+ 2. interest
+intestinos
+ intestines
+inventar
+ 1. invent
+ 2. invent
+invierno
+ winter
+invitar
+ invite
+invocar
+ 1. invoke
+ 2. invoke
+inválido
+ 1. disabled
+ 2. disabledperson
+inyección
+ injection
+ir
+ go
+irlandés
+ 1. Irish
+ 2. Irishman
+irregular
+ 1. abnormal
+ 2. abnormal
+ 3. abnormal
+ 4. abnormal
+irse
+ go
+ir a buscar a
+ 1. takealong
+ 2. meet; pickup
+ir por
+ fetch; get; pickup
+isla
+ island
+islas Filipinas
+ Philippine Islands; Philippines
+israelita
+ Israelite
+israelí
+ 1. Israelian
+ 2. Israeli
+italiana
+ Italianwoman
+italiano
+ 1. Italian
+ 2. Italian; Italianlanguage
+ 3. Italian
+jabalí
+ wildboar
+jadeante
+ breathless
+jamás
+ never
+jamón
+ ham
+japonesa
+ Japanesewoman
+japonés
+ 1. Japanese
+ 2. Japanese; Japaneselanguage
+ 3. Japanese
+jardinero
+ gardener
+jardín zoológico
+ zoo
+jarra
+ jug; pitcher
+jarro
+ 1. jug; pot
+ 2. jug; box; container; vessel
+javanesa
+ Javanesewoman
+javanés
+ 1. Javan; Javanese
+ 2. Javanese
+jefe
+ 1. boss; chief; leader
+ 2. chief; superior
+ 3. chef
+ 4. chief; boss
+jengibre
+ ginger
+jerez
+ sherry
+jirafa
+ giraffe
+joven
+ 1. young
+ 2. youngster; youth
+joya
+ 1. gem; jewel
+ 2. jewel
+joyero
+ 1. jeweller
+ 2. jeweller
+judía
+ haricot
+judía verde
+ haricot
+judío
+ Israelite
+juego
+ game
+juego de damas
+ checkers
+jueves
+ Thursday
+juez
+ judge
+jugar
+ 1. play
+ 2. play
+jugo
+ juice; sap
+jugo de grosellas
+ currantjuice
+jugo de manzana
+ applejuice
+juguete
+ toy
+juicio
+ judgment
+julio
+ July
+junco
+ cane; reed
+junio
+ June
+juntamente
+ 1. together
+ 2. atthesametime
+juntar
+ join; unite
+juntarse
+ 1. associate; come together; join; pool
+ 2. associate; join; pool
+jurar
+ 1. blaspheme; cuss; curse; swear
+ 2. swear
+justamente
+ 1. exactly
+ 2. exactly; sharp
+juventud
+ youth
+juzgado
+ tribunal
+juzgar
+ 1. judge
+ 2. judge
+kilo
+ kilo
+kilómetro
+ kilometre
+la
+ the
+labio
+ lip
+laborioso
+ active; hardworking
+labrador
+ builder
+laca para las uñas
+ nail‐varnish
+lado
+ side
+lado inferior
+ bottom
+ladrar
+ give tongue; bark
+ladrillo
+ brick
+ladrón
+ thief
+lago
+ lake; loch
+lago Lemán
+ LakeofGeneva
+lamer
+ lick
+lanchamotora
+ motor‐boat; motor‐launch
+langosta
+ lobster
+lanzar
+ throw
+largo
+ long
+largura
+ 1. length
+ 2. length
+las
+ the
+lastre
+ ballast
+lata
+ can; tin; tincan
+latino
+ Latin
+latín
+ Latin
+latón
+ 1. brass
+ 2. brass
+laurel
+ laurel
+lava
+ lava
+lavadero
+ laundry
+lavaplatos
+ dishwasher
+lavar
+ 1. wash
+ 2. washup
+ 3. wash
+lazo
+ 1. bond; tie
+ 2. connection; league
+lección
+ lesson
+leche
+ milk
+lechería
+ dairy
+lecho
+ bed
+lechuga
+ lettuce
+lechón
+ piglet
+leer
+ read
+legúa
+ mile
+lejano
+ distant; far; remote
+lejos
+ 1. away
+ 2. afar; far; far away; remotely
+lengua
+ 1. tongue
+ 2. language; tongue
+lenguado
+ sole
+lenguaje figurado
+ metaphor
+lente
+ lens
+lenteja
+ lentil
+lento
+ slow
+letón
+ Latvian; Lett
+levantar
+ lever; lift; raise
+levantarse
+ 1. get up; rise; stand; standup
+ 2. get up; rise; stand; standup
+ley
+ law
+león
+ lion
+leño
+ timber; wood
+liar
+ bind; connect; join; tie; tieup
+libertino
+ lawless; licentious; riotous
+libra
+ 1. pound
+ 2. plate; sheet; slab
+librero
+ bookseller
+librería
+ bookshop; bookstore
+libritode memoria
+ notebook
+libro
+ book
+libréria
+ bookcase
+licor
+ liqueur
+liebre
+ hare
+liebre macho
+ buck; buck‐hare
+ligar
+ bind; connect; join; tie; tieup
+ligero
+ light
+lila
+ lilac
+lima
+ file
+lima para uñas
+ nail‐scissors
+limitado
+ confined; limited; restricted
+limitar
+ abridge; confine; limit; restrict
+limosna
+ alms; charity
+limpiar
+ 1. polish
+ 2. clean; cleanse; make clean; purge
+ 3. delete; wipe; wipeoff
+limpieza
+ cleanliness; purity
+limpio
+ clean
+limón
+ lemon
+lince
+ lynx
+lindo
+ 1. delightful; lovely
+ 2. charming; lovely
+lisera
+ shoulder; verge; vergeofaroad
+liso
+ 1. even; flat; level; smooth
+ 2. smooth
+lista
+ 1. list
+ 2. menu
+ 3. menu
+lista de precios
+ price‐list
+listo
+ finished; ready; through
+litro
+ liter; litre
+llama
+ flame
+llamada
+ 1. appeal
+ 2. parade; roll‐call
+ 3. parade; roll‐call
+llamar
+ 1. appeal to; invoke
+ 2. hit; knock; strike
+ 3. call
+ 4. call; summon
+llamarse
+ becalled
+llamar a la puerta
+ knock at the door; rapatthedoor
+llano
+ 1. plain
+ 2. flat
+llanta
+ felly; felloe; rim
+llanura
+ plain
+llave
+ 1. key; wrench
+ 2. adjustable wrench; spanner
+llave inglesa
+ monkey‐wrench; shiftingspanner
+llegada
+ arrival
+llegar
+ pass; spend
+llenar
+ 1. complete
+ 2. fill; fill in; fillup
+lleno
+ complete; full
+llevar
+ 1. bring; fetch
+ 2. bring along; takealong
+ 3. carry; wear
+ 4. wear
+llorar
+ cry; weep
+llover
+ rain
+lluvia
+ rain
+lo
+ the
+lobo
+ wolf
+loma
+ hill
+londinense
+ Londoner
+loro
+ parrot
+los
+ the
+los dos
+ both
+loza
+ 1. crockery; earthenware; pottery
+ 2. pottery
+lucio
+ pike
+lucir
+ shine
+luego
+ 1. soon
+ 2. afterwards; next; subsequently
+ 3. beyond; next; then; thereafter
+lugar
+ 1. inducement; occasion; motive
+ 2. inducement; motive; occasion
+ 3. account; motive; reason
+lujo
+ luxury
+lumbar
+ loin
+luna
+ moon
+lunes
+ Monday
+luxemburgués
+ 1. Luxemburger
+ 2. Luxemburg
+ 3. Luxemburger
+luz
+ light
+luz de Bengala
+ bengal‐light; bengal‐lights
+luz posterior
+ rear‐lamp; rear‐light; tail‐light
+luz trasera
+ rear‐lamp; rear‐light; tail‐light
+lágrima
+ tear
+lámina
+ plate; sheet; slab
+lámpara
+ lamp
+lápiz
+ pencil
+línea
+ line
+líquido
+ liquid
+lúgubre
+ bleak; dismal; dreary; horrible; ghastly; grisly; nasty
+macarrones
+ macaroni
+maciso
+ massive
+madera
+ timber; wood
+madre
+ 1. bed; watercourse
+ 2. mother
+maduro
+ mature; ripe
+maestra
+ teacher; femaleteacher
+maestro
+ instructor; teacher
+magnetófono
+ tape‐recorder
+magnífico
+ 1. lovely
+ 2. bright; brilliant
+majo
+ pretty
+malayo
+ 1. Malay
+ 2. Malay
+mala costumbre
+ habit; trick
+mala suerte
+ badluck
+malentendido
+ misunderstanding
+maleta
+ 1. trunk
+ 2. suitcase; valise
+maleta de mano
+ suitcase; valise
+malo
+ 1. erroneous; mistaken; wrong
+ 2. bad; miserable; nasty; poor
+mal olor
+ stench
+mal reputado
+ ofillrepute
+mancebía
+ brothel
+mancha
+ blot; spot
+mandar
+ 1. direct; guide; manage; steer
+ 2. steer
+mandarina
+ tangerine
+mandato
+ command
+mando
+ command
+mandíbula
+ jaw; jawbone
+manga
+ sleeve
+manido
+ stale
+mano
+ hand
+manso
+ tame
+manta
+ blanket
+mantel
+ table‐cloth
+mantequilla
+ 1. butter
+ 2. blueberry
+manzana
+ apple
+manzano
+ apple‐tree
+mapa
+ 1. map
+ 2. map
+maquinar
+ 1. initiate; start
+ 2. activate; cause; giveriseto
+mar
+ sea
+marcar
+ dial
+marea
+ tide
+mareado
+ dizzy
+mareado en avión
+ airsick
+marfil
+ ivory
+margarina
+ margarine
+marido
+ husband
+marina
+ navy
+marinero
+ sailor
+mariposa
+ butterfly
+marroquí
+ 1. Moroccan
+ 2. Moroccan
+marroquía
+ Moroccanwoman
+marroquín
+ 1. Moroccan
+ 2. Moroccan
+marroquína
+ Moroccanwoman
+marrón
+ brown
+martes
+ Tuesday
+martes de carnestolendas
+ Shrove‐Tuesday
+martillo
+ hammer
+marzo
+ March
+mar Báltico
+ BalticSea
+mar Rojo
+ RedSea
+mar del Norte
+ NorthSea
+mas
+ but
+masa
+ 1. lump; mass
+ 2. dough; paste
+masaje
+ massage
+masajear
+ massage
+masculino
+ 1. male
+ 2. male
+masticar
+ chew
+matar
+ 1. butcher; slaughter
+ 2. kill; liquidate; slay
+materia
+ matter
+material
+ data; material
+matrimonio
+ 1. marriage; matrimony
+ 2. marriage
+ 3. marriage
+matrícula
+ numberplate
+mayo
+ May
+mayoría
+ majority
+maíz
+ corn; Indian corn; maize; mealies
+mañana
+ 1. morning
+ 2. tomorrow
+mañana pasado
+ thedayaftertomorrow
+mañana por la mañana
+ tomorrowmorning
+mañana por la tarde
+ tomorrowevening
+mear
+ 1. urinate
+ 2. urinate
+mecanógrafa
+ stenotypist; femalestenotypist
+mechero
+ lighter
+mecánico
+ 1. mechanic
+ 2. mechanic
+ 3. chauffeur; driver
+media
+ stocking
+media noche
+ midnight
+medicamento
+ drug; medicine; pharmaceutical
+medicina
+ drug; medicine; pharmaceutical
+medida
+ measure; measurement
+medio
+ 1. half
+ 2. half
+ 3. agent; means; tool
+ 4. average; mean; middle
+ 5. means; remedy; resources
+mediodía
+ midday; noon
+medir
+ measure
+medroso
+ 1. afraid
+ 2. afraid
+ 3. afraid; fearful
+medusa
+ jelly‐fish
+mejicana
+ Mexicanwoman
+mejicano
+ Mexican
+mejikano
+ Mexican
+mejilla
+ cheek
+mejor
+ better
+melindroso
+ prudish
+melocotón
+ peach
+melón
+ melon
+mencionar
+ 1. cite; quote
+ 2. mention
+mendicidad
+ begging
+mendigar
+ beg
+mendigo
+ beggar
+menesteroso
+ 1. abject; dismal; meager; miserable; wretched
+ 2. miserable; needy
+menguar
+ abate; decrease; diminish; drop; fall
+menos
+ 1. apart from; but; except; otherthan
+ 2. fewer; less
+menos y menos
+ lessandless
+mensaje
+ errand; message
+mensualmente
+ monthly
+menta
+ mint
+mentir
+ lie; tellalie
+mentira
+ lie
+menú
+ 1. menu
+ 2. menu
+mercado
+ 1. fair; market
+ 2. market; salesactivity
+ 3. market; marketplace
+mercado de consumo
+ market; salesactivity
+merecer
+ be worthy of; deserve; merit
+merluza
+ haddock
+mermelada
+ jam; marmelade
+mermelada de manzanas
+ 1. apple‐sauce
+ 2. apple‐sauce
+mes
+ month
+mesa
+ table
+metal
+ metal
+meter
+ lay down; place; put; putdown
+meticuloso
+ accurate; scrupulous
+metro
+ 1. metre
+ 2. subway; underground
+mezcla
+ admixture; mixture
+mezquino
+ petty; small‐minded
+mezquita
+ mosque
+mi
+ my
+miedo
+ 1. agony; anguish; fear
+ 2. afraid
+ 3. afraid
+ 4. fright
+ 5. afraid; timid
+miedoso
+ 1. afraid
+ 2. afraid
+miel
+ honey
+miembro
+ limb; member
+mil
+ thousand; onethousand
+millón
+ million
+milímetro
+ millimetre
+mimar
+ spoil
+mimoso
+ affectionate; caressing; cuddlesome; cuddly
+mineral
+ mineral
+ministerio
+ ministry
+minuto
+ minute
+miope
+ near‐sighted; short‐sighted
+mirada
+ look
+mirlo
+ blackbird
+misa
+ mass
+miserable
+ 1. miserable; poor
+ 2. abject; dismal; meager; miserable; wretched
+misericordia
+ charity; mercifulness; mercy
+misericordioso
+ charitable; merciful
+mismo
+ even
+mito
+ myth
+mitología
+ mythology
+mitra
+ miter; mitre
+miércoles
+ Wednesday
+mobilario
+ furniture
+mochila
+ backpack; knapsack
+moda
+ fashion; mode
+moderno
+ modern
+modesto
+ modest
+modista
+ milliner
+modo subjuntivo
+ subjunctive
+mofarse de
+ laughat
+mohoso
+ mouldy
+mojado
+ wet
+moler
+ grind; pulverize
+molestar
+ bother; disturb; hinder; trouble
+molestia
+ 1. hindrance
+ 2. disquiet; disturbance; interference; unrest
+ 3. trouble
+momentito
+ instant; moment
+momento
+ instant; moment
+mondar habas
+ string
+moneda
+ coin
+monedas
+ change
+monje
+ monk
+mono
+ 1. ape; monkey
+ 2. overalls
+monopolio
+ monopoly
+monstruo
+ colossus
+montar
+ go in; enter; perform
+montaña
+ mountain
+monte
+ mountain
+monumental
+ monumental
+monólogo
+ monologue; soliloquy
+morado
+ violet
+morar
+ dwell; live
+morder
+ bite
+mordisco
+ bite
+moreno
+ brown
+morera
+ mulberry‐tree
+morir
+ die; expire; passaway
+mosaico
+ mosaic; mosaicwork
+mosca
+ fly; housefly
+mosquito
+ mosquito
+mostaza
+ mustard
+mostrador
+ counter
+mostrar
+ indicate; point out; show
+motel
+ motel
+motivo
+ 1. inducement; occasion; motive
+ 2. inducement; motive; occasion
+ 3. account; motive; reason
+moto
+ motorcycle
+motocicleta
+ moped
+motor
+ engine; motor
+moverse
+ move
+mozo
+ porter
+muchacha
+ girl; lass; wench
+muchacho
+ boy; lad; laddie
+muchacho travieso
+ naughty boy; pickle
+mucho
+ 1. a lot of; much
+ 2. a lot of; much; plentyof
+mudar
+ 1. alter; change
+ 2. change; turn
+mudo
+ dumb; mute; speechless
+mueblaje
+ furniture
+muelle
+ spring
+muerte
+ death
+muerto
+ dead
+mujer
+ 1. wife
+ 2. woman
+mulo
+ mule
+multa
+ 1. fine
+ 2. minutes; protocol
+multar
+ 1. fine
+ 2. give a ticket; takesomebody'sname
+multiplicar
+ 1. multiply
+ 2. duplicate; multiply
+mundo
+ world
+municipio
+ community
+museo
+ museum
+muslo
+ thigh
+muy
+ quite; very; verymuch
+muérdago
+ mistletoe
+muñeca
+ 1. wrist
+ 2. wrist
+ 3. doll; puppet
+máquina
+ engine; machine
+máquina de escribir
+ typewriter
+mármol
+ marble
+más
+ more
+mástil
+ mast
+más adelante
+ afterwards; next; subsequently
+más bien
+ 1. preferably
+ 2. preferably; rather
+más y más
+ increasingly; moreandmore
+máximo
+ maximum
+máximum
+ maximum
+médico
+ doctor; physician
+método
+ method
+músculo
+ muscle
+música
+ music
+músico
+ musician
+nabo
+ turnip
+nacer
+ arise; beborn
+nacimiento
+ birth
+nacional
+ national
+nacionalidad
+ nationality
+nada
+ nothing
+nadar
+ float; swim
+nadie
+ neither; nobody; none; no‐one
+naranja
+ orange
+naranjo
+ 1. orange‐tree
+ 2. orange‐tree
+nariz
+ nose
+nata batida
+ whippedcream
+natural
+ coming
+naturaleza
+ 1. character; nature; personality
+ 2. nature
+ 3. character; nature
+naturalmente
+ naturally
+navegar
+ navigate
+necesario
+ necessary
+necesidad
+ 1. need; want
+ 2. necessity
+necesitado
+ 1. abject; dismal; meager; miserable; wretched
+ 2. miserable; needy
+necesitar
+ need; require
+neerlandesa
+ Dutchwoman
+neerlandés
+ 1. Dutch
+ 2. Dutchman
+ 3. Dutch; Dutchlanguage
+negar
+ deny
+negativa
+ refusal
+negativo
+ negative
+negocio
+ enterprise
+negro
+ 1. Negro
+ 2. black
+nene
+ baby
+nervio
+ nerve
+neumático
+ 1. tyre
+ 2. tire; tyre
+ 3. cover; outercover
+nevado
+ snowy
+nevar
+ snow
+niebla
+ fog; mist
+nieto
+ grandson
+nieve
+ snow
+nilón
+ nylon
+ninguno
+ neither; nobody; none; no‐one
+nivel
+ level
+ni mucho menos
+ notatall
+niño
+ 1. bairn; child; infant
+ 2. child
+no
+ 1. no
+ 2. not
+noble
+ ofnoblebirth
+nobleza
+ nobility
+noche
+ 1. night
+ 2. evening
+noción
+ concept; idea
+nogal
+ 1. walnut‐tree
+ 2. walnut‐tree
+nombramiento
+ appointment; appointmenttooffice
+nombrar
+ appoint
+nombre
+ appellation; name
+nombre de pila
+ firstname
+normal
+ 1. normal
+ 2. normal
+norte
+ north; North
+noruega
+ Norwegianwoman
+noruego
+ 1. Norwegian
+ 2. Norwegian
+nosotras
+ us; we
+nosotros
+ us; we
+nostalgia
+ nostalgia
+notable
+ considerable; sizable
+notar
+ note; make a note; writedown
+notario
+ notary
+noticia
+ 1. account; communication
+ 2. advice; announcement; communication; message; notice; report
+noticias
+ 1. news; novelty; somethingnew
+ 2. advice; announcement; communication; message; notice; report
+notificar
+ instruct; notify; summon
+notoriedad
+ acquaintance; conversance; familiarity
+notorio
+ well‐known
+novela
+ novel
+noviembre
+ November
+novio
+ beloved; loved one; lover; sweetheart; well‐beloved
+no ... del todo
+ notatall
+no ... mas
+ nolonger
+no ... mas que
+ exclusively; just; only
+no ... nunca
+ never
+no tener razón
+ bewrong
+no tocar
+ keepone'shandsoff
+nube
+ cloud
+nudo
+ knot; node
+nueve
+ nine
+nuevo
+ new; novel
+nuez
+ nut
+nuez moscada
+ nutmeg
+nunca
+ never
+níquel
+ nickel
+número
+ 1. amount; number
+ 2. number; numeral
+o
+ or
+oasis
+ oasis
+obedecer
+ obey
+obispo
+ bishop
+objeción
+ objection
+objecto
+ article; object; thing
+objeto
+ 1. thing
+ 2. aim; goal; purpose; target
+obligar
+ compel; force
+obligatorio
+ compulsory
+obra
+ work
+obrera
+ female laborer; femal labourer; femalworker
+obrero
+ hand; laborer; labourer; operative; worker; working man; workman
+observar
+ keep; mind; observe
+obstrucción
+ 1. dam
+ 2. barrier; fence
+ 3. bar; barrier
+obtener
+ 1. achieve; acquire; attain; get; obtain
+ 2. get; have; receive
+obtuso
+ 1. blunt
+ 2. dull; obtuse
+oca
+ goose
+ocasionar
+ 1. activate; cause; giveriseto
+ 2. cause; causetotakeplace
+occipucio
+ back of the head; occiput
+ochenta
+ eighty
+ocho
+ eight
+ochocientos
+ eighthundred
+octavo
+ eighth
+octubre
+ October
+oculista
+ oculist; ophtalmologist
+ocultar
+ conceal; hide
+ocultarse
+ hide; hideoneself
+oculto
+ hidden
+ocupado
+ busy
+ocupar
+ occupy; take
+océano
+ ocean
+odiar
+ hate
+odio
+ hate
+oeste
+ 1. west; West
+ 2. west
+ofender
+ abuse; insult; offend
+ofensa
+ 1. abuse; insult
+ 2. abuse
+oferta
+ 1. offer
+ 2. presentation
+ 3. presentation
+oficial
+ 1. official
+ 2. official
+oficina
+ bureau; office
+oficina de correos
+ postoffice
+oficina de informaciones
+ inquiry‐office
+oficio
+ 1. handicraft; occupation; trade
+ 2. function; job; office; post
+oficioso
+ accommodating; helpful
+ofrecer
+ bid; offer; makeanofferof
+ofrecimiento
+ 1. offer
+ 2. presentation
+ 3. presentation
+ojo
+ eye
+ola
+ wave
+oleaje
+ billow
+oler
+ give off an odour; reek; smell
+oler a
+ smellof
+oler mal
+ reek; smell; smell bad; stink
+olivo
+ olive‐tree
+olla
+ 1. jug; pot
+ 2. jug; box; container; vessel
+olmo
+ elm
+olor
+ 1. aroma; flavour
+ 2. odor; odour; scent; smell
+olvidar
+ forget
+omnipotencia
+ omnipotence
+omnipotente
+ almighty; all‐powerful; omnipotent
+omnisciente
+ all‐knowing; omniscient
+once
+ eleven
+opinión
+ opinion
+opio
+ opium
+oponerse
+ 1. confront; stand up to; withstand
+ 2. resist; withstand
+oprimido
+ 1. stale
+ 2. airless; oppressive; stiffling; sultry
+oprimir
+ suppress
+oración
+ appeal; entreaty; supplication
+orden
+ 1. order
+ 2. warrant; writ
+ordenador
+ computer
+orden del día
+ agenda
+orden por escrito
+ warrant; writ
+oreja
+ ear
+orgulloso
+ proud
+origen
+ 1. lineage
+ 2. beginning; commencement; start
+ 3. origin
+original
+ 1. aboriginal; original
+ 2. original
+originario
+ coming
+orina
+ urine
+orinal
+ pot; chamberpot
+orinar
+ 1. urinate
+ 2. urinate
+oro
+ gold
+ortiga
+ nettle
+ortografía
+ orthography
+oruga
+ caterpillar
+osa
+ she‐bear
+oscuro
+ dark; dim
+oso
+ bear
+ostra
+ oyster
+otoño
+ autumn
+otra vez
+ 1. afresh; again; all over again; anew
+ 2. afresh; again; oncemore
+otro
+ other; another; else
+otro lado
+ oppositeside
+oveja
+ sheep
+oír
+ hear
+paciencia
+ patience
+padre
+ 1. father
+ 2. father
+padres
+ parents
+padre y madre
+ parents
+pagar
+ pay
+pagar a plazos
+ payonaccount
+pago
+ payment
+paisaje
+ landscape; scenery
+pala
+ shovel
+palabra
+ word
+palacio
+ palace
+palmera
+ palm; palmtree
+palo
+ baton; cane; stick
+paloma
+ pigeon
+pan
+ bread; loaf
+pana
+ brakedown
+panadero
+ baker
+panadería
+ bakery
+panecillo
+ roll
+panne
+ brakedown
+pantalón
+ pants; trousers
+pantalón corto
+ 1. short pants; shorts
+ 2. short pants; shorts
+pantorrilla
+ calf
+papel
+ paper
+papelería
+ stationer'sshop
+papel de cartas
+ writing‐paper
+papel higiénico
+ toilet‐paper
+papel pintado
+ tapestry; wallcovering
+papel secante
+ blotter; blottingpaper
+paquete
+ packet; parcel
+par
+ 1. pair
+ 2. even
+ 3. pair
+para
+ for; to; in order to; per
+parachoques
+ buffer; bumper
+parada
+ stop
+parada del autobús
+ 1. busstop
+ 2. bus stop; busstop
+paraguas
+ umbrella
+paralelo
+ parallel
+paraninfo
+ auditorium
+parar
+ 1. turnaway
+ 2. halt; come to a halt; stop
+ 3. halt; stop
+ 4. shut off; stop; switch off; turnoff
+para que
+ so; sothat
+para una persona
+ oneperson
+parche
+ adhesiveplaster
+pardo
+ 1. brown
+ 2. grey
+pardone usted
+ excuseme
+parecer
+ 1. appear; look
+ 2. appear; appear to be; seem
+parecerse
+ be similar; resemble
+pared
+ wall
+pariente
+ 1. relative; femalerelative
+ 2. relative
+parir
+ bear; givebirthto
+parisiense
+ Parisian
+parque
+ park
+parra
+ vine; grapevine
+parroquiano
+ client; customer
+parte
+ 1. part; Parthian; share
+ 2. part; piece; share
+ 3. share
+ 4. share
+parte trasera
+ back; reverse; reverseside
+particular
+ 1. affair; business; business deal; case; matter
+ 2. apart; particular; separate; special
+partidario
+ 1. acolyte; member; supporter
+ 2. member; supporter
+partido
+ 1. adherents; disciples; following; party; supporters
+ 2. adherents; disciples; followers; partymembers
+ 3. faction; party; side
+ 4. adherents; disciples; followers; following; party; supporters
+pasada
+ 1. former; last; previous; prior
+ 2. last
+pasado
+ 1. former
+ 2. past
+pasado mañana
+ thedayaftertomorrow
+pasaporte
+ passport
+pasar
+ pass; spend
+pasillo
+ corridor; passage
+paso
+ 1. pass
+ 2. gate; gangway; passage; passageway
+ 3. pace; step; stride
+ 4. passage
+paso a nivel
+ level‐crossing
+paso de montaña
+ pass
+pasta dentrífica
+ tooth‐paste
+pasta de almendras
+ almondpaste
+pastel
+ 1. bakedgoods
+ 2. pie; tart
+pastelero
+ confectioner
+pastelería
+ confectionery
+pastel de almendra
+ almoundpastry
+pastor protestante
+ pastor
+patada
+ kick
+patata
+ potato
+patillas
+ whiskers; side‐whiskers
+patinar
+ 1. skate
+ 2. skate
+patinete
+ 1. scooter
+ 2. scooter
+patio
+ court; yard; courtyard
+pato
+ duck
+patria
+ 1. cradle; placeofbirth
+ 2. fatherland
+patriarca
+ patriarch
+patrono
+ patron
+patrón
+ 1. boss; chief; leader
+ 2. chief; boss
+pavo
+ turkey
+paz
+ peace
+país
+ country; land
+pañal
+ swaddlingcloth
+peatón
+ pedestrian
+pecho
+ bosom; breast; chest
+pedal
+ pedal
+pedazo
+ bit; lump; piece
+pedido
+ order
+pedir
+ 1. book; order; reserve
+ 2. ask; ask for; beg; bid; request
+pedir limosna
+ beg
+pegar
+ 1. sew; sewon
+ 2. thrash
+ 3. glue; stick
+peinar
+ comb
+peine
+ comb
+peligro
+ danger; peril
+peligroso
+ dangerous
+pelota
+ ball
+peludo
+ hairy; hirsute
+peluquera
+ hairdresser; femalehairdresser
+peluquero
+ barber; hairdresser
+pelvis
+ basin; bowl; pelvis
+película
+ film; motion picture; movie
+pendiente
+ 1. ear‐drop; earring
+ 2. pending
+pensamiento
+ thought
+pensar
+ think
+pensión
+ boarding house; boardingschool
+península
+ peninsula
+pepino
+ 1. gherkin
+ 2. cucumber
+pequeño
+ diminutive; little; small
+pera
+ pear
+peral
+ pear‐tree
+perca
+ bass
+perder
+ 1. miss
+ 2. lose
+perderse
+ loseone'sway
+perdida
+ loss
+perdido
+ lost
+perdiz
+ partridge
+peregrinación
+ pilgrimage
+perejil
+ parsley
+perfume
+ perfume
+periodista
+ 1. journalist; femalejournalist
+ 2. journalist
+ 3. journalist; femalejournalist
+ 4. journalist
+perito de contabilidad
+ accountant
+periódico
+ gazette; magazine; newspaper; periodical
+perjudicar a
+ harm
+perla
+ pearl
+permiso
+ permission
+permitir
+ accord; admit; afford; allow; permit
+pero
+ but
+perpetrar
+ 1. achieve; act; do; make; perform
+ 2. accomplish; achieve; keep; observe; perform
+perro
+ dog
+persa
+ 1. Persian
+ 2. Persian
+perseguir
+ chase; persecute; prosecute; pursue
+persona
+ person
+personal
+ personal
+pertenecer a
+ 1. belongto
+ 2. belong to; beoneof
+peruana
+ Peruvianwoman
+peruano
+ 1. Peruvian
+ 2. Peruvian
+perímetro
+ 1. circumference
+ 2. outskirts; periphery
+pesado
+ burdensome; heavy; onerous
+pesar
+ weigh
+pescador
+ fisherman
+pescar
+ fish
+peso
+ weight
+petición
+ request
+petroleo
+ paraffin‐oil; petroleum
+petróleo
+ 1. crudeoil
+ 2. crudeoil
+petulancia
+ 1. wantonness
+ 2. wantonness
+petulante
+ 1. wanton
+ 2. wanton
+pez
+ fish
+pezuña
+ hoof
+pez de colores
+ goldfish
+pez dorado
+ goldfish
+picar
+ pick; stab; sting
+picazón
+ itch
+pichón
+ dove; pigeon
+pico
+ 1. beak; bill
+ 2. mountain peak; mountain top; pinnacle
+ 3. woodpecker
+pic nic
+ picnic
+piedra
+ stone
+piel
+ 1. fur; hide; skin
+ 2. skin
+ 3. fur; fur coat; furpiece
+pierna
+ 1. leg
+ 2. leg; paw
+piernas torcidas hacia afuera
+ knock‐kneed legs; turned‐inlegs
+pieza
+ 1. fragment; lump; piece
+ 2. part; piece; share
+pijama
+ pyjamas
+pila
+ battery
+pimienta
+ pepper
+pimiento
+ paprika
+pino
+ pine; pine‐tree
+pintar
+ paint
+pintor
+ painter
+pintoresco
+ picturesque
+pintura
+ 1. dye; paint
+ 2. painting; picture
+piojo
+ louse
+pipa
+ pipe
+pirenaico
+ Pyrenean
+piscina
+ pool; swimming‐bath; swimming‐pool
+piso
+ 1. apartment; flat
+ 2. floor; storey; story
+piso bajo
+ ground‐floor
+pistón
+ piston
+piña
+ pineapple
+placer
+ 1. pleasure
+ 2. fun; pleasure
+plancha
+ iron; flat‐iron
+planchar
+ iron; ironclothes
+plano
+ 1. even; flat; level; smooth
+ 2. map
+ 3. design; diagram; plan; plane
+planta
+ 1. sole
+ 2. plant
+plantar
+ plant
+plantío
+ planting
+plata
+ silver
+plataforma
+ platform
+plataforma posterior
+ rearplatform
+platija
+ plaice
+platillo
+ 1. cymbal
+ 2. saucer
+plato
+ 1. food
+ 2. menu
+ 3. plate
+playa
+ beach
+plaza
+ plaza; square; publicsquare
+plaza de toros
+ 1. bullring
+ 2. bullring
+pleito
+ complaint
+plemear
+ hightide
+plombo
+ lead
+pluma
+ feather
+plástico
+ plastic
+plátano
+ 1. banana
+ 2. banana
+población
+ 1. population
+ 2. folk; nation; people
+ 3. city; town
+pobre
+ 1. miserable; poor
+ 2. abject; dismal; meager; miserable; wretched
+ 3. poor
+ 4. miserable; needy
+pobreza
+ poverty
+pobrezo
+ misery
+poco
+ 1. a little; rather; some; somewhat; tosomeextent
+ 2. a little; rather
+ 3. little
+poco a poco
+ gradually; littlebylittle
+podadera
+ bill; pruning‐knife
+podadera de mango largo
+ polepruner
+podadera de mano tipo yunque
+ anvilpruner
+podadera de vanilla
+ polepruner
+poder
+ 1. beableto
+ 2. ability
+podrido
+ addled; bad; rotten
+poesía
+ poetry
+polaca
+ Polishwoman
+polaco
+ 1. Polish
+ 2. Pole
+polaina
+ gaiter; legging
+policía
+ police
+pollo
+ chick; chicken
+polonesa
+ Polishwoman
+polonés
+ 1. Polish
+ 2. Pole
+polvo
+ dust
+polvos
+ 1. powder; cosmeticpowder
+ 2. powder
+política
+ policy; politics
+político
+ politician
+pomelo
+ grapefruit
+poner
+ 1. put on; start; switch on; turnon
+ 2. turnon
+ 3. lay
+ 4. lay down; place; put; putdown
+ponerse
+ 1. attitudinize; pose; putonairs
+ 2. puton
+ 3. dress; getdressed
+ 4. dress
+poner en depósito
+ deposit
+poner pleito a
+ sue
+poney
+ pony
+popa
+ 1. poop; poopdeck; stern
+ 2. stern
+ 3. poop; poopdeck; stern
+poquito
+ a little; rather
+por
+ 1. a; in; inside; into; on; per; within
+ 2. a; per
+ 3. through
+porciento
+ percent; percentage
+porque
+ 1. because; forthereasonthat
+ 2. because; forthereasonthat
+ 3. as; because; for; since
+portamonedas
+ purse; wallet
+portero
+ porter
+portuguesa
+ Portuguesewoman
+portugués
+ 1. Portuguese
+ 2. Portuguese; Portugueselanguage
+ 3. Portuguese
+portátil
+ portable
+porvenir
+ future
+por decirlo así
+ sotospeak
+por ejemplo
+ for example; forinstance
+por eso
+ 1. on that account; therefore
+ 2. on that account; therefore
+por favor
+ please
+por fin
+ at last; finally; ultimately
+por fortuna
+ 1. fortunately
+ 2. unfortunately
+por la derecha
+ right; totheright
+por la izquierda
+ left; totheleft
+por la mañana
+ inthemorning
+por la noche
+ intheevening
+por la tarde
+ intheevening
+por lo más
+ 1. atmost
+ 2. atmost
+por lo tocante a
+ 1. about; concerning
+ 2. about; concerning; on; upon
+ 3. as to; as regards; concerning
+por medio de
+ by; by means of; on; through; with
+por qué
+ 1. what for; why
+ 2. why
+ 3. what for; wherefore; why
+ 4. what for; wherefore; why
+por razón de oficio
+ officially
+por separado
+ apart; separately
+por suerte
+ by accident; bychance
+poseer
+ own; possess
+posible
+ possible
+postal
+ 1. picturepostcard
+ 2. postcard
+poste
+ pole; post; stanchion; stake
+postre
+ dessert
+postrero
+ last
+practicable
+ 1. passable; practicable
+ 2. passable; practicable
+precavido
+ 1. careful; cautious
+ 2. careful; cautious
+precio
+ price
+precio de entrada
+ admission; admissionfee
+precipicio
+ abyss; chasm; gulf; precipice
+precipitadamente
+ hastily; hurriedly; inahurry
+preciso
+ 1. accurate; precise
+ 2. correct; exact; proper; right
+preferir
+ prefer
+pregunta
+ question
+preguntar
+ ask
+preguntarse
+ ask oneself; wonder
+prejuicio
+ prejudice
+premiar
+ awardaprize
+preocupar
+ agitate; alarm
+preparar
+ prepare
+presa
+ dam
+presencia
+ presence
+presentación
+ 1. accession
+ 2. presentation
+presente
+ present
+preservativo
+ condom; rubber
+presión
+ pressure
+prestar
+ 1. borrow
+ 2. borrow; lend; loan
+preste
+ priest
+presumido
+ attitudinizer; poseur
+presupuesto
+ budget; estimate; estimates
+pretensión
+ 1. offer; offerofparriage
+ 2. offer; offer of marriage; proposal
+ 3. claim; presumption; pretence
+pretina
+ belt; girdle
+prever
+ foresee
+prima
+ cousin
+primavera
+ spring; springtime
+primeramente
+ first; firstly; firstofall
+primero
+ 1. first
+ 2. first; firstly; firstofall
+primeros socorros
+ 1. firstaid
+ 2. firstaid
+primitivo
+ initial
+primo
+ cousin
+primo segundo
+ secondcousin
+princesa
+ princess
+principal
+ 1. mostimportant
+ 2. main; predominant; principal
+ 3. chief; main; major; principal
+principalmente
+ 1. above all; especially; chiefly; mainly; principally
+ 2. chiefly
+principiante
+ beginner
+principiar
+ begin; commence; start
+principio
+ 1. beginning; commencement; start
+ 2. beginning; commencement; start
+ 3. principle
+prisa
+ 1. haste
+ 2. speed
+ 3. urgency
+prisión
+ 1. jail; gaol; prison
+ 2. jail; gaol; prison
+ 3. jail; gaol; prison
+privar
+ rob
+probablemente
+ probably
+probar
+ 1. attempt; test; try
+ 2. prove
+ 3. tryon
+ 4. tryon
+procedente de
+ a native of; comingfrom
+proceso
+ action; lawsuit
+proceso verbal
+ minutes; protocol
+proclamación
+ proclamation
+proclamar
+ issue; proclaim
+procurarse
+ 1. achieve; acquire; attain; get; obtain
+ 2. buy; get; procure
+ 3. buy; get; procure
+producción
+ 1. making; manifacture
+ 2. making; manufacture
+producir
+ 1. activate; cause; giveriseto
+ 2. afford; bear; produce
+producto
+ product
+profesional
+ professional
+profesión
+ profession
+profundidad
+ depth
+profundo
+ deep; profound
+progreso
+ advance; advancement; progress
+prohibir
+ forbid; prohibit
+prohijar
+ affiliate
+promesa
+ affirmation; promise
+prometer
+ promise
+prometida
+ bride; fiancée
+prometido
+ fiancé
+promulgar
+ issue; proclaim
+pronombre demonstrativo
+ 1. demonstrative; demonstrativepronoun
+ 2. demonstrative; demonstrativepronoun
+pronto
+ 1. soon
+ 2. fast; quickly; swiftly
+pronunciación
+ pronunciation
+pronunciar
+ 1. pronounce
+ 2. pronounce
+propiedad
+ ownership
+propietario
+ owner
+propina
+ tip
+propio
+ own; personal
+proposición
+ offer; tender
+propulsión
+ drive
+propósito
+ 1. design; diagram; plan; plane
+ 2. plan; project; scheme
+prostituta
+ prostitute
+protección
+ protection
+protectar
+ protect
+protector
+ patron
+proteger
+ protect
+protegido
+ protégé
+protesta
+ protest
+protestante
+ Protestant
+protestar
+ protest
+provecho
+ 1. benefit; gain; profit
+ 2. gain; profit
+ 3. advantage; benefit
+proveniente
+ coming
+provisionalmente
+ for the time being; temporarily
+proyectar
+ make a project of; plan
+prudente
+ 1. thoughtful
+ 2. careful; cautious
+prueba
+ 1. problem; trouble
+ 2. proof; sign; token
+prusiano
+ 1. Prussian
+ 2. Prussian
+prémio
+ premium; prize
+príncipe
+ prince
+próximo
+ 1. future
+ 2. close; near; nearby; next
+ 3. following; next
+ 4. next
+psiquiatra
+ psychiatrist
+publicación
+ advice; announcement; communication; message; notice; report
+publicar
+ 1. advertise; announce; givenotice
+ 2. publish; reveal
+ 3. acquaint; let know; inform
+pudín
+ pudding
+pueblecito
+ hamlet; township
+pueblo
+ 1. folk; nation; people
+ 2. village
+puente
+ bridge
+puerta
+ 1. gate; gateway; portal
+ 2. door
+puerta trasera
+ back‐door
+puerto
+ harbor; harbour; port
+puesta del sol
+ sunset
+puesto
+ barn; shed; stand
+puesto de Primeros Auxilios
+ first‐aidstation
+puesto que
+ 1. because; forthereasonthat
+ 2. because; forthereasonthat
+ 3. as; because; for; since
+pulga
+ flea
+pulgar
+ 1. thumb
+ 2. thumb
+pulmón
+ lung
+pulsera
+ 1. bracelet
+ 2. bracelet
+punta
+ peak; point; tip; summit
+puntiagudo
+ pointed; spiked
+punto
+ dot; period; point; spot
+punto de contacto
+ startingpoint
+punto de partida
+ startingpoint
+punto inicial
+ startingpoint
+purgante
+ laxative
+puro
+ pure
+puré de patatas
+ mashedpotatoes
+pus
+ pus
+puta
+ hooker; whore
+putrefacción
+ 1. corruption; decay; depravation; taint
+ 2. decay
+puño
+ fist
+pájaro
+ bird
+pálido
+ pale; sallow
+párpado
+ eyelid
+párrafo
+ paragraph
+píldora
+ pill
+póliza
+ policy; insurancepolicy
+que
+ 1. that
+ 2. than
+quebraja
+ 1. crack; crevice
+ 2. burst; crack; flaw
+quebrar
+ break
+quedar
+ 1. meet
+ 2. besituated
+quedarse
+ remain; stay; stayover
+quedarse atrás
+ be kept in; be detained; remain; stayon
+queja
+ complaint
+quejarse
+ complain
+quemado
+ burnt
+quemar
+ 1. burn
+ 2. beburntdown
+ 3. burndown
+quemarse
+ sticktothepan
+queque
+ cake
+querer
+ 1. love
+ 2. desire; wish
+querer decir
+ 1. aim; intend
+ 2. mean
+querido
+ 1. beloved; loved one; lover; sweetheart; well‐beloved
+ 2. best
+queso
+ cheese
+quieto
+ calm; quiet
+quince
+ fifteen
+quinto
+ 1. fifth
+ 2. fifth
+quitar
+ abstract; takeaway
+quitarse
+ 1. take off; putoff
+ 2. absent onself; depart; go away; leave
+quitar el polvo
+ dust
+quitar el polvo a
+ dust
+quizás
+ maybe; mayhap; perchance; perhaps; possibly
+química
+ 1. chemistry
+ 2. chemistry
+químico
+ 1. chemist
+ 2. chemist
+ración
+ share
+radiador
+ radiator
+radio
+ radio; wireless
+radio de acción
+ radius
+ralea
+ property; quality
+rama
+ bough; branch
+rana
+ frog
+raramente
+ seldom
+raro
+ rare
+rascar
+ scratch
+rata
+ rat
+ratón
+ mouse
+raya
+ ray; strip; stripe
+rayo
+ beam; ray
+rayos de Röntgen
+ X‐rays
+rayos x
+ X‐rays
+raza
+ breed; race
+razonable
+ acceptable
+reaccionar
+ react; respond
+realizar
+ 1. accomplish; achieve; actout
+ 2. produce
+realizarse
+ come about; happen; occur
+rebaja
+ abatement; discount; rebate
+rebanada
+ breadandbutter
+rebuznar
+ bray
+recado
+ errand; message
+recalar
+ endup
+recelo
+ 1. suspicion
+ 2. suspicion
+recelocaz
+ suspicion
+receloso
+ 1. suspicious
+ 2. suspicious
+ 3. suspicious
+receta
+ prescription; recipe
+rechazar
+ 1. reject
+ 2. reject
+ 3. refuse; reject
+recibir
+ get; have; receive
+recibo
+ 1. receipt
+ 2. acknowledgement; receipt
+recientemente
+ recently
+recipiente de agua
+ basin; reservoir
+recitar
+ recite
+recoger
+ 1. collect; gather; pickup
+ 2. get; lay hold of; pick up; take
+recoger la mesa
+ clear away; removethecloth
+recomendable
+ recommendable
+recomendación
+ recommendation
+recompensa
+ compensation; reward
+recompensar
+ compensate; reward
+recorrer
+ cover; go through; passthrough
+recreación
+ entertainment
+recuerdo
+ 1. keepsake; memento; souvenir
+ 2. keepsake; memento; souvenir
+ 3. memory; recollection
+ 4. recollection
+red
+ net; network
+redicho
+ 1. hackneyed
+ 2. hackneyed; hard‐worked; stale; trite; worn‐out
+redondear
+ round; roundoff
+redondel
+ arena
+redondo
+ round
+reducción
+ abatement; discount; rebate
+reflexionar
+ think; think about; reflecton
+reflexión
+ consultation; deliberation
+reflujo
+ lowtide
+refrenar
+ control; govern; restrain; rule
+refugio
+ 1. asylum
+ 2. Alpine hut; climber's hut; mountainhut
+regalo
+ 1. gift; present
+ 2. gift
+regar
+ 1. irrigate; water
+ 2. water
+registrar
+ 1. examine
+ 2. audit; check; check up on; supervise; verify
+ 3. record; register
+registro
+ account book; record; register
+región
+ region
+regla
+ regulation; rule
+reglamento
+ regulations; rules
+rehusar
+ 1. reject
+ 2. refuse; reject
+reina
+ queen
+reino
+ kingdom
+reja
+ barrier; fence
+relación
+ 1. relation; understanding
+ 2. relation
+relampaguear
+ lighten
+relevar
+ taketheplaceof
+relevo
+ replacement; substitution
+religión
+ religion
+relleno
+ replacement; replenishment; supplement
+reloj
+ 1. watch
+ 2. clock; watch
+relojero
+ watchmaker
+reloj de pulsera
+ watch; wrist‐watch
+relámpago
+ lightning
+remar
+ row
+remendar
+ mend; patch; patchup
+remitente
+ 1. sender
+ 2. sender
+remo
+ oar
+remolacha
+ beet
+remolcar
+ drag; tow
+remolque
+ trailer
+renegado
+ unfaithful
+renunciar a
+ relinquish; renounce; waive
+reparar
+ fix; repair
+reparo
+ 1. criticism
+ 2. observation; remark; reproof
+ 3. observation; remark
+repeler
+ protect from; wardoff
+repetir
+ 1. repeat
+ 2. repeat
+reponerse
+ revive
+reprender
+ 1. reproach; rebuke; reprove; scold
+ 2. blame; rebuke; reproach; reprove; scold
+representante
+ agent
+representante exclusivo
+ soleagent
+representar
+ act for; represent
+reprimir
+ 1. bridle; check; restrain
+ 2. control; govern; restrain; rule
+reprobable
+ blameworthy; censurable; condemnable; objectionable
+reprobación
+ censure; condemnation; disapprobation; disapproval
+reprobar
+ 1. condemn; disapprove; disapprove of; rebuke
+ 2. reproach; rebuke; reprove; scold
+ 3. blame; rebuke; reproach; reprove; scold
+reproducción
+ 1. image; picture
+ 2. figure; diagram; image; picture; representation
+reproducir
+ depict; represent
+repugnancia
+ 1. aversion; dislike
+ 2. disgust; nausea
+repulsar
+ reducetheprice
+república
+ republic
+requerir
+ admonish; scold
+resabio
+ habit; trick
+reservar
+ 1. reserve
+ 2. reserve
+ 3. book
+resfriado
+ 1. cold
+ 2. cold
+resignación
+ acquiescence; rezignation
+resistir
+ resist; withstand
+resolver
+ decide
+respaldo
+ prop; support
+respectar
+ esteem; thinkwellof
+respecto de
+ 1. about; concerning
+ 2. about; concerning; on; upon
+ 3. as to; as regards; concerning
+respetable
+ respectable
+respetar
+ respect
+respiración
+ 1. respiration
+ 2. breath
+respirar
+ 1. exhale
+ 2. breathe
+responder
+ answer; reply; respond
+responder a
+ answer
+responsabilidad
+ responsibility
+responsable
+ 1. accountable; responsible
+ 2. accountable; responsible
+respuesta
+ answer; reply
+resquebrajarse
+ 1. burst; split
+ 2. burst
+restar
+ remain; stay; stayover
+restaurante
+ restaurant
+resultado
+ result
+resultar
+ pointouttobe
+resumen
+ abridgement; abstract; resumé; summery
+retaguardia
+ 1. rear; rearguard
+ 2. defence; rear; rearguard
+retener
+ detain; hold back; retain
+retirarse
+ retreat
+retiro
+ isolation; separation
+retraso
+ 1. delay; retardation
+ 2. adjournment; delay
+retratar
+ depict; represent
+retrato
+ 1. image; picture
+ 2. figure; diagram; image; picture; representation
+retrete
+ toilet
+retroceder
+ go back; gobackwards
+retroceso
+ decline; goingdown
+retrovisor
+ drivingmirror
+retrógrado
+ backward; retrograde
+reumatismo
+ rheumatism
+reunir
+ 1. join; unite
+ 2. join; unite
+reunirse
+ join
+reunión
+ joining; junction
+revelar
+ develop; reveal
+reverso
+ back; reverse; reverseside
+revisar
+ 1. examine
+ 2. audit; check; check up on; supervise; verify
+ 3. revise
+revisor
+ guard
+revista
+ 1. periodical
+ 2. magazine; periodical; revue
+revés
+ 1. back; reverse; reverseside
+ 2. back; reverse; reverseside
+ 3. back; rear
+rey
+ king
+rezagado
+ laggard; straggler
+rezar
+ pray
+reír
+ laugh
+reírse de
+ laughat
+reñir
+ quarrel; wrangle
+rico
+ nice; tasty
+ridiculizar
+ ridicule
+ridículo
+ ridiculous
+riesgo
+ hazard; risk
+rigido
+ rigid; stiff
+rinceronte
+ rhino; rhinoceros
+riqueza
+ abundance; affluence; wealth
+risa
+ laughter
+ritmo
+ rhythm
+riñón
+ kidney
+robar
+ 1. rob
+ 2. steal
+roble
+ oak
+robo
+ abstraction; theft
+roca
+ 1. reef
+ 2. rock
+rocío
+ dew
+rodar
+ roll
+rodilla
+ knee
+rojo
+ 1. red
+ 2. red
+romano
+ 1. Roman
+ 2. Roman
+ 3. Roman
+ 4. Roman
+romería
+ pilgrimage
+romper
+ break
+románico
+ Romanesque
+ron
+ rum
+roncar
+ snore
+ropa
+ clothes; clothing
+ropa de la cama
+ bed‐clothes; bedding
+rosa
+ rose
+rosado
+ pink
+rostro
+ face
+roto
+ broken
+rubio
+ blond; fair
+rueda posterior
+ back wheel; hind wheel; rearwheel
+ruego
+ appeal; entreaty; supplication
+ruido
+ 1. ado; din; noise
+ 2. sound
+ 3. agitation; riot; tumult
+ruina
+ ruin
+ruiseñor
+ nightingale
+rumano
+ 1. Romanian; Rumanian
+ 2. Romanian
+rusa
+ Russianwoman
+ruso
+ 1. Russian
+ 2. Russian
+ruta
+ 1. route
+ 2. route
+rábano
+ radish
+rábano picante
+ horse‐radish; horseradish
+rápido
+ 1. fast; quick; rapid; speedy; swift
+ 2. fasttrain
+ 3. fasttrain
+récord
+ record
+río
+ river
+río Amazonas
+ Amazon
+saber
+ know; knowhow
+sabido
+ well‐known
+saborear
+ taste
+sacacorchos
+ corkscrew
+sacerdote
+ priest
+sajón
+ 1. Saxon
+ 2. Saxon
+salario
+ salary; wage; wages
+saldar
+ 1. liquidate
+ 2. pay
+salida
+ 1. demand; sale
+ 2. exit; wayout
+ 3. departure
+salida del sol
+ sunrise
+salir
+ 1. exit; goout
+ 2. absent onself; depart; go away; leave
+ 3. drive away; driveoff
+salmo
+ psalm
+salmón
+ salmon
+salsa
+ gravy; sauce
+salsa de malzanas
+ apple‐sauce
+salsa de manzanas
+ apple‐sauce
+saltamontes
+ grasshopper; locust
+saltar
+ jump; leap; spring
+salteo
+ assault
+salto
+ jump; leap
+salud
+ health
+saludar
+ greet; salute
+saludo
+ 1. greeting; salutation
+ 2. greeting
+salvar
+ keep; save; rescue
+salvia
+ sage
+salvo
+ bar; barring; except for; subject to; withoutprejudice
+sanar
+ recover
+sandalia
+ sandal
+sandwich
+ sandwich
+sangrar
+ bleed
+sangre
+ blood
+sangría
+ bleeding; blood‐letting
+santa
+ saint
+santo
+ saint
+sapo
+ toad
+saque de comienzo
+ kick‐off
+sartén
+ frying‐pan; fryingpan
+sastre
+ tailor
+satélite de la tierra
+ earthsatellite
+sauce
+ willow
+secar
+ dry
+sección
+ section
+seco
+ dry
+secreción
+ secretion
+secreto
+ 1. hidden
+ 2. secret
+secta
+ sect
+sed
+ thirst
+seducir
+ attract; draw
+segregar
+ divide; separate
+seguido
+ 1. directly; straighahead
+ 2. straight ahead; straightalong
+seguir
+ follow
+segundo
+ 1. second
+ 2. second
+seguridad
+ safety; security
+seguro
+ 1. insurance
+ 2. safe; secure
+seis
+ six
+sellar
+ mark; stamp
+sello
+ stamp; postagestamp
+sello de correos
+ stamp; postagestamp
+semanalmente
+ weekly
+sembrar
+ sow
+semejante
+ like; alike; similar
+sencillo
+ simple; straightforward
+sendero
+ path
+sensible
+ sensitive
+sentarse
+ 1. sitdown
+ 2. sitdown
+sentencia
+ decision; judgement
+sentimiento
+ feel; feeling; sensation
+sentir
+ 1. be sorry about; regret
+ 2. feel; sense
+sentirse
+ feel
+separación
+ 1. separation; partition
+ 2. isolation; separation
+separado
+ 1. apart; particular; separate; special
+ 2. remote
+separar
+ divide; separate
+septiembre
+ September
+ser
+ be
+sereno
+ serene; untroubled
+serie
+ series; set
+serio
+ earnest; serious; staid
+serpiente
+ serpent; snake
+servicial
+ accommodating; helpful
+servicio
+ 1. service; worshipservice
+ 2. attendance; service; waiting
+ 3. house charge; servicecharge
+ 4. service
+servilleta
+ napkin
+servir
+ 1. accomodate
+ 2. serve
+ 3. serve
+ser arrojado a la playa
+ 1. bewashedashore
+ 2. bewashedashore
+ser de
+ belongto
+ser partidario de
+ adhereto
+ser presuntuoso
+ attitudinize; pose; putonairs
+sesenta
+ sixty
+seta
+ 1. fungus; mushroom
+ 2. mushroom
+seudónimo
+ pseudonym
+severo
+ severe; strict
+sexo
+ sex
+sexto
+ sixth
+sexual
+ generative; sexual
+seña
+ character; mark; sign; signal; token
+señal
+ mark; sign; signal; token
+señas
+ address
+señorita
+ madam; Mrs.
+si
+ 1. as; like; suchas
+ 2. if; providedthat
+siberiana
+ Siberian
+siberiano
+ Siberian
+sidra
+ cider
+siempre
+ 1. constantly; continually; continuously
+ 2. always; ever
+sien
+ temple
+sierra
+ 1. mountainchain
+ 2. chain of mountains; mountain chain; mountain range; rand
+ 3. saw
+siete
+ seven
+siglo
+ centennial; century
+significar
+ imply; mean; signify
+siguiente
+ following; next
+silbar
+ whistle
+silencio
+ 1. calm; quiet; silence
+ 2. silence
+silla
+ chair
+sillón
+ armchair
+simple
+ simple; straightforward
+sin
+ without
+sincero
+ 1. above‐board; honest
+ 2. above‐board; sincere
+sin aliento
+ breathless
+sin duda
+ no doubt; undoubtedly
+sistema
+ system
+sitiar
+ besiege
+sitio
+ 1. place
+ 2. location; place; spot
+ 3. seat
+ 4. siege
+sobre
+ 1. envelope
+ 2. on; upon
+sobretodo
+ 1. above all; especially; chiefly; mainly; principally
+ 2. chiefly
+sobre todo
+ above all; especially
+sobrino
+ nephew
+sofocar
+ choke; quell; suffocate; suppress
+sol
+ sun
+solicitación
+ request
+solicitar
+ ask; ask for; beg; bid; request
+solicitud
+ request
+sollo
+ sturgeon
+solo
+ alone; only; sole; solitary
+soltero
+ single; unmarried
+solterona
+ unmarried woman; spinster
+solterón
+ bachelor
+sombra
+ 1. shadow
+ 2. shade
+sombrero
+ hat
+somero
+ shallow; superficial
+sonido
+ sound
+sonreír
+ smile
+sonrisa
+ smile
+sopa
+ soup
+soplar
+ blow
+sordo
+ deaf
+sorprender
+ surprise
+sorpresa
+ surprise
+sosegado
+ calm; tranquil
+sosegar
+ appease; calm; quiet; soothe; still
+sosegarse
+ 1. abate; subside
+ 2. calmdown
+sospecha
+ 1. suspicion
+ 2. suspicion
+sospechar
+ suspect
+sostener
+ abet; support; sustain
+sostén
+ bra
+soñar
+ dream
+su
+ 1. her; his; its; their
+ 2. her
+subasta
+ tender
+subir
+ 1. ascend; get up; go up; lift; rise; arise
+ 2. ascend; climb; goup
+subir a
+ ascend; climb; scale
+subscripción
+ subscription
+subscriptor
+ subscriber
+substantivo
+ noun; substantive
+substituir
+ 1. taketheplaceof
+ 2. replace; substitute
+subyugar
+ 1. govern; head up; restrain
+ 2. control; govern; restrain; rule
+sucesivamente
+ consecutively
+sucesivo
+ following; next
+sucinto
+ concise
+sucio
+ dirty; filthy; nasty; soiled; unclean
+sudafricano
+ SouthAfrican
+sudamericano
+ SouthAmerican
+sudar
+ sweat
+sudor
+ perspiration; sweat
+sueco
+ 1. Swedish
+ 2. Swede
+suela
+ sole
+suelo
+ 1. bottom; foundation; ground
+ 2. floor
+suelto
+ loose
+suerte
+ 1. destiny; fate; fortune; luck
+ 2. kind; sort
+ 3. chance; luck
+sueño
+ 1. sleep
+ 2. dream
+suizo
+ 1. Swiss
+ 2. Swiss
+sujetador
+ bra
+sujetar
+ hang onto; hold
+suma
+ amount; sum
+sumar
+ add up; sumup
+superficie
+ summit; surface; top
+supermercado
+ 1. supermarket
+ 2. supermarket
+suplemento
+ replacement; replenishment; supplement
+suplicar
+ implore; invoke
+suponer
+ guess; presume; suppose; surmise
+sur
+ south
+surtido
+ assortment
+suscribirse
+ subscribe; subscribeto
+suscripción
+ subscription
+suscriptor
+ subscriber
+suspender
+ reject
+suspicaz
+ 1. suspicious
+ 2. suspicious
+ 3. suspicious
+suspirar
+ sigh
+sustraer
+ subtract
+sábana
+ sheet
+séptimo
+ seventh
+sí
+ yes
+sólido
+ 1. firm; robust; sturdy
+ 2. firm; solid
+sólo
+ exclusively; just; only
+sótano
+ basement; cellar
+tabaco
+ tobacco
+taberna
+ bar; pub
+tabique
+ wall
+tabla
+ 1. shelf
+ 2. lath; slat
+ 3. board; plank
+tabla de planchar
+ ironingboard
+taburete
+ barstool
+taco
+ 1. nail
+ 2. taco
+tacón
+ heel
+tajada
+ slice
+tal
+ such; such a; thatkindof
+talento
+ aptitude; disposition; talent; turn
+talentoso
+ 1. gifted; talented
+ 2. accomplished; talented
+ 3. gifted; talented
+taller
+ workplace
+talonario
+ cheque‐book
+talón
+ 1. heel
+ 2. acknowledgement; receipt
+tal vez
+ maybe; mayhap; perchance; perhaps; possibly
+tamaño
+ 1. dimension; measurement
+ 2. size
+también
+ also; likewise; too
+tambor
+ drum
+tampoco
+ neither; nor
+tampón
+ plug; tampon
+tanque
+ 1. cistern; tank
+ 2. tank
+tantico
+ a little; rather
+tanto
+ thatmuch
+tapacubo
+ hub‐cap
+tapicero
+ paperer; paper‐hanger
+tapizar
+ paper
+tapon
+ hub‐cap
+taquilla
+ window; ticket‐window
+tardar
+ be kept in; be detained; remain; stayon
+tarde
+ 1. afternoon
+ 2. evening
+tardío
+ late; tardy
+tarjeta
+ 1. card; map; menu
+ 2. postcard
+tarjeta de crédito
+ creditcard
+tarjeta postal
+ 1. picturepostcard
+ 2. postcard
+tarjeta postal ilustrada
+ 1. picturepostcard
+ 2. picturepostcard
+tarta de manzana
+ apple‐tart
+tasa
+ assessment
+taxi
+ taxi
+taza
+ cup
+teatro
+ theatre
+teatro de varietés
+ varietyentertainment
+tejado
+ roof
+tela
+ 1. bit; lump; piece
+ 2. cloth; material
+telegrama
+ telegram
+telemando
+ remotecontrol
+televisión
+ television; TV
+teléfono
+ telephone
+temer
+ be afraid of; fear
+temeroso
+ 1. afraid
+ 2. afraid
+ 3. horrible
+temor
+ fear
+temperatura
+ temperature
+tempestad
+ storm
+templo
+ temple
+temporada
+ season
+temprano
+ early
+tenazas
+ 1. pincers
+ 2. tongs
+ 3. pincers; pairofpincers
+tenedor
+ fork
+tenedor de libros
+ book‐keeper
+tener
+ 1. desire; wish
+ 2. have; havegot
+ 3. own; possess
+ 4. hang onto; hold
+tener cuidado
+ advert; pay attention; pay attention to; watchoutfor
+tener el propósito
+ intend; mean
+tener lugar
+ come about; happen; occur
+tener puesto
+ wear
+tener que
+ have to; must; ought to; should
+tener éxito
+ succeed
+tenga
+ behold; here is; here are; look; there
+tenis
+ tennis
+tensión
+ tension
+tentación
+ 1. disposal; inclination; tendency
+ 2. temptation
+tercero
+ third
+tercio
+ third
+terciopelo
+ velvet
+terminado
+ completed; done; finished; over; through
+terminante
+ effective; effectual; efficacious
+terminar
+ accomodate; end; finish; terminate
+terminarse
+ end; come to an end; end up; expire
+termos
+ 1. thermosbottle
+ 2. thermos; thermosflask
+termómetro
+ thermometer
+ternero
+ calf
+terraza
+ terrace
+terremoto
+ earthquake
+terrenal
+ 1. terrestrial
+ 2. earthen; earthly; terrestrial
+ 3. terrestrial
+terreno
+ ground; grounds; terrain
+terreno del camping
+ camping ground; campingsite
+terreno pantanoso
+ marsh; swamp
+terrestre
+ 1. terrestrial
+ 2. earthen; earthly; terrestrial
+ 3. terrestrial
+testigo
+ witness
+tetera
+ 1. teapot
+ 2. tea‐pot
+texto
+ lyric; text
+teñir
+ dye; tint
+tibio
+ lukewarm
+tiburón
+ shark
+tiempo
+ 1. time; while
+ 2. weather
+tienda
+ boutique; shop; store
+tienda de campaña
+ tent
+tierno
+ soft
+tierra
+ earth; land; soil
+tigre
+ tiger
+tijeras
+ scissors
+tijera para setos
+ hedge clippers; hedgeshears
+tilo
+ lime‐tree; linden‐tree
+timbrar
+ mark; stamp
+timbre
+ 1. bell
+ 2. bell
+timbre de alarma
+ alarmbell
+timón
+ 1. handlebars; helm; rudder
+ 2. rudder
+tinieblas
+ darkness; murk
+tinta
+ ink
+tirantes
+ braces; suspenders
+tirar
+ 1. fire; shoot
+ 2. drag; draw; haul; pull; tug
+titubear
+ 1. hesitate
+ 2. hesitate; waver
+toalla
+ towel
+tobillo
+ ankle
+tocar
+ 1. touchupon
+ 2. play
+ 3. play
+ 4. sound
+ 5. touch
+tocino
+ bacon
+todavia
+ still; yet
+toda clase de
+ 1. all; everykindof
+ 2. all sorts; all sorts of; miscellaneous; ofallsorts
+todo
+ 1. entire; overall; whole
+ 2. all; altogether; everything
+todopoderoso
+ almighty; all‐powerful; omnipotent
+todos
+ all
+tolerar
+ endure; put up with; tolerate
+tomar
+ 1. accept; receive; take; takein
+ 2. engulf; swallowup
+ 3. get; lay hold of; pick up; take
+tomar en consideración
+ account; consider; esteem; regard; takeintoaccount
+tomate
+ tomato
+tomo
+ volume
+toque
+ 1. touch
+ 2. touch
+torcido
+ furious
+tormenta
+ storm
+tornillo
+ screw
+toro
+ bull
+torre
+ castle; tower
+torta
+ pie; tart
+tortilla
+ omelette
+toser
+ cough
+trabajador
+ hand; laborer; labourer; operative; worker; working man; workman
+trabajar
+ work
+trabajo
+ job; work
+traducir
+ translate
+traer
+ bring; fetch
+tragar
+ 1. engulf; swallowup
+ 2. swallow
+traje
+ costume; outfit; suit
+traje de baño
+ bathing suit; bathing‐suit
+tranquilo
+ calm; tranquil
+transbordador
+ ferry
+transitable
+ 1. passable; practicable
+ 2. passable; practicable
+transitivo
+ transitive
+transpirar
+ sweat
+transportar
+ transport
+transporte
+ transport
+tranvía
+ streetcar; tram
+tras
+ behind; after
+trasladar
+ copy
+traslado
+ copy
+trasporte
+ transport
+trastornar
+ overthrow; turn; turn over; upset
+tratado
+ treaty
+tratamiento
+ 1. treatment
+ 2. treatment
+ 3. treatment
+tratar
+ 1. treat
+ 2. deal with; handle; treat
+tratar de
+ aim; attempt; endeavour; take steps; undertake
+trato
+ treatment
+trece
+ thirteen
+treinta
+ thirty
+tremblar
+ quiver; shiver; tremble
+tren
+ 1. train
+ 2. train
+tren corrido
+ corridortrain
+trepar
+ climb
+tres
+ three
+tresillo
+ lounge suite; three‐piecesuite
+tres veces
+ three times; thrice
+tributo
+ 1. tax
+ 2. tribute
+tricar
+ carrier cycle; carriertricycle
+trigo
+ wheat
+trillado
+ 1. hackneyed
+ 2. hackneyed; hard‐worked; stale; trite; worn‐out
+trinquete
+ clique; coterie; junto; set
+tripulación
+ 1. crew
+ 2. crew
+triste
+ 1. sad
+ 2. bleak; dismal; dreary; gaunt; miserable; sad; somber
+ 3. dismal; gaunt; miserable; sad
+tristeza
+ sadness; sorrow
+trivial
+ commonplace; dismal; trite
+trombón
+ trumpet
+tronar
+ thunder
+tronco
+ 1. stem; trunk; tree‐trunk
+ 2. stem; trunk
+trono
+ throne
+trozo
+ slice
+trucha
+ trout
+trueno
+ thunder
+tráfico
+ traffic
+tráfico de dirección única
+ one‐waytraffic
+tu
+ 1. your
+ 2. your
+tubo receptor
+ 1. cathodetube
+ 2. cathodetube
+tuerca
+ 1. nut
+ 2. nut
+tumba
+ grave; tomb
+tumor
+ tumor; tumour
+turca
+ Turkish lady; Turkishwoman
+turco
+ 1. Turkish
+ 2. Turk
+turista
+ tourist
+turno
+ file; line; rank; row; turn
+tutear
+ theeandthou
+tápa
+ cover; hood; lid
+té
+ tea
+técnica
+ technics; technique
+término
+ end; ending
+tía
+ aunt
+tímido
+ afraid; timid
+tío
+ uncle
+título
+ superscription
+tóxico
+ poisonous
+tú
+ thou; you
+túnel
+ tunnel
+uf
+ shame
+ultrajar
+ abuse; insult; offend
+un
+ 1. one
+ 2. a; an
+una
+ 1. one
+ 2. a; an
+unas
+ a few; any; some
+una vez
+ once; onetime
+unirse
+ associate; join; pool
+universal
+ general; usual
+universidad
+ university
+unión
+ joining; junction
+uno
+ one
+unos
+ a few; any; some
+uno y medio
+ oneandahalf
+un momento
+ a few minutes; amoment
+urbano
+ urban
+urgente
+ pressing; urgent
+urgentemente
+ urgently
+urraca
+ magpie
+usado
+ 1. worn
+ 2. used
+usar
+ 1. use up; wearout
+ 2. employ; use; makeuseof
+uso
+ use
+usted
+ 1. thou; you
+ 2. ye; you
+ustedes
+ ye; you
+uva
+ grape
+uña
+ nail
+vaca
+ cow
+vacaciones
+ vacation
+vaciar
+ 1. empty
+ 2. bottle
+vacilación
+ 1. hesitation; wavering
+ 2. hesitation
+vacilar
+ 1. hesitate
+ 2. hesitate; waver
+vacío
+ empty; void
+vainilla
+ vanilla
+vale
+ agreed; okay
+valer
+ beworth
+valle
+ valley
+valor
+ 1. courage
+ 2. value; worth
+valorar en
+ blame; holdagainst
+valuta
+ currency
+vampiro
+ vampire
+variar
+ vary
+variedad
+ variety
+varios
+ several
+vasco
+ 1. Basque
+ 2. Basque; Basquelanguage
+ 3. Basque
+vascuence
+ 1. Basque
+ 2. Basque; Basquelanguage
+vaso
+ 1. glass
+ 2. vase; vessel
+vecino
+ 1. adjacent
+ 2. adjacent; adjoining
+ 3. adjacent; nearby; neighbouring
+ 4. neighbour
+vegetación
+ vegetation
+vegetariano
+ vegetarian
+veinte
+ twenty
+veinte y uno
+ twenty‐one
+vejiga
+ bladder; bubble
+vela
+ candle
+velludo
+ hairy; hirsute
+velocidad
+ speed
+velocidad inicial
+ initialvelocity
+vena
+ vein
+vencimiento
+ end; terminate
+vendaje
+ 1. bandage
+ 2. bandage
+vendar
+ dress
+vendedor
+ salesman
+vendedora
+ saleswoman
+vender
+ dispose of; sell; vend
+veneno
+ poison
+venganza
+ revenge; vengeance
+vengar
+ avenge; avengeoneself
+venir
+ come
+venir después
+ arrive afterwards; come afterwards; come later; follow
+venta
+ sale
+ventaja
+ 1. advantage; benefit
+ 2. advantage; benefit
+ventana
+ window
+ventilador
+ electric fan; ventilator
+ventilar
+ aerate; air out; give an airing; ventilate
+ver
+ see
+verano
+ summer
+verbena
+ fair
+verdad
+ reality; truth
+verdaderamente
+ absolutely; genuinly; indeed; really; truly
+verdadero
+ true
+verde
+ 1. green
+ 2. green
+verduras
+ vegetable
+vergonzoso
+ 1. ashamed
+ 2. humiliating
+vergüenza
+ shame
+vermut
+ vermouth
+verter
+ pourin
+vestido
+ dress; gown; robe
+vestir
+ 1. cover; overlay
+ 2. clothe; dress
+vestirse
+ 1. dress; getdressed
+ 2. dress
+vestíbulo
+ hall
+veterinario
+ 1. veterinarian
+ 2. veterinarian
+viajar
+ travel
+viaje
+ journey; trip; voyage
+viajero
+ traveller
+viaticar
+ administerthelastsacraments
+victoria
+ victory
+vida
+ life
+vidrio
+ glass
+viejo
+ 1. old
+ 2. old
+viento
+ wind
+vientre
+ abdomen; belly; tummy
+viernes
+ Friday
+viga
+ beam; girder
+vigilar
+ guard; keep; look after; watchover
+vinagre
+ vinegar
+violento
+ acute; intense; intensive
+violoncelo
+ cello
+virtud
+ 1. energy
+ 2. force; strength; vigour
+ 3. courage
+ 4. ability
+ 5. morality; vice
+ 6. chastity; purity
+visado
+ visa; visé
+visita
+ visit
+visitación
+ inspection
+visitar
+ attend; call on; see; visit
+vista
+ 1. appearance; aspect; look; sight; view
+ 2. exterior
+ 3. view
+ 4. view
+ 5. examination
+ 6. sight; view
+vitamina
+ vitamin
+viudo
+ widower
+vivir
+ be alive; live
+vivo
+ alive
+viña
+ vine
+volante
+ 1. handlebars; helm; rudder
+ 2. joystick; steering‐wheel
+volar
+ fly
+voltaje
+ tension; voltage
+voluntad
+ will; willingness; wish
+voluntariamente
+ willingly
+volver
+ 1. turnaway
+ 2. go back; return
+ 3. come back; return
+ 4. turn; turn around; turnround
+vomitar
+ throw up; vomit
+vosotras
+ you
+vosotros
+ you
+votar
+ vote
+voz
+ voice
+vuelo
+ flight
+válido
+ valid
+válvula
+ tube; valve
+vía
+ 1. path; road; way
+ 2. road; route; way
+víbora
+ adder; viper
+xilófono
+ xylophone
+y
+ and
+ya
+ already; by now; yet
+yate
+ yacht
+ya ... no
+ nolonger
+ya que
+ 1. because; forthereasonthat
+ 2. because; forthereasonthat
+ 3. as; because; for; since
+yedra
+ ivy
+yerba
+ grass
+yerno
+ son‐in‐law
+yerro
+ aberration; error; mistake
+yo
+ I
+yodo
+ iodine
+yogur
+ yoghourt; yoghurt
+yugo
+ yoke
+y tambien
+ and also; and ... as well; as well as; togetherwith
+y también
+ and also; and ... as well; as well as; togetherwith
+zalamero
+ affectionate; caressing; cuddlesome; cuddly
+zambullirse
+ dive; plunge
+zanahoria
+ carrot
+zanja
+ hole; ditch; pit
+zapatero
+ shoemaker
+zapatilla
+ slipper
+zapato
+ shoe
+zarza
+ blackberry; blackberry bush; bramble
+zarzamora
+ blackberry
+zelandés
+ 1. Zealand
+ 2. Zealander
+zinc
+ zinc
+zona
+ zone
+zorro
+ fox
+zote
+ addled; foolish; stupid
+zumo
+ juice; sap
+zumo de naranja
+ orangejuice
+zurrar
+ thrash
+África
+ Africa
+África del Sur
+ SouthAfrica
+ágata
+ agate
+ágil
+ adroit; clever; dexterous; skillful
+águila
+ eagle
+álamo
+ poplar
+álbum
+ album
+álgebra
+ algebra
+ámbar amarillo
+ amber
+ángulo
+ angle
+árabe
+ 1. Arabian; Arabic
+ 2. Arab
+árbol
+ tree
+árido
+ 1. barren
+ 2. dreary
+áspero
+ 1. coarse; rough
+ 2. severe; strict
+áspid
+ adder; viper
+átomo
+ atom
+ávido
+ acquisitive; eager; greedy
+él
+ he; him
+ídolo
+ idol
+ópera
+ opera
+óptico
+ optician
+órbita
+ orbit
+úlcera
+ ulcer; sore
+último
+ last
+único
+ 1. alone; only; sole; solitary
+ 2. unique
+útero
+ uterus; womb
+ñajú
+ gumbo; okra; okraplant
+ñame
+ yam
+ñandu
+ American ostrich; nandu
+ñaña
+ elder sister
+unknown
+ abcdefghijklmnopqrstuvwxyzáéíñóöúü
