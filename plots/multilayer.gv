@@ -24,6 +24,7 @@ digraph {
         z3 [shape=circle, label=""];
     }
 	subgraph cluster_layer3 {
+        label=output;
         w1 [shape=circle, label=""];
         w2 [shape=circle, label=""];
     }

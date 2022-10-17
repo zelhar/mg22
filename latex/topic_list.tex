@@ -150,7 +150,9 @@ so-so--so---so
 \chapter{Notations and definitions, preliminary concepts}
 %\section{Basic Definitions}
 
-\section{Basic notations} Throughout this paper (modulo typing errors) we use
+\section{Basic notations}
+\subsection{Vectors, matrices and tensors}
+Throughout this paper (modulo typing errors) we use
 capital bold math Latin or Greek letters ($\bv{X, \Sigma}$) to represent
 matrices. To stress that we talk about matrices rather than vectors we show
 product ($\times$) in the dimension, i.e $\bv{X} \in \R^{m \times n}$. Although
@@ -200,6 +202,15 @@ be a matrix in \textbf{row} notation. Then its \emph{squared Frobenius norm} is
 = \sum_{i=1}^{m} \|\x_i\|^2_2 = \sum_{i=1}^m \sum_{j=1}^n x_{ij}^2
 \end{equation}
 \end{mydef}
+
+
+\subsection{Functions and maps}
+Functions are usually understood to be scalar, namely $f:\R^n \to \R$ while maps
+are more general $g:\R^n \to \R^m$. When we say that a map (or function) $\phi
+:\R^n \to \R^m$ is parameterized, it means that implicitly has additional 
+variables that we treat as parameters $\phi_{\w}(\x) = \phi(\x, \w)$ where $\x \in \R^n$
+and $\w$ is the parameter set which we don't always specify its domain and we may not
+always subscript $\phi$ with it.
 
 \section{The data}
 we assume that the input data unless otherwise stated is real-valued matrix.
@@ -401,7 +412,7 @@ given sufficiently large set of
 parameters (i.e. is universal).
 \end{itemize}
 
-But if these requirements are still not enough.
+However these requirements are still not enough.
 For example, the class of multivariate polynomials can
 uniformly approximate any function. However it may not be a good idea to try
 to learn very complicated high dimensional data using polynomial representation. 
@@ -418,7 +429,7 @@ which is the class of functions that are comprised from "neurons".
 
 \subsection{Neurons}
 
-So first lets see what a neuron is. Basically it is the simplest parametrize
+So what a "neuron"?. Basically it is the simplest \textbf{parametrize}
 scalar function that is not linear. It is simple in the sense that it applies a
 linear function on the variables and then applies a so called activation
 function on the output of the linear function.
@@ -432,6 +443,9 @@ $ x \mapsto \frac{e^x}{1 + e^x}$ (sigmoid), and $x \mapsto \max(0,x)$ (ReLU).
 If $\x = (x_1, \dots x_n) \in \R^n$ then $\sigma(\x)$ is the element-wise application
 $\sigma(\x) \triangleq (\sigma(x_1), \dots , \sigma(x_n))$.
 \end{mydef}
+
+In the official definition we narrowed it down to just 4 kinds but in general
+there are plenty of other activation functions.
 
 \begin{mydef}
 \label{def:neuron}
@@ -460,36 +474,34 @@ feedback).
 A \emph{feed forward neural network (NN)}is a \textbf{parameterized} map $\phi$
 recursively defined
 follows:
-\begin{itemize}
+\begin{enumerate}
 \item{} 
 Activation functions ($1$, $id$, and $\sigma$) are NNs which are called the
 \emph{elementary neurons} and they have no parameters ($\w=\emptyset$).
 \item{} neurons are NNs
-\item{} If $\psi :\R^n -> \R$ is NN we say it has a single output (SONN).
-\item{} if $\nu:\R^n->\R$ is a NN and $\psi_1, \dots \psi_n$ are SONNs,
+\item{} If $\psi :\R^n \to \R^m$ is a parameterized linear map then it is a NN.
+\item{} If $\psi : R^n \to \R^m$
+and $\rho: \R^m \to \R^l$ are NNs and their parameter sets are discjoint then $\phi = \rho
+\circ \psi$ is a NN.
+\item{} if $\nu:\R^n->\R^m$ is a NN and if $\psi_1, \dots \psi_n$ are NNs,
 and if the parameter set of $\nu$ is disjoint from the combined parameters of
-the $\psi_i$'s, then
-$\phi = \nu(\psi_1, \dots, \psi_n)$ is a NN.
-\item{}
-if $f_{\w}:\R^n \to \R^m$ is a parameterized linear map,  
-$\psi_1 \dots \psi_n$ are
-NNs, and the parameter sets of all the maps and NNs involved are pair-wise
-disjoint,
-then $\phi = f_{\w}(g_1, \dots , g_n)$ is a NN.
-\item{}
-if $\psi$ is a NN, and $\nu$ is an neuron then $\phi = \nu(\psi)$ is a NN, which
-means $\nu:\R \to \R$ is applied
-element-wise on the output of $\psi$.
-\end{itemize}
+the $\psi_i$'s then
+$\phi = \nu(\psi_1, \dots, \psi_n)$ is a NN if the diemnsions "make sense".
+\end{enumerate}
 
-The parameter set $\w$ is called the \emph{weights} of $\phi$
+The parameter set $\w$ is called the \emph{weights} of $\phi$.
+
+In the definition we made the range and domain to be the entire $\R^n$ but
+it is not necessary, we just need for the composition to be valid.
 \end{mydef}
-Feed forward neural network 
-are depicted as a directed acyclic graph and usually they are arranged in
-layers. In that description a neuron consists of a node in the graph, 
-the node label (its activation function),
-incoming edges, and the edge labels.
 
+Feed forward neural network 
+are depicted as a directed acyclic graph where every node (with its incoming
+edges) depicts a neuron.
+If rule 5 of the definition is not used in the construction of $\phi$, then the
+resulting network is hirarchical. Its graph can partitioned into \emph{levels}
+$l_0, l_1\dots$ and there are only directed edges between two consequtive
+levels.
 
 The label inside the neuron describe its activation funcrtion.
 In the diagrams, we let $\sigma$ represent the sigmoid function.
@@ -505,6 +517,11 @@ Input neurons (sources) have no incoming edges and they represent the begining o
 computation.
 Output neurons (sinks) have no outgoing edges and their output is the final result of
 the computation.
+
+The incoming edges into a node represent linear function, but we will in general let
+it represent an affine function without bothering with adding a fixed $1$ input
+node. A Node's output is therefore only dependent on those nodes which have
+directed edges connecting to it.
 
 \begin{figure}[b]
 \centering
@@ -531,6 +548,13 @@ for the parameters $\w$ such that
 $\forall \x \in B \|\phi(\x) - f(\x)\| \lt \x \|$. The size of that single
 hidden layer (the number of parameters) depends on $f$ and $\epsilon$.
 
+In the definitions we only used linear maps to grow the network. 
+There are other types of maps which are used, most commonly are convolutions 
+but the principles and the graphical description remain essentially the same.
+
+There are additional types of parameterized functions which are used "within the
+layer" such as batch normalization but we won't get into that as this is not a
+thesis about neural networks per se.
 
 \subsection{Loss functions}
 
