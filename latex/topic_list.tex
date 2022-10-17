@@ -202,14 +202,31 @@ be a matrix in \textbf{row} notation. Then its \emph{squared Frobenius norm} is
 \end{mydef}
 
 \section{The data}
-we assume that the input data unless otherwise stated is real and 2-dimensional.
-Its rows represent \emph{samples}, for example---cells in the case of scRNAseq
-dataset, while its columns represent \emph{variables}, for example---genes in
-scRNAseq dataset. 
+we assume that the input data unless otherwise stated is real-valued matrix.
+Rows represent \emph{samples} 
+and columns represent \emph{variables}.
+
+We deal with two type of concrete datasets in this thesis. One of them is
+Single cell RNAseq data. This data represents gene expression levels in 
+individual cells, where rows represent cells and columns represent genes.
+So if we see a reading of
+$0.5$ in row $2$ column $4$ in means that in cell $2$ gene $4$ has normalized
+expression of $0.5$.
+
+The other type of data is images. For example the MNIST data set contains 
+greyscale $28 \times 28$ images of hand written digits.
+We still think of such data set as a matrix. The first axis always represents
+the samples, so each "row" represent an image. The rest of the axes represent
+the image. Alternatively we can also flatten the images into one axis and think
+of an image as a row vector of $28*28$ dimensions.
 
 There could possibly be additional data matrices with information about
 class or conditions. We use \emph{one-hot encoding} to represent such
 information.
+For example in the case of the MNIST dataset every image also comes with a label
+which indicate which digit it shows. Since there are $10$ classes of digits ($0$
+to $9$) the class matrix is going to have $10$ columns and each row is a one-hot
+vector indicating the digit of the correspoinding image.
 
 \begin{mydef}
 \label{def:datamatrix}
@@ -298,7 +315,7 @@ $\bv{D} =
 \right) \in \R^{N \times n}
 $ is diagonal.
 
-$\bv{V}_r$ are called the \textit{(right) principle components} of $\X$.
+$\bv{V}_r$ are called the \textit{(right) principal components} of $\X$.
 Note that $\bv{V}_r^* \bv{V}_r = \bv{I}_r$ and that 
 $\X = \X \bv{V}_r \bv{V}_r^* = (\X \bv{V}_r) \bv{V}_r^T$. If one looks at the second expression, 
 it means that the each row of $\X$ is spanned by the orthogonal
@@ -348,28 +365,174 @@ solution $\bv{W}$, it must hold that $\text{span}\{\bv{W}\} =
 
 \section{Neural networks}
 
+We briefly discuss here some of the basics of neural network to provide clarity
+and motivation. Mostly based on~\cite{nielsen2015neural}.
+
+\subsection{Universal families of parameterized maps}
+If we take an expression such as $f_{a,b}(x) = ax + b$, if we hold $(a,b)$ fixed
+on specific values, then we get a linear function on $x$. Every assignment of
+$(a,b)$ defines a different linear function and in fact every linear function on
+one dimension can be uniquely described by these $a$ and $b$. So we can say that
+$\{f_{a,b}\}_{a,b \in \R}$ is a \emph{parameterization} of the class of all real
+linear functions on one variable. The distinction between what are the variables and what are
+the parameters is somewhat arbitrary
+and in the end, $f_{a,b}(x)$ is just another way to represent 
+a $3$-variable function $f(a,b,x)$. 
+
+In general we can define one or more multivariate
+functions $g : \R^{n+m} \to \R^k$ (for simplicity of the discussion lets assume 
+it is defined everywhere) and partition the set of its variables into $2$. 
+$g_{\w}(x) \triangleq g(\w,\x)$ where 
+$\x \in \R^n, \w
+\in \R^m$ and let $g_{\w}(\x) := g(w,x) \in \R^k$.
+
+
+We call a class $\mathcal{F}$ of parameterized functions \emph{universal} if
+every continuous function can be uniformly approximated by functions of that
+class.
+The class of all linear functions is not universal.
+But taking "any function" $g$ is too general. What we actually want is a 
+class of parameterized functions that is:
+\begin{itemize}
+\item{} as simple as possible to construct
+\item{} derivable in both the parameters as well as the variables
+\item{} can uniformly approximate any continuous function in a bounded domain
+given sufficiently large set of
+parameters (i.e. is universal).
+\end{itemize}
+
+But if these requirements are still not enough.
+For example, the class of multivariate polynomials can
+uniformly approximate any function. However it may not be a good idea to try
+to learn very complicated high dimensional data using polynomial representation. 
+For one reason is that the number of terms (monomials) grows very rapidly with the
+dimension and the degree of the polynomials: for $n$ dimensions and $m$ degrees
+there are something like $\binom{m + n}{n}$ monomial terms.
+
+We want this class of simpler functions, that are almost as simple as linear,
+and yet that suits well for statistical learning. For example we want to
+represent complicated functions with relatively few parameters.
+
+One such class of functions is the feed forward neural networks,
+which is the class of functions that are comprised from "neurons".
+
+\subsection{Neurons}
+
+So first lets see what a neuron is. Basically it is the simplest parametrize
+scalar function that is not linear. It is simple in the sense that it applies a
+linear function on the variables and then applies a so called activation
+function on the output of the linear function.
+
+\begin{mydef}
+\label{def:activationfunction}
+An \emph{activation function} $\sigma : \R \to \R$ is any one of the following functions:
+$x \mapsto 1$ (constant), $x \mapsto x$ (identity)
+$ x \mapsto \frac{e^x}{1 + e^x}$ (sigmoid), and $x \mapsto \max(0,x)$ (ReLU).
+
+If $\x = (x_1, \dots x_n) \in \R^n$ then $\sigma(\x)$ is the element-wise application
+$\sigma(\x) \triangleq (\sigma(x_1), \dots , \sigma(x_n))$.
+\end{mydef}
+
+\begin{mydef}
+\label{def:neuron}
+Let $\sigma : \R -> \R$ be an activation function and let $f_{\w} : \R^n -> \R$
+be a \emph{parameterized} linear function. A \emph{neuron} $\nu$ is the
+parameterized function 
+$\nu =  \nu_{\w} \triangleq \sigma \circ
+f_{\w}$.
+%In case that $n=0$ then $\w = \emptyset$, we let $\nu \triangleq \sigma$.
+
+The parameters $\w$ are called the weights of the neuron $\nu$.
+\end{mydef}
+
+Think of the weights of a neuron as some mutable, tunable property, some sort of memory.
+
+Connecting many neurons together can create pretty powerful parameterized
+functions which we call neural networks.
+Connecting means that the output of one neuron is the input to one of the
+variables of a different neuron.
+In feed forward networks the information only goes in one direction (no
+feedback).
+
+
 \begin{mydef}
 \label{def:NN}
-A \emph{feed forward neural network} is simply a parameterized differentiable
-map $\phi_{\omega} : \R^n \to \R^m$. $\phi_{\omega}(x)$ is differentiable both in its input
-variable $x$ as well as in its parameters $\omega$, which are also called its
-\emph{weights}.
+A \emph{feed forward neural network (NN)}is a \textbf{parameterized} map $\phi$
+recursively defined
+follows:
+\begin{itemize}
+\item{} 
+Activation functions ($1$, $id$, and $\sigma$) are NNs which are called the
+\emph{elementary neurons} and they have no parameters ($\w=\emptyset$).
+\item{} neurons are NNs
+\item{} If $\psi :\R^n -> \R$ is NN we say it has a single output (SONN).
+\item{} if $\nu:\R^n->\R$ is a NN and $\psi_1, \dots \psi_n$ are SONNs,
+and if the parameter set of $\nu$ is disjoint from the combined parameters of
+the $\psi_i$'s, then
+$\phi = \nu(\psi_1, \dots, \psi_n)$ is a NN.
+\item{}
+if $f_{\w}:\R^n \to \R^m$ is a parameterized linear map,  
+$\psi_1 \dots \psi_n$ are
+NNs, and the parameter sets of all the maps and NNs involved are pair-wise
+disjoint,
+then $\phi = f_{\w}(g_1, \dots , g_n)$ is a NN.
+\item{}
+if $\psi$ is a NN, and $\nu$ is an neuron then $\phi = \nu(\psi)$ is a NN, which
+means $\nu:\R \to \R$ is applied
+element-wise on the output of $\psi$.
+\end{itemize}
 
-For example each affine function has the
-form $f:x \mapsto a \cdot x + b$. $a$ and $b$ are its trainable parameters (weights).
-The input is treated as fixed (the data we are trying to explain).
-
-Normally $\phi$ is a sequence of compositions of
-more simple functions. We call such more basic unit in a composition sequence 
-a \emph{layer}.
-Each layer is itself a composition, with exactly a
-single affine map, followed by $0$ or more dimension preserving functions
-such as normalization functions or activation functions.
-An \emph{activation function}
-is a real values non-linear function which is applied element-wise over the
-input later. For example the sigmoid function and the ReLU (rectified linear
-unit) are well-known and often used activation functions.
+The parameter set $\w$ is called the \emph{weights} of $\phi$
 \end{mydef}
+Feed forward neural network 
+are depicted as a directed acyclic graph and usually they are arranged in
+layers. In that description a neuron consists of a node in the graph, 
+the node label (its activation function),
+incoming edges, and the edge labels.
+
+
+The label inside the neuron describe its activation funcrtion.
+In the diagrams, we let $\sigma$ represent the sigmoid function.
+We represent the identity function either by the name of the variable ($x_1$,
+$y$ etc.) it acts on or simple by 
+$id$.   We let the label $1$ represent the constant function. We need the
+constant function because with it we can represent any affine map as a linear
+map with the first input always clamped to $1$.
+An directed edge between neurons means that the output of the neuron at the tail
+is multiplied by the edge weight and assigned to the input variable of the
+neuron it connects to.
+Input neurons (sources) have no incoming edges and they represent the begining of the
+computation.
+Output neurons (sinks) have no outgoing edges and their output is the final result of
+the computation.
+
+\begin{figure}[b]
+\centering
+\includegraphics[width=0.3\textwidth]{./images/models/neuron.2.gv.png}
+\caption{a neural network graphical description
+$\sigma(w_1x + w_2y + b)$}
+\label{fig:neuron1}
+\end{figure}
+
+Figure~\ref{fig:neuron1} shows a single output neural network of four neurons, with three of .
+input neurons and one output. 
+It describes the function $f : \R^2 -> \R, f(x,y) = \sigma(w_1x + w_2y + b)$. 
+
+It turns out~\cite{nielsen2015neural} that the feed forward neural networks
+class of functions (will be properly defined later)
+are "universal", meaning any continuous function $f$ can be
+uniformly approximated by a neural network (in fact, a network with just a
+single hidden layer suffices and just ReLU or Sigmoid as the non-linear
+activation functions).
+More precisely, let $B \subseteq \R^n$ be a bounded domain. Let $f : B \to \R^m$
+be continuous, and let $\epsilon \in (0,1)$. Then there is a feed forward neural
+network with a single hidden layer $\phi = \phi_{\w}$ and there is some value assignment
+for the parameters $\w$ such that 
+$\forall \x \in B \|\phi(\x) - f(\x)\| \lt \x \|$. The size of that single
+hidden layer (the number of parameters) depends on $f$ and $\epsilon$.
+
+
+\subsection{Loss functions}
 
 \begin{mydef}
 \label{def:lossfunc}
@@ -693,14 +856,12 @@ represent the weights of the decoder.
 \label{def:vae}
 Let $\{p_{\theta}\}$ be a family of distributions over $\R^n$ and let
 $\{q_{\phi}\}$ be a family of distributions over $\R^m$ and let $p$ be some
-fixed distribution over $\R^m$.
-A \emph{variational autoencoder (VAE)} consists of 
-neural networks $f_{\omega}: \R^n \to \{\theta\}_{\theta}$ and 
-$g_{\omega}: \R^m \to \{\phi\}_{\phi}$
-where $\omega$ are the combined parameters of $f,g$ and $\{\theta \}$ means the
-parameter space (all possible values of $\theta$ which can define a valid
-distribution $p_{\phi}$ (similarly with $\phi$).
-\end{mydef}
+fixed distribution over $\R^m$. A \emph{variational autoencoder (VAE)} $\upsilon
+= (f_{\omega}, g_{\omega})$ consists of neural networks $f_{\omega}: \R^n \to
+\{\theta\}_{\theta}$ and $g_{\omega}: \R^m \to \{\phi\}_{\phi}$ where $\omega$
+are the combined parameters of $f,g$ and $\{\theta \}$ means the parameter space
+(all possible values of $\theta$ which can define a valid distribution
+$p_{\phi}$ (similarly with $\phi$). \end{mydef}
 
 
 %The \emph{standard associated loss function} of a VAE is the ELBO
@@ -721,6 +882,10 @@ latent space $\z \mapsto \hat{x}$ to the reconstruction, a VAE tries to do
 basically the same thing but non-deterministically.
 It maps $\x$ into a distribution over $\z$: $\x \mapsto q(\z|\x)$ and it maps
 $\z$ into a distribution over $\x$, $\z \mapsto p(\x|\z)$.
+
+The loss function associated with a VAE is usually the minus ELBO.
+
+
 
 \subsection{Graphical representation}
 
