@@ -207,10 +207,17 @@ be a matrix in \textbf{row} notation. Then its \emph{squared Frobenius norm} is
 \subsection{Functions and maps}
 Functions are usually understood to be scalar, namely $f:\R^n \to \R$ while maps
 are more general $g:\R^n \to \R^m$. When we say that a map (or function) $\phi
-:\R^n \to \R^m$ is parameterized, it means that implicitly has additional 
+:\R^n \to \R^m$ is \emph{parameterized}, it means that implicitly has additional 
 variables that we treat as parameters $\phi_{\w}(\x) = \phi(\x, \w)$ where $\x \in \R^n$
 and $\w$ is the parameter set which we don't always specify its domain and we may not
 always subscript $\phi$ with it.
+
+In the context of neural networks, when we say \emph{linear} map, we actually mean an
+\emph{affine} map.
+An affine map $f(x_1 \dots x_n)$ can always as linear map with one extra variable 
+which is held fixed $x_0 \equiv 1$: $f(x_0, \dots x_n) = b + a_1 x_1 + \dots a_n
+x_n$. $b$ is called the \emph{bias} of the map.
+\label{affinelinear}
 
 \section{The data}
 we assume that the input data unless otherwise stated is real-valued matrix.
@@ -241,7 +248,7 @@ vector indicating the digit of the correspoinding image.
 
 \begin{mydef}
 \label{def:datamatrix}
-A \emph{data matrix} is simply a real--valued matrix $\bv{X} \in \R^{N \times n}$
+A \emph{data matrix} is a real--valued matrix $\bv{X} \in \R^{N \times n}$
 which represent a set of $N$ $n$-dimensional data points.
 The $N$ rows are also called \emph{observations} and the $n$ columns are
 \emph{variables}.
@@ -264,6 +271,19 @@ non-negative and sums up to $1$.
 Usually if the input data includes class/condition information, it comes as a
 class matrix (pure one-hot) but the output (the prediction) is naturally 
 probabilistic and hence is relaxed.
+
+\subsection{Input set and target set}
+Sometimes the data paired into the input data $\X$ and the
+target data $\Y$, 
+representing for example, samples from some unknown function $f(\x) = \y$
+that we want to "learn" to represent.
+In classification tasks for example, $\X$ can be for example a set of images,
+and $\Y$ can be their labels.
+
+In the case of autoencoders, the target set is also the input set and $f$ is the
+identity (in this case $f$ is known but we want to learn an efficient way
+to represent the data).
+
 
 \section{Linear algebra preliminary: SVD and PCA}
 In the following state some facts and bring without proof what are the singular
@@ -399,11 +419,10 @@ $\x \in \R^n, \w
 
 
 We call a class $\mathcal{F}$ of parameterized functions \emph{universal} if
-every continuous function can be uniformly approximated by functions of that
-class.
-The class of all linear functions is not universal.
-But taking "any function" $g$ is too general. What we actually want is a 
-class of parameterized functions that is:
+every continuous function can be uniformly approximated (inside a bounded
+domain) by functions of that class. The class of all linear functions is not
+universal. But taking "any function" $g$ is too general. What we actually want
+is a class of parameterized functions that is:
 \begin{itemize}
 \item{} as simple as possible to construct
 \item{} derivable in both the parameters as well as the variables
@@ -430,9 +449,10 @@ which is the class of functions that are comprised from "neurons".
 \subsection{Neurons}
 
 So what a "neuron"?. Basically it is the simplest \textbf{parametrize}
-scalar function that is not linear. It is simple in the sense that it applies a
+scalar function that is not linear (affine, see~\ref{affinelinear}).
+It is simple in the sense that it applies a
 linear function on the variables and then applies a so called activation
-function on the output of the linear function.
+function on the scalar output of the linear function.
 
 \begin{mydef}
 \label{def:activationfunction}
@@ -445,7 +465,8 @@ $\sigma(\x) \triangleq (\sigma(x_1), \dots , \sigma(x_n))$.
 \end{mydef}
 
 In the official definition we narrowed it down to just 4 kinds but in general
-there are plenty of other activation functions.
+there are plenty of other activation functions. Also note that these functions
+have no parameters.
 
 \begin{mydef}
 \label{def:neuron}
@@ -461,13 +482,30 @@ The parameters $\w$ are called the weights of the neuron $\nu$.
 
 Think of the weights of a neuron as some mutable, tunable property, some sort of memory.
 
+\begin{figure}[!h]
+\begin{framed}
+\centering
+\begin{subfigure}[b]{0.45\textwidth}
+\includegraphics[width=0.4\textwidth]{./images/models/neuron.gv.png}
+%\label{fig:neuron1}
+\end{subfigure}
+\begin{subfigure}[b]{0.45\textwidth}
+\includegraphics[width=0.4\textwidth]{./images/models/neuron.2.gv.png}
+\end{subfigure}
+\caption{Two graphical descriptions of the neuron
+$\sigma(w_1x_1 + w_2x_2 + b)$}. Here the bias $b$ is explicitly shown
+but usually it is not depicted. In the left the variable names are explicitly
+shown, while in the right they are not.
+\label{fig:neuron2}
+\end{framed}
+\end{figure}
+
 Connecting many neurons together can create pretty powerful parameterized
 functions which we call neural networks.
 Connecting means that the output of one neuron is the input to one of the
 variables of a different neuron.
 In feed forward networks the information only goes in one direction (no
 feedback).
-
 
 \begin{mydef}
 \label{def:NN}
@@ -481,12 +519,12 @@ Activation functions ($1$, $id$, and $\sigma$) are NNs which are called the
 \item{} neurons are NNs
 \item{} If $\psi :\R^n \to \R^m$ is a parameterized linear map then it is a NN.
 \item{} If $\psi : R^n \to \R^m$
-and $\rho: \R^m \to \R^l$ are NNs and their parameter sets are discjoint then $\phi = \rho
+and $\rho: \R^m \to \R^l$ are NNs and their parameter sets are disjoint then $\phi = \rho
 \circ \psi$ is a NN.
 \item{} if $\nu:\R^n->\R^m$ is a NN and if $\psi_1, \dots \psi_n$ are NNs,
 and if the parameter set of $\nu$ is disjoint from the combined parameters of
 the $\psi_i$'s then
-$\phi = \nu(\psi_1, \dots, \psi_n)$ is a NN if the diemnsions "make sense".
+$\phi = \nu(\psi_1, \dots, \psi_n)$ is a NN if the dimensions "make sense".
 \end{enumerate}
 
 The parameter set $\w$ is called the \emph{weights} of $\phi$.
@@ -498,42 +536,64 @@ it is not necessary, we just need for the composition to be valid.
 Feed forward neural network 
 are depicted as a directed acyclic graph where every node (with its incoming
 edges) depicts a neuron.
-If rule 5 of the definition is not used in the construction of $\phi$, then the
-resulting network is hirarchical. Its graph can partitioned into \emph{levels}
-$l_0, l_1\dots$ and there are only directed edges between two consequtive
-levels.
+You can think of figure~\ref{fig:neuron2} left as depicting the neuron "component" 
+in a network, while figure~\ref{fig:neuron2} right shows how elementary neurons
+connect to form a general neuron. If we add more neurons and add depth to the
+graph we already get a neural network.
 
-The label inside the neuron describe its activation funcrtion.
+If rule 5 of the definition is not used in the construction of $\phi$, then the
+resulting network is hierarchical. Its graph can partitioned into \emph{levels}
+$l_0, l_1\dots$ and there are only directed edges between two consecutive
+levels $l_i \to l_{i+1}$ (see figure~\ref{fig:nn1}).
+
+The label inside the neuron describe its activation function.
 In the diagrams, we let $\sigma$ represent the sigmoid function.
 We represent the identity function either by the name of the variable ($x_1$,
 $y$ etc.) it acts on or simple by 
 $id$.   We let the label $1$ represent the constant function. We need the
 constant function because with it we can represent any affine map as a linear
-map with the first input always clamped to $1$.
-An directed edge between neurons means that the output of the neuron at the tail
+map with the first input always clamped to $1$. But connecting $1$ to every
+(non-input level) neuron would clutter the graph so it is not shown in most
+diagrams but still implicitly assumed.
+A directed edge between neurons means that the output of the neuron at the tail
 is multiplied by the edge weight and assigned to the input variable of the
 neuron it connects to.
-Input neurons (sources) have no incoming edges and they represent the begining of the
+Input-level neurons (sources) have no incoming edges and they represent the
+beginning of the
 computation.
 Output neurons (sinks) have no outgoing edges and their output is the final result of
 the computation.
 
-The incoming edges into a node represent linear function, but we will in general let
-it represent an affine function without bothering with adding a fixed $1$ input
-node. A Node's output is therefore only dependent on those nodes which have
-directed edges connecting to it.
+A Node's output is therefore only dependent on the output of its direct
+ancestral nodes, those nodes with
+directed edges connecting to it (plus the bias which is usually not shown).
 
-\begin{figure}[b]
+\begin{figure}[!h]
+\begin{framed}
 \centering
-\includegraphics[width=0.3\textwidth]{./images/models/neuron.2.gv.png}
-\caption{a neural network graphical description
-$\sigma(w_1x + w_2y + b)$}
-\label{fig:neuron1}
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics[width=0.8\textwidth]{./images/models/neuronlayers.gv.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics[width=0.8\textwidth]{./images/models/neuronlayers.2.gv.png}
+\end{subfigure}
+\caption{The network in the top didn't use rule 5~\ref{def:NN} in the construction.
+It is strictly hierarchical and there are only edges between nodes of two
+consecutive layers. The one on the bottom is more general.
+}
+\label{fig:nn1}
+\end{framed}
 \end{figure}
 
-Figure~\ref{fig:neuron1} shows a single output neural network of four neurons, with three of .
-input neurons and one output. 
-It describes the function $f : \R^2 -> \R, f(x,y) = \sigma(w_1x + w_2y + b)$. 
+
+%\begin{figure}[!h]
+%\centering
+%\includegraphics[width=0.3\textwidth]{./images/models/neuron.2.gv.png}
+%\caption{a neural network graphical description
+%$\sigma(w_1x + w_2y + b)$}
+%\label{fig:neuron2}
+%\end{figure}
+
 
 It turns out~\cite{nielsen2015neural} that the feed forward neural networks
 class of functions (will be properly defined later)
@@ -556,39 +616,97 @@ There are additional types of parameterized functions which are used "within the
 layer" such as batch normalization but we won't get into that as this is not a
 thesis about neural networks per se.
 
+\begin{figure}[!h]
+\begin{framed}
+\centering
+\includegraphics[width=0.5\textwidth]{./images/models/multilayer.gv.png}
+\caption{
+A graph of a hierarchical feed forward neural network where the connections 
+are abstracted. Edges between layers may represent in this case a fully
+connected layer (every neuron has incoming edges from all neurons of the
+previous layer) but it could also be used for describing a convolution.
+}
+\label{fig:nn2}
+\end{framed}
+\end{figure}
+
+As figure~\ref{fig:nn1} shows, 
+The input layer is the where the input $(\x)$ is "fed in" and the output layer
+is the final result of the evaluation $\phi(\x)$.
+We call all the layers (or neurons) that are 
+not in the input level or the output level "hidden"
+because we don't usually know what is the input/output value in these.
+
 \subsection{Loss functions}
+
+
+In the claim about neural networks being "universal" in terms of approximating
+function $f(\x)=\y$ with neural network $\phi(\x)$. We assumed specifically
+$\|\phi(\x) - \y \|_2$ in the $l_2$ norm but the claim holds in theory and in
+practice with other types of "distance-like" functions which we call loss
+functions.
+
+Moreover we usually don't know what is the function $f$ which we try to
+approximate. Rather we are given 
+paired samples of input/target $(\x, \y=f(\x))$ and we
+try to minimize the total error.
 
 \begin{mydef}
 \label{def:lossfunc}
-Usually together with a neural network comes an associated differentiable
-function which is the \textit{loss function} $\mathcal{L} : \R^m \to \R$.
-
-Typically the loss function is additive on the dimension, meaning it has the
-form $\mathcal{L}(\bv{x}) = \sum_{i=1}^m \psi(x_i)$
-
-An example for such a loss function is the square error: $\x \mapsto \|\x\|_2^2$
+Let $\phi :\R^n \to \R^m$ be a neural network.
+A \textit{loss function} is a differentiable
+function $\mathcal{L} : \R^{m+m} \to \R$. 
+With "distance-like quality".
 \end{mydef}
+
+Let $\X \in \R^{N \times n}, \Y \in \R^{N \times m}$ be the input and the target
+set and let $(\x,\y)$ be a paired input/target. 
+We use $\mathcal{L}$ as the target function for $\phi$,
+where $\phi$ tries to minimize $\sum_{(\x,\y)}\mathcal{L}(\y, \phi(\x)$ over all
+pairs ($N$ rows) of input and target.
+Typically the loss function is additive on the dimension, meaning it has the
+form $(\forall \y,\z \in \R^m) \mathcal{L}(\y, \z)) = \sum_{i=1}^m \psi(y_i, \z)_i)$
+
+For example
+$\mathcal{L}(\x, \phi(\x)) = \|\phi(\x) - \x\|_2^2 = 
+\sum_i |\phi(\x)_i - x_i|^2$ is a common loss function (the
+square error).
+
+So far we defined $\phi$ and $\mathcal{L}$ on single input/target data points
+$\x$ and $\y$. But we are interested in minimizing the total error
+$\mathcal{L}(\Y, \phi(\X)$. So first we need to state how these functions
+operate on sets of samples (matrices) rather than on data points (vectors).
 
 \begin{mydef}
 \label{def:batch}
 Let $\bv{X} \in  \R^{N \times n}$ be a data matrix. A \emph{batch}
 $\bv{x} \in \R^{b \times n}$ is any subset of $b$ rows of $\bv{X}$
 (Note that in this case $\x$ represents a matrix).
+\end{mydef}
 
-Batch $\bv{x} = \{\x_1, \dots \x_b\} \in \R^{b \times n}$ (row notation)
+Batch $\x = \{\x_1, \dots \x_b\} \in \R^{b \times n}$ (row notation)
 represents a subset of $b$ samples out of the total of $N$ samples in the
-dataset. The operations of $\phi$ and $\mathcal{L}$ \emph{extend} to batches in
-natural ways--- collect for $\phi$ and we average for $\mathcal{L}$, namely:
+dataset.
+Extending $\phi$ to operate on batches is trivial.
+$\phi(\x) = \{\phi(\x_i)\}$ is the matrix where $\phi$ is applied on the rows of the bath.
+Given an input batch $\x$ and corresponding target batch of $\y$,
+We extend the loss function to batches by averaging over the batch:
+$\mathcal{L}(\phi(\x), \y) \triangleq \frac{1}{b} 
+\sum_{i=1}^b \mathcal{L}(\phi(\x_i), \y_i)
+$
 
 \begin{mydef}
 \label{def:NNbatchloss}
 Let $\phi$ be a neural network as defined in~\ref{def:NN} and let $\mathcal{L}$
 its associated loss function as defined in~\ref{def:lossfunc}---over vectors.
 Let $\x = \{\x_1, \dots , \x_b\} \in \R^{b \times n}$ be a $b$-batch (in row
-notation). Then $\phi$ and $\mathcal{L}$ \emph{extended} over batches are:
+notation)
+, and let $\y = \{\y_1, \dots , \y_b\} \in \R^{b \times m}$ be a corresponding
+target batch.
+Then $\phi$ and $\mathcal{L}$ \emph{extended} over batches are:
 \begin{IEEEeqnarray}{C}
 \phi(\bv{x}) \triangleq \{\phi(\bv{x}_i)\}_{i=1}^m \in \R^{b \times m}\\
-\mathcal{L}(\x) \triangleq \frac{1}{b}\sum_{i=1}^b \mathcal{L}(\bv{x}_i) \in \R
+\mathcal{L}(\phi(\x), \y) \triangleq \frac{1}{b}\sum_{i=1}^b \mathcal{L}(\phi(\x_i), \y_i) \in \R
 \end{IEEEeqnarray}
 \end{mydef}
 
@@ -596,30 +714,34 @@ If $\mathcal{L}$ is the square error function $\| \cdot \|_2^2$ on vectors,
 then its extension to batches is $\frac{1}{b}\| \cdot \|_F^2$. The reason why we
 sum and don't average over the dimensions will be cleared later when we get into
 variational inference.
-\end{mydef}
 
-
+\subsection{Training}
 Training the neural network $\phi_w$ means finding the weights that minimize the
-loss function applied on the training set $X$, in other words minimizing
-$\min_{w} (\mathcal{L}(\phi_w(X))$.
+loss function applied on the training input/target paired sets $\X,\Y$, in other
+words minimizing $\min_{w} (\mathcal{L}(\phi_w(X),Y)$.
+Usually we can't compute efficiently $\phi$ and $\mathcal{L}$ over the entire
+sets because $N$ is too large, therefore we use batches.
 
 \begin{mydef}
 Let $\phi_{\omega}$ be a neural network and $\mathcal{L}$ its associated loss
-function. And let the data matrix $\X$ be our \emph{training set}.
+function. And let $(\X, \Y)$ be our \emph{training set} consisting of 
+the data matrix $\X$ and $\Y$
+the corresponding target matrix.
 Then \emph{Training} of $\phi_{\omega}$ with respect to $\mathcal{L}, \X$ 
 means
 algorithmically approximating the minimization problem:
 \begin{equation}
 \label{def:training}
-\min_{\omega} \mathcal{L}(\phi_{\omega}(\X))
+\min_{\omega} \mathcal{L}(\phi_{\omega}(\X), \Y)
 \end{equation}
 \end{mydef}
 
-During a \emph{training step} the network is applied on a batch $x$. Then the
-loss function is applied on the output and a gradient (with relation to the
+During a \emph{training step} the network is applied on a batch $(\x,\y)$. Then the
+loss function is applied on the output of the network and a gradient (with relation to the
 weights) is taken. This gradient is used for the weight update rule, which
 varies depending on the specific training algorithm. Typical training algorithms
-are SGD (stochastic gradient decent) and Adam, which is the one used throughout
+are SGD (stochastic gradient decent) and Adam~\cite{jais2019adam},
+which is the one used throughout
 this work.
 
 We only need to define the network, the loss function and the specific training
@@ -627,18 +749,43 @@ algorithm. The rest (derivation, weight update etc.) is taken care for us by the
 backend of the software (Pytorch~\cite{pytorch2018pytorch}) and can be regarded
 as a black box.
 
-
-
 \section{Autoencoders}
+
+The basic type of an autoencoder which we informally call "vanilla" autoencoder
+is a neural network which tries to "learn" the identity function, which sounds
+pointless on a first thought. The point is how we construct this network. An
+autoencoder comprised from two neural networks.
+An encoder network maps the input into a lower dimensional so called "latent
+space", and the decoder network maps the latent space back into the high
+dimensional input layer.
+In the case of the vanilla autoencoder the target for the loss function is the
+same as the input $\Y = \X$.
+
+\begin{figure}[!h]
+\begin{framed}
+\centering
+\includegraphics[width=0.8\textwidth]{./images/models/autoencoderNN.gv.png}
+\caption{
+A graphic description of a "vanilla" autoencoder.
+}
+\label{fig:autoencoder}
+\end{framed}
+\end{figure}
+
 \begin{mydef}
 \label{def:autoencoder}
-An \textit{Autoencoder} (AE) is a neural network $\phi = D \circ E$ with a "bottleneck" layer 
-and which
-approximates the identity function on the training input.
+Let $\psi : \R^n \to \R^m, \nu : \R^m \to \R^n$ be feed forward neural networks.
+An \textit{Autoencoder} (AE) is the neural network $\phi = \nu \circ \psi$.  
 
-We call $E$ which projects into the bottleneck, the \emph{encoder}, and $D$
-which expands back into the input dimensions, the \emph{decoder}.
+$\psi$ is called the \emph{encoder}, and $\nu$ is called the \emph{decoder}.
+
+Given a batch $\x \ \R^{b \times n}$ we call $\z = \psi(x) \in \R^{b \times m}$
+the \emph{latent representation} of $\x$ or the \emph{encoding} of $\x$.
 \end{mydef}
+
+The idea here is that the original high dimensional data can be embedded
+in a low dimensional space by the encoder. The decoder then can reconstruct the
+original data from the embedding.
 
 %A typical loss function for the AE is usually the mean sum of squares (MSE)
 %$\mathcal{L}(X;\phi) = \frac{1}{N}\|X - \phi(X)\|_F^2 = \frac{1}{N}\|X - D \circ
