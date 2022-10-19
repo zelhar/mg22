@@ -73,6 +73,7 @@
 \newcommand{\y}{\mathbf{y}}
 \newcommand{\W}{\mathbf{W}}
 \newcommand{\w}{\mathbf{w}}
+\newcommand{\LL}{\mathcal{L}}
 %\newcommand{\B}{\{-1,1\}}
 %\newcommand{\bvec}[1]{\mathbf{#1}}
 %\newcommand{\bv}[1]{\mathbf{#1}}
@@ -791,14 +792,21 @@ A graphic description of a "vanilla" autoencoder.
 
 \begin{mydef}
 \label{def:autoencoder}
-Let $\psi : \R^n \to \R^m, \nu : \R^m \to \R^n$ be feed forward neural networks.
-An \textit{Autoencoder} (AE) is the neural network $\phi = \nu \circ \psi$.  
+An \textit{Autoencoder} (AE) consists of a pair 
+$(\phi, \psi)$ of feed forward neural networks 
+$\psi : \R^n \to \R^m, \nu : \R^m \to \R^n$.
 
-$\psi$ is called the \emph{encoder}, and $\nu$ is called the \emph{decoder}.
+$\psi$ is called the \emph{encoder} network, and $\nu$ is called the
+\emph{decoder} network and the composition
+$\phi = \nu \circ \psi$ is called the \emph{autoencoding network}. 
 
 Given a batch $\x \ \R^{b \times n}$ we call $\z = \psi(x) \in \R^{b \times m}$
 the \emph{latent representation} of $\x$ or the \emph{encoding} of $\x$.
 \end{mydef}
+
+While the definition as is given is symmetric, it is assumed that $n > m$, and
+therefore $\psi$ represents dimensional reduction (in other words encoding) of
+the data and $\nu$ represents expansion back to original space (decoding).
 
 The idea here is that the original high dimensional data can be embedded
 in a low dimensional space by the encoder. The decoder then can reconstruct the
@@ -887,16 +895,19 @@ distribution $p(\bv{x},\bv{z})$ and let $q(\bv{z})$ be any distribution.
 The \emph{evidence lower bound (ELBO)} with respect to $p,q$ is:
 \begin{IEEEeqnarray}{C}
 \label{def:elbo}
-\mathcal{L}(q,p,\x) \triangleq
+-\mathcal{L}(q,p,\x) \triangleq
 \int \log \frac{p(\bv{x},\bv{z})}{q(\bv{z})} d q(\bv{z}) \\
 \label{def:elboX}
-\mathcal{L}(q,p) \triangleq \mathcal{L}(q,p,\X) = 
+-\mathcal{L}(q,p) \triangleq -\mathcal{L}(q,p,\X) = 
 \int \log \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})} d q(\bv{Z})
 \end{IEEEeqnarray}
 \end{mydef}
 
 Equation~\ref{def:elboX} is no longer treated as a function of $\X$ because it
 is taken over all of our data which we think of as a constant.
+The reason that we mark the ELBO with $-\LL$ is because we use the minus ELBO,
+$\LL$, as the 
+loss function for VAEs.
 
 The following equation shows that the \emph{ELBO} is a lower bound for the \emph{log
 evidence}.
@@ -909,7 +920,7 @@ evidence}.
 = \log \int \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})} q(\bv{Z})d\bv{Z} \\
 &= \log \int \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})}dq(\bv{Z}) 
 \geq \int \log \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})}dq(\bv{Z}) 
-\triangleq \mathcal{L}(q,p,X) = \mathcal{L}(q,p)
+\triangleq -\mathcal{L}(q,p,X) = -\mathcal{L}(q,p)
 \end{aligned}
 \end{equation}
 
@@ -924,7 +935,7 @@ equivalent to minimizing $KL(q(\bv{Z}) \| p(\bv{Z}|\bv{X})$:
 
 \begin{equation}\label{eq:kl_bound}
 \begin{aligned}
-\mathcal{L}(q,p) &\triangleq \int \log \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})} d
+-\mathcal{L}(q,p) &\triangleq \int \log \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})} d
 q(\bv{Z})
 = \int \log \frac{p(\bv{Z}|\bv{X})p(\bv{X})}{q(\bv{Z})} d q(\bv{Z}) \\
 &= \int \log p(\bv{X}) dq(\bv{Z}) - \int \log \frac{q(\bv{Z})}{p(\bv{Z}|\bv{X})}
@@ -935,7 +946,7 @@ dq(\bv{Z})
 
 We can rewrite equation~\ref{eq:kl_bound} as:
 \begin{equation}\label{eq:elbokl}
-\log p(\bv{X}) = \mathcal{L}(q,p) - KL(q(\bv{Z}) \| p(\bv{Z}|\bv{X}))
+\log p(\bv{X}) = -\mathcal{L}(q,p) - KL(q(\bv{Z}) \| p(\bv{Z}|\bv{X}))
 \end{equation}
 
 Equation~\ref{eq:elbokl} shows that the ELBO minus the kl-divergence are constant
@@ -964,8 +975,9 @@ the parameters for $q$. Meaning we are dealing with a family of distributions
 $p_{\theta}(x,z)$ and another family $q_{\phi}(z)$.
 
 For any $\theta$ and any $\phi$, the equations from the previous chapter hold
-also in the parametrize form, i.e $\log p_{\theta}(x) = \mathcal{L}(q_{\phi},
-p_{\theta}) -
+also in the parametrize form, i.e 
+$\log p_{\theta}(x) =
+-\mathcal{L}(q_{\phi},p_{\theta}) -
 KL(q_{\phi}(Z) \| p_{\theta}(Z|X)$.
 
 We assume that we can only approach the "real" distribution using
@@ -974,7 +986,7 @@ So together with equation~\ref{eq:elbo} we have
 
 \begin{equation}\label{eq:parelbo}
 \begin{aligned}
-(\forall \theta, \phi)\log p(X) & \geq \log p_{\theta}(X) \geq \mathcal{L}(q_{\phi})
+(\forall \theta, \phi)\log p(X) & \geq \log p_{\theta}(X) \geq -\mathcal{L}(q_{\phi})
 = \int \frac{p_{\theta}(X,Z)}{q_{\phi}(Z)} dq_{\phi}(Z)
 \end{aligned}
 \end{equation}
@@ -991,7 +1003,7 @@ but we actually don't care about them. We condition everything on $\X$ but $\X$
 is treated as a given constant from a Bayesian view point and we only want to
 somehow make $q(\Z|\X)$ to closely approximate $p(\Z | \X)$.
 
-A second thing we need to achieve is to express the ELBO in terms of $p(\X|\Z)$
+A second thing we need to achieve is to express the -ELBO in terms of $p(\X|\Z)$
 and $q(\Z|\X)$ rather than the joint distribution. To that end we need also the
 prior $p(\Z)$.
 
@@ -999,10 +1011,10 @@ prior $p(\Z)$.
 The \emph{conditioned (on $\X$) ELBO} is
 \begin{equation}
 \begin{aligned}
-\mathcal{L}(q,p) &\triangleq \int \log \frac{p(\X,\Z)}{q(\Z|\X)}dq(\Z|\X) 
-= \int \log \frac{p(\X |\Z) p(\Z)}{q(\Z|\X)}dq(\Z|\X) \\
-&= \int \log p(\X | \Z)dq(\Z|\X) - \int \log \frac{q(\Z|\X)}{p(\Z)}dq(\Z|\X) \\
-&= \int \log p(\X | \Z)dq(\Z|\X) - KL(q(\Z|\X) \| p(\Z))
+\mathcal{L}(q,p) &\triangleq \int -\log \frac{p(\X,\Z)}{q(\Z|\X)}dq(\Z|\X) 
+= \int -\log \frac{p(\X |\Z) p(\Z)}{q(\Z|\X)}dq(\Z|\X) \\
+&= \int -\log p(\X | \Z)dq(\Z|\X) + \int \log \frac{q(\Z|\X)}{p(\Z)}dq(\Z|\X) \\
+&= \int -\log p(\X | \Z)dq(\Z|\X) + KL(q(\Z|\X) \| p(\Z))
 \label{eq:elbo_conditioned}
 \end{aligned}
 \end{equation}
@@ -1060,29 +1072,29 @@ represent the weights of the decoder.
 
 For the prior $p(z)$ we set some fixed prior distribution.
 
+Note that the the encoder network (similarly the decorer) is used to define a distribution over
+$\z \in \R^m$, but the encoder itself maps into some other space. 
+For example,
+to define a normal one Gaussian distribution (so over $\z \in \R$, the encoder
+maps into $\R^2$, and its output creates $\mu, \sigma \R$ which are used to
+define the Gaussian distribution $\mathcal{N}(\z ; \mu, \sigma)$.
+We also need to make sure that the range of the network obeys to the constraints
+of the parameters. For example the variance must be non-negative. 
+Alternatively we can use transformations to remove constraints. For example
+instead of letting the network specify the variance. we let it specify the
+log-variance.
+
 \begin{mydef}
 \label{def:vae}
-Let $\{p_{\theta}\}$ be a family of distributions over $\R^n$ and let
-$\{q_{\phi}\}$ be a family of distributions over $\R^m$ and let $p$ be some
-fixed distribution over $\R^m$. A \emph{variational autoencoder (VAE)} $\upsilon
-= (f_{\omega}, g_{\omega})$ consists of neural networks $f_{\omega}: \R^n \to
-\{\theta\}_{\theta}$ and $g_{\omega}: \R^m \to \{\phi\}_{\phi}$ where $\omega$
-are the combined parameters of $f,g$ and $\{\theta \}$ means the parameter space
-(all possible values of $\theta$ which can define a valid distribution
-$p_{\phi}$ (similarly with $\phi$). \end{mydef}
+Let $\{p_{\theta}\}_{\theta \in \Theta}$ be a parameterized 
+family of distributions over $\R^n$ and let
+$\{q_{\phi}\}_{\phi \in \Phi}$ be a family of distributions over $\R^m$.
+Where $\Theta$ and $\Phi$ are real domains (i.e $\Theta \subseteq \R^k \dots$).
 
+A \emph{variational autoencoder (VAE)} consists of a pair $(E,D)$ of neural networks,
+$E : \R^n \to \Phi$ and $D : \R^m \to \Theta$.
+\end{mydef}
 
-%The \emph{standard associated loss function} of a VAE is the ELBO
-%\begin{equation}
-%\mathcal{L}(\omega) = \mathcal{L}(q_{phi(
-%\end{equation}
-
-%\remark{}\label{rem:abuse_of_notation}
-%In many papers about VAEs (including this text) the decoder is described as
-%$q_{\phi}(X | Z)$. This is an abuse of notation, because there is neither 
-%join distribution $q_{\phi}(X,Z)$ nor marginal $q_{\phi}(X)$ to speak of.
-%However $q_{\phi}(Z)$ is meant to approximate the intractable $p(Z|X)$ and
-%that's presumably the reason for the abused notation.
 
 If an autoencoder works on deterministic data, 
 with the encoder mapping input $\x \mapsto \z$ and the decoder then maps the
@@ -1091,7 +1103,54 @@ basically the same thing but non-deterministically.
 It maps $\x$ into a distribution over $\z$: $\x \mapsto q(\z|\x)$ and it maps
 $\z$ into a distribution over $\x$, $\z \mapsto p(\x|\z)$.
 
-The loss function associated with a VAE is usually the minus ELBO.
+The loss function associated with a VAE is minus ELBO. This means training
+the the VAR maximizes equation~\ref{eq:elbo_conditioned} and therefore also
+the log evidence.
+
+\subsection{Computing the ELBO}
+The quesion is how to compute the integral in the ELBO function. 
+Recall that given an input $\x \R^n$,
+The loss function is 
+
+\begin{equation}
+\LL(p,q,\x) = 
+\int - \log \frac{p(\x|\z)p(\z)}{q(\z|\x)}dq(\z|\x)
+= \int -\log p(\x|\z)dq(\z|\x) + \int \log \frac{q(\z|\x)}{p(\z)}dq(\z|\x)
+\label{eq:elbovae}
+\end{equation}
+
+Given concrete input $\x \in \R^n$,
+the decoder specifies a distribution over
+$\z \in \R^m$ rather then a concrete denterministic point:
+$\z \sim q(\z | \x)$. Suppose that we draw one concrete sample $\z \in \R^m$
+taken from that distribution. Now we have the concrete input $\x$ and the
+concrete $\z$ we can compute $\log q (\z | \x)$ as well as the prior $p(z)$.
+Remember that the decoder takes $\z$ and produces a distribution $p(\x | \z)$.
+Now that we have a concrete $\z$, and $\x$ we can also compute $\log p(\x | \z)$
+So once we draw a specific sample $\z$ we can compute everything inside the
+integral.
+
+In fact what we have done is already a form of Monte Carlo integration.
+More generally, instead of drawing just one concrete $\z$, we draw $k$ samples
+$\z_i \sim q(\z | \x)$ per input $\x$, and take the average. Then we have
+
+\begin{equation}
+\begin{aligned}
+\LL(p,q,\x) = 
+\int - \log \frac{p(\x|\z)p(\z)}{q(\z|\x)}dq(\z|\x) \\
+= \int -\log p(\x|\z)dq(\z|\x) + 
+\int \log \frac{q(\z|\x)}{p(\z)}dq(\z|\x) \\
+\approx \frac{1}{k} \sum_{i=1}^k [-\log p(\x|\z_i)
++ \log \frac{q(\z_i|\x)}{p(\z_i)} ]
+\label{eq:elbomc}
+\end{aligned}
+\end{equation}
+
+In practice we take just one ($k=1$) sample $z$ for each input data point $x$.
+Remember that we are working on batches and computing an average loss over
+batches so for a given batch we are taking many samples $\z$.
+Experimental data shows that taking larger samples usually brings little
+benefit~\cite{kingma2019introduction}.
 
 
 
