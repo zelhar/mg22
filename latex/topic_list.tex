@@ -696,7 +696,6 @@ $\mathcal{L}(\phi(\x), \y) \triangleq \frac{1}{b}
 $
 
 \begin{mydef}
-\label{def:NNbatchloss}
 Let $\phi$ be a neural network as defined in~\ref{def:NN} and let $\mathcal{L}$
 its associated loss function as defined in~\ref{def:lossfunc}---over vectors.
 Let $\x = \{\x_1, \dots , \x_b\} \in \R^{b \times n}$ be a $b$-batch (in row
@@ -706,7 +705,9 @@ target batch.
 Then $\phi$ and $\mathcal{L}$ \emph{extended} over batches are:
 \begin{IEEEeqnarray}{C}
 \phi(\bv{x}) \triangleq \{\phi(\bv{x}_i)\}_{i=1}^m \in \R^{b \times m}\\
+\label{eq:NNbatch}
 \mathcal{L}(\phi(\x), \y) \triangleq \frac{1}{b}\sum_{i=1}^b \mathcal{L}(\phi(\x_i), \y_i) \in \R
+\label{eq:NNbatchloss}
 \end{IEEEeqnarray}
 \end{mydef}
 
@@ -715,7 +716,23 @@ then its extension to batches is $\frac{1}{b}\| \cdot \|_F^2$. The reason why we
 sum and don't average over the dimensions will be cleared later when we get into
 variational inference.
 
+There is also a probabilistic way to interpret the total loss.
+We assume that the data points $\X, \Y$ were randomly sampled from the unknown
+data distribution $P(\x, \y)$.
+Then equation~\ref{eq:NNbatchloss} can be reformulated as the expected 
+loss~\cite{bishop2006pattern}:
+
+\begin{equation}
+\mathcal{L}(\phi(\x), \y) \triangleq 
+\mathrm{E}_{\x,\y \sim P(\x,\y)} \mathcal{L}(\phi(\x), \y)
+\label{eq:NNbatchlossE}
+\end{equation}
+
 \subsection{Training}
+This is just a brief explanation of the basic principals. Training deep networks
+is a big subject which has many challenges and obstacles and a lot of
+heuristics are used. 
+
 Training the neural network $\phi_w$ means finding the weights that minimize the
 loss function applied on the training input/target paired sets $\X,\Y$, in other
 words minimizing $\min_{w} (\mathcal{L}(\phi_w(X),Y)$.
@@ -840,7 +857,9 @@ In other words we think that $\bv{X}$ is conditioned on $\bv{Z}$ and we can spea
 the joint distribution $p(\bv{X},\bv{Z}) = p(\bv{X}|\bv{Z})p(\bv{Z})$.
 Because we assume i.i.d for both $\bv{X}$ and $\bv{Z}$ all the distributions factor
 over the individual samples multiplicatively, e.g.
-$p(\bv{X}|\bv{Z}) = \prod p(\bv{x}_i | \bv{z}_i)$.
+$p(\bv{X}|\bv{Z}) = \prod p(\bv{x}_i | \bv{z}_i)$,
+$p(\bv{X}) = \prod p(\bv{x}_i)$ and so forth. This makes working with log
+probabilities very easy.
 
 Suppose that we have a fully Bayesian model. In this case there are no
 parameters because the parameters are themselves stochastic variables with some
@@ -866,12 +885,18 @@ distribution $q(\bv{Z})$ taken from some family of distributions.
 Let $\bv{x},\bv{z}$ be random variables with joint
 distribution $p(\bv{x},\bv{z})$ and let $q(\bv{z})$ be any distribution.
 The \emph{evidence lower bound (ELBO)} with respect to $p,q$ is:
-\begin{equation}
+\begin{IEEEeqnarray}{C}
 \label{def:elbo}
-\mathcal{L}(q,p) = 
-\triangleq \int \log \frac{p(\bv{x},\bv{z})}{q(\bv{z})} d q(\bv{z})
-\end{equation}
+\mathcal{L}(q,p,\x) \triangleq
+\int \log \frac{p(\bv{x},\bv{z})}{q(\bv{z})} d q(\bv{z}) \\
+\label{def:elboX}
+\mathcal{L}(q,p) \triangleq \mathcal{L}(q,p,\X) = 
+\int \log \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})} d q(\bv{Z})
+\end{IEEEeqnarray}
 \end{mydef}
+
+Equation~\ref{def:elboX} is no longer treated as a function of $\X$ because it
+is taken over all of our data which we think of as a constant.
 
 The following equation shows that the \emph{ELBO} is a lower bound for the \emph{log
 evidence}.
@@ -884,7 +909,7 @@ evidence}.
 = \log \int \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})} q(\bv{Z})d\bv{Z} \\
 &= \log \int \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})}dq(\bv{Z}) 
 \geq \int \log \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})}dq(\bv{Z}) 
-\triangleq \mathcal{L}(q,p)
+\triangleq \mathcal{L}(q,p,X) = \mathcal{L}(q,p)
 \end{aligned}
 \end{equation}
 
@@ -939,7 +964,8 @@ the parameters for $q$. Meaning we are dealing with a family of distributions
 $p_{\theta}(x,z)$ and another family $q_{\phi}(z)$.
 
 For any $\theta$ and any $\phi$, the equations from the previous chapter hold
-also in the parametrize form, i.e $\log p_{\theta}(x) = \mathcal{L}(q_{\phi}) -
+also in the parametrize form, i.e $\log p_{\theta}(x) = \mathcal{L}(q_{\phi},
+p_{\theta}) -
 KL(q_{\phi}(Z) \| p_{\theta}(Z|X)$.
 
 We assume that we can only approach the "real" distribution using
@@ -953,7 +979,7 @@ So together with equation~\ref{eq:elbo} we have
 \end{aligned}
 \end{equation}
 
-So from equation~\ref{eq:elbokl} we again see that by finding the parameters
+And from equation~\ref{eq:elbokl} we again see that by finding the parameters
 $\phi$, $\theta$ that maximize the elbo we approach the real log evidence as much
 as we can within the limits of the parametrized family of distributions we use.
 
@@ -970,7 +996,6 @@ and $q(\Z|\X)$ rather than the joint distribution. To that end we need also the
 prior $p(\Z)$.
 
 \begin{mydef}
-\label{eq:elbo_conditioned}
 The \emph{conditioned (on $\X$) ELBO} is
 \begin{equation}
 \begin{aligned}
@@ -978,50 +1003,62 @@ The \emph{conditioned (on $\X$) ELBO} is
 = \int \log \frac{p(\X |\Z) p(\Z)}{q(\Z|\X)}dq(\Z|\X) \\
 &= \int \log p(\X | \Z)dq(\Z|\X) - \int \log \frac{q(\Z|\X)}{p(\Z)}dq(\Z|\X) \\
 &= \int \log p(\X | \Z)dq(\Z|\X) - KL(q(\Z|\X) \| p(\Z))
+\label{eq:elbo_conditioned}
 \end{aligned}
 \end{equation}
 \end{mydef}
 
 So to sum it up, if we want to maximize the log evidence $\log p(\X)$ it
-suffices to maximize $\mathcal{q,p}$ and equation~\ref{eq:elbo_conditioned}
+suffices to maximize $\mathcal{L}(q,p)$ and equation~\ref{eq:elbo_conditioned}
 shows that this means finding the balance between making 
 the right term (which we call the reconstruction term) large as possible, 
 and making the KL-term small.
 The KL term is seen as a regularization term.
 
-\subsection{Thinking of the data as distribution}
-We can think of any data point $\x_i \in X$, rather than being a deterministic
-point, as if is a sample which comes from some distribution $p_i$.
-For example if $\x_i$ is a vector of binary data, we can think of it as if it
-was generated by some Bernoulli distribution. If the data is a in the
-range$[0,1]$ we can think of every data point as a vector of Bernoulli 
-probabilities rather than a concrete sample.
-For other type of real data, we think of it as coming from a diagonal Gaussian
-distribution, where we usually assume the variance is fixed $1$ or more 
-generally that all the samples have some common variance $\sigma$.
+\subsection{Mean field approximation}
+Usually we treat the dimensions of $\x$, $\z$ etc. as indipendent.
+That means if $\x = (x_1, \dots, \x_n)$ is a r.v. in $\R^n$ 
+we assume that the $x_i$ are independent and therefore 
+$P(\x) = \prod_1^n P_i(x_i)$.
+Mean field approximation simplifies the implementation and speeds up the
+computation and has been the standard practice since the
+begining of VAEs~\cite{kingma2013auto}.
 
-Similarly we can also treat the latent variable as coming from some distribution
-rather than being deterministic. Actually that is what
-equation~\ref{eq:elbo_conditioned}
-is all about.
+%\subsection{Thinking of the data as distribution}
+%We can think of any data point $\x_i \in X$, rather than being a deterministic
+%point, as if is a sample which comes from some distribution $p_i$.
+%For example if $\x_i$ is a vector of binary data, we can think of it as if it
+%was generated by some Bernoulli distribution. If the data is a in the
+%range$[0,1]$ we can think of every data point as a vector of Bernoulli 
+%probabilities rather than a concrete sample.
+%For other type of real data, we think of it as coming from a diagonal Gaussian
+%distribution, where we usually assume the variance is fixed $1$ or more 
+%generally that all the samples have some common variance $\sigma$.
+%
+%Similarly we can also treat the latent variable as coming from some distribution
+%rather than being deterministic. Actually that is what
+%equation~\ref{eq:elbo_conditioned}
+%is all about.
 
 \subsection{Using neural networks for the parametrization}
 In this text we deal with variational autoencoders (VAE).
 A VAE is a neural network which is used to define and optimize the parameters
-$\phi$ and $\theta$ which define $p_{\theta}(\X | \Z)$ and $q_{\phi}(\Z | \X)$.
+$\phi$ and $\theta$ which define $p_{\theta}(\x | \z)$ and $q_{\phi}(\z | \x)$
+and we train the network to maximize equation~\ref{eq:elbo_conditioned}.
 
-Specifically the encoder part of the network is a non-linear map $f_{\theta}(\Z)$ which is
-used to define $P_{\theta}(X|Z)$. For example, we can assume that $P_{\theta}$
-is a family of multivariate Gaussians and in this case $f_{\theta}(Z) =
-(\mu(Z), \Sigma(Z))$. Meaning the encoder maps $Z$ to the location vector and
+Specifically the encoder part of the network is a feed forward neural network 
+$f_{\theta}(\z)$ which is
+used to define $P_{\theta}(x|z)$. For example, we can assume that $P_{\theta}$
+is a family of multivariate Gaussians and in this case $f_{\theta}(z) =
+(\mu(z), \Sigma(z))$. Meaning the encoder maps $z$ to the location vector and
 covariance matrice. The parameter $\theta$ in this case are the weights of the
-encoder neural network. In parametrize the prior $p(Z)$ however in this case its
-parameter is not a function of $X$. In practice there is no reason to do this
-for most VAEs and we choose some simple fixed prior distribution for $p(Z)$.
+encoder neural network. 
 
-The decoder network is similarly defined as a non-linear function $g_{\phi}(X)$ which
-maps $X$ into the parameters defining the family $q_{\phi}(Z)$. Here too $\phi$
+The decoder network is similarly defined as neural network $g_{\phi}(\x)$ which
+maps $\x$ into the parameters defining the family $q_{\phi}(\z)$. Here too $\phi$
 represent the weights of the decoder.
+
+For the prior $p(z)$ we set some fixed prior distribution.
 
 \begin{mydef}
 \label{def:vae}
