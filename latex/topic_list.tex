@@ -449,11 +449,20 @@ which is the class of functions that are comprised from "neurons".
 
 \subsection{Neurons}
 
-So what a "neuron"?. Basically it is the simplest \textbf{parametrize}
-scalar function that is not linear (affine, see~\ref{affinelinear}).
-It is simple in the sense that it applies a
-linear function on the variables and then applies a so called activation
-function on the scalar output of the linear function.
+So what a "neuron"?. 
+Inspired from biology, a \emph{neuron} is a many to one ($\R^n \to \R$) parameterized
+function which
+"integrates" the input with a linear, or affine~(see~remark~\ref{affinelinear})
+function, and 
+then applies a non-linear scalar function, which we call an \emph{activation
+function}.
+In a sense it is the simplest
+function that is not linear.
+Moreover we only need one type of non-linear activation, e.g sigmoid, to
+construct arbitrarily complex neural networks.
+A degree 2 polynomial would be considered "less 
+simple" because it applies multiple non-linear multi-variable
+functions $x_i x_j\dots$.
 
 \begin{mydef}
 \label{def:activationfunction}
@@ -478,7 +487,7 @@ $\nu =  \nu_{\w} \triangleq \sigma \circ
 f_{\w}$.
 %In case that $n=0$ then $\w = \emptyset$, we let $\nu \triangleq \sigma$.
 
-The parameters $\w$ are called the weights of the neuron $\nu$.
+The parameters $\w$ are called the \emph{weights} of the neuron $\nu$.
 \end{mydef}
 
 Think of the weights of a neuron as some mutable, tunable property, some sort of memory.
@@ -501,12 +510,12 @@ shown, while in the right they are not.
 \end{framed}
 \end{figure}
 
-Connecting many neurons together can create pretty powerful parameterized
+Connecting many neurons together can create powerful parameterized
 functions which we call neural networks.
 Connecting means that the output of one neuron is the input to one of the
 variables of a different neuron.
 In feed forward networks the information only goes in one direction (no
-feedback).
+feedback) and as we will see it means the network is a directed acyclic graph.
 
 \begin{mydef}
 \label{def:NN}
@@ -522,10 +531,15 @@ Activation functions ($1$, $id$, and $\sigma$) are NNs which are called the
 \item{} If $\psi : R^n \to \R^m$
 and $\rho: \R^m \to \R^l$ are NNs and their parameter sets are disjoint then $\phi = \rho
 \circ \psi$ is a NN.
-\item{} if $\nu:\R^n->\R^m$ is a NN and if $\psi_1, \dots \psi_n$ are NNs,
+\item{} if $\nu:\R^n \to \R^m$ is a NN
+and if $\psi_i: \R^{k_i} \to \R^{n_i}, i =1 \dots l$ are NNs, such that
+$\sum_1^l n_i = n$
+%and if $\psi_1, \dots \psi_n$ are NNs,
 and if the parameter set of $\nu$ is disjoint from the combined parameters of
 the $\psi_i$'s then
-$\phi = \nu(\psi_1, \dots, \psi_n)$ is a NN if the dimensions "make sense".
+$\phi = \nu(\psi_1, \dots, \psi_n)$ is a NN
+%if the dimensions "make sense".
+.
 \end{enumerate}
 
 The parameter set $\w$ is called the \emph{weights} of $\phi$.
@@ -536,18 +550,18 @@ it is not necessary, we just need for the composition to be valid.
 
 Feed forward neural network 
 are depicted as a directed acyclic graph where every node (with its incoming
-edges) depicts a neuron.
+edges) corresponds to a neuron.
 You can think of figure~\ref{fig:neuron2} left as depicting the neuron "component" 
-in a network, while figure~\ref{fig:neuron2} right shows how elementary neurons
-connect to form a general neuron. If we add more neurons and add depth to the
-graph we already get a neural network.
+in a network, while figure~\ref{fig:neuron2} right shows a neural network
+description of single neuron, comprised from elementary neurons.
+If we add more neurons and add depth to the
 
 If rule 5 of the definition is not used in the construction of $\phi$, then the
-resulting network is hierarchical. Its graph can partitioned into \emph{levels}
+resulting network is hierarchical. Its graph can be partitioned into \emph{levels}
 $l_0, l_1\dots$ and there are only directed edges between two consecutive
 levels $l_i \to l_{i+1}$ (see figure~\ref{fig:nn1}).
 
-The label inside the neuron describe its activation function.
+The label inside the neuron describes its activation function.
 In the diagrams, we let $\sigma$ represent the sigmoid function.
 We represent the identity function either by the name of the variable ($x_1$,
 $y$ etc.) it acts on or simple by 
@@ -566,8 +580,8 @@ Output neurons (sinks) have no outgoing edges and their output is the final resu
 the computation.
 
 A Node's output is therefore only dependent on the output of its direct
-ancestral nodes, those nodes with
-directed edges connecting to it (plus the bias which is usually not shown).
+ancestral nodes 
+(plus the bias which is usually not shown).
 
 \begin{figure}[!h]
 \begin{framed}
@@ -597,16 +611,18 @@ consecutive layers. The one on the bottom is more general.
 
 
 It turns out~\cite{nielsen2015neural} that the feed forward neural networks
-class of functions (will be properly defined later)
-are "universal", meaning any continuous function $f$ can be
-uniformly approximated by a neural network (in fact, a network with just a
-single hidden layer suffices and just ReLU or Sigmoid as the non-linear
-activation functions).
+with a single type of non-linear activation (e.g. sigmoid) and a single hidden
+layer
+are "universal"; Which means that
+any continuous function $f$ can be
+uniformly approximated by a feed forward neural network
+with a single hidden layer and Sigmoid as the non-linear
+activation function.
 More precisely, let $B \subseteq \R^n$ be a bounded domain. Let $f : B \to \R^m$
 be continuous, and let $\epsilon \in (0,1)$. Then there is a feed forward neural
 network with a single hidden layer $\phi = \phi_{\w}$ and there is some value assignment
 for the parameters $\w$ such that 
-$\forall \x \in B \|\phi(\x) - f(\x)\| \lt \x \|$. The size of that single
+$(\forall \x \in B) \|\phi(\x) - f(\x)\|_2 \lt \epsilon $. The size of that single
 hidden layer (the number of parameters) depends on $f$ and $\epsilon$.
 
 In the definitions we only used linear maps to grow the network. 
@@ -642,14 +658,15 @@ because we don't usually know what is the input/output value in these.
 
 
 In the claim about neural networks being "universal" in terms of approximating
-function $f(\x)=\y$ with neural network $\phi(\x)$. We assumed specifically
-$\|\phi(\x) - \y \|_2$ in the $l_2$ norm but the claim holds in theory and in
+function $f(\x)=\y$ with neural network $\phi(\x)$. We stated specifically
+convergence in terms of $l_2$ norm
+$\|\phi(\x) - \y \|_2$, but the claim holds in theory and in
 practice with other types of "distance-like" functions which we call loss
 functions.
 
 Moreover we usually don't know what is the function $f$ which we try to
 approximate. Rather we are given 
-paired samples of input/target $(\x, \y=f(\x))$ and we
+paired samples of input/target $(\x, \y)$ and we
 try to minimize the total error.
 
 \begin{mydef}
@@ -660,23 +677,30 @@ function $\mathcal{L} : \R^{m+m} \to \R$.
 With "distance-like quality".
 \end{mydef}
 
+Typically the loss function is additive on the dimension, meaning it has the
+form $(\forall \y,\z \in \R^m) \mathcal{L}(\y, \z)) = \sum_{i=1}^m \psi(y_i,
+z_i))$
+
 Let $\X \in \R^{N \times n}, \Y \in \R^{N \times m}$ be the input and the target
 set and let $(\x,\y)$ be a paired input/target. 
-We use $\mathcal{L}$ as the target function for $\phi$,
-where $\phi$ tries to minimize $\sum_{(\x,\y)}\mathcal{L}(\y, \phi(\x)$ over all
-pairs ($N$ rows) of input and target.
-Typically the loss function is additive on the dimension, meaning it has the
-form $(\forall \y,\z \in \R^m) \mathcal{L}(\y, \z)) = \sum_{i=1}^m \psi(y_i, \z)_i)$
+We use the loss function $\mathcal{L}$ as the target function for 
+the minimization problem,
+ $\min_{\w} \sum_{(\x,\y)}\mathcal{L}(\phi(\x), \y)$ where the sum goes over all
+paires ($N$ rows)  (input, target).
+
 
 For example
-$\mathcal{L}(\x, \phi(\x)) = \|\phi(\x) - \x\|_2^2 = 
-\sum_i |\phi(\x)_i - x_i|^2$ is a common loss function (the
+$\mathcal{L}(\y, \z)) = \|\y - \z\|_2^2 = 
+\sum_i |y_i - z_i|^2$ is a one such loss function (the
 square error).
 
 So far we defined $\phi$ and $\mathcal{L}$ on single input/target data points
 $\x$ and $\y$. But we are interested in minimizing the total error
-$\mathcal{L}(\Y, \phi(\X)$. So first we need to state how these functions
+$\mathcal{L}(\phi(\X),\Y)$. So first we need to state how these functions
 operate on sets of samples (matrices) rather than on data points (vectors).
+
+Usually evaluation over the entire dataset is infeasible. Instead computation is
+performed on batches, which are relatively small chunks of the data.
 
 \begin{mydef}
 \label{def:batch}
@@ -724,7 +748,7 @@ Then equation~\ref{eq:NNbatchloss} can be reformulated as the expected
 loss~\cite{bishop2006pattern}:
 
 \begin{equation}
-\mathcal{L}(\phi(\x), \y) \triangleq 
+\mathcal{L}(\phi(\x), \y) \approx
 \mathrm{E}_{\x,\y \sim P(\x,\y)} \mathcal{L}(\phi(\x), \y)
 \label{eq:NNbatchlossE}
 \end{equation}
@@ -770,11 +794,11 @@ as a black box.
 \section{Autoencoders}
 
 The basic type of an autoencoder which we informally call "vanilla" autoencoder
-is a neural network which tries to "learn" the identity function, which sounds
-pointless on a first thought. The point is how we construct this network. An
-autoencoder comprised from two neural networks.
+is a neural network that tries to "learn" the identity function. Though it sounds
+pointless on a first thought, the point is how we construct this network. An
+autoencoder consists of two neural networks.
 An encoder network maps the input into a lower dimensional so called "latent
-space", and the decoder network maps the latent space back into the high
+space", and a decoder network maps the latent space back into the high
 dimensional input layer.
 In the case of the vanilla autoencoder the target for the loss function is the
 same as the input $\Y = \X$.
@@ -792,7 +816,7 @@ A graphic description of a "vanilla" autoencoder.
 
 \begin{mydef}
 \label{def:autoencoder}
-An \textit{Autoencoder} (AE) consists of a pair 
+An \textit{Autoencoder} (AE) is a pair 
 $(\phi, \psi)$ of feed forward neural networks 
 $\psi : \R^n \to \R^m, \nu : \R^m \to \R^n$.
 
@@ -851,7 +875,7 @@ the entire dataset it holds that $p(\bv{X}) = \prod p(\bv{x}_i)$.
 
 \begin{mydef}
 \label{def:logevidence}
-Let $\bv{X} \in \R^{Nn}$ be a data matrix and let $\{\bv{x}_i\}_1^n$ be its
+Let $\bv{X} \in \R^{N \times n}$ be a data matrix and let $\{\bv{x}_i\}_1^n$ be its
 rows, which we assume to be i.i.d with some (unknown) distribution $p(\bv{x})$.
 Then $\log p(\bv{X}) = \sum_1^N p(\bv{x}_i)$ is called the \emph{log evidence} of our
 data.
