@@ -285,6 +285,20 @@ In the case of autoencoders, the target set is also the input set and $f$ is the
 identity (in this case $f$ is known but we want to learn an efficient way
 to represent the data).
 
+When our data comes in several matrices, for example input data $\X$ and target
+matrix $\Y$, it means they have the same number of rows. And when we speak about 
+paired input/target $\x,\y$ it means some $(\x,\y) \in (\X,\Y)$ so it should be
+clear they belong to the same sample (row).
+
+\begin{mydef}
+\label{paired data}
+Let $\X = \{\x_i\}_1^N,\quad \Y = \{\y_i\}_1^N$ be two matrices in row noataion
+with the same number of rows $N$. Then
+\begin{equation}
+(\X,\Y) \triangleq \{(\x_i,\y_i)\}_1^N
+\end{equation}
+\end{mydef}
+
 
 \section{Linear algebra preliminary: SVD and PCA}
 In the following state some facts and bring without proof what are the singular
@@ -870,14 +884,14 @@ We treat the data matrix as a set of independent observations (its rows)
 $\bv{X} = \{\bv{x}_1, \dots
 , \bv{x}_N\}$ which we try to explain by a probabilistic model. 
 We assume that
-the $\bv{x}_i$'s are i.i.d with some distribution function $p(\bv{x})$ and therefore for
+the $\bv{x}_i$'s are i.i.d with some distribution function $p(\x)$ and therefore for
 the entire dataset it holds that $p(\bv{X}) = \prod p(\bv{x}_i)$.
 
 \begin{mydef}
 \label{def:logevidence}
 Let $\bv{X} \in \R^{N \times n}$ be a data matrix and let $\{\bv{x}_i\}_1^n$ be its
 rows, which we assume to be i.i.d with some (unknown) distribution $p(\bv{x})$.
-Then $\log p(\bv{X}) = \sum_1^N p(\bv{x}_i)$ is called the \emph{log evidence} of our
+Then $\log p(\bv{X}) = \sum_1^N \log p(\bv{x}_i)$ is called the \emph{log evidence} of our
 data.
 \end{mydef}
 
