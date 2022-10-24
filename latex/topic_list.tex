@@ -74,6 +74,7 @@
 \newcommand{\W}{\mathbf{W}}
 \newcommand{\w}{\mathbf{w}}
 \newcommand{\LL}{\mathcal{L}}
+\newcommand{\NN}{\mathcal{N}}
 %\newcommand{\B}{\{-1,1\}}
 %\newcommand{\bvec}[1]{\mathbf{#1}}
 %\newcommand{\bv}[1]{\mathbf{#1}}
@@ -222,8 +223,11 @@ x_n$. $b$ is called the \emph{bias} of the map.
 
 \section{The data}
 we assume that the input data unless otherwise stated is real-valued matrix.
-Rows represent \emph{samples} 
-and columns represent \emph{variables}.
+Rows represent \emph{samples} and columns represent \emph{variables}. We assume
+that each raw is a realisation of a random vector. If we have $N$ rows, then the
+corresponding $N$ random vectors are assumed to be independent. So depending on
+the context, when we say observation, or row, we may mean the actual observed
+values, or to the random vector who was realized by said observation.
 
 We deal with two type of concrete datasets in this thesis. One of them is
 Single cell RNAseq data. This data represents gene expression levels in 
@@ -285,19 +289,20 @@ In the case of autoencoders, the target set is also the input set and $f$ is the
 identity (in this case $f$ is known but we want to learn an efficient way
 to represent the data).
 
-When our data comes in several matrices, for example input data $\X$ and target
-matrix $\Y$, it means they have the same number of rows. And when we speak about 
+When our data comes in several matrices, for example it could be a single cell RNAseq data
+with normalized gene expression data $\X$,  and cell types as target
+matrix $\Y$. It means they have must the same number of rows. And when we speak about 
 paired input/target $\x,\y$ it means some $(\x,\y) \in (\X,\Y)$ so it should be
 clear they belong to the same sample (row).
 
-\begin{mydef}
-\label{paired data}
-Let $\X = \{\x_i\}_1^N,\quad \Y = \{\y_i\}_1^N$ be two matrices in row noataion
-with the same number of rows $N$. Then
-\begin{equation}
-(\X,\Y) \triangleq \{(\x_i,\y_i)\}_1^N
-\end{equation}
-\end{mydef}
+%\begin{mydef}
+%\label{paired data}
+%Let $\X = \{\x_i\}_1^N,\quad \Y = \{\y_i\}_1^N$ be two matrices in row noataion
+%with the same number of rows $N$. Then
+%\begin{equation}
+%(\X,\Y) \triangleq \{(\x_i,\y_i)\}_1^N
+%\end{equation}
+%\end{mydef}
 
 
 \section{Linear algebra preliminary: SVD and PCA}
@@ -557,6 +562,8 @@ $\phi = \nu(\psi_1, \dots, \psi_n)$ is a NN
 \end{enumerate}
 
 The parameter set $\w$ is called the \emph{weights} of $\phi$.
+Often we don't distinguish between the network $\phi$ and its weights, and
+we identify both as $\phi$.
 
 In the definition we made the range and domain to be the entire $\R^n$ but
 it is not necessary, we just need for the composition to be valid.
@@ -774,7 +781,7 @@ heuristics are used.
 
 Training the neural network $\phi_w$ means finding the weights that minimize the
 loss function applied on the training input/target paired sets $\X,\Y$, in other
-words minimizing $\min_{w} (\mathcal{L}(\phi_w(X),Y)$.
+words minimizing $\min_{w} (\mathcal{L}(\phi_w(\X),\Y)$.
 Usually we can't compute efficiently $\phi$ and $\mathcal{L}$ over the entire
 sets because $N$ is too large, therefore we use batches.
 
@@ -794,7 +801,9 @@ algorithmically approximating the minimization problem:
 
 During a \emph{training step} the network is applied on a batch $(\x,\y)$. Then the
 loss function is applied on the output of the network and a gradient (with relation to the
-weights) is taken. This gradient is used for the weight update rule, which
+weights) is taken using the efficient backpropagation
+algorithm~\cite{nielsen2015neural}.
+The gradient is used for the weight update rule, which
 varies depending on the specific training algorithm. Typical training algorithms
 are SGD (stochastic gradient decent) and Adam~\cite{jais2019adam},
 which is the one used throughout
@@ -838,7 +847,11 @@ $\psi$ is called the \emph{encoder} network, and $\nu$ is called the
 \emph{decoder} network and the composition
 $\phi = \nu \circ \psi$ is called the \emph{autoencoding network}. 
 
-Given a batch $\x \ \R^{b \times n}$ we call $\z = \psi(x) \in \R^{b \times m}$
+We call $\R^m$ or more genrally the domain of the decoder, \emph{the latent
+space}, and $\R^n$ (or more generally the domain of the encoder) is called
+\emph{the observed space}.
+
+Given a batch $\x \in \R^{b \times n}$ we call $\z = \psi(\x) \in \R^{b \times m}$
 the \emph{latent representation} of $\x$ or the \emph{encoding} of $\x$.
 \end{mydef}
 
@@ -862,7 +875,7 @@ original data from the embedding.
 
 \subsection{Relation between PCA and AE}
 For \textbf{centered} data, meaning every variable (column of $\bv{X}$)
-has $0$ sample mean, the first $k \leq \text{rank}(\bv{X})$ principle components
+has a sample mean of $0$, the first $k \leq \text{rank}(\bv{X})$ principle components
 $\bv{P}$ are the solution for equation~\ref{eqn:pca}; Whereas a \textbf{linear}
 autoencoder solves equation~\ref{eqn:pca3}. As mentioned, it must hold that $E =
 D^{\dagger}$ (the encoder must be the Moore-Penrose inverse of the decoder).
@@ -883,14 +896,19 @@ For more details see~\fullcite{bishop2006pattern}.
 We treat the data matrix as a set of independent observations (its rows)
 $\bv{X} = \{\bv{x}_1, \dots
 , \bv{x}_N\}$ which we try to explain by a probabilistic model. 
+Each row $\x_i$ is thought of a realization of a random vector, which we also 
+denote as $\x_i$ (as explained in the notation section) and similarly $\X$
+represent both the set of r.vs as well as the realization itself.
 We assume that
-the $\bv{x}_i$'s are i.i.d with some distribution function $p(\x)$ and therefore for
+the $\bv{x}_i$'s are independent and identically distributes (i.i.d) random vectors
+with some distribution function $p(\x)$ and therefore for
 the entire dataset it holds that $p(\bv{X}) = \prod p(\bv{x}_i)$.
 
 \begin{mydef}
 \label{def:logevidence}
 Let $\bv{X} \in \R^{N \times n}$ be a data matrix and let $\{\bv{x}_i\}_1^n$ be its
-rows, which we assume to be i.i.d with some (unknown) distribution $p(\bv{x})$.
+rows,
+which we assume to be i.i.d with some (unknown) distribution $p(\bv{x})$.
 Then $\log p(\bv{X}) = \sum_1^N \log p(\bv{x}_i)$ is called the \emph{log evidence} of our
 data.
 \end{mydef}
@@ -1045,8 +1063,8 @@ A second thing we need to achieve is to express the -ELBO in terms of $p(\X|\Z)$
 and $q(\Z|\X)$ rather than the joint distribution. To that end we need also the
 prior $p(\Z)$.
 
-\begin{mydef}
-The \emph{conditioned (on $\X$) ELBO} is
+%\begin{mydef}
+%The \emph{conditioned (on $\X$) ELBO} is
 \begin{equation}
 \begin{aligned}
 \mathcal{L}(q,p) &\triangleq \int -\log \frac{p(\X,\Z)}{q(\Z|\X)}dq(\Z|\X) 
@@ -1056,23 +1074,23 @@ The \emph{conditioned (on $\X$) ELBO} is
 \label{eq:elbo_conditioned}
 \end{aligned}
 \end{equation}
-\end{mydef}
+%\end{mydef}
 
 So to sum it up, if we want to maximize the log evidence $\log p(\X)$ it
-suffices to maximize $\mathcal{L}(q,p)$ and equation~\ref{eq:elbo_conditioned}
+suffices to minimize $\mathcal{L}(q,p)$ and equation~\ref{eq:elbo_conditioned}
 shows that this means finding the balance between making 
-the right term (which we call the reconstruction term) large as possible, 
+the term $\int \log p(\X | \Z)dq(\Z|\X)$ (which we call the reconstruction term) large as possible, 
 and making the KL-term small.
 The KL term is seen as a regularization term.
 
 \subsection{Mean field approximation}
-Usually we treat the dimensions of $\x$, $\z$ etc. as indipendent.
+Usually we treat the dimensions of $\x$, $\z$ etc. as independent.
 That means if $\x = (x_1, \dots, \x_n)$ is a r.v. in $\R^n$ 
 we assume that the $x_i$ are independent and therefore 
 $P(\x) = \prod_1^n P_i(x_i)$.
 Mean field approximation simplifies the implementation and speeds up the
 computation and has been the standard practice since the
-begining of VAEs~\cite{kingma2013auto}.
+beginning of VAEs~\cite{kingma2013auto}.
 
 %\subsection{Thinking of the data as distribution}
 %We can think of any data point $\x_i \in X$, rather than being a deterministic
@@ -1130,24 +1148,30 @@ $\{q_{\phi}\}_{\phi \in \Phi}$ be a family of distributions over $\R^m$.
 Where $\Theta$ and $\Phi$ are real domains (i.e $\Theta \subseteq \R^k \dots$).
 
 A \emph{variational autoencoder (VAE)} consists of a pair $(E,D)$ of neural networks,
-$E : \R^n \to \Phi$ and $D : \R^m \to \Theta$.
+$E : \R^n \to \Phi$ and $D : \R^m \to \Theta$ and some fixed distribution $p \in
+\Phi$.
+
+We call $\R^m$ or more genrally the domain of the decoder, \emph{the latent
+space}, and $\R^n$ (or more generally the domain of the encoder) is called
+\emph{the observed space}.
+$p$ is called \emph{the prior distribution of the latent space}.
 \end{mydef}
 
 
-If an autoencoder works on deterministic data, 
+While an autoencoder works on deterministic data, 
 with the encoder mapping input $\x \mapsto \z$ and the decoder then maps the
-latent space $\z \mapsto \hat{x}$ to the reconstruction, a VAE tries to do
+latent space $\z \mapsto \hat{\x}$ to the reconstruction, a VAE does
 basically the same thing but non-deterministically.
 It maps $\x$ into a distribution over $\z$: $\x \mapsto q(\z|\x)$ and it maps
 $\z$ into a distribution over $\x$, $\z \mapsto p(\x|\z)$.
 
 The loss function associated with a VAE is minus ELBO. This means training
-the the VAR maximizes equation~\ref{eq:elbo_conditioned} and therefore also
+the VAR maximizes equation~\ref{eq:elbo_conditioned} and therefore also
 the log evidence.
 
 \subsection{Computing the ELBO}
-The quesion is how to compute the integral in the ELBO function. 
-Recall that given an input $\x \R^n$,
+It may not be immediately clear how to how to compute the integral in the ELBO function. 
+Recall that given an input $\x \in \R^n$,
 The loss function is 
 
 \begin{equation}
@@ -1159,17 +1183,17 @@ The loss function is
 
 Given concrete input $\x \in \R^n$,
 the decoder specifies a distribution over
-$\z \in \R^m$ rather then a concrete denterministic point:
+$\z \in \R^m$ rather then a concrete deterministic point:
 $\z \sim q(\z | \x)$. Suppose that we draw one concrete sample $\z \in \R^m$
-taken from that distribution. Now we have the concrete input $\x$ and the
+taken from that distribution. Now that we have the concrete input $\x$ and a 
 concrete $\z$ we can compute $\log q (\z | \x)$ as well as the prior $p(z)$.
 Remember that the decoder takes $\z$ and produces a distribution $p(\x | \z)$.
-Now that we have a concrete $\z$, and $\x$ we can also compute $\log p(\x | \z)$
+With a concrete $\z$, and $\x$ we can also compute $\log p(\x | \z)$
 So once we draw a specific sample $\z$ we can compute everything inside the
 integral.
 
 In fact what we have done is already a form of Monte Carlo integration.
-More generally, instead of drawing just one concrete $\z$, we draw $k$ samples
+More generally, instead of drawing just one concrete sample $\z$, we draw $k$ samples
 $\z_i \sim q(\z | \x)$ per input $\x$, and take the average. Then we have
 
 \begin{equation}
@@ -1190,56 +1214,54 @@ batches so for a given batch we are taking many samples $\z$.
 Experimental data shows that taking larger samples usually brings little
 benefit~\cite{kingma2019introduction}.
 
+\subsection{using the decoder as data generator encoder for dimensionality
+reduction}
+given a VAE $(E, D, p)$, synthetic data samples can be generated as follows:
+sample $\z \sim p(\z)$. Then given the samples in the latent space, sample
+from the decoded distribution $\x \sim D(\z)$, in the observed space.
+
+Given observation $\x$, we can non deterministically encode $\x$ into 
+the latent space by taking the mean: $\x \mapsto \E [E(\x)]$. Or we can
+non-deterministically draw $\z$ from the encoded distribution:
+$\x \mapsto \z \sim E(\x)$.
 
 
 \subsection{Graphical representation}
 
-%punkt.
-%punkt.
-%\remark{My remark}[See \cite{makhzani2015adversarial}] This is interesting
-%\dots.
-%punkt.
-
 It is both convenient as well as informative to include a graphical description
-of our probabilitic models by way of plate diagrams.
+of our probabilistic models by way of plate diagrams.
 
-Please note that we drop the $\phi, \theta$ subscript but they are still there
-in reality.
+%Please note that we drop the $\phi, \theta$ subscript but they are still there
+%in reality.
 
 In a plate diagram nodes represent random variables and arrows
 represent dependency.
 Figure~\ref{fig:vae_model} is a plate diagram of the VAE model with slight
-adaptation. We use doted arrows to represent the arrows of the inference model,
-and regular arrows for the generative model. Regular (triangular) arrowhead
-represents real probabilitic dependency whereas rounded arrows are reminding us
-that this is not a real probabilitic dependency (recall
-\ref{rem:abuse_of_notation}) which maybe we can call 'parametric
-dependency'.
+adaptation. We use doted arrows to represent the arrows of the inference model
+(encoder network),
+and regular arrows for the generative model (decoder network).
+Regular (triangular) arrowhead
+represents real probabilistic dependency whereas rounded arrows are reminding us
+that this is a separate network and also to somehow mark 
+it is not a complete probability because there is have no "prior" $q(\x)$ to
+speak of.
 
 Plate represents packing of $N$ i.i.ds since we have $N$ observations $X =
 (x_i)_1^N$ and correspondingly $N$ latent variables $Z = (z_i)$.
 
 Shaded node represent known values (either observation of prior).
 
-The squared $\zeta$ node represent some fixed parameters which describes the
-prior distribution of $P(z)$. Usually it is not shown in the papers about VAE
-but we just wanted to remind the reader that it can be parametrize in general.
+The squared $\zeta$ node represent some fixed parameter which describes the
+prior distribution of $p(\z) := p(\z | \zeta)$.
+It is possible to make $\zeta$ a non-fixed stochastic parameter but in the case of this
+vanilla VAE I don't think it has any advantage and don't know of anyone who 
+does that. 
 
-The generative model therefore factors as: $p(x,z) = p(x|z)p(z|\zeta) =
-p(x|z)p(z)$
+The generative model therefore factors as: $p(\x,\z) = p(\x|\z)p(\z|\zeta) =
+p(\x|\z)p(\z)$.
+The inference model in this case is just $q(\z | \x)$.
 
-The inference model in this case is just $q(z)$ but we might denote is as
-$q(z|x)$ because it tries to approximate $p(z|x)$.
-
-Note that the graphical model has no assumption about the specific types of
-distributions involved (Gaussian, Dirichlet or whateve \dots) and that is left
-for the actual implementation.
-
-In the case of a "vanilla" VAE, We chose the prior to be diagonal standard Gaussian
-$p(z) \sim N(;0,1)$. And $p(z | x)$ is then chosed as diagonal Gaussian (whose
-means and variances we find by training the network).
-
-\begin{figure}
+\begin{figure}[!h]
 \centering
 \begin{subfigure}[b]{0.2\textwidth}
 \includegraphics[width=\textwidth]{../plots/vae_p.gv.png}
@@ -1261,6 +1283,114 @@ means and variances we find by training the network).
 \caption{VAE graphical model}
 \label{fig:vae_model}
 \end{figure}
+
+Note that the graphical model has no assumption about the specific types of
+distributions involved (Gaussian, Dirichlet or whatever \dots) and that is left
+for the actual implementation.
+
+In the case of a "vanilla" VAE $(E,D,p)$, 
+We use mean field approximation for $p$ and $q$ with Gaussian distributions.
+We set the prior $p(\z)$ to be diagonal standard Gaussian
+$p(\z) \sim \NN(;\bv{0},\bv{1})$.
+And $p(\z | \x) \sim \NN(;D(\z))$ is a diagonal Gaussian, where the decoder
+determines its means and variances $D(\z) = (\bv{\mu}(\z), \bv{\sigma}(\z))$, 
+And similarly $q(\z | \x) \sim \NN(;E(\x))$.
+
+\section{Expanding the VAE model}
+If we look at figure~\ref{fig:vae_model} it looks very simple, but it also
+pretty much forces us to choose a simple type of distribution family (e.g
+diagonal Gaussians in the case of the vanilla VAE).
+Recall that That $\z$ packs up all the latent variables and the stochastic
+parameters and $\x$ packs up all the observed variables.
+
+We can describe a more complex distribution by unpacking them and describe the
+dependencies between them.
+This is done in the following way:
+\begin{enumerate}
+\item{} define the set of observed random vectors $\x_1, \x_2, \dots \x_k$, and 
+the set of latent random vectors and stochastic parameters $\z_1, \dots \z_l$.
+\item{} specify how to factor the generative model $p(\x_1,\dots, \x_k| \z_1
+\dots , \z_l)$
+\item{} specify how to factor the inference model $q(\z_1 \dots \z_l | \x1,
+\dots \x_k)$
+\item{} choose appropriate priors $p(z_i)$ and
+\item{} Chose appropriate distribution families for the $\x_i$ and $\z_i$,
+and choose priors $p(\z_i)$.
+\end{enumerate}
+
+\subsection{Example: CVAE}
+Suppose that we have data that carries both numerical and categorical data $(\X,
+C)$.
+For example suppose that $\X$ represent a set of images (as flattened vectors),
+and $C$ represents the object types shown in the images.
+Moreover lets assume that we have $k$ types of categories and that the data is
+balanced so we have $k/N$ samples from each category.
+We have just specified our observed variables $\x, c$.
+We will have one latent variable $\z$ (remember it is actually a vector but we
+call them variables...).
+The idea here is that because we have different categories, we will have some
+type of a mixture of distributions.
+
+Lets specify the generative model $p(\x, \z, c)$. 
+We can factor it "arbitrarily" as $p(\x, \z, c) = p(\x | \z, c)p(\z | c)p(c)$.
+But we can also simplify if it makes sense. 
+Suppose we have reason to believe that $\z$ alone generates
+$\x$, so given $\z$, $\x$ and $c$ are treated as independent. But $\z$ itself
+will be a mixture of $k$ distributions.
+Moreover, since our data is balanced, it is clear that $p(c) = \frac{1}{k}$.
+The generative process is therefore as follows:
+draw a category $c \sim Cat(\frac{1}{k})$. Then draw $\z \sim p(\z | c)$.
+Then draw $\x \sim p(\x | \z)$.
+So our factorization of $p$ is:
+$p(\x, \z, c) = p(\x | \z)p(\z | c)\frac{1}{k}$.
+
+As for the inference model, given the observation $\x$ and $c$ it will determine
+our only latent variable $\z$, in other words $q(\z | \x, c)$ is the inference
+model without anything further to factorize.
+
+Now for concrete choice of distribution families:
+$p(c)$ is already chosen for us as uniform categorical. 
+For the rest we again use diagonal Gaussians.
+$p(\z | c)$ will be parametrized by an encoder network taking only the
+categorical information. Essentially this network will map each category into
+some "blob" around some centroid in the latent space. 
+$p(\x | \z)$ describes how given $\z$ it defines a distribution back in the
+observed space like the decoder network in the vanilla case.
+$q(\z | \x, c)$ means that in this case the encoder takes as input both $\x$ and
+$c$ and defines a diagonal gaussian in the latent space.
+The difference is that with this model after we train it, the encoder will
+encode a mixture distribution in $\z$, we will get several blobs in the latent
+space corresponding to the classes.
+
+Remember that the loss function is still the minus elbo but with our
+factorization it will become:
+
+\begin{equation}
+\begin{aligned}
+\label{eq:cvaeloss}
+\LL(p,q,\x,c) = 
+\int -\log \frac{p(\x,c,\z)}{q(\z | \x, c)}dq \\
+= \int -\log \frac{p(\x|\z) p(\z | c) p(c)}{q(\z | \x, c)}dq \\
+= \int - \log p(\x | \z)dq + \int \log \frac{q(\z | \x, c)}{p(\z | c)}dq
++ \log(k) \\
+= \int - \log p(\x | \z)dq + KL(q(\z | \x, c) \| p(\z | c)) + \text{const}
+\end{aligned}
+\end{equation}
+
+From equation~\ref{eq:cvaeloss}, we can ignore the constant and we see again a
+reconstruction term that will make sure the decoder reconstruct the image in
+our example, while the kl-term imposes a mixture distribution in the latent
+space.
+
+Finally there are circumstances that we use CVAE to "forget" the categories
+rather then to encode them by setting a fixed prior $p(\z | c) \equiv p(\z)$.
+An example for such use-case is if we have for example several batches of data,
+for the same type of data but from different experiment. In this case we can use
+a CVAE model with fixed prior to reduce the batch effect.
+
+%MEMO: add examples with CVAE on MNIST. one with learned prior for mixture
+%latent, one with fixed prior for batch effect reduction, one vanilla VAE.
+%plots of the umaps...
 
 \chapter{Gaussian mixture model VAEs}
 
