@@ -221,7 +221,7 @@ which is held fixed $x_0 \equiv 1$: $f(x_0, \dots x_n) = b + a_1 x_1 + \dots a_n
 x_n$. $b$ is called the \emph{bias} of the map.
 \label{affinelinear}
 
-\section{The data}
+\section{Data types}
 we assume that the input data unless otherwise stated is real-valued matrix.
 Rows represent \emph{samples} and columns represent \emph{variables}. We assume
 that each raw is a realisation of a random vector. If we have $N$ rows, then the
@@ -414,12 +414,12 @@ $\bv{V}_l$ still minimizes the general problem~\ref{eqn:pca2} and for every
 solution $\bv{W}$, it must hold that $\text{span}\{\bv{W}\} =
 \text{span}\{\bv{V}_l\}$ (but it isn't necessarily an orthogonal matrix).
 
-\section{Neural networks}
+\chapter{Neural networks}
 
 We briefly discuss here some of the basics of neural network to provide clarity
 and motivation. Mostly based on~\cite{nielsen2015neural}.
 
-\subsection{Universal families of parameterized maps}
+\section{Universal families of parameterized maps}
 If we take an expression such as $f_{a,b}(x) = ax + b$, if we hold $(a,b)$ fixed
 on specific values, then we get a linear function on $x$. Every assignment of
 $(a,b)$ defines a different linear function and in fact every linear function on
@@ -466,7 +466,7 @@ represent complicated functions with relatively few parameters.
 One such class of functions is the feed forward neural networks,
 which is the class of functions that are comprised from "neurons".
 
-\subsection{Neurons}
+\section{Neurons}
 
 So what a "neuron"?. 
 Inspired from biology, a \emph{neuron} is a many to one ($\R^n \to \R$) parameterized
@@ -515,11 +515,11 @@ Think of the weights of a neuron as some mutable, tunable property, some sort of
 \begin{framed}
 \centering
 \begin{subfigure}[b]{0.45\textwidth}
-\includegraphics[width=0.4\textwidth]{./images/models/neuron.gv.png}
+\includegraphics[width=0.4\textwidth]{./plots/neuron.gv.png}
 %\label{fig:neuron1}
 \end{subfigure}
 \begin{subfigure}[b]{0.45\textwidth}
-\includegraphics[width=0.4\textwidth]{./images/models/neuron.2.gv.png}
+\includegraphics[width=0.4\textwidth]{./plots/neuron.2.gv.png}
 \end{subfigure}
 \caption{Two graphical descriptions of the neuron
 $\sigma(w_1x_1 + w_2x_2 + b)$}. Here the bias $b$ is explicitly shown
@@ -608,10 +608,10 @@ ancestral nodes
 \begin{framed}
 \centering
 \begin{subfigure}[b]{0.5\textwidth}
-\includegraphics[width=0.8\textwidth]{./images/models/neuronlayers.gv.png}
+\includegraphics[width=0.8\textwidth]{./plots/neuronlayers.gv.png}
 \end{subfigure}
 \begin{subfigure}[b]{0.5\textwidth}
-\includegraphics[width=0.8\textwidth]{./images/models/neuronlayers.2.gv.png}
+\includegraphics[width=0.8\textwidth]{./plots/neuronlayers.2.gv.png}
 \end{subfigure}
 \caption{The network in the top didn't use rule 5~\ref{def:NN} in the construction.
 It is strictly hierarchical and there are only edges between nodes of two
@@ -620,16 +620,6 @@ consecutive layers. The one on the bottom is more general.
 \label{fig:nn1}
 \end{framed}
 \end{figure}
-
-
-%\begin{figure}[!h]
-%\centering
-%\includegraphics[width=0.3\textwidth]{./images/models/neuron.2.gv.png}
-%\caption{a neural network graphical description
-%$\sigma(w_1x + w_2y + b)$}
-%\label{fig:neuron2}
-%\end{figure}
-
 
 It turns out~\cite{nielsen2015neural} that the feed forward neural networks
 with a single type of non-linear activation (e.g. sigmoid) and a single hidden
@@ -657,7 +647,7 @@ thesis about neural networks per se.
 \begin{figure}[!h]
 \begin{framed}
 \centering
-\includegraphics[width=0.5\textwidth]{./images/models/multilayer.gv.png}
+\includegraphics[width=0.5\textwidth]{./plots/multilayer.gv.png}
 \caption{
 A graph of a hierarchical feed forward neural network where the connections 
 are abstracted. Edges between layers may represent in this case a fully
@@ -675,7 +665,7 @@ We call all the layers (or neurons) that are
 not in the input level or the output level "hidden"
 because we don't usually know what is the input/output value in these.
 
-\subsection{Loss functions}
+\section{Loss functions}
 
 
 In the claim about neural networks being "universal" in terms of approximating
@@ -774,7 +764,7 @@ loss~\cite{bishop2006pattern}:
 \label{eq:NNbatchlossE}
 \end{equation}
 
-\subsection{Training}
+\section{Training}
 This is just a brief explanation of the basic principals. Training deep networks
 is a big subject which has many challenges and obstacles and a lot of
 heuristics are used. 
@@ -814,6 +804,10 @@ algorithm. The rest (derivation, weight update etc.) is taken care for us by the
 backend of the software (Pytorch~\cite{pytorch2018pytorch}) and can be regarded
 as a black box.
 
+\subsection{Training, validation and testing data sets}
+
+\subsection{Un/Supervised learning}
+
 \section{Autoencoders}
 
 The basic type of an autoencoder which we informally call "vanilla" autoencoder
@@ -829,7 +823,7 @@ same as the input $\Y = \X$.
 \begin{figure}[!h]
 \begin{framed}
 \centering
-\includegraphics[width=0.8\textwidth]{./images/models/autoencoderNN.gv.png}
+\includegraphics[width=0.8\textwidth]{./plots/autoencoderNN.gv.png}
 \caption{
 A graphic description of a "vanilla" autoencoder.
 }
@@ -880,11 +874,29 @@ $\bv{P}$ are the solution for equation~\ref{eqn:pca}; Whereas a \textbf{linear}
 autoencoder solves equation~\ref{eqn:pca3}. As mentioned, it must hold that $E =
 D^{\dagger}$ (the encoder must be the Moore-Penrose inverse of the decoder).
 
-A linear autoencoder (an AE where $\phi$ is linear) is therefore almost equivalent to
-PCA~\cite{plaut2018principal}, in that in the optimum, a bottleneck space of dimension $k$
+A linear autoencoder with the  square error
+loss function is almost equivalent to
+PCA~\cite{plaut2018principal}; At the optimum, a bottleneck space of dimension $k$
 is spanned by the first $k$ principle components of the input $\bv{X}$.
 In general, an AE can be seen a PCA-like, but non-linear method for
 dimensionality reduction.
+
+\begin{figure}[!h]
+\begin{framed}
+\centering
+\label{fig:pcavsae}
+\begin{subfigure}[t]{0.45\textwidth}
+\includegraphics[width=0.95\textwidth]{images/pca.umap.mnist.png}
+\caption{MNIST: UMAP of the PCA}
+\end{subfigure}
+\begin{subfigure}[t]{0.45\textwidth}
+\includegraphics[width=0.95\textwidth]{images/ae.umap.mnist.png}
+\caption{MNIST: UMAP of the AE}
+\end{subfigure}
+\end{framed}
+\caption{"vanilla" autoencoder compared with PCA, on the MNIST dataset}
+\end{figure}
+
 
 \chapter{Variance inference and variational autoencoders}
 \section{Variational Inference}
@@ -1225,6 +1237,85 @@ the latent space by taking the mean: $\x \mapsto \E [E(\x)]$. Or we can
 non-deterministically draw $\z$ from the encoded distribution:
 $\x \mapsto \z \sim E(\x)$.
 
+\subsection{Choosing the distribution types}
+This is of course another topic that can get arbitrarily complex.
+
+Recall that our loss function (if we take just one sample $\z$ for intput $\x$
+is:
+\begin{equation}
+\label{eq:vanillavaeloss}
+\begin{aligned}
+\LL(p,q,\x) 
+= (-\int \log p (\x | \z)dq) + KL(q(\z | \x) \| p(\z)) \\
+\approx -\log p (\x | \z) + \log \frac{\log q(\z | \x)}{p(\z)}
+\end{aligned}
+\end{equation}
+
+The left term is called the reconstruction error and the 
+right term is called the regularization term or the kl-term.
+
+
+Lets suppose that we just want to use diagonal Gaussian distributions.
+The advantage is that it is easy to compute them because we just sum over the
+dimensions:
+
+\begin{equation}
+\label{eq:diagnormal}
+\log \NN(\x ; \bv{\mu}, \bv{\sigma}) = 
+\sum_1^n \log \NN(\x_i ; \bv{\mu}_i, \bv{\sigma}_i)
+\end{equation}
+
+The dimension of the latent space is a significant hyper parameter of the vae
+model.
+Since we sum over the dimensions rather than averaging,
+the larger we let the dimension of the latent space $\z$ 
+it can have an effect of upscaling the importance of the kl-term relative to the
+reconstruction.
+Moreover the dimension should also be appropriate in terms of the "real"
+dimensionality of the data.
+
+In the case of the vanilla VAE we choose $p(\z) = \NN(\z;0,1)$ (diagonal
+gaussian standard normal) for the prior and 
+$q(\z | \x) = \NN(\z ; \bv{\mu}(\x), \bv{\sigma}(\x))$ for the encoder.
+There is a closed form formula for KL-divergence between two diagonal gaussians
+so in this case we don't need to use Monte Carlo integration for the KL-term
+(we show it in one dimensions and for $k$ dimension in the diagonal case
+we sum over the dimensions:
+
+\begin{equation}
+\label{eq:kldivnormal}
+KL(\NN(;\mu_1, \sigma_1) \| \NN(;\mu_2, \sigma_2)) = 
+-\frac{1}{2} + \log \frac{\sigma_2}{\sigma_1}
++ \frac{\sigma_1^2 + (\mu_1 - \mu_2)^2}{2 \sigma_2^2}
+\end{equation}
+
+
+
+The reconstruction term is more tricky.
+Lets say we still want some sort of gaussian diagonal distribution for $\x$,
+so $p(\x | \z) = \NN(\x ; \bv{\mu}(\z), \bv{\sigma}(\z))$.
+If we allow the decoder to create arbitrarily small variances, then the
+decoder will stop being stochastic and it becomes deterministic. 
+The decoder will also be able to pinpoint the sources in the latent space.
+As a result the encoding becomes meaning-less and the encoded data will tend to
+be arbitrarily spread in the latent space without meaningful clusters.
+In addition there is a problem of numerical instability because the distribution
+function can become arbitrarily large and the reconstruction loss might approach
+$-\infty$.
+
+A common approach is to use a fixed variance of $1$, because then the
+reconstruction term becomes square error loss.
+$p(\x | \z) = \NN(\x ; \bv{\mu}(\z), 1))$.
+
+Another approach, $\sigma$-VAE~\cite{rybkin2021simple}, is to let the variance
+be a trainable parameter but not a function of $\z$.
+$p(\x | \z) = \NN(\x ; \bv{\mu}(\z), \bv{\sigma})$.
+In this case as well in my experiments at least, if $\sigma$ is allowed to be
+too small we sometimes get similar issues of numerical stability, 
+non-stochastic decoder and meaningless 
+encoding in the latent
+space.
+
 
 \subsection{Graphical representation}
 
@@ -1262,26 +1353,23 @@ p(\x|\z)p(\z)$.
 The inference model in this case is just $q(\z | \x)$.
 
 \begin{figure}[!h]
+\begin{framed}
 \centering
 \begin{subfigure}[b]{0.2\textwidth}
-\includegraphics[width=\textwidth]{../plots/vae_p.gv.png}
+\includegraphics[width=\textwidth]{plots/vae_p.gv.png}
 \caption{generative model ($p(x,z)$}
-%\caption{blabla}
-%\label{bla}
 \end{subfigure}
-%\includegraphics[width=0.4\linewidth]{images/model_mnist_10c_generation.png}
 \begin{subfigure}[b]{0.2\textwidth}
-\includegraphics[width=\textwidth]{../plots/vae_q.gv.png}
+\includegraphics[width=\textwidth]{plots/vae_q.gv.png}
 \caption{inference model ($q(z|x)$)}
-%\includegraphics[width=0.4\linewidth]{images/model_mnist_10c_umap.png}
 \end{subfigure}
 \begin{subfigure}[b]{0.2\textwidth}
-\includegraphics[width=\textwidth]{../plots/vae.gv.png}
+\includegraphics[width=\textwidth]{plots/vae.gv.png}
 \caption{the combined graphical model}
-%\includegraphics[width=0.4\linewidth]{images/model_mnist_10c_umap.png}
 \end{subfigure}
 \caption{VAE graphical model}
 \label{fig:vae_model}
+\end{framed}
 \end{figure}
 
 Note that the graphical model has no assumption about the specific types of
@@ -1296,6 +1384,28 @@ And $p(\z | \x) \sim \NN(;D(\z))$ is a diagonal Gaussian, where the decoder
 determines its means and variances $D(\z) = (\bv{\mu}(\z), \bv{\sigma}(\z))$, 
 And similarly $q(\z | \x) \sim \NN(;E(\x))$.
 
+\begin{figure}[!h]
+\begin{framed}
+\centering
+\begin{subfigure}[t]{0.3\textwidth}
+\includegraphics[width=\textwidth]{images/vae.umap.mnist.mu.png}
+\caption{umap: means}
+\end{subfigure}
+\begin{subfigure}[t]{0.3\textwidth}
+\includegraphics[width=\textwidth]{images/vae.umap.mnist.sampling.png}
+\caption{umap: sampling}
+\end{subfigure}
+\begin{subfigure}[t]{0.3\textwidth}
+\includegraphics[width=0.9\textwidth]{images/vae.generation.mnist.sampling.png}
+\caption{randomly generated digits}
+\end{subfigure}
+\caption{VAE showing umap plots of the latent space. The first shows 
+the encoding where the mean of the distribution $p(\z | \x)$ is used. The second
+uses a random sample from the distribution for the encoding.}
+\label{fig:vaeumap}
+\end{framed}
+\end{figure}
+
 \section{Expanding the VAE model}
 If we look at figure~\ref{fig:vae_model} it looks very simple, but it also
 pretty much forces us to choose a simple type of distribution family (e.g
@@ -1307,14 +1417,14 @@ We can describe a more complex distribution by unpacking them and describe the
 dependencies between them.
 This is done in the following way:
 \begin{enumerate}
-\item{} define the set of observed random vectors $\x_1, \x_2, \dots \x_k$, and 
+\item{} Define the set of observed random vectors $\x_1, \x_2, \dots \x_k$, and 
 the set of latent random vectors and stochastic parameters $\z_1, \dots \z_l$.
-\item{} specify how to factor the generative model $p(\x_1,\dots, \x_k| \z_1
+\item{} Specify how to factor the generative model $p(\x_1,\dots, \x_k| \z_1
 \dots , \z_l)$
-\item{} specify how to factor the inference model $q(\z_1 \dots \z_l | \x1,
+\item{} Specify how to factor the inference model $q(\z_1 \dots \z_l | \x1,
 \dots \x_k)$
-\item{} choose appropriate priors $p(z_i)$ and
-\item{} Chose appropriate distribution families for the $\x_i$ and $\z_i$,
+\item{} Choose appropriate priors $p(z_i)$ and
+\item{} Choose appropriate distribution families for the $\x_i$ and $\z_i$,
 and choose priors $p(\z_i)$.
 \end{enumerate}
 
@@ -1332,39 +1442,31 @@ The idea here is that because we have different categories, we will have some
 type of a mixture of distributions.
 
 Lets specify the generative model $p(\x, \z, c)$. 
-We can factor it "arbitrarily" as $p(\x, \z, c) = p(\x | \z, c)p(\z | c)p(c)$.
-But we can also simplify if it makes sense. 
-Suppose we have reason to believe that $\z$ alone generates
-$\x$, so given $\z$, $\x$ and $c$ are treated as independent. But $\z$ itself
-will be a mixture of $k$ distributions.
-Moreover, since our data is balanced, it is clear that $p(c) = \frac{1}{k}$.
-The generative process is therefore as follows:
-draw a category $c \sim Cat(\frac{1}{k})$. Then draw $\z \sim p(\z | c)$.
-Then draw $\x \sim p(\x | \z)$.
-So our factorization of $p$ is:
-$p(\x, \z, c) = p(\x | \z)p(\z | c)\frac{1}{k}$.
+We can factor it "arbitrarily" but the choice may make meaningful different in
+the result. Luckily in this case there aren't too many
+ways to do that.
+We can factor as $p(\x, \z, c) = p(\x | \z, c)p(\z | c)p(c)$ which mean $\x$ is
+directly dependent on both $\z$ and $c$.
+We can opt for a model where given $\z$, $\x$ and $c$ are independent. 
 
-As for the inference model, given the observation $\x$ and $c$ it will determine
+As for the inference model (encoder), given the observation $\x$ and $c$ it will determine
 our only latent variable $\z$, in other words $q(\z | \x, c)$ is the inference
-model without anything further to factorize.
+model without anything further to factorize. We might try to remove the
+dependency on $c$, and make it $q(\z | \x)$.
 
-Now for concrete choice of distribution families:
-$p(c)$ is already chosen for us as uniform categorical. 
-For the rest we again use diagonal Gaussians.
-$p(\z | c)$ will be parametrized by an encoder network taking only the
-categorical information. Essentially this network will map each category into
-some "blob" around some centroid in the latent space. 
-$p(\x | \z)$ describes how given $\z$ it defines a distribution back in the
-observed space like the decoder network in the vanilla case.
-$q(\z | \x, c)$ means that in this case the encoder takes as input both $\x$ and
-$c$ and defines a diagonal gaussian in the latent space.
-The difference is that with this model after we train it, the encoder will
-encode a mixture distribution in $\z$, we will get several blobs in the latent
-space corresponding to the classes.
+Since our data is balanced, it is clear that $p(c) = \frac{1}{k}$.
 
-Remember that the loss function is still the minus elbo but with our
-factorization it will become:
+The generative process (decoder) is therefore as follows:
+\begin{itemize}
+\item{} draw a category $c \sim Cat(\frac{1}{k})$.
+\item{} draw $\z \sim p(\z | c)$.
+\item{} draw $\x \sim p(\x | \z)$.
+\item{} the resulting factorization of $p$ is:
+$p(\x, \z, c) = p(\x | \z)p(\z | c)\frac{1}{k}$.
+\end{itemize}
 
+Remember that the loss function is still the minus ELBO,
+which according to our factorization becomes:
 \begin{equation}
 \begin{aligned}
 \label{eq:cvaeloss}
@@ -1377,7 +1479,29 @@ factorization it will become:
 \end{aligned}
 \end{equation}
 
-From equation~\ref{eq:cvaeloss}, we can ignore the constant and we see again a
+
+Since the $\z$ prior depends on the category, $p(\z | c)$, it should be some
+sort of "blobs" mixture type of distribution.
+The inference model is just $q(\z | \x,c)$. The regularization kl-term tries
+to impose $q(\z | \x, c)$ to be close to $p(z | c)$, so if all works well 
+$q(\z | \x, c)$ should look like a mixture distribution ("blobs").
+
+Now for concrete choice of distribution families:
+$p(c)$ is already chosen for us as uniform categorical. 
+For the rest we again use diagonal Gaussians.
+$p(\z | c)$ will be parametrized by an encoder network taking only the
+categorical information. Essentially this network will map each category into
+some "blob" around some centroid in the latent space. 
+$p(\x | \z)$ describes how given $\z$ it defines a diagonal normal distribution
+with fixed (or restricted) variance back in the
+observed space like the decoder network in the vanilla case.
+$q(\z | \x, c)$ means that in this case the encoder takes as input both $\x$ and
+$c$ and defines a diagonal Gaussian in the latent space.
+The difference is that with this model after we train it, the encoder will
+encode a mixture distribution in $\z$, we will get several blobs in the latent
+space corresponding to the classes.
+
+From equation~\ref{eq:cvaeloss}, we can ignore the constant and see that the
 reconstruction term that will make sure the decoder reconstruct the image in
 our example, while the kl-term imposes a mixture distribution in the latent
 space.
@@ -1392,6 +1516,51 @@ a CVAE model with fixed prior to reduce the batch effect.
 %latent, one with fixed prior for batch effect reduction, one vanilla VAE.
 %plots of the umaps...
 
+\begin{figure}[!h]
+\begin{framed}
+\centering
+\includegraphics[width=0.4 \textwidth]{plots/cvae.gv.png}
+\caption{Graphical model of the CVAE with a learned prior $p(\z | c)$.
+as usual the solid arrows depict the inference model (encoder) and the dotted
+ones the generative model (decoder)}
+\label{fig:cvae}
+\end{framed}
+\end{figure}
+
+Figure~\ref{fig:cvaeumap} shows in the left a umap plot of the latent space for
+the CVAE model which we described first, on the MNIST data set.
+It uses the learned prior $p(\z|c)$ and
+$\x$ and $c$ are conditionally independent given $\z$.
+The middle image shows the reconstruction of the clusters centers (the means of
+$p(\z | c)$). In this model the encoder completely separates the categories in
+the latent representation, resulting in distinct blobs.
+The right image is the CVAE described last, the one which "forgets" the
+category, with fixed prior $p(\z | c) = p(\z) = \NN(\z;0,1)$.
+In this model $\x$ is not conditionally independent from $c$, but instead it 
+is directly dependent on both $\z$ and $c$ ($p(\x | \z, c)$).
+The result is an encoding which mixes a lot of the categories in the latent
+space but we can still notice some clustering.
+
+\begin{figure}[!h]
+\begin{framed}
+\centering
+\begin{subfigure}[b]{0.33\textwidth}
+\includegraphics[width=\textwidth]{images/cvae2lp.umap.mnist.png}
+\caption{learned prior}
+\end{subfigure}
+\begin{subfigure}[t]{0.33\textwidth}
+\includegraphics[width=\textwidth]{images/cvae2lp.clusterheads.mnist.png}
+\caption{Reconstruction of the cluster centers}
+\end{subfigure}
+\begin{subfigure}[b]{0.33\textwidth}
+\includegraphics[width=\textwidth]{images/cvae1nolp.umap.mnist.png}
+\caption{no learned prior}
+\end{subfigure}
+\caption{CVAE, different use cases}
+\label{fig:cvaeumap}
+\end{framed}
+\end{figure}
+
 \chapter{Gaussian mixture model VAEs}
 
 Theoretical background and 
@@ -1399,6 +1568,7 @@ with some examples from publications and my own tests.
 
 
 \begin{figure}
+\begin{framed}
 \centering
 \begin{subfigure}[b]{0.4\textwidth}
 \includegraphics[width=\textwidth]{images/model_mnist_10c_generation.png}
@@ -1414,6 +1584,7 @@ with some examples from publications and my own tests.
 \end{subfigure}
 \caption{a figure}
 \label{fig:myfig}
+\end{framed}
 \end{figure}
 
 \subsection{Relation between AE and VAE}
