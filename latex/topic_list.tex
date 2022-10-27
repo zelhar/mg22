@@ -152,8 +152,54 @@ so-so--so---so
 \chapter{Notations and definitions, preliminary concepts}
 %\section{Basic Definitions}
 
-\section{Basic notations}
-\subsection{Vectors, matrices and tensors}
+%\section{Basic notations}
+%\section{Vectors, matrices and tensors}
+
+\section{Tensors, shape, axes, dimension}
+A scalar $x \in \R$ is an element of the field and not a vector.
+It has 0 dimension, $0$ axes and shape $(,)$,
+A vector $\x \in \R^n$ has $n$ dimensions and one axis. Its shape is $(n,)$.
+A matrix $\X \in \R^{m \times n}$ has $mn$ dimensions, 2 axes, and shape of $(m,n)$.
+The generalized entity with $0$ or more axes is called \emph{tensor}.
+In Pytorch~\cite{pytorch2018pytorch} terminology dimension
+is used for the number of axes but I think it is
+inconsistent with the way dimension is used in mathematics with regards to vectors.
+
+If $\x$ is a tensor, $\x_i$ represents the $i$'th "row" of $\x$,
+and $\x = \{\x_1, \dots , \x_n\}$ is the \emph{row representation} or 
+\emph{batch
+representation} of $\x$.
+
+\section{samples, batches, mean-sum rule}
+
+We distinguish between two types of tensors depending on what they represents.
+Let $\x \in \R^{m \times n \times l}$ be a tensor.
+If we say that $\x$ is a \emph{sample} or a \emph{data point} it means it is a
+single sample from our data set. If we say that it is a \emph{batch}, then 
+it represent a collection of $m$ samples. In this case the first axis is the batch
+axis and the rest of the axes are the sample axes.
+
+As a rule the default reduction is summation over sample axes 
+and mean over the batch axes.
+For example if $\x$ is a sample, 
+then $\|\x \|_1 = \sum_i \sum_j \sum_k |x_{i,j,k}|$ because it has no batch axis.
+If $\x$ is a batch, then we take the mean over the first axis:
+$\| \x \|_1 = \frac{1}{m} \sum_i \| \x_i \|_1 = \frac{1}{m} \sum_i \sum_j \sum_k |x_{i,j,k}|$.
+
+The reason that we do that is that for batches, we want batches of different
+sizes to be comparable so it is straight forward to take mean. For the other
+axes, as we will see in the case of VAE we use the ELBO function where we have
+to sum over the sample axes.
+
+\label{meansumrule}
+
+
+\section{Matrices and vectors}
+
+The type of data we work with in this paper can be represented as vectors.
+For example images of shape $(h,w,c)$ can be flattened into a single axis shape
+$(h \cdot w \cdot c,)$ vector.
+
 Throughout this paper (modulo typing errors) we use
 capital bold math Latin or Greek letters ($\bv{X, \Sigma}$) to represent
 matrices. To stress that we talk about matrices rather than vectors we show
@@ -206,7 +252,9 @@ be a matrix in \textbf{row} notation. Then its \emph{squared Frobenius norm} is
 \end{mydef}
 
 
-\subsection{Functions and maps}
+
+\section{Functions and maps}
+see~\ref{meansumrule}
 Functions are usually understood to be scalar, namely $f:\R^n \to \R$ while maps
 are more general $g:\R^n \to \R^m$. When we say that a map (or function) $\phi
 :\R^n \to \R^m$ is \emph{parameterized}, it means that implicitly has additional 
@@ -224,7 +272,7 @@ x_n$. $b$ is called the \emph{bias} of the map.
 \section{Data types}
 we assume that the input data unless otherwise stated is real-valued matrix.
 Rows represent \emph{samples} and columns represent \emph{variables}. We assume
-that each raw is a realisation of a random vector. If we have $N$ rows, then the
+that each raw is a realization of a random vector. If we have $N$ rows, then the
 corresponding $N$ random vectors are assumed to be independent. So depending on
 the context, when we say observation, or row, we may mean the actual observed
 values, or to the random vector who was realized by said observation.
@@ -249,7 +297,7 @@ information.
 For example in the case of the MNIST dataset every image also comes with a label
 which indicate which digit it shows. Since there are $10$ classes of digits ($0$
 to $9$) the class matrix is going to have $10$ columns and each row is a one-hot
-vector indicating the digit of the correspoinding image.
+vector indicating the digit of the corresponding image.
 
 \begin{mydef}
 \label{def:datamatrix}
@@ -303,6 +351,15 @@ clear they belong to the same sample (row).
 %(\X,\Y) \triangleq \{(\x_i,\y_i)\}_1^N
 %\end{equation}
 %\end{mydef}
+
+\subsection{Probabilistic interpretation of the data}
+Suppose that we have a data matrix $\X = \{\x_1, \dots , \x_N\}$.
+We think of $\X$ as a set of $N$ independent samples, all drawn from the same
+data distribution $\x \sim p(\x)$. We think of $\x_i$ as a realization of a
+random vector which we also denote with $\x_i$. 
+The random vectors $\x_i$ are independent replications of a random vector $\x$.
+This is another motivation why we take mean for the batch dimension because
+then $\|\X\| = \frac{1}{N} \sum_1^N \|\x_i\| \approx \E [\|\x\|]$.
 
 
 \section{Linear algebra preliminary: SVD and PCA}
@@ -499,7 +556,7 @@ have no parameters.
 
 \begin{mydef}
 \label{def:neuron}
-Let $\sigma : \R -> \R$ be an activation function and let $f_{\w} : \R^n -> \R$
+Let $\sigma : \R \to \R$ be an activation function and let $f_{\w} : \R^n \to \R$
 be a \emph{parameterized} linear function. A \emph{neuron} $\nu$ is the
 parameterized function 
 $\nu =  \nu_{\w} \triangleq \sigma \circ
@@ -667,7 +724,6 @@ because we don't usually know what is the input/output value in these.
 
 \section{Loss functions}
 
-
 In the claim about neural networks being "universal" in terms of approximating
 function $f(\x)=\y$ with neural network $\phi(\x)$. We stated specifically
 convergence in terms of $l_2$ norm
@@ -753,7 +809,7 @@ sum and don't average over the dimensions will be cleared later when we get into
 variational inference.
 
 There is also a probabilistic way to interpret the total loss.
-We assume that the data points $\X, \Y$ were randomly sampled from the unknown
+We assume that the data points $\x, \y$ were randomly sampled from the unknown
 data distribution $P(\x, \y)$.
 Then equation~\ref{eq:NNbatchloss} can be reformulated as the expected 
 loss~\cite{bishop2006pattern}:
@@ -806,7 +862,38 @@ as a black box.
 
 \subsection{Training, validation and testing data sets}
 
+The data is partitioned into disjoint sets. The training set is used for the
+training of the model. The testing set is used for the final performance
+assessment. Sometimes a third subset, the validation set is used for tuning and
+tweaking the model during training. The point is that the model "doesn't know"
+the validation data because the weights are only trained on the training set,
+but the hyper-parameters are optimized based on the validation set.
+For example the validation set can be used for early
+stopping during the training.
+We didn't use a validation subset in our tests.
+Finally the assessment is performed on the 
+testing set which was completely held out during the training and
+hyper-parameter tuning.
+
+
 \subsection{Un/Supervised learning}
+
+In unsupervised learning one seeks to "learn" or infer the target set $\Y$ (for example
+category information) from $\X$ without seeing $\Y$ during training.
+For example in the case of MNIST we want to teach the model to distinguish
+10 categories of images corresponding to the $10$ digits, without having access
+to the digit tags in the training set.
+
+Supervised learning means the $\Y$ target information is fully accessible (every image
+is tagged with the digit it represents). This is a much simpler classification
+task.
+
+Semisupervised learning is the hybrid case of both, where the training set
+includes a small portion of known paired input/targets $(\x,\y)$ while for the
+rest of the training set we only have $\x$ input and need to infer $\y$.
+Semisupervised learning tasks often arise in natural situations. For example
+there may be a large image data set where only a portion of the images have been
+manually tagged.
 
 \section{Autoencoders}
 
@@ -857,6 +944,14 @@ The idea here is that the original high dimensional data can be embedded
 in a low dimensional space by the encoder. The decoder then can reconstruct the
 original data from the embedding.
 
+There are many variations of autoencoders. For example a "denoising" autoencoder is
+essentially that same model but it receives a "noisy" version of the input and
+tries to reconstruct the original clean version.
+We informally call the type of autoencoder of
+definition~\ref{def:autoencoder} which aims to learn the identity function 
+on the original input, and which is using the square error loss function, 
+a "vanilla" autoencoder. 
+
 %A typical loss function for the AE is usually the mean sum of squares (MSE)
 %$\mathcal{L}(X;\phi) = \frac{1}{N}\|X - \phi(X)\|_F^2 = \frac{1}{N}\|X - D \circ
 %E (X) \|_F^2$.
@@ -884,7 +979,6 @@ dimensionality reduction.
 \begin{figure}[!h]
 \begin{framed}
 \centering
-\label{fig:pcavsae}
 \begin{subfigure}[t]{0.45\textwidth}
 \includegraphics[width=0.95\textwidth]{images/pca.umap.mnist.png}
 \caption{MNIST: UMAP of the PCA}
@@ -895,8 +989,21 @@ dimensionality reduction.
 \end{subfigure}
 \end{framed}
 \caption{"vanilla" autoencoder compared with PCA, on the MNIST dataset}
+\label{fig:pcavae}
 \end{figure}
 
+Figure~\ref{fig:pcavae} shows on the left a
+UMAP~\cite{mcinnes2018umap} of the principle components of the testing subset of
+MNIST (images of hand written digits). On the left we see a UMAP of the latent
+space encoded by the encoder of a "vanilla" autoencoder with the square error loss
+function. The autoencoder was
+trained on the training set and didn't "see" the testing images during training.
+The results appear quite similar.
+
+
+%note: talk about autoencoder not being a good generative model, usually.
+%for one because we don't know how to sample from the latent space
+%like who is to tell if we should use uniform, or normal or whatever...
 
 \chapter{Variance inference and variational autoencoders}
 \section{Variational Inference}
@@ -911,63 +1018,76 @@ $\bv{X} = \{\bv{x}_1, \dots
 Each row $\x_i$ is thought of a realization of a random vector, which we also 
 denote as $\x_i$ (as explained in the notation section) and similarly $\X$
 represent both the set of r.vs as well as the realization itself.
+
 We assume that
 the $\bv{x}_i$'s are independent and identically distributes (i.i.d) random vectors
-with some distribution function $p(\x)$ and therefore for
+with some distribution function $\x \sim p(\x)$ and therefore for
 the entire dataset it holds that $p(\bv{X}) = \prod p(\bv{x}_i)$.
 
 \begin{mydef}
 \label{def:logevidence}
 Let $\bv{X} \in \R^{N \times n}$ be a data matrix and let $\{\bv{x}_i\}_1^n$ be its
 rows,
-which we assume to be i.i.d with some (unknown) distribution $p(\bv{x})$.
+which we assume to be i.i.d with some (unknown) distribution $\x \sim p(\bv{x})$.
 Then $\log p(\bv{X}) = \sum_1^N \log p(\bv{x}_i)$ is called the \emph{log evidence} of our
 data.
+
+$\frac{1}{N}\log p(\X)$ is the \emph{mean log evidence} (remember the
+mean-sum rule for data sets and
+batches~\ref{meansumrule}).
 \end{mydef}
 
-The r.vs $\bv{X}$ are high dimensional however
-we have some reason to believe that behind the scenes there are some hidden
-(latent), smaller dimensional, r.vs
-$\bv{Z} = \{\bv{z}_1 \dots \bv{z}_N\}$ that generate the observations $\bv{X}$.
-In other words we think that $\bv{X}$ is conditioned on $\bv{Z}$ and we can speak of
-the joint distribution $p(\bv{X},\bv{Z}) = p(\bv{X}|\bv{Z})p(\bv{Z})$.
-Because we assume i.i.d for both $\bv{X}$ and $\bv{Z}$ all the distributions factor
-over the individual samples multiplicatively, e.g.
-$p(\bv{X}|\bv{Z}) = \prod p(\bv{x}_i | \bv{z}_i)$,
-$p(\bv{X}) = \prod p(\bv{x}_i)$ and so forth. This makes working with log
-probabilities very easy.
+An observation r.v $\bv{x}$ is high dimensional however
+we have some reason to believe that behind the scenes there is some hidden
+(latent), smaller dimensional random vector $\z$ that generates it.
+%$\bv{Z} = \{\bv{z}_1 \dots \bv{z}_N\}$ that generate the observations $\bv{X}$.
+In other words we think that $\x$ is conditioned on $\z$ and we can speak of
+the joint distribution $p(\x,\z) = p(\x | \z)p(\z)$.
+%Because we assume i.i.d for both $\bv{X}$ and $\bv{Z}$ all the distributions factor
+%over the individual samples multiplicatively, e.g.
+%$p(\bv{X}|\bv{Z}) = \prod p(\bv{x}_i | \bv{z}_i)$,
+%$p(\bv{X}) = \prod p(\bv{x}_i)$ and so forth. This makes working with log
+%probabilities very easy.
 
 Suppose that we have a fully Bayesian model. In this case there are no
 parameters because the parameters are themselves stochastic variables with some
 suitable priors. We can therefore pack all the latent variables and stochastic
-parameters into one latent "meta variable" $\bv{Z} = (\bv{z}_1, \bv{z}_2, \dots )$,
-where each $\bv{z}_i$
-is some multidimensional r.v and possibly composed of several simpler r.vs (for
+parameters into one latent "meta variable" $\z$,
+%$\bv{Z} = (\bv{z}_1, \bv{z}_2, \dots )$,
+%where each $\bv{z}_i$
+which is some multidimensional r.v and possibly composed of several simpler r.vs (for
 example a categorical and a normal r.vs).
-We similarly pack all the observed variables into one meta variable $\bv{X}$.
-Together we have a distribution $p(\bv{X},\bv{Z})$ and the working assumption is that it
-is easy to factorize $p(\bv{X},\bv{Z}) = p(\bv{X}|\bv{Z})p(\bv{Z})$,
-however $p(\bv{Z}|\bv{X})$ is intractable and
-$p(\bv{X})$ is unknown.
+We similarly pack all the observed variables into one meta variable $\bv{x}$.
+Together we have a distribution $p(\bv{x},\bv{z})$ and the working assumption is that it
+is easy to factorize $p(\bv{x},\bv{z}) = p(\bv{x}|\bv{z})p(\bv{z})$,
+however $p(\bv{z}|\bv{x})$ is intractable and
+$p(\bv{x})$ is unknown.
 
 We are being Bayesian here so we consider $\bv{X} = (\bv{x}_1, \bv{x}_2, \dots)$ to be
 a constant a set of observations and we want to best explain $p(\bv{X})$ by finding as
 high as possible lower bound for it (or rather to $\log p(\bv{X})$, the \emph{log
 evidence}).
-A second goal is to approximate the intractable $p(\bv{Z}|\bv{X})$ by some simpler
-distribution $q(\bv{Z})$ taken from some family of distributions.
+A second goal is to approximate the intractable $p(\bv{z}|\bv{x})$ by some simpler
+distribution $q(\bv{z})$ taken from some family of distributions.
 
 \begin{mydef}
 Let $\bv{x},\bv{z}$ be random variables with joint
 distribution $p(\bv{x},\bv{z})$ and let $q(\bv{z})$ be any distribution.
+Let $(\X,\Z) = \{(\x_1,\z_1), \dots , (\x_N,\z_N)\}$
+be $N$ independent replications of $(\x,\z)$.
 The \emph{evidence lower bound (ELBO)} with respect to $p,q$ is:
 \begin{IEEEeqnarray}{C}
 \label{def:elbo}
 -\mathcal{L}(q,p,\x) \triangleq
 \int \log \frac{p(\bv{x},\bv{z})}{q(\bv{z})} d q(\bv{z}) \\
 \label{def:elboX}
--\mathcal{L}(q,p) \triangleq -\mathcal{L}(q,p,\X) = 
-\int \log \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})} d q(\bv{Z})
+%-\mathcal{L}(q,p) \triangleq - \mathcal{L}(q,p,\X) = 
+%\int \log \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})} d q(\bv{Z})
+-\LL(q,p) \triangleq 
+-\LL(q,p, \X) 
+= \frac{1}{N} \sum_1^N (-\LL(q,p,\x_i) \\ 
+\approx
+\E_{\x} [-\LL (q,p, \x)]
 \end{IEEEeqnarray}
 \end{mydef}
 
@@ -977,22 +1097,26 @@ The reason that we mark the ELBO with $-\LL$ is because we use the minus ELBO,
 $\LL$, as the 
 loss function for VAEs.
 
-The following equation shows that the \emph{ELBO} is a lower bound for the \emph{log
+The following equation shows that the \emph{ELBO} is a lower bound for the
+\emph{mean log
 evidence}.
 (using Jensen's inequality)
 
 \begin{equation}
 \label{eq:elbo}
 \begin{aligned}
-\log p(\bv{X}) &= \log \int p(\bv{X},\bv{Z}) d\bv{Z} 
-= \log \int \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})} q(\bv{Z})d\bv{Z} \\
-&= \log \int \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})}dq(\bv{Z}) 
-\geq \int \log \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})}dq(\bv{Z}) 
-\triangleq -\mathcal{L}(q,p,X) = -\mathcal{L}(q,p)
+\frac{1}{N} \log p(\bv{X}) &= \frac{1}{N} \log \int p(\bv{X},\bv{Z}) d\bv{Z} 
+= \frac{1}{N} \log \int \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})} q(\bv{Z})d\bv{Z} \\
+&=  \frac{1}{N} \log \int \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})}dq(\bv{Z}) 
+\geq  \frac{1}{N} \int \log \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})}dq(\bv{Z}) \\
+&= \frac{1}{N} \int \sum_1^N \log \frac{p(\x_i, \z_i)}{q(\z_i)}dq(\z_i) \\
+&= \frac{1}{N} \sum_1^N - \LL(q,p,\x_i)
+= -\mathcal{L}(q,p,X) \triangleq -\mathcal{L}(q,p)
 \end{aligned}
 \end{equation}
 
-In equation~\ref{eq:elbo} we found a lower bound $\mathcal{L}(q,p)$ for the log
+In equation~\ref{eq:elbo} we found a lower bound $-\mathcal{L}(q,p)$ for the
+mean log
 evidence $\log p(\bv{X})$, the \emph{ELBO}.
 Whatever distribution $q$ we put in ELBO will not be
 greater than the real log evidence so we are looking for the $q$ which
@@ -1003,18 +1127,18 @@ equivalent to minimizing $KL(q(\bv{Z}) \| p(\bv{Z}|\bv{X})$:
 
 \begin{equation}\label{eq:kl_bound}
 \begin{aligned}
--\mathcal{L}(q,p) &\triangleq \int \log \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})} d
-q(\bv{Z})
-= \int \log \frac{p(\bv{Z}|\bv{X})p(\bv{X})}{q(\bv{Z})} d q(\bv{Z}) \\
-&= \int \log p(\bv{X}) dq(\bv{Z}) - \int \log \frac{q(\bv{Z})}{p(\bv{Z}|\bv{X})}
-dq(\bv{Z}) 
-= \log p(\bv{X}) - KL(q(\bv{Z}) \| p(\bv{Z}|\bv{X})
+-\mathcal{L}(q,p,\x) &\triangleq \int \log \frac{p(\bv{x},\bv{z})}{q(\bv{z})} d
+q(\bv{z})
+= \int \log \frac{p(\bv{z}|\bv{x})p(\bv{x})}{q(\bv{z})} d q(\bv{z}) \\
+&= \int \log p(\bv{x}) dq(\bv{z}) - \int \log \frac{q(\bv{z})}{p(\bv{z}|\bv{x})}
+dq(\bv{z}) 
+= \log p(\bv{x}) - KL(q(\bv{z}) \| p(\bv{z}|\bv{x})
 \end{aligned}
 \end{equation}
 
 We can rewrite equation~\ref{eq:kl_bound} as:
 \begin{equation}\label{eq:elbokl}
-\log p(\bv{X}) = -\mathcal{L}(q,p) - KL(q(\bv{Z}) \| p(\bv{Z}|\bv{X}))
+\log p(\bv{x}) = -\mathcal{L}(q,p,\x) - KL(q(\bv{z}) \| p(\bv{z}|\bv{x}))
 \end{equation}
 
 Equation~\ref{eq:elbokl} shows that the ELBO minus the kl-divergence are constant
@@ -1040,49 +1164,50 @@ always non-negative) simultaneously maximizes the ELBO and vicer-versa.
 Our models will not be fully Bayesian, but rather parametrized.
 In this case let $\theta$ represent the set of parameters for $p$, and $\phi$
 the parameters for $q$. Meaning we are dealing with a family of distributions
-$p_{\theta}(x,z)$ and another family $q_{\phi}(z)$.
+$p_{\theta}(\x,\z)$ and another family $q_{\phi}(\z)$.
 
 For any $\theta$ and any $\phi$, the equations from the previous chapter hold
 also in the parametrize form, i.e 
-$\log p_{\theta}(x) =
--\mathcal{L}(q_{\phi},p_{\theta}) -
-KL(q_{\phi}(Z) \| p_{\theta}(Z|X)$.
+$\log p_{\theta}(\x) =
+-\mathcal{L}(q_{\phi},p_{\theta},\x) -
+KL(q_{\phi}(\z) \| p_{\theta}(\z|\x)$.
 
 We assume that we can only approach the "real" distribution using
-$\theta$ from below $\log p(X) \geq \log p_{\theta}(X)$.
+$\theta$ from below $\log p(\x) \geq \log p_{\theta}(\x)$.
 So together with equation~\ref{eq:elbo} we have
 
 \begin{equation}\label{eq:parelbo}
 \begin{aligned}
-(\forall \theta, \phi)\log p(X) & \geq \log p_{\theta}(X) \geq -\mathcal{L}(q_{\phi})
-= \int \frac{p_{\theta}(X,Z)}{q_{\phi}(Z)} dq_{\phi}(Z)
+(\forall \theta, \phi)\log p(\x) & \geq \log p_{\theta}(\x) 
+\geq -\mathcal{L}(q_{\phi}.p_{\theta},\x)
+= \int \frac{p_{\theta}(\x,\z)}{q_{\phi}(\z)} dq_{\phi}(\z)
 \end{aligned}
 \end{equation}
 
 And from equation~\ref{eq:elbokl} we again see that by finding the parameters
-$\phi$, $\theta$ that maximize the elbo we approach the real log evidence as much
+$\phi$, $\theta$ that maximize the ELBO we approach the real log evidence as much
 as we can within the limits of the parametrized family of distributions we use.
 
 \subsection{Rearranging the ELBO}
 Equations~\ref{eq:elbo} and~\ref{eq:kl_bound} were defined for any distribution
-$q(\Z)$ and in particular we are allowed to plug in a conditioned
-distribution $q(\Z|\X)$. That implies the existence of $q(\Z,\X)$ and $q(\X)$
-but we actually don't care about them. We condition everything on $\X$ but $\X$
+$q(\z)$ and in particular we are allowed to plug in a conditioned
+distribution $q(\z|\x)$. That implies the existence of $q(\z,\x)$ and $q(\x)$
+but we actually don't care about them. We condition everything on $\x$ but $\x$
 is treated as a given constant from a Bayesian view point and we only want to
-somehow make $q(\Z|\X)$ to closely approximate $p(\Z | \X)$.
+somehow make $q(\z|\x)$ to closely approximate $p(\z | \x)$.
 
-A second thing we need to achieve is to express the -ELBO in terms of $p(\X|\Z)$
-and $q(\Z|\X)$ rather than the joint distribution. To that end we need also the
-prior $p(\Z)$.
+A second thing we need to achieve is to express the -ELBO in terms of $p(\x|\z)$
+and $q(\z|\x)$ rather than the joint distribution. To that end we need also the
+prior $p(\z)$.
 
 %\begin{mydef}
 %The \emph{conditioned (on $\X$) ELBO} is
 \begin{equation}
 \begin{aligned}
-\mathcal{L}(q,p) &\triangleq \int -\log \frac{p(\X,\Z)}{q(\Z|\X)}dq(\Z|\X) 
-= \int -\log \frac{p(\X |\Z) p(\Z)}{q(\Z|\X)}dq(\Z|\X) \\
-&= \int -\log p(\X | \Z)dq(\Z|\X) + \int \log \frac{q(\Z|\X)}{p(\Z)}dq(\Z|\X) \\
-&= \int -\log p(\X | \Z)dq(\Z|\X) + KL(q(\Z|\X) \| p(\Z))
+\mathcal{L}(q,p,\x) &\triangleq \int -\log \frac{p(\x,\z)}{q(\z|\x)}dq(\z|\x) 
+= \int -\log \frac{p(\x |\z) p(\z)}{q(\z|\x)}dq(\z|\x) \\
+&= \int -\log p(\x | \z)dq(\z|\x) + \int \log \frac{q(\z|\x)}{p(\z)}dq(\z|\x) \\
+&= \int -\log p(\x | \z)dq(\z|\x) + KL(q(\z|\x) \| p(\z))
 \label{eq:elbo_conditioned}
 \end{aligned}
 \end{equation}
@@ -1097,28 +1222,12 @@ The KL term is seen as a regularization term.
 
 \subsection{Mean field approximation}
 Usually we treat the dimensions of $\x$, $\z$ etc. as independent.
-That means if $\x = (x_1, \dots, \x_n)$ is a r.v. in $\R^n$ 
-we assume that the $x_i$ are independent and therefore 
-$P(\x) = \prod_1^n P_i(x_i)$.
+That means if $\x = (\x_1, \dots, \x_n)$ is a r.v. in $\R^n$ 
+we assume that the $\x_i$ are independent and therefore 
+$P(\x) = \prod_1^n P_i(\x_i)$.
 Mean field approximation simplifies the implementation and speeds up the
 computation and has been the standard practice since the
 beginning of VAEs~\cite{kingma2013auto}.
-
-%\subsection{Thinking of the data as distribution}
-%We can think of any data point $\x_i \in X$, rather than being a deterministic
-%point, as if is a sample which comes from some distribution $p_i$.
-%For example if $\x_i$ is a vector of binary data, we can think of it as if it
-%was generated by some Bernoulli distribution. If the data is a in the
-%range$[0,1]$ we can think of every data point as a vector of Bernoulli 
-%probabilities rather than a concrete sample.
-%For other type of real data, we think of it as coming from a diagonal Gaussian
-%distribution, where we usually assume the variance is fixed $1$ or more 
-%generally that all the samples have some common variance $\sigma$.
-%
-%Similarly we can also treat the latent variable as coming from some distribution
-%rather than being deterministic. Actually that is what
-%equation~\ref{eq:elbo_conditioned}
-%is all about.
 
 \subsection{Using neural networks for the parametrization}
 In this text we deal with variational autoencoders (VAE).
@@ -1131,7 +1240,7 @@ $f_{\theta}(\z)$ which is
 used to define $P_{\theta}(x|z)$. For example, we can assume that $P_{\theta}$
 is a family of multivariate Gaussians and in this case $f_{\theta}(z) =
 (\mu(z), \Sigma(z))$. Meaning the encoder maps $z$ to the location vector and
-covariance matrice. The parameter $\theta$ in this case are the weights of the
+covariance matrix. The parameter $\theta$ in this case are the weights of the
 encoder neural network. 
 
 The decoder network is similarly defined as neural network $g_{\phi}(\x)$ which
@@ -1140,7 +1249,7 @@ represent the weights of the decoder.
 
 For the prior $p(z)$ we set some fixed prior distribution.
 
-Note that the the encoder network (similarly the decorer) is used to define a distribution over
+Note that the encoder network (similarly the decoder) is used to define a distribution over
 $\z \in \R^m$, but the encoder itself maps into some other space. 
 For example,
 to define a normal one Gaussian distribution (so over $\z \in \R$, the encoder
@@ -1255,7 +1364,8 @@ The left term is called the reconstruction error and the
 right term is called the regularization term or the kl-term.
 
 
-Lets suppose that we just want to use diagonal Gaussian distributions.
+Lets suppose that we just want to use diagonal Gaussian distributions (which is
+a type of mean field approximation).
 The advantage is that it is easy to compute them because we just sum over the
 dimensions:
 
@@ -1265,7 +1375,7 @@ dimensions:
 \sum_1^n \log \NN(\x_i ; \bv{\mu}_i, \bv{\sigma}_i)
 \end{equation}
 
-The dimension of the latent space is a significant hyper parameter of the vae
+The dimension of the latent space is a significant hyper parameter of the VAE
 model.
 Since we sum over the dimensions rather than averaging,
 the larger we let the dimension of the latent space $\z$ 
@@ -1275,9 +1385,9 @@ Moreover the dimension should also be appropriate in terms of the "real"
 dimensionality of the data.
 
 In the case of the vanilla VAE we choose $p(\z) = \NN(\z;0,1)$ (diagonal
-gaussian standard normal) for the prior and 
+Gaussian standard normal) for the prior and 
 $q(\z | \x) = \NN(\z ; \bv{\mu}(\x), \bv{\sigma}(\x))$ for the encoder.
-There is a closed form formula for KL-divergence between two diagonal gaussians
+There is a closed form formula for KL-divergence between two diagonal Gaussians
 so in this case we don't need to use Monte Carlo integration for the KL-term
 (we show it in one dimensions and for $k$ dimension in the diagonal case
 we sum over the dimensions:
@@ -1292,7 +1402,7 @@ KL(\NN(;\mu_1, \sigma_1) \| \NN(;\mu_2, \sigma_2)) =
 
 
 The reconstruction term is more tricky.
-Lets say we still want some sort of gaussian diagonal distribution for $\x$,
+Lets say we still want some sort of Gaussian diagonal distribution for $\x$,
 so $p(\x | \z) = \NN(\x ; \bv{\mu}(\z), \bv{\sigma}(\z))$.
 If we allow the decoder to create arbitrarily small variances, then the
 decoder will stop being stochastic and it becomes deterministic. 
@@ -1316,31 +1426,68 @@ non-stochastic decoder and meaningless
 encoding in the latent
 space.
 
+\subsection{VAE as an generalization of AE}
+Suppose that we take a $\sigma$-VAE as described above, and suppose that we hold
+$\sigma$ fixed.
+
+So the decoder is $p(\x | \z) = \NN(\x ; \mu(\z), \sigma)$ where $\mu(z)$ is a a
+function of $\z$ the decoder neural network. The decoder is $q(\z | \x) = \NN(\z
+; \mu(\x), \sigma(\x))$ For the kl-term we use the analytical solution and for
+the reconstruction error we use Monte Carlo integration with one sample. We can
+assume that the KL term is uniformly (with respect to $\x$) bounded by some
+constant $M$. We could also make sure that the encoder map is bounded but
+normally there is no reason for the encoder to take the mean or the variance to
+infinity during training as it would just increase the loss.
+
+Our -ELBO loss function is:
+\begin{equation}
+\begin{aligned}
+\LL(p,q, \x) = -\log \NN(\x; \mu(\z), \sigma) + KL(q(\z | \x) \| p(\z)) \\
+= \frac{1}{2}\|\frac{x - \mu(\z)}{\sigma}\|^2 + \log \sigma + KL(q(\z | \x) \| p(\z))
+\end{aligned}
+\label{eq:losss}
+\end{equation}
+
+Minimizing $\LL(p,q,\x)$ in equation~\ref{eq:losss} is equivalent to minimizing 
+$\sigma \LL(p,q,\x)$, and if we let $\sigma \to 0$ we get:
+\begin{equation}
+\begin{aligned}
+\lim_{\sigma \rightarrow 0} \LL(p,q, \x) \sigma 
+= \lim_{\sigma \to 0}[ -\log \NN(\x; \mu(\z), \sigma) \sigma + \sigma KL(q(\z |
+\x) \| p(\z))] \\
+= \lim_{\sigma \to 0} [\frac{1}{2}\|x - \mu(\z)\|^2 + \sigma \log \sigma  +
+\sigma KL(q(\z | \x) \| p(\z))] = 
+\frac{1}{2}\|x - \mu(\z)\|^2
+\end{aligned}
+\label{eq:lossss}
+\end{equation}
+
+So if we set $\sigma$ be arbitrary small, $p(\x | \z)$ become almost point mass
+and the KL term loses significance, effectively removing the constraint from the
+encoder. As a result the encoder itself
+will also become point mass in order to minimize the reconstruction term and
+disregarding the constraint on its distribution.
+Thus the VAE becomes essentially a vanilla auto encoder at the limit.
 
 \subsection{Graphical representation}
 
 It is both convenient as well as informative to include a graphical description
 of our probabilistic models by way of plate diagrams.
 
-%Please note that we drop the $\phi, \theta$ subscript but they are still there
-%in reality.
-
 In a plate diagram nodes represent random variables and arrows
 represent dependency.
 Figure~\ref{fig:vae_model} is a plate diagram of the VAE model with slight
-adaptation. We use doted arrows to represent the arrows of the inference model
+adaptation. We use doted arrows with round arrowhead to represent the inference model
 (encoder network),
-and regular arrows for the generative model (decoder network).
+and regular arrows for the generative model (decoder network) so the combined
+diagram describes the two networks together.
 Regular (triangular) arrowhead
-represents real probabilistic dependency whereas rounded arrows are reminding us
-that this is a separate network and also to somehow mark 
-it is not a complete probability because there is have no "prior" $q(\x)$ to
-speak of.
 
-Plate represents packing of $N$ i.i.ds since we have $N$ observations $X =
+Plate represents packing of $N$ i.i.d random vectors since we have $N$ observations $X =
 (x_i)_1^N$ and correspondingly $N$ latent variables $Z = (z_i)$.
 
-Shaded node represent known values (either observation of prior).
+Shaded node represent known values (either observations or the prior
+distribution).
 
 The squared $\zeta$ node represent some fixed parameter which describes the
 prior distribution of $p(\z) := p(\z | \zeta)$.
@@ -1562,9 +1709,28 @@ space but we can still notice some clustering.
 \end{figure}
 
 \chapter{Gaussian mixture model VAEs}
+%Theoretical background and 
+%with some examples from publications and my own tests.
 
-Theoretical background and 
-with some examples from publications and my own tests.
+\section{Motivation}
+
+\begin{figure}[!hb]
+\begin{framed}
+\centering
+\includegraphics[width=0.5\textwidth]{plots/dirichlet_gmm.gv.png}
+\caption{Dirichlet GMM model}
+\label{fig:dirgmm}
+\end{framed}
+\end{figure}
+
+\begin{figure}[!hb]
+\begin{framed}
+\centering
+\includegraphics[width=0.5\textwidth]{plots/dirichlet_gmm_cvae.gv.png}
+\caption{Dirichlet GMM conditional model}
+\label{fig:dirgmmcvae}
+\end{framed}
+\end{figure}
 
 
 \begin{figure}
