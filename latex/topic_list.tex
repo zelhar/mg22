@@ -73,6 +73,8 @@
 \newcommand{\y}{\mathbf{y}}
 \newcommand{\W}{\mathbf{W}}
 \newcommand{\w}{\mathbf{w}}
+\newcommand{\DD}{\mathbf{D}}
+\newcommand{\dd}{\mathbf{d}}
 \newcommand{\LL}{\mathcal{L}}
 \newcommand{\NN}{\mathcal{N}}
 %\newcommand{\B}{\{-1,1\}}
@@ -1353,7 +1355,7 @@ q_{\phi(\x)}(\z)$ and it maps
 $\z$ into a distribution over $\x$: $\z \mapsto p(\x|\z) = p_{\theta(\z)}(\x)$.
 
 The loss function associated with a VAE is minus ELBO. This means training
-the VAR maximizes equation~\ref{eq:elbo_conditioned} and therefore also
+the VAE maximizes equation~\ref{eq:elbo_conditioned} and therefore also
 the log evidence.
 
 To give a concrete example lets say that the distribution family for $q_{\phi}$ 
@@ -1377,9 +1379,9 @@ $p(\x | \z) = p_{\theta}(\x)$
 
 \subsection{Mean field approximation}
 Usually we treat the dimensions of $\x$, $\z$ etc. as independent.
-That means if $\x = (\x_1, \dots, \x_n)$ is a r.v. in $\R^n$ 
-we assume that the $\x_i$ are independent and therefore 
-$P(\x) = \prod_1^n P_i(\x_i)$.
+That means if $\x = (x_1, \dots, x_n)$ is a r.v. in $\R^n$ 
+we assume that the $x_i$ are independent and therefore 
+$P(\x) = \prod_1^n p_i(x_i)$.
 Mean field approximation simplifies the implementation and speeds up the
 computation and has been the standard practice since the
 beginning of VAEs~\cite{kingma2013auto}.
@@ -1434,13 +1436,15 @@ benefit~\cite{kingma2019introduction}.
 
 Suppose that we have a vanilla auto encoder $(\phi, \psi)$ and suppose that we
 want to generate synthetic data set that looks similar to the original data.
-We need to choose points $\z \R^m$ from the latent space and project back to
-observed space $\psi(\z)$. The question is then how to sample these $\z$?
-It's not immediately clear how to do this. Perhaps $\phi(X)$ can be be
-approximated by some distribution in $\z$ which we can sample from.
+We need to choose points $\z \in \R^m$ from the latent space and project back to
+observed space $\psi(\z) \in \R^n$. The question is then how to sample these $\z$?
+It's not immediately clear how to do this because we don't know what is the
+distribution in the latent space.
+%Perhaps $\phi(X)$ can be be
+%approximated by some distribution in $\z$ which we can sample from.
 
-If we use a VAE instead, we know that $\z$ should have a distribution pretty
-close to the prior $p(\z)$ which we can easily sample from.
+If we use a VAE instead, we know that $\z$ should have a distribution that is pretty
+close to the prior $p(\z)$, which we can easily sample from.
 Given a VAE $(E, D, p)$, synthetic data samples can be generated as follows:
 sample $\z \sim p(\z)$. Then given the samples in the latent space, sample
 from the decoded distribution $\x \sim D(\z)$, in the observed space.
@@ -1449,18 +1453,22 @@ from the decoded distribution $\x \sim D(\z)$, in the observed space.
 
 Unlike a vanilla autoencoder, a VAE doesn't deterministically encode input $\x$
 but rather maps it to a distribution $q(\z | \x)$.
-Given observation $\x$, we can non deterministically encode $\x$ into 
+We can use the distribution's mean $\mu(\x)$ as the
+encoding. 
+Given observation $\x$, we can deterministically encode $\x$ into 
 the latent space by taking the mean: $\x \mapsto \E [E(\x)]$. 
-However $q(\x | \z)$ is some kind of simple distribution for example 
-$\NN(\z: \mu(\x), \sigma(\x))$ so we can use the known mean $\mu(\x)$ as the
-encoding. Or we can deliberately add stockanticity and 
+Since $q(\x | \z)$ is some kind of parameterized distribution for example 
+$\NN(\z: \mu(\x), \sigma(\x))$  
+the mean is a known parameter of the distribution so we don't need to estimate
+it.
+Alternatively we can deliberately add stockanticity and 
 non-deterministically draw a $\z \sim q(\z | \x)$ from the encoded distribution
 and use it as the encoding.
 
 \subsection{Choosing the distribution types}
-This is of course another topic that can get arbitrarily complex.
+This is another topic that can get arbitrarily complex.
 
-Recall that our loss function (if we take just one sample $\z$ for intput $\x$
+Recall that our loss function in the case that we take just one sample $\z$ for input $\x$
 is:
 \begin{equation}
 \label{eq:vanillavaeloss}
@@ -1483,7 +1491,7 @@ dimensions:
 \begin{equation}
 \label{eq:diagnormal}
 \log \NN(\x ; \bv{\mu}, \bv{\sigma}) = 
-\sum_1^n \log \NN(\x_i ; \bv{\mu}_i, \bv{\sigma}_i)
+\sum_1^n \log \NN(x_i ; \mu_i, \sigma_i)
 \end{equation}
 
 The dimension of the latent space is a significant hyper parameter of the VAE
@@ -1674,6 +1682,7 @@ parameters and $\x$ packs up all the observed variables.
 We can describe a more complex distribution by unpacking them and describe the
 dependencies between them.
 This is done in the following way:
+\label{VAE-specs}
 \begin{enumerate}
 \item{} Define the set of observed random vectors $\x_1, \x_2, \dots \x_k$, and 
 the set of latent random vectors and stochastic parameters $\z_1, \dots \z_l$.
@@ -1830,6 +1839,71 @@ space but we can still notice some clustering.
 
 \section{Motivation}
 
+Suppose that we have data of type $(\x,y)$ which like in the CVAE case has numerical and 
+categorical information, but unlike in the CVAE section we don't have access to
+the categories $\y$, only to $\x$. 
+We are looking for a model that can partition
+$\X$ according to the true categories.
+This is a task of unsupervised learning which is much harder then classifying
+data with known targets $\Y$.
+
+The original data has a complex distribution. Not only is it high dimensional,
+but because the data belongs to distinct categories, it is natural to assume
+that $\x$ has mixture distribution.
+We would like to use a VAE with a latent space $\z$ and it too should have 
+mixture distribution. One challenge that needs to be sorted is how to define
+a prior distribution that is a mixture type without having access to the
+categorical information.
+
+One model which is called the Gaussian mixture model was proposed by 
+Dilokthanakul et.al~\cite{dilokthanakul2016deep} and we base our proposed model
+on their model with some adaptations and present it in the next section.
+
+\section{The GMMVAE model}
+
+We need to specify the generative model and the inference model as explained in
+section~\ref{VAE-specs}.
+We have just one type of observed random vector, $\x$ (the numerical data, for
+example corresponding to image if we deal with image dataset).
+
+We will certainly need a latent random vector $\y$ representing the categories 
+(in relaxes one-hot encoding). And we will need a random vector $\z$ to
+reconstruct $\x$ from.
+One way we could try is to make $p(\x | \z, \y)$ a mixture distribution, as the
+M2 model in~\cite{kingma2014semi}.
+
+We assume that $\x$ has some sort of Gaussian mixture distribution $p(\x|\y)$,
+but of course $\y$ is unknown. We will have a latent $\z$ and so $p(\x | \z)$
+will need to be 
+some sort of Gaussian mixture distribution. 
+Another random variable, $\w$ is used assist in creating the
+mixture in $\z$, 
+with $\z | \y$ having diagonal Gaussian distribution.
+Finally we use another random variable $\dd$ to
+create a "good" prior" which is a symmetric Dirichlet type, 
+for the categorical distribution $\y$.
+$\dd$ and $\w$ require some fixed prior distributions, whereas the priors for 
+$\y$ and $\z$ will be learned as we'll see.
+We have a hyper-parameter $\alpha$ which we use for the prior of $\dd$.
+$\w$ will have standard normal diagonal distribution as its prior.
+
+
+
+The generative process goes as follows:
+\begin{enumerate}
+\item{} draw from the prior $\w \sim p(\w) = \NN(\w;\bv{0},\bv{1})$
+\item{} draw a categorical distribution from the prior $\dd \sim p(\dd) = \text{Dir}(\alpha)$
+\item{} draw a category $\y \sim p(\y | \d) = \text{Cat}(\dd)$
+\item draw a latent $\z|\y \sim p(\z | \w,\y) = \NN(\z;\bv{\mu}(\w,\y), \bv{\sigma}(\w,\y)$
+\item{} draw observation $\x \sim p(\x | \z) = \NN(\x;\bv{\mu}(\z),
+\bv{\sigma}(\z))$
+\end{enumerate}
+
+
+
+
+
+
 \begin{figure}[!hb]
 \begin{framed}
 \centering
@@ -1869,9 +1943,9 @@ space but we can still notice some clustering.
 \end{framed}
 \end{figure}
 
-\subsection{Relation between AE and VAE}
+%\subsection{Relation between AE and VAE}
 
-\subsection{Conditional VAE}
+%\subsection{Conditional VAE}
 
 \chapter{Experiments and results}
 \section{Tests with MNIST and FMNIST}
