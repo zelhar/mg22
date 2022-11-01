@@ -3,6 +3,7 @@ digraph {
     rankdir=TB;
 		label=N; labeljust=r; labelloc=b;
         {rank = same; d; y; w; }
+        {rank = same; x; c; }
         d -> y
         y -> z;
         w -> z;
@@ -17,13 +18,20 @@ digraph {
 		y [label="y" shape=ellipse];
 		z [label="z" fillcolor=white shape=ellipse style=filled];
 		x [label="x" fillcolor=grey shape=ellipse style=filled];
+		c [label="c" fillcolor=grey shape=ellipse style=filled];
+        c -> z [style=dotted, arrowhead=dot];
+        c -> w [style=dotted, arrowhead=dot];
+        c -> x;
+        c -> w;
     }
     //rankdir=LR;
     //rankdir=BT;
     a -> d;
     n -> w;
+    e -> c;
     {rank=same; a; n;}
     a [label="α", shape=box, width=0.25,height=0.2,style=filled,];
     n [label="ζ", shape=box, width=0.25,height=0.2,style=filled, ];
+    e [label="η", shape=box, width=0.25,height=0.2,style=filled, ];
 }
 

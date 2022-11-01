@@ -133,6 +133,7 @@ punkt.
 \nocite{serre2001matrices}
 \nocite{kingma2013auto}
 \nocite{lotfollahi2018generative}
+\nocite{luecken2019current}
 
 \chapter*{Acknowledgement}
 punkt.\cite{kingma2013auto}
@@ -155,20 +156,84 @@ so-so--so---so
 %\section{Basic notations}
 %\section{Vectors, matrices and tensors}
 
-\section{Tensors, shape, axes, dimension}
-A scalar $x \in \R$ is an element of the field and not a vector.
-It has 0 dimension, $0$ axes and shape $(,)$,
-A vector $\x \in \R^n$ has $n$ dimensions and one axis. Its shape is $(n,)$.
-A matrix $\X \in \R^{m \times n}$ has $mn$ dimensions, 2 axes, and shape of $(m,n)$.
-The generalized entity with $0$ or more axes is called \emph{tensor}.
+\section{Tensors, shape, axis, dimension}
+In machine learning one often encounters data structures that have
+multi-dimensional \emph{shape} which we call \emph{tensors}.
+For example a 28 over 28 color image can be represented as
+a 3-dimensional shape ($28, 28, 3)$ representing height, width, and rgb
+color "channel". This creates some confusion as to what one means by dimensions.
+For example a vector $\x \in \R^5$ is represented as a 1 dimensional shape
+but it has $5$ \emph{dimensions in total}. Similarly the color image has a $3$ dimensional shape
+but it has $28 \cdot 28 \cdot 3$ dimesnions in total, 
+but it has $28$ dimensions on its first (and second) \emph{axis}, and $3$ dimesnions of
+its third axis. 
+
+A (real valued) \emph{tensor} is an element of a tensor product space, for exmaple
+the color image described above,
+$\x \in  \R^{28 \times 28 \times 3} 
+\triangleq \R^{28} \otimes \R^{28} \otimes \R^3$. 
+A \emph{tensor} has $0$ or more axes and it generalizes 
+scalar, vector, matrix and higher dimensional shaped entities.
+
 In Pytorch~\cite{pytorch2018pytorch} terminology dimension
 is used for the number of axes but I think it is
 inconsistent with the way dimension is used in mathematics with regards to vectors.
 
+\begin{mydef}
+\label{def:tensor}
+A \emph{scalar} $x \in \R$ is an element of the (real) field.
+It has $0$ \emph{dimensions}, $0$ \emph{axes} and \emph{shape} $(,)$.
+
+A \emph{vector} $\x \in \R^n$ has $n$ dimensions, $1$ axis, and sahpe $(n,)$.
+
+A matrix $\X \in \R^{m \times n}$ has $mn$ dimensions (in total), $2$ axes, and shape of $(m,n)$.
+Its first and second axes are said to be of dimensions $m$ and $n$ respectively.
+
+A tensor $\x \in \R^{n_1 \times \dots \times n_k}$
+has $\prod_1^k n_i$ dimensions, $k$ axes, and shape $(n_1, \dots, n_k)$.
+Its $i$'s axis is said to be of dimension $n_i$.
+\end{mydef}
+
+In practice a tensor $\x \in \R^{n_1 \times \dots \times n_k}$
+is represented as a $k$ dimensional array.
+We call its first axis the \emph{batch axis} or alternatively the \emph{row
+axis}. And $\x_i = \x[i]$, which is the $k-1$ dimensional sub-array with the first
+coordinate held fixed is called the $i$'th "row" of $\x$.
+Sometimes we want to represent a tensor $\x$ as a collections of tensors. For
+example it can represent a collection of several images. Each "row" then
+represents an image tensor.
+
+It may be that our data set comes not as one tensor but in several tensors.
+For example we might have a tensor $\x$ representing an ordered set of images,
+and a tensor $\y$ which represents the category of each image.
+Because they have different shapes they don't fit together in one tensor.
+However since they refer to the same entities (images) their first axes have equal
+dimensions. We use the notation $(\x, \y)$ to denote the matching pairs of
+image/category, implicitly requiring them to have equal dimensional first axis.
+
+If $\x,\y$ have the same number of axes and their dimensions are equal on all
+but the last axis then we can concatenate them by "stacking" $\y$ on top of $\x$
+along the last axis.
+
+\begin{mydef}
+\label{def:rowrep}
 If $\x$ is a tensor, $\x_i$ represents the $i$'th "row" of $\x$,
 and $\x = \{\x_1, \dots , \x_n\}$ is the \emph{row representation} or 
 \emph{batch
 representation} of $\x$.
+\end{mydef}
+
+\begin{mydef}
+\label{def:pairnotaion}
+Let $\x, \y$ be tensors whose first axes have equal dimensions, $n$. Then $(\x, \y)$
+is the set of ordered pairs $(\x,\y) \triangleq \{(\x_i,\y_i) : i=1 \to n\}$.
+\end{mydef}
+
+\begin{mydef}
+\label{def:concat}
+If $\x,\y$ have the same number of axes and equal dimension on all but their last axis, 
+the $(\x|\y)$ is their concatenation on the last axis. 
+\end{mydef}
 
 \section{samples, batches, mean-sum rule}
 
@@ -233,7 +298,7 @@ For example $\{\x, \y\}$ represents a matrix whose \textbf{rows} are $\x$ and $\
 (as row vectors), which alternatively could be represented as
 $(\x, \y)^T$.
 
-$(\X,\Y)$ represents
+$(\X,\Y)$ or $(\X | \Y)$ represent
 concatenation of two matrices which implicitly means they have the same number
 of rows.
 
@@ -260,13 +325,14 @@ are more general $g:\R^n \to \R^m$. When we say that a map (or function) $\phi
 :\R^n \to \R^m$ is \emph{parameterized}, it means that implicitly has additional 
 variables that we treat as parameters $\phi_{\w}(\x) = \phi(\x, \w)$ where $\x \in \R^n$
 and $\w$ is the parameter set which we don't always specify its domain and we may not
-always subscript $\phi$ with it.
+always subscript $\phi$ with it. The parameterized map $\phi$ itself may be
+identified with its parameter set and then both are designated with $\phi$.
 
 In the context of neural networks, when we say \emph{linear} map, we actually mean an
 \emph{affine} map.
-An affine map $f(x_1 \dots x_n)$ can always as linear map with one extra variable 
+An affine map $f(x_1 \dots x_n)$ can always be represented as a linear map with one extra variable 
 which is held fixed $x_0 \equiv 1$: $f(x_0, \dots x_n) = b + a_1 x_1 + \dots a_n
-x_n$. $b$ is called the \emph{bias} of the map.
+x_n$. We call $b$ the \emph{bias} of the linear map $f$.
 \label{affinelinear}
 
 \section{Data types}
@@ -526,7 +592,7 @@ which is the class of functions that are comprised from "neurons".
 \section{Neurons}
 
 So what a "neuron"?. 
-Inspired from biology, a \emph{neuron} is a many to one ($\R^n \to \R$) parameterized
+Inspired from biology, a \emph{neuron} is a many--to--one ($\R^n \to \R$) parameterized
 function which
 "integrates" the input with a linear, or affine~(see~remark~\ref{affinelinear})
 function, and 
@@ -546,6 +612,8 @@ An \emph{activation function} $\sigma : \R \to \R$ is any one of the following f
 $x \mapsto 1$ (constant), $x \mapsto x$ (identity)
 $ x \mapsto \frac{e^x}{1 + e^x}$ (sigmoid), and $x \mapsto \max(0,x)$ (ReLU).
 
+$\sigma$ can be applied on tensors by element-wise application.
+For example
 If $\x = (x_1, \dots x_n) \in \R^n$ then $\sigma(\x)$ is the element-wise application
 $\sigma(\x) \triangleq (\sigma(x_1), \dots , \sigma(x_n))$.
 \end{mydef}
@@ -740,7 +808,7 @@ try to minimize the total error.
 \label{def:lossfunc}
 Let $\phi :\R^n \to \R^m$ be a neural network.
 A \textit{loss function} is a differentiable
-function $\mathcal{L} : \R^{m+m} \to \R$. 
+function $\mathcal{L} : \R^{m}\oplus\R^m \to \R$. 
 With "distance-like quality".
 \end{mydef}
 
@@ -780,7 +848,8 @@ Batch $\x = \{\x_1, \dots \x_b\} \in \R^{b \times n}$ (row notation)
 represents a subset of $b$ samples out of the total of $N$ samples in the
 dataset.
 Extending $\phi$ to operate on batches is trivial.
-$\phi(\x) = \{\phi(\x_i)\}$ is the matrix where $\phi$ is applied on the rows of the bath.
+$\phi(\x) = \{\phi(\x_i)\}$ is the matrix where $\phi$ is applied on the rows of
+the batch.
 Given an input batch $\x$ and corresponding target batch of $\y$,
 We extend the loss function to batches by averaging over the batch:
 $\mathcal{L}(\phi(\x), \y) \triangleq \frac{1}{b} 
@@ -796,7 +865,7 @@ notation)
 target batch.
 Then $\phi$ and $\mathcal{L}$ \emph{extended} over batches are:
 \begin{IEEEeqnarray}{C}
-\phi(\bv{x}) \triangleq \{\phi(\bv{x}_i)\}_{i=1}^m \in \R^{b \times m}\\
+\phi(\bv{x}) \triangleq \{\phi(\bv{x}_i)\}_{i=1}^b \in \R^{b \times m}\\
 \label{eq:NNbatch}
 \mathcal{L}(\phi(\x), \y) \triangleq \frac{1}{b}\sum_{i=1}^b \mathcal{L}(\phi(\x_i), \y_i) \in \R
 \label{eq:NNbatchloss}
@@ -1043,6 +1112,8 @@ we have some reason to believe that behind the scenes there is some hidden
 %$\bv{Z} = \{\bv{z}_1 \dots \bv{z}_N\}$ that generate the observations $\bv{X}$.
 In other words we think that $\x$ is conditioned on $\z$ and we can speak of
 the joint distribution $p(\x,\z) = p(\x | \z)p(\z)$.
+And again $\x_i$ only depends on $\z_i$ so everything factors nicely, e.g. 
+$p(\X | \Z) = \prod_i p(\x_i | \z_i)$.
 %Because we assume i.i.d for both $\bv{X}$ and $\bv{Z}$ all the distributions factor
 %over the individual samples multiplicatively, e.g.
 %$p(\bv{X}|\bv{Z}) = \prod p(\bv{x}_i | \bv{z}_i)$,
@@ -1063,7 +1134,8 @@ is easy to factorize $p(\bv{x},\bv{z}) = p(\bv{x}|\bv{z})p(\bv{z})$,
 however $p(\bv{z}|\bv{x})$ is intractable and
 $p(\bv{x})$ is unknown.
 
-We are being Bayesian here so we consider $\bv{X} = (\bv{x}_1, \bv{x}_2, \dots)$ to be
+We are being Bayesian here so we consider $\bv{X} = \{\bv{x}_1, \bv{x}_2, \dots
+\}$ to be
 a constant a set of observations and we want to best explain $p(\bv{X})$ by finding as
 high as possible lower bound for it (or rather to $\log p(\bv{X})$, the \emph{log
 evidence}).
@@ -1117,12 +1189,12 @@ evidence}.
 
 In equation~\ref{eq:elbo} we found a lower bound $-\mathcal{L}(q,p)$ for the
 mean log
-evidence $\log p(\bv{X})$, the \emph{ELBO}.
+evidence $\log p(\bv{X})/N$, the \emph{ELBO}.
 Whatever distribution $q$ we put in ELBO will not be
 greater than the real log evidence so we are looking for the $q$ which
 \textbf{maximizes} it.
 
-Now we show that maximizing the ELBO actually obtains the log evidence and it is
+Now we show that maximizing the ELBO actually obtains the mean log evidence and it is
 equivalent to minimizing $KL(q(\bv{Z}) \| p(\bv{Z}|\bv{X})$:
 
 \begin{equation}\label{eq:kl_bound}
@@ -1162,9 +1234,12 @@ always non-negative) simultaneously maximizes the ELBO and vicer-versa.
 \subsection{Adding parameters}
 
 Our models will not be fully Bayesian, but rather parametrized.
-In this case let $\theta$ represent the set of parameters for $p$, and $\phi$
-the parameters for $q$. Meaning we are dealing with a family of distributions
-$p_{\theta}(\x,\z)$ and another family $q_{\phi}(\z)$.
+Suppose that the $p$ distribution over $\x,\z$ belongs to some parametrized family of
+distributions $p_{\theta}(\x)$ and the $q$ distribution over $\z$ belongs to another
+family $q_{\phi}(\z)$. In a fully Bayesian model we would make $\theta$ and
+$\phi$ stochastic parameters and give them appropriate prior distributions, but
+with the VAE we leave them as parameters that we determine with neural network
+as will shortly be explained.
 
 For any $\theta$ and any $\phi$, the equations from the previous chapter hold
 also in the parametrize form, i.e 
@@ -1220,15 +1295,6 @@ the term $\int \log p(\X | \Z)dq(\Z|\X)$ (which we call the reconstruction term)
 and making the KL-term small.
 The KL term is seen as a regularization term.
 
-\subsection{Mean field approximation}
-Usually we treat the dimensions of $\x$, $\z$ etc. as independent.
-That means if $\x = (\x_1, \dots, \x_n)$ is a r.v. in $\R^n$ 
-we assume that the $\x_i$ are independent and therefore 
-$P(\x) = \prod_1^n P_i(\x_i)$.
-Mean field approximation simplifies the implementation and speeds up the
-computation and has been the standard practice since the
-beginning of VAEs~\cite{kingma2013auto}.
-
 \subsection{Using neural networks for the parametrization}
 In this text we deal with variational autoencoders (VAE).
 A VAE is a neural network which is used to define and optimize the parameters
@@ -1237,7 +1303,7 @@ and we train the network to maximize equation~\ref{eq:elbo_conditioned}.
 
 Specifically the encoder part of the network is a feed forward neural network 
 $f_{\theta}(\z)$ which is
-used to define $P_{\theta}(x|z)$. For example, we can assume that $P_{\theta}$
+used to define the distribution $p_{\theta}(x|z)$. For example, we can assume that $p_{\theta}$
 is a family of multivariate Gaussians and in this case $f_{\theta}(z) =
 (\mu(z), \Sigma(z))$. Meaning the encoder maps $z$ to the location vector and
 covariance matrix. The parameter $\theta$ in this case are the weights of the
@@ -1278,17 +1344,46 @@ space}, and $\R^n$ (or more generally the domain of the encoder) is called
 $p$ is called \emph{the prior distribution of the latent space}.
 \end{mydef}
 
-
-While an autoencoder works on deterministic data, 
-with the encoder mapping input $\x \mapsto \z$ and the decoder then maps the
-latent space $\z \mapsto \hat{\x}$ to the reconstruction, a VAE does
+An autoencoder works deterministically, where 
+the encoder mapping input $\x \mapsto \z$ and the decoder then maps the
+latent space $\z \mapsto \hat{\x}$ to the reconstruction. A VAE does
 basically the same thing but non-deterministically.
-It maps $\x$ into a distribution over $\z$: $\x \mapsto q(\z|\x)$ and it maps
-$\z$ into a distribution over $\x$, $\z \mapsto p(\x|\z)$.
+It maps $\x$ into a distribution over $\z$: $\x \mapsto q(\z|\x) =
+q_{\phi(\x)}(\z)$ and it maps
+$\z$ into a distribution over $\x$: $\z \mapsto p(\x|\z) = p_{\theta(\z)}(\x)$.
 
 The loss function associated with a VAE is minus ELBO. This means training
 the VAR maximizes equation~\ref{eq:elbo_conditioned} and therefore also
 the log evidence.
+
+To give a concrete example lets say that the distribution family for $q_{\phi}$ 
+is the diagonal normal distribution.
+We can set the parameter domains $\Phi = \R^m \oplus \R^m$. The means can be any
+real vector, but the variances are non-negative. We can either restrict the
+encoder to be non-negative on the variance-domain, or we can agree to use the
+log-variance as the second parameter, which is then unconstrained.
+
+We identify $q(\z | \x)$ with the encoder but technically what it means is that 
+the encoder network maps $\x$ into the distribution parameters $E(\x) = \phi(\x)
+\in \Phi$;
+in the case we use diagonal normal distribution $\phi(\x) = (\mu(\x), \sigma(\x))$
+. Thus we defined a distribution over $\z$ by using $\x$ to map into
+the parameter domain: $q(\z | \x) = q_{\phi(x)}(\z)$
+
+Similarly we call $p(\x | \z)$ the decoder although it is
+technically the distribution defined by the decoder. $D(\z) = \theta(\z)$:
+$p(\x | \z) = p_{\theta}(\x)$
+
+
+\subsection{Mean field approximation}
+Usually we treat the dimensions of $\x$, $\z$ etc. as independent.
+That means if $\x = (\x_1, \dots, \x_n)$ is a r.v. in $\R^n$ 
+we assume that the $\x_i$ are independent and therefore 
+$P(\x) = \prod_1^n P_i(\x_i)$.
+Mean field approximation simplifies the implementation and speeds up the
+computation and has been the standard practice since the
+beginning of VAEs~\cite{kingma2013auto}.
+
 
 \subsection{Computing the ELBO}
 It may not be immediately clear how to how to compute the integral in the ELBO function. 
@@ -1335,16 +1430,32 @@ batches so for a given batch we are taking many samples $\z$.
 Experimental data shows that taking larger samples usually brings little
 benefit~\cite{kingma2019introduction}.
 
-\subsection{using the decoder as data generator encoder for dimensionality
-reduction}
-given a VAE $(E, D, p)$, synthetic data samples can be generated as follows:
+\subsection{Using the decoder for data generation}
+
+Suppose that we have a vanilla auto encoder $(\phi, \psi)$ and suppose that we
+want to generate synthetic data set that looks similar to the original data.
+We need to choose points $\z \R^m$ from the latent space and project back to
+observed space $\psi(\z)$. The question is then how to sample these $\z$?
+It's not immediately clear how to do this. Perhaps $\phi(X)$ can be be
+approximated by some distribution in $\z$ which we can sample from.
+
+If we use a VAE instead, we know that $\z$ should have a distribution pretty
+close to the prior $p(\z)$ which we can easily sample from.
+Given a VAE $(E, D, p)$, synthetic data samples can be generated as follows:
 sample $\z \sim p(\z)$. Then given the samples in the latent space, sample
 from the decoded distribution $\x \sim D(\z)$, in the observed space.
 
+\subsection{Encoding data in the latest space with a VAE}
+
+Unlike a vanilla autoencoder, a VAE doesn't deterministically encode input $\x$
+but rather maps it to a distribution $q(\z | \x)$.
 Given observation $\x$, we can non deterministically encode $\x$ into 
-the latent space by taking the mean: $\x \mapsto \E [E(\x)]$. Or we can
-non-deterministically draw $\z$ from the encoded distribution:
-$\x \mapsto \z \sim E(\x)$.
+the latent space by taking the mean: $\x \mapsto \E [E(\x)]$. 
+However $q(\x | \z)$ is some kind of simple distribution for example 
+$\NN(\z: \mu(\x), \sigma(\x))$ so we can use the known mean $\mu(\x)$ as the
+encoding. Or we can deliberately add stockanticity and 
+non-deterministically draw a $\z \sim q(\z | \x)$ from the encoded distribution
+and use it as the encoding.
 
 \subsection{Choosing the distribution types}
 This is of course another topic that can get arbitrarily complex.
@@ -1426,7 +1537,7 @@ non-stochastic decoder and meaningless
 encoding in the latent
 space.
 
-\subsection{VAE as an generalization of AE}
+\subsection{VAE as a generalization of AE}
 Suppose that we take a $\sigma$-VAE as described above, and suppose that we hold
 $\sigma$ fixed.
 
@@ -1570,7 +1681,7 @@ the set of latent random vectors and stochastic parameters $\z_1, \dots \z_l$.
 \dots , \z_l)$
 \item{} Specify how to factor the inference model $q(\z_1 \dots \z_l | \x1,
 \dots \x_k)$
-\item{} Choose appropriate priors $p(z_i)$ and
+\item{} Choose appropriate priors $p(\z_i)$ and
 \item{} Choose appropriate distribution families for the $\x_i$ and $\z_i$,
 and choose priors $p(\z_i)$.
 \end{enumerate}
@@ -1589,12 +1700,17 @@ The idea here is that because we have different categories, we will have some
 type of a mixture of distributions.
 
 Lets specify the generative model $p(\x, \z, c)$. 
-We can factor it "arbitrarily" but the choice may make meaningful different in
-the result. Luckily in this case there aren't too many
-ways to do that.
+We can factor it "arbitrarily" however the choice may make a significant
+difference on
+the result. In this case there aren't too many
+ways to factor.
 We can factor as $p(\x, \z, c) = p(\x | \z, c)p(\z | c)p(c)$ which mean $\x$ is
 directly dependent on both $\z$ and $c$.
-We can opt for a model where given $\z$, $\x$ and $c$ are independent. 
+But suppose we assume that 
+$\x$ and $c$ are conditionally independent given $\z$, so we 
+set: $p(\x, \z, c) = p(\x | \z)p(\z | c)p(c)$
+We call $p(\z | c)$ a "learned prior" of $\z$ since it is not fixed like in the
+VAE case but rather the decoder maps the categorical $c$ into some distribution.
 
 As for the inference model (encoder), given the observation $\x$ and $c$ it will determine
 our only latent variable $\z$, in other words $q(\z | \x, c)$ is the inference
@@ -1630,7 +1746,7 @@ which according to our factorization becomes:
 Since the $\z$ prior depends on the category, $p(\z | c)$, it should be some
 sort of "blobs" mixture type of distribution.
 The inference model is just $q(\z | \x,c)$. The regularization kl-term tries
-to impose $q(\z | \x, c)$ to be close to $p(z | c)$, so if all works well 
+to impose $q(\z | \x, c)$ to be close to $p(\z | c)$, so if all works well 
 $q(\z | \x, c)$ should look like a mixture distribution ("blobs").
 
 Now for concrete choice of distribution families:
