@@ -411,15 +411,6 @@ matrix $\Y$. It means they have must the same number of rows. And when we speak 
 paired input/target $\x,\y$ it means some $(\x,\y) \in (\X,\Y)$ so it should be
 clear they belong to the same sample (row).
 
-%\begin{mydef}
-%\label{paired data}
-%Let $\X = \{\x_i\}_1^N,\quad \Y = \{\y_i\}_1^N$ be two matrices in row noataion
-%with the same number of rows $N$. Then
-%\begin{equation}
-%(\X,\Y) \triangleq \{(\x_i,\y_i)\}_1^N
-%\end{equation}
-%\end{mydef}
-
 \subsection{Probabilistic interpretation of the data}
 Suppose that we have a data matrix $\X = \{\x_1, \dots , \x_N\}$.
 We think of $\X$ as a set of $N$ independent samples, all drawn from the same
@@ -1023,16 +1014,6 @@ definition~\ref{def:autoencoder} which aims to learn the identity function
 on the original input, and which is using the square error loss function, 
 a "vanilla" autoencoder. 
 
-%A typical loss function for the AE is usually the mean sum of squares (MSE)
-%$\mathcal{L}(X;\phi) = \frac{1}{N}\|X - \phi(X)\|_F^2 = \frac{1}{N}\|X - D \circ
-%E (X) \|_F^2$.
-
-%Note that the MSE can be interpreted probabilitically, if we assume our input
-%comes from a random diagonal Gaussian with constant unit variant, we can interpret
-%$D(E(X)) = \mu_x$ and the mean square error is $\log \mathcal{N}(x ; mu_x, 1)$
-%(up to some scaling factor). Where $\log \mathcal{N}(\cdot ; \mu_x, 1)$ is the 
-%log-density function for diagonal Gaussian with mean $\mu_x$ and unit variance. 
-
 \subsection{Relation between PCA and AE}
 For \textbf{centered} data, meaning every variable (column of $\bv{X}$)
 has a sample mean of $0$, the first $k \leq \text{rank}(\bv{X})$ principle components
@@ -1071,11 +1052,6 @@ function. The autoencoder was
 trained on the training set and didn't "see" the testing images during training.
 The results appear quite similar.
 
-
-%note: talk about autoencoder not being a good generative model, usually.
-%for one because we don't know how to sample from the latent space
-%like who is to tell if we should use uniform, or normal or whatever...
-
 \chapter{Variance inference and variational autoencoders}
 \section{Variational Inference}
 
@@ -1111,23 +1087,15 @@ batches~\ref{meansumrule}).
 An observation r.v $\bv{x}$ is high dimensional however
 we have some reason to believe that behind the scenes there is some hidden
 (latent), smaller dimensional random vector $\z$ that generates it.
-%$\bv{Z} = \{\bv{z}_1 \dots \bv{z}_N\}$ that generate the observations $\bv{X}$.
 In other words we think that $\x$ is conditioned on $\z$ and we can speak of
 the joint distribution $p(\x,\z) = p(\x | \z)p(\z)$.
 And again $\x_i$ only depends on $\z_i$ so everything factors nicely, e.g. 
 $p(\X | \Z) = \prod_i p(\x_i | \z_i)$.
-%Because we assume i.i.d for both $\bv{X}$ and $\bv{Z}$ all the distributions factor
-%over the individual samples multiplicatively, e.g.
-%$p(\bv{X}|\bv{Z}) = \prod p(\bv{x}_i | \bv{z}_i)$,
-%$p(\bv{X}) = \prod p(\bv{x}_i)$ and so forth. This makes working with log
-%probabilities very easy.
 
 Suppose that we have a fully Bayesian model. In this case there are no
 parameters because the parameters are themselves stochastic variables with some
 suitable priors. We can therefore pack all the latent variables and stochastic
 parameters into one latent "meta variable" $\z$,
-%$\bv{Z} = (\bv{z}_1, \bv{z}_2, \dots )$,
-%where each $\bv{z}_i$
 which is some multidimensional r.v and possibly composed of several simpler r.vs (for
 example a categorical and a normal r.vs).
 We similarly pack all the observed variables into one meta variable $\bv{x}$.
@@ -1155,8 +1123,6 @@ The \emph{evidence lower bound (ELBO)} with respect to $p,q$ is:
 -\mathcal{L}(q,p,\x) \triangleq
 \int \log \frac{p(\bv{x},\bv{z})}{q(\bv{z})} d q(\bv{z}) \\
 \label{def:elboX}
-%-\mathcal{L}(q,p) \triangleq - \mathcal{L}(q,p,\X) = 
-%\int \log \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})} d q(\bv{Z})
 -\LL(q,p) \triangleq 
 -\LL(q,p, \X) 
 = \frac{1}{N} \sum_1^N (-\LL(q,p,\x_i) \\ 
@@ -1218,19 +1184,6 @@ We can rewrite equation~\ref{eq:kl_bound} as:
 Equation~\ref{eq:elbokl} shows that the ELBO minus the kl-divergence are constant
 and equal the log evidence. Therefore minimizing the kl-divergence (which is
 always non-negative) simultaneously maximizes the ELBO and vicer-versa.
-
-%In reality we can't search in the set of \textbf{all} possible distributions 
-%$q(\bv{Z})$. Instead we limit our search to some parameterized family of simple distributions
-%$\{q_\alpha(\bv{Z})\}_{\alpha}$ where $\alpha$ is the parameter set. For a simple
-%one dimensional concrete example, we can consider the set of all
-%Gaussian distributions $\{\mathcal{N}(\bv{z} ; \mu, \sigma)\}_{\mu,\sigma}$.
-%
-%The task therefore is to use the data $\bv{X}$ to find the best parameter 
-%$\hat\alpha$ that maximizes $\mathcal{L}(q_{\alpha})$:
-%\begin{equation}
-%\label{eq:alphahat}
-%\hat\alpha \triangleq \text{arg max}_{\alpha}(\mathcal{L}(q_{\alpha},p))
-%\end{equation}
 
 \section{Variational Autoencoder}
 \subsection{Adding parameters}
@@ -1440,8 +1393,6 @@ We need to choose points $\z \in \R^m$ from the latent space and project back to
 observed space $\psi(\z) \in \R^n$. The question is then how to sample these $\z$?
 It's not immediately clear how to do this because we don't know what is the
 distribution in the latent space.
-%Perhaps $\phi(X)$ can be be
-%approximated by some distribution in $\z$ which we can sample from.
 
 If we use a VAE instead, we know that $\z$ should have a distribution that is pretty
 close to the prior $p(\z)$, which we can easily sample from.
@@ -1517,8 +1468,6 @@ KL(\NN(;\mu_1, \sigma_1) \| \NN(;\mu_2, \sigma_2)) =
 -\frac{1}{2} + \log \frac{\sigma_2}{\sigma_1}
 + \frac{\sigma_1^2 + (\mu_1 - \mu_2)^2}{2 \sigma_2^2}
 \end{equation}
-
-
 
 The reconstruction term is more tricky.
 Lets say we still want some sort of Gaussian diagonal distribution for $\x$,
@@ -1784,10 +1733,6 @@ An example for such use-case is if we have for example several batches of data,
 for the same type of data but from different experiment. In this case we can use
 a CVAE model with fixed prior to reduce the batch effect.
 
-%MEMO: add examples with CVAE on MNIST. one with learned prior for mixture
-%latent, one with fixed prior for batch effect reduction, one vanilla VAE.
-%plots of the umaps...
-
 \begin{figure}[!h]
 \begin{framed}
 \centering
@@ -1834,9 +1779,6 @@ space but we can still notice some clustering.
 \end{figure}
 
 \chapter{Gaussian mixture model VAEs}
-%Theoretical background and 
-%with some examples from publications and my own tests.
-
 \section{Motivation}
 
 Suppose that we have data of type $(\x,\y)$ which like in the CVAE case has numerical and 
@@ -1850,69 +1792,182 @@ data with known targets $\Y$.
 The original data has a complex distribution. Not only is it high dimensional,
 but because the data belongs to distinct categories, it is natural to assume
 that $\x$ has mixture distribution.
-We would like to use a VAE with a latent space $\z$ and it too should have 
-mixture distribution. One challenge that needs to be sorted is how to define
-a prior distribution that is a mixture type without having access to the
-categorical information.
 
-One model which is called the Gaussian mixture model was proposed by 
-Dilokthanakul et.al~\cite{dilokthanakul2016deep} and we base our proposed model
-on their model with some adaptations and present it in the next section.
+We want to create some mixture distribution, where the inferred category random
+variable $\y$ functions as the component selector. We could try to directly
+create the mixture $p(\x | \z, \y)$ in the $\x$ space, as the M2 model
+in~\cite{kingma2014semi}.
+The other option, following the Gaussian mixture model proposed by
+Dilokthanakul et.al~\cite{dilokthanakul2016deep} and which base our model
+is to create a mixture prior distribution $p(\z | \w, \y)$ on the lower
+dimensional latent $\z$ space.
+
+There are several advantages to doing this. For one, we are interested in
+dimensionality reduction and not just unsupervised classification, in that
+case it makes sense to create a mixture distribution in the latent space which
+we can than plot for example with UMAP.
+A second reason is that perhaps it is easier to create a mixture Gaussian on
+the simpler, lower dimensional space $\z$ than on the $\x$ space where the data
+probably occupies a complex hyper-surface.
+
+%We need to specify the generative model and the inference model as explained in
+%section~\ref{VAE-specs}.
+%We have just one type of observed random vector, $\x$ (the numerical data, for
+%example corresponding to image if we deal with image dataset).
+%
+%We will certainly need a latent random vector $\y$ representing the categories 
+%(in relaxes one-hot encoding). And we will need a random vector $\z$ to
+%reconstruct $\x$ from.
+%Instead we'll add another latent variable $\w$, and create a mixture
+%distribution in $\z$, $p(\z | \w, \y)$. Then reconstruct $\x$ just from $\z$
+%like in a vanilla VAE.
+
+\begin{figure}[!h]
+\begin{framed}
+\centering
+\begin{subfigure}[b]{0.4\textwidth}
+\includegraphics[width=\textwidth]{plots/mm.gv.png}
+\caption{"vanilla" Gauss mixture model with fixed centroids.}
+\label{fig:vanillamix}
+\end{subfigure}
+\begin{subfigure}[t]{0.4\textwidth}
+\includegraphics[width=\textwidth]{plots/mmp.gv.png}
+\caption{a more complex mixture where the centroids are moved into the plate.}
+\label{fig:platemix}
+\end{subfigure}
+\caption{}
+\label{fig:mixturemodels}
+\end{framed}
+\end{figure}
+
+Figure~\ref{fig:vanillamix} describes the usual mixture model. The components'
+centroids, $\bv{\mu} = (\bv{\mu}_1, \dots \bv{\mu}_k)$, its covariances,
+$\bv{\Sigma}$, 
+and the categorical selection
+distribution $\pi$, are outside the plate.
+It means we draw the centroids, variances, and the categorical distribution
+once, and use them for all the samples inside the plate.
+That constraints each category to be
+distributed around some fixed center which is pretty restrictive and perhaps too
+much so. By moving the random vectors inside the plate
+(figure~\ref{fig:platemix}), we create a much more flexible distribution.
+
+\begin{figure}[!h]
+\begin{framed}
+\centering
+\begin{subfigure}[b]{0.4\textwidth}
+\includegraphics[width=\textwidth]{plots/mmpd.gv.png}
+\caption{The generative model of GMMVAE~\cite{dilokthanakul2016deep}}
+\label{fig:dilomix}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\textwidth}
+\includegraphics[width=\textwidth]{plots/mmpp.gv.png}
+\caption{modified model}
+\label{fig:mymix}
+\end{subfigure}
+\caption{
+On the left we see the generative model used by
+GMMVAE~\cite{dilokthanakul2016deep}, where $\pi$ is a fixed parameter and resides
+outside of the plate.
+On the right: modification of the GMMVAE model, where $\pi$ moves inside the plate
+and becomes a variable with a symmetric Dirichlet prior.}
+\label{fig:mixturemodels2}
+\end{framed}
+\end{figure}
+
+Another issue with the original mixture model, if we try to base a VAE model on
+it, is that it imposes a "bad categorical prior" on $\y$, because $p(\y) \sim
+\text{Cat}(\pi)$ and $\pi=\frac{1}{k}$ assuming the data is balanced. The
+problem is that we want the inference model (the encoder) $q(\y | \x)$ to be a
+good predictor so we don't want to impose it to be close to uniform. If we move
+$\phi$ inside and give it a symmetric Dirichlet prior, we allow it more
+flexibility to be heavily biased towards one category, making it a good
+predictor. $\alpha$ is a symmetric Dirichlet hyper-parameter.
 
 
-We need to specify the generative model and the inference model as explained in
-section~\ref{VAE-specs}.
-We have just one type of observed random vector, $\x$ (the numerical data, for
-example corresponding to image if we deal with image dataset).
+Figure~\ref{fig:dilomix} shows the generative model of the 
+GMMVAE~\cite{dilokthanakul2016deep}, where the mixtures components ($\mu, \sigma$)
+are inside the plate but the selection distribution $(\pi)$ is a fixed parameter
+which is outside the of the plate.
+The latent $\z$ space is a mixture distribution. As explained above, the $\y$-prior is
+"bad" because it will be uniform categorical, while we want to use the inference
+model $q(\y | \z)$ to predict the category.
+In figure~\ref{fig:mymix} $\pi$ is moved inside the plate and becomes a variable. Its prior is a
+symmetric Dirichlet with hyper-parameter $\alpha$.
+We call our modification the \emph{DGMMVAE} model (D stands for the Dirichlet prior
+obviously).
 
-We will certainly need a latent random vector $\y$ representing the categories 
-(in relaxes one-hot encoding). And we will need a random vector $\z$ to
-reconstruct $\x$ from.
-One way we could try is to make $q(\x | \z, \y)$ a mixture distribution, as the
-M2 model in~\cite{kingma2014semi}.
-Instead we'll add another latent variable $\w$, and create a mixture
-distribution in $\z$, $p(\z | \w, \y)$. Then reconstruct $\x$ just from $\z$
-like in a vanilla VAE.
+\section{The DGMMVAE model}
 
-\section{The GMMVAE model}
+Our DGMMMVAE model is based on figure~\ref{fig:mymix}.
+In addition to the latent variables $\z$ (mixture), and $\y$ (categorical), there
+$2$ more variables.
+The third latent variabel $\w$ has standard normal prior.
+With $\w$ the model generates the means and variances $\mu,
+\sigma$ for the mixture's components, by a of neural network.
+A fourth variable $\dd$ is the Dirichlet prior.
+The full generative model factors as (figure~\ref{fig:dirgmm}):
 
-We assume that $\x$ has some sort of Gaussian mixture distribution $p(\x|\y)$,
-but of course $\y$ is unknown. We will have a latent $\z$ and so $p(\x | \z)$
-will need to be 
-some sort of Gaussian mixture distribution. 
-Another random variable, $\w$ is used assist in creating the
-mixture in $\z$, 
-with $\z | \y$ having diagonal Gaussian distribution.
-Finally we use another random variable $\dd$ to
-create a "good" prior" which is a symmetric Dirichlet type, 
-for the categorical distribution $\y$.
-$\dd$ and $\w$ require some fixed prior distributions, whereas the priors for 
-$\y$ and $\z$ will be learned as we'll see.
-We have a hyper-parameter $\alpha$ which we use for the prior of $\dd$.
-$\w$ will have standard normal diagonal distribution as its prior.
+\begin{equation}
+\begin{aligned}
+&p(\x, \y, \z, \w, \dd) &=\quad& 
+p(\x | \z) p(\z | \w, \y) p(\y | \dd) p(\dd) p(\w) \\
+&p(\w) &=\quad& \NN(\w | \bv{0},\bv{1}) \\
+&p(\dd) &=\quad& \text{Dir}(\dd | \alpha) \\
+&p(\y | \dd) &=\quad& \text{Cat}(\y | \dd) \\
+&p(\z | \w, \y) &=\quad& \NN(\z | \mu(\w)_{\y}, \sigma(\w)_{\y})) \\
+&p(\x | \z) &=\quad& \NN(\x | \mu(\z), \sigma(\z))
+\label{eq:gmmfact}
+\end{aligned}
+\end{equation}
 
+$\mu(\w), \sigma(\w), \mu(\z), \sigma(\z)$ are neural networks of the decoder.
+$\mu(\w)$, ($\sigma(\w)$) is not just one mean (variance) but a set of $k$ (=number of categories)
+means (variances), 
+and we are selecting the component $\mu(\w)_{\y}, \sigma(\w)_{\y}$
+indicated by $\y$, the categorical random
+variable.
 
-
-The generative process goes as follows:
+The generative process can be described as follows:
 \begin{enumerate}
-\item{} draw from the prior $\w \sim p(\w) = \NN(\w;\bv{0},\bv{1})$
-\item{} draw a categorical distribution from the prior $\dd \sim p(\dd) = \text{Dir}(\alpha)$
-\item{} draw a category $\y \sim p(\y | \d) = \text{Cat}(\dd)$
-\item draw a latent $\z|\y \sim p(\z | \w,\y) = \NN(\z;\bv{\mu}(\w,\y), \bv{\sigma}(\w,\y)$
-\item{} draw observation $\x \sim p(\x | \z) = \NN(\x;\bv{\mu}(\z),
-\bv{\sigma}(\z))$
+\item{} draw from the prior $\w \sim p(\w) = \NN(\w|\bv{0},\bv{1})$
+\item{} draw a categorical distribution from the Dirichlet prior
+$\dd \sim p(\dd) = \text{Dir}(\dd | \alpha)$
+\item{} draw a category $\y \sim p(\y | \dd) = \text{Cat}(\y | \dd)$
+\item{} generate the $k$ centroids and diagonal variances by the decoder's NN:
+$\bv{\mu}(\w), \bv{\sigma}(\w)$.
+\item draw from the mixture $\z \sim p(\z | \w,\y) = \NN(\z|\bv{\mu}(\w)_{\y},
+\bv{\sigma}(\w)_{\y})$
+\item{} generate the means $\bv{\mu}(\z)$ and diagonal variances
+$\bv{\sigma}(\z)$ (or use fixed variance $1$) by the decoder NN.
+\item{} draw observation $\x \sim p(\x | \z) = \NN(\x|\bv{\mu}(\z)$
 \end{enumerate}
 
+There are several ways to factor the inference model and it is not immediately
+clear which one is better. Here is the factorization depicted in
+figure~\ref{fig:dirgmm}:
 
+\begin{equation}
+\begin{aligned}
+&q(\y, \z, \w, \dd | \x) &=& 
+&q(\z | \x) q(\w | \x) q(\y | \z) q(\dd | \z) \\
+&q(\z | \x) &=& &\NN(\z | \mu_z(\x), \sigma_z(\x)) \\
+&q(\w | \x) &=& &\NN(\w | \mu_w(\x), \sigma_w(\x)) \\
+&q(\y | \z) &=& &\text{Cat}(\y | f(\z)) \\
+&q(\dd | \z) &=& &\text{Dir}(\dd | g(\z))
+\label{eq:gmmqfact}
+\end{aligned}
+\end{equation}
 
-
+And $f(\z),g(\z), \mu_w(\x), \sigma_w(\x), \mu_z(\x), \sigma_z(\x)$ are
+the neural networks of the encoder.
 
 
 \begin{figure}[!hb]
 \begin{framed}
 \centering
 \includegraphics[width=0.5\textwidth]{plots/dirichlet_gmm.gv.png}
-\caption{Dirichlet GMM model}
+\caption{DGMMVAE: GMMVAE with Dirichlet prior}
 \label{fig:dirgmm}
 \end{framed}
 \end{figure}
@@ -1921,7 +1976,7 @@ The generative process goes as follows:
 \begin{framed}
 \centering
 \includegraphics[width=0.5\textwidth]{plots/dirichlet_gmm_cvae.gv.png}
-\caption{Dirichlet GMM conditional model}
+\caption{cDGMMVAE}
 \label{fig:dirgmmcvae}
 \end{framed}
 \end{figure}
