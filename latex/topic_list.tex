@@ -1839,7 +1839,7 @@ space but we can still notice some clustering.
 
 \section{Motivation}
 
-Suppose that we have data of type $(\x,y)$ which like in the CVAE case has numerical and 
+Suppose that we have data of type $(\x,\y)$ which like in the CVAE case has numerical and 
 categorical information, but unlike in the CVAE section we don't have access to
 the categories $\y$, only to $\x$. 
 We are looking for a model that can partition
@@ -1859,7 +1859,6 @@ One model which is called the Gaussian mixture model was proposed by
 Dilokthanakul et.al~\cite{dilokthanakul2016deep} and we base our proposed model
 on their model with some adaptations and present it in the next section.
 
-\section{The GMMVAE model}
 
 We need to specify the generative model and the inference model as explained in
 section~\ref{VAE-specs}.
@@ -1869,8 +1868,13 @@ example corresponding to image if we deal with image dataset).
 We will certainly need a latent random vector $\y$ representing the categories 
 (in relaxes one-hot encoding). And we will need a random vector $\z$ to
 reconstruct $\x$ from.
-One way we could try is to make $p(\x | \z, \y)$ a mixture distribution, as the
+One way we could try is to make $q(\x | \z, \y)$ a mixture distribution, as the
 M2 model in~\cite{kingma2014semi}.
+Instead we'll add another latent variable $\w$, and create a mixture
+distribution in $\z$, $p(\z | \w, \y)$. Then reconstruct $\x$ just from $\z$
+like in a vanilla VAE.
+
+\section{The GMMVAE model}
 
 We assume that $\x$ has some sort of Gaussian mixture distribution $p(\x|\y)$,
 but of course $\y$ is unknown. We will have a latent $\z$ and so $p(\x | \z)$
