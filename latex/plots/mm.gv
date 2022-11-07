@@ -10,7 +10,7 @@ digraph {
     p -> y [arrowtail=tee,];
     m -> x;
     s -> x;
-    p [label="π", width=0.20,height=0.2,];
+    p [label="π", width=0.20,height=0.2, ];
     //p [label="π", shape=box, width=0.20,height=0.2,style=filled, ];
     m [label="μ", width=0.20,height=0.2,]; 
     s [label="Σ", idth=0.20,height=0.2,];

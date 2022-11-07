@@ -23,6 +23,7 @@
 \usepackage{amsthm}
 \usepackage{amsmath}
 \usepackage{IEEEtrantools}
+\usepackage[section]{placeins} %\Floatbarrier
 %\usepackage{showframe}
 %\usepackage[a4paper, width=150mm, top=5mm, bottom=5mm]{geometry}
 \usepackage[a4paper, width=150mm, top=25mm, bottom=25mm]{geometry}
@@ -1385,6 +1386,25 @@ batches so for a given batch we are taking many samples $\z$.
 Experimental data shows that taking larger samples usually brings little
 benefit~\cite{kingma2019introduction}.
 
+\subsubsection{Reparameterization trick}
+
+We compute the loss function by using Monte Carlo integration, which requires us
+to take samples $\z \sim q(\z | \z)$. But then we also need to take the gradient
+of the loss function with respect to the encoder's weights $\phi$ and the
+decoder's $\theta$. There is a method, "the reparameterization
+trick"~\cite{kingma2013auto} which uses
+some random noise $\epsilon \sim \NN(0,1)$ which allows us to express the
+sample $\z = h_{\phi}(\epsilon, \x)$ as deterministic given $\epsilon$.
+
+For example in the "vanilla" VAE $\phi(\x) = (\mu(\x), \sigma(\x))$. Sampling
+from $\z \sim \NN(\mu(\x), \sigma(\x))$ is equivalent to sampling noise
+$\epsilon \sim \NN(0,1)$ and taking $\z = \mu(\x) + \sigma(\x) \cdot \epsilon$.
+Most other types of distributions (Dirichlet, Negative Binomial, etc.) can be
+sampled using the reparameterization trick as deterministic, differentiable
+transformation of Gaussian or uniform random noise and in Pytorch, this feature
+is built into the distribution object types.
+
+
 \subsection{Using the decoder for data generation}
 
 Suppose that we have a vanilla auto encoder $(\phi, \psi)$ and suppose that we
@@ -1729,8 +1749,13 @@ space.
 
 Finally there are circumstances that we use CVAE to "forget" the categories
 rather then to encode them by setting a fixed prior $p(\z | c) \equiv p(\z)$.
-An example for such use-case is if we have for example several batches of data,
-for the same type of data but from different experiment. In this case we can use
+An example for such use-case is for batch effect reduction.
+In cases where for example, there are several batches of data
+of the same type and but from different experiments.
+We expect any differences in the data of the same entity are a result of technical differences 
+(different measuring tools etc.) rather than reflecting true differences between
+the entity of interest.
+In this case we can use
 a CVAE model with fixed prior to reduce the batch effect.
 
 \begin{figure}[!h]
@@ -1791,9 +1816,9 @@ data with known targets $\Y$.
 
 The original data has a complex distribution. Not only is it high dimensional,
 but because the data belongs to distinct categories, it is natural to assume
-that $\x$ has mixture distribution.
+that $\x$ comes from a mixture distribution.
 
-We want to create some mixture distribution, where the inferred category random
+We want to create some mixture distribution, where a latent categorical random
 variable $\y$ functions as the component selector. We could try to directly
 create the mixture $p(\x | \z, \y)$ in the $\x$ space, as the M2 model
 in~\cite{kingma2014semi}.
@@ -1802,13 +1827,13 @@ Dilokthanakul et.al~\cite{dilokthanakul2016deep} and which base our model
 is to create a mixture prior distribution $p(\z | \w, \y)$ on the lower
 dimensional latent $\z$ space.
 
-There are several advantages to doing this. For one, we are interested in
-dimensionality reduction and not just unsupervised classification, in that
-case it makes sense to create a mixture distribution in the latent space which
-we can than plot for example with UMAP.
-A second reason is that perhaps it is easier to create a mixture Gaussian on
-the simpler, lower dimensional space $\z$ than on the $\x$ space where the data
-probably occupies a complex hyper-surface.
+There are several advantages to doing this. For once we are interested in
+dimensionality reduction and not just in unsupervised classification. If we
+create a mixture distribution in the latent space $\z$ we can then further
+analyse it (by clustering algorithms for example) and plot it, for example with
+UMAP. A second reason is that it may be easier to create a mixture Gaussian on
+the simpler, lower dimensional space $\z$ rather than on the high dimensional
+$\x$ space where the data occupies a complex hyper-surface.
 
 %We need to specify the generative model and the inference model as explained in
 %section~\ref{VAE-specs}.
@@ -1840,7 +1865,8 @@ probably occupies a complex hyper-surface.
 \end{framed}
 \end{figure}
 
-Figure~\ref{fig:vanillamix} describes the usual mixture model. The components'
+Figure~\ref{fig:vanillamix} describes the usual Gaussian mixture
+model~\cite{bishop2006pattern}. The components'
 centroids, $\bv{\mu} = (\bv{\mu}_1, \dots \bv{\mu}_k)$, its covariances,
 $\bv{\Sigma}$, 
 and the categorical selection
@@ -1867,7 +1893,7 @@ much so. By moving the random vectors inside the plate
 \end{subfigure}
 \caption{
 On the left we see the generative model used by
-GMMVAE~\cite{dilokthanakul2016deep}, where $\pi$ is a fixed parameter and resides
+GMMVAE~\cite{dilokthanakul2016deep}, where $\pi$ is a fixed hyper parameter and resides
 outside of the plate.
 On the right: modification of the GMMVAE model, where $\pi$ moves inside the plate
 and becomes a variable with a symmetric Dirichlet prior.}
@@ -1876,14 +1902,16 @@ and becomes a variable with a symmetric Dirichlet prior.}
 \end{figure}
 
 Another issue with the original mixture model, if we try to base a VAE model on
-it, is that it imposes a "bad categorical prior" on $\y$, because $p(\y) \sim
+it, is that it imposes a "bad categorical prior" on $\y$. We usually set $p(\y) \sim
 \text{Cat}(\pi)$ and $\pi=\frac{1}{k}$ assuming the data is balanced. The
 problem is that we want the inference model (the encoder) $q(\y | \x)$ to be a
-good predictor so we don't want to impose it to be close to uniform. If we move
-$\phi$ inside and give it a symmetric Dirichlet prior, we allow it more
-flexibility to be heavily biased towards one category, making it a good
-predictor. $\alpha$ is a symmetric Dirichlet hyper-parameter.
-
+good classifier so we don't want to impose it to be close to uniform. 
+If we move
+$\pi$ inside and give it a symmetric Dirichlet prior, we allow more
+flexibility on $\pi$, so it can be be heavily biased towards one category, making it a good
+predictor. $\alpha$ is a symmetric Dirichlet hyper-parameter and "tweaking" with
+it has influence on the number of non-empty categories that the model finds
+during training.
 
 Figure~\ref{fig:dilomix} shows the generative model of the 
 GMMVAE~\cite{dilokthanakul2016deep}, where the mixtures components ($\mu, \sigma$)
@@ -1899,7 +1927,7 @@ obviously).
 
 \section{The DGMMVAE model}
 
-Our DGMMMVAE model is based on figure~\ref{fig:mymix}.
+Our DGMMVAE model is based on figure~\ref{fig:mymix}.
 In addition to the latent variables $\z$ (mixture), and $\y$ (categorical), there
 $2$ more variables.
 The third latent variabel $\w$ has standard normal prior.
@@ -1940,7 +1968,7 @@ $\bv{\mu}(\w), \bv{\sigma}(\w)$.
 \bv{\sigma}(\w)_{\y})$
 \item{} generate the means $\bv{\mu}(\z)$ and diagonal variances
 $\bv{\sigma}(\z)$ (or use fixed variance $1$) by the decoder NN.
-\item{} draw observation $\x \sim p(\x | \z) = \NN(\x|\bv{\mu}(\z)$
+\item{} draw observation $\x \sim p(\x | \z) = \NN(\x|\bv{\mu}(\z))$
 \end{enumerate}
 
 There are several ways to factor the inference model and it is not immediately
@@ -1972,6 +2000,190 @@ the neural networks of the encoder.
 \end{framed}
 \end{figure}
 
+\section{Computing the loss function of DGMMVAE model}
+
+The loss function remains the -ELBO and we can break it into
+different terms:
+
+\begin{IEEEeqnarray}{lC}
+\LL(p,q,\x) &= 
+\int - \log \frac{p(\x,\y,\z,\w,\dd)}{q(\z,\y,\w,\dd | \x)} dq(\z,\y,\w,\dd |
+\x) \\ 
+&= \int - \log 
+\frac{p(\x | \z) p(\z | \w, \y) p(\y | \dd) p(\w) p(\dd)}
+{q(\z | \x) q(\w | \x) q(\y | \z) q(\dd | \z)} dq \\
+&= \int - \log p(\x | \z) dq \\
+\label{dgmmrecloss}
+&+ \int \log \frac{q(\z | \x)}{p(\z | \w, \y)}dq \\
+\label{dgmmzloss}
+&+ \int \log \frac{q(\w | \x)}{p(\w)}dq \\
+\label{dgmmwloss}
+&+ \int \log \frac{q(\y | \z)}{p(\y | \dd)}dq \\
+\label{dgmmyloss}
+&+ \int \log \frac{q(\dd | \z)}{p(\dd)}dq
+\label{dgmmdloss}
+\end{IEEEeqnarray}
+
+As we see there are five terms in the reconstruction loss function.
+\ref{dgmmrecloss} is called the reconstruction error.
+The rest of the terms get the repetitive, mundane names:
+\ref{dgmmzloss} is called the $z$-error or $z$-kl-term,
+\ref{dgmmwloss} is the $w$-error or $w$-kl-term,
+\ref{dgmmyloss} is the $y$-error or $y$-kl-term, and
+\ref{dgmmdloss} is called the $d$-error or $d$-kl-term.
+%\subsection{Relation between AE and VAE}
+
+To actually compute the loss function we will use Monte Carlo integration,
+with one sample for each observation.
+We will need to sample $\z$, $\w$ and $\dd$. For $\y$ we will not sample but
+rather integrate over the categorical probabilities.
+
+
+\begin{enumerate}
+\item{sample} $\z \sim q(\z | \x)$ using the reparameterization trick
+\item{sample} $\w \sim q(\w | \x)$ using the reparameterization trick
+\item{sample} $\dd \sim q(\dd | \z)$ using the reparameterization trick
+\item{Reconstruction error estimation}:
+$$-\log p(\x | \z) = -\log \NN(\x | \mu(\z), \sigma(\z))$$
+\item{$\z$-error}: calculate $KL(q(\z | \x) \| p(\z | \w, \y))$ analytically
+using equation~\ref{eq:kldivnormal}
+for every mixture component of $p(\z | \w, \y)$,
+and then take the weighted average with respect
+to $q(\y | \z)$:
+$$\sum_{j=1}^k [ q(\y=j | \z) KL(q(\z | \x) \| p(\z | \w, \y=j))]$$.
+\item{$\w$-error}: calculate $KL(q(\w | \x) \| p(\w))$ analytically 
+the kl-divergence between two diagonal Gaussians (equation~\ref{eq:kldivnormal}).
+\item{$\y$-error}:
+calculate $KL(q(\y | \z) \| p(\y | \dd))$ analytically (kl-div of
+two categorical distributions, ):
+$$KL(q(\y | \z) \| p(\y | \dd)) = 
+\sum_{j=1}^k [ q(\y=j | \z) \log \frac{q(\y=j | \z)}{p(\y = j | \dd)}]$$
+\item{$\dd$-error}:
+calculate $KL(q(\dd | \z) \| p(\dd))$ analytically
+(kl-divergence of two Dirichlet distributions also has a closed formed
+formula...).
+\end{enumerate}
+
+\section{The DGMMVAE model in the supervised case}
+
+The DGMMVAE model can also be used for supervised training. While the
+architecture of the neural network remains the same, the probabilistic
+interpretation and consequently the calculation of the loss function is
+different.
+
+Figure~\ref{fig:dirgmm_sup} describes the generative and the inference model in
+the supervised case.
+Since in this case $\y$ is observed, we regard $\z$ in the generative model
+as only dependent on $\w$. Internally we keep the same architecture but during
+supervised training we always select just the given $\y$ component and so we
+can stop regarding $\z$ as depending on $\y$.
+$p(\z | \w, \y) = p(\z | \w) = \NN(\z | \mu(\w)_y, \sigma(\w)_y)$.
+In the figure we show the dashed arrow from $\y$ to $\w$ but if it were a real
+dependency we would get an "illegal" cycle in the $p$-graph. However the $\y$
+which we used to select the $\mu(\w), \sigma(\w)$ mixture components are not
+drawn from $p(\y | \z)$, rather we use the observation $\y$ (=the category
+label) itself which is
+given to us in the supervised case. Thus there is no actual cycle in the
+dependency graph but the effect of $\y$ remains in the implementation of the
+network architecture. 
+
+Moreover in the supervised case the random variable $\y$ becomes dependent on both $\dd$ and $\z$.
+We make an assumption that $\y | \dd$ and $\y | \z$ are independent, so
+$p(\y | \dd, \z) = p(\y | \dd)p(\y | \z)$, thus enabling us to retain the same 
+network architecture. $p(\y | \dd)$ is determined by
+the same decoder component as in the unsupervised case but $p(\y | \z)$ equals 
+$q(\y | \z)$ of the encoder in the unsupervised case. So while again we keep the same
+architecture we will compute the loss function differently.
+As for the inference model it becomes other than losing the $q(\y | \z)$
+component the rest remains the same.
+The full factorization in the supervised case becomes:
+
+\begin{equation}
+\begin{aligned}
+&p(\x, \y, \z, \w, \dd) &=& 
+&p(\x | \z) p(\y | \dd) p(\y | \z) p(\z | \w) p(\dd) p(\w) \\
+&q(\z, \w, \dd | \x, \y) &=& 
+&q(\z | \x) q(\w | \x) q(\dd | \z) \\
+&p(\x | \z) &=& & \NN(\x | \mu(\z), \sigma(\z)) \\
+&p(\y | \z) &=& &\text{Cat}(\y | f(\z)) \\
+&p(\y | \dd) &=& & \text{Cat}(\y | \dd) \\
+&p(\w) &=& & \NN(\w | \bv{0},\bv{1}) \\
+&p(\dd) &=& & \text{Dir}(\dd | \alpha) \\
+&p(\z | \w) &=& & \NN(\z | \mu(\w)_{\y}, \sigma(\w)_{\y})) \\
+&q(\z | \x) &=& &\NN(\z | \mu_z(\x), \sigma_z(\x)) \\
+&q(\w | \x) &=& &\NN(\w | \mu_w(\x), \sigma_w(\x)) \\
+&q(\dd | \z) &=& &\text{Dir}(\dd | g(\z))
+\label{eq:gmmfact_supervised}
+\end{aligned}
+\end{equation}
+
+\begin{figure}[!hb]
+\begin{framed}
+\centering
+\includegraphics[width=0.5\textwidth]{plots/dirichlet_gmm_supervised.gv.png}
+\caption{DGMMVAE: the supervised case, where $\y$ is an observed variable.
+}
+\label{fig:dirgmm_sup}
+\end{framed}
+\end{figure}
+%\subsection{Conditional VAE}
+
+The loss function in the supervised case is:
+
+\begin{IEEEeqnarray}{lC}
+\LL(p,q,\x) &= 
+\int - \log \frac{p(\x,\y,\z,\w,\dd)}{q(\z,\w,\dd | \x, \y)} dq(\z,\y,\w,\dd |
+\x) \\ 
+&= \int - \log 
+\frac{p(\x | \z) p(\z | \w) p(\y | \dd) p(\y | \z) p(\w) p(\dd)}
+{q(\z | \x) q(\w | \x) q(\dd | \z)} dq \\
+&= \int - \log p(\x | \z) dq \\
+\label{dgmmrecloss}
+&+ \int \log \frac{q(\z | \x)}{p(\z | \w)}dq \\
+\label{dgmmzloss}
+&+ \int \log \frac{q(\w | \x)}{p(\w)}dq \\
+\label{dgmmwloss}
+&+ \int \log p(\y | \z)dq \\
+&+ \int \log p(\y | \dd)dq \\
+\label{dgmmyloss}
+&+ \int \log \frac{q(\dd | \z)}{p(\dd)}dq
+\label{dgmmdloss_supervised}
+\end{IEEEeqnarray}
+
+The reconstruction error, the $w$-error and the $d$-error are calculated exactly
+like in the unsupervised loss.
+The $z$-term is also calculated in exactly the same procedure as in unsupervised
+case except that we only need to take the component indicated by the obseved
+$\y$ in the weighted sum.
+The two $y$-terms are the log probability of the observed category given the
+sampled $\z$ and $\dd$.
+
+\chapter{The conditional mixture model, cDGMMVAE}
+\section{Motivation}
+
+We have seen two types of models that deal with data that is both numerical and
+categorical, namely the conditional VAE (CVAE), and the GMMVAE.
+The cDGMMVAE is a combination of both, a conditional DGMMVAE but why do we need
+it?
+
+Suppose that we have again numerical/categorical type of data $(\x, \y)$ which 
+comes in two or more types of "flavors" $c$, so the full data type 
+is $(\x, \y, c)$. For example $\x$ can be an image of on of $k$ 
+different faces, 
+$\y$ is the identity of the person, $c$ is an indicator of whether the person
+smiles or not. 
+Also suppose that $\y$ might not be provided at all or just for
+a subset of the data but $c$ is always provided for us.
+
+The data we actually use for this model scRNAseq that comes from two types 
+of conditions, before and after exposure to some pathogen or some chemical.
+So $\x$ would be normalized gene expression levels, $\y$ is the cell type 
+we want to infer but may not know the ground truth, and $c$ indicates from which
+group the measurement was taken (control/stimulate) and this information is
+visible to use because we know for each sample from which group it was
+taken.
+
+
 \begin{figure}[!hb]
 \begin{framed}
 \centering
@@ -1981,6 +2193,9 @@ the neural networks of the encoder.
 \end{framed}
 \end{figure}
 
+
+\chapter{Experiments and results}
+\section{Tests with MNIST and FMNIST}
 
 \begin{figure}
 \begin{framed}
@@ -2002,12 +2217,6 @@ the neural networks of the encoder.
 \end{framed}
 \end{figure}
 
-%\subsection{Relation between AE and VAE}
-
-%\subsection{Conditional VAE}
-
-\chapter{Experiments and results}
-\section{Tests with MNIST and FMNIST}
 
 \section{Tests with scRNAseq Data}
 some words about (sc)RNAseq and published papers where 
