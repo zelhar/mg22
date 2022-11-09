@@ -7,18 +7,26 @@
 #	pdflatex $(fname)
 name = topic_list
 slides = slides_test
+poster = poster_test
 
 
 topic_list.pdf:
 	#pdflatex $(name)
 	#biber $(name)
 	#pdflatex $(name)
-	pdflatex -interaction=nonstopmode $(name)
+	pdflatex -interaction=nonstopmode -halt-on-error $(name)
 	biber $(name)
 	pdflatex -interaction=nonstopmode $(name)
 
 slides_test.pdf:
-	pdflatex $(slides)
+	pdflatex -interaction=nonstopmode -halt-on-error $(slides)
+	#pdflatex $(slides)
 	biber $(slides)
 	pdflatex $(slides)
 	
+
+poster_test.pdf:
+	pdflatex -interaction=nonstopmode -halt-on-error $(poster)
+	#pdflatex $(poster)
+	biber $(poster)
+	pdflatex $(poster)
