@@ -1,8 +1,7 @@
 \documentclass[10pt, ]{beamer}
 %\documentclass[10pt, handout]{beamer}
-\usepackage[backend=biber]{biblatex}
-\addbibresource{mybib.bib}
 \usepackage[utf8]{inputenc}
+\usepackage{multicol}
 \usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{color}
@@ -15,6 +14,8 @@
 \usepackage{amssymb}
 \usepackage{amsfonts}
 \usepackage{amsthm}
+\usepackage[backend=biber]{biblatex}
+\addbibresource{mybib.bib}
 
 %\usepackage[a4paper, width=150mm, top=25mm, bottom=25mm]{geometry}
 \usepackage{fancyhdr}
@@ -41,15 +42,29 @@
 
 \maketitle
 
+
 \section{Intro}
 
 \begin{frame}
 \frametitle{Spam}
+\begin{multicols}{2}
 Spam~\footfullcite{russkikh2020style} is good.
+
+\lipsum[0]
+
+\lipsum[1]
+
+\end{multicols}
+
 \end{frame}
 
 \begin{frame}
-And now to something completely different \dots
+And now to something~\cite{guo2017improved} completely different \dots
+\end{frame}
+
+\section{Reference}
+\begin{frame}
+\printbibliography
 \end{frame}
 
 \end{document}

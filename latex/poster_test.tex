@@ -1,0 +1,100 @@
+%\documentclass[final]{beamer}
+\documentclass[10pt, ]{beamer}
+%\documentclass[10pt, handout]{beamer}
+\usepackage[orientation=portrait,
+            size=a0,
+            scale=1.25
+            ]{beamerposter}
+%\usepackage{markdown} 
+\usepackage[utf8]{inputenc}
+\usepackage{multicol}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{framed}
+\usepackage{subcaption}
+\usepackage{float}
+\graphicspath{ {images/} }
+\usepackage{blindtext}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage[backend=biber]{biblatex}
+\addbibresource{mybib.bib}
+
+%\usepackage[a4paper, width=150mm, top=25mm, bottom=25mm]{geometry}
+%\usepackage{fancyhdr}
+%\setlength{\headheight}{12pt}
+%\pagestyle{fancy}
+%\pagestyle{empty}
+\usepackage{lipsum}
+
+
+\title{Spam Beamer}
+\subtitle{boring slides about spam}
+\author{Kolb, Yiftach}
+\date{\today}
+\institute[FU and MPG]{
+\centering
+\vfill
+{\includegraphics[width=0.8\linewidth]{images/MPIMG_RGB_gruen.png}}\\
+\vfill
+{\includegraphics[width=0.8\linewidth]{images/fu-logo_bildschirm_RGB1.jpg}}
+}
+
+\date{\today}
+
+
+\begin{document}
+
+
+\maketitle
+
+%\begin{frame}[t]
+
+%\begin{frame}
+
+%\begin{multicols}{2}
+
+
+\begin{frame}
+\frametitle{Spam}
+
+\begin{multicols}{3}
+
+\section{Intro}
+Spam~\footfullcite{russkikh2020style} is good.
+%\end{frame}
+
+\lipsum[0]
+
+%\begin{frame}
+And now to something~\cite{guo2017improved} completely different \dots
+
+foo ...
+foo ...
+foo ...
+
+foo ...
+foo ...
+foo ...
+
+\section{foo}
+\lipsum[1]
+foo ...
+foo ...
+foo ...
+
+\lipsum[2]
+
+\section{Reference}
+%\printbibliography
+
+foo ...
+foo ...
+foo ...
+
+\end{multicols}
+\end{frame}
+\end{document}
