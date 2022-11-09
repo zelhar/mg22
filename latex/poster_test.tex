@@ -1,5 +1,5 @@
-%\documentclass[final]{beamer}
-\documentclass[10pt, ]{beamer}
+\documentclass[final]{beamer}
+%\documentclass[10pt, ]{beamer}
 %\documentclass[10pt, handout]{beamer}
 \usepackage[orientation=portrait,
             size=a0,
@@ -30,6 +30,8 @@
 %\pagestyle{empty}
 \usepackage{lipsum}
 
+\usetheme{Madrid}
+%\usetheme{Frankfurt}
 
 \title{Spam Beamer}
 \subtitle{boring slides about spam}
@@ -38,18 +40,17 @@
 \institute[FU and MPG]{
 \centering
 \vfill
-{\includegraphics[width=0.8\linewidth]{images/MPIMG_RGB_gruen.png}}\\
+{\includegraphics[width=0.2\linewidth]{images/MPIMG_RGB_gruen.png}}\\
 \vfill
-{\includegraphics[width=0.8\linewidth]{images/fu-logo_bildschirm_RGB1.jpg}}
+{\includegraphics[width=0.2\linewidth]{images/fu-logo_bildschirm_RGB1.jpg}}
 }
-
 \date{\today}
+
 
 
 \begin{document}
 
 
-\maketitle
 
 %\begin{frame}[t]
 
@@ -58,12 +59,23 @@
 %\begin{multicols}{2}
 
 
-\begin{frame}
-\frametitle{Spam}
+\begin{frame}[t]
+%\frametitle{Spam}
+%\maketitle
+
+\begin{block}
+\titlepage
+\end{block}
+
+\begin{block}{bar}
+foo
+
+\end{block}
 
 \begin{multicols}{3}
 
 \section{Intro}
+\title{Introduction}
 Spam~\footfullcite{russkikh2020style} is good.
 %\end{frame}
 
@@ -71,6 +83,7 @@ Spam~\footfullcite{russkikh2020style} is good.
 
 %\begin{frame}
 And now to something~\cite{guo2017improved} completely different \dots
+
 
 foo ...
 foo ...
@@ -88,6 +101,14 @@ foo ...
 
 \lipsum[2]
 
+\section{bar}
+
+\lipsum[3]
+
+\lipsum[4]
+
+\lipsum[5-8]
+
 \section{Reference}
 %\printbibliography
 
@@ -97,4 +118,36 @@ foo ...
 
 \end{multicols}
 \end{frame}
+
+\begin{frame}{manual column setting}
+\begin{columns}
+
+\begin{column}{0.55\textwidth}
+\begin{block}{block headline}
+\lipsum
+\end{block}
+\end{column}
+
+\begin{column}{0.43\textwidth}
+\begin{block}{block headline0}
+\lipsum[0]
+\end{block}
+
+\begin{block}{block headline1}
+\lipsum[1]
+\end{block}
+
+\begin{block}{block headline2}
+\lipsum[2]
+\end{block}
+
+
+\end{column}
+\end{columns}
+
+\end{frame}
+
+
+
+
 \end{document}
