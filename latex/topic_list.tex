@@ -22,12 +22,19 @@
 \usepackage{amsfonts}
 \usepackage{amsthm}
 \usepackage{amsmath}
+\usepackage{bm} %\bm
 \usepackage{IEEEtrantools}
 \usepackage[section]{placeins} %\Floatbarrier
 %\usepackage{showframe}
 %\usepackage[a4paper, width=150mm, top=5mm, bottom=5mm]{geometry}
 \usepackage[a4paper, width=150mm, top=25mm, bottom=25mm]{geometry}
 \usepackage{fancyhdr}
+\hypersetup{linktocpage,
+            linktoc=all,
+            %colorlinks=true,
+            %linkcolor=blue,
+}
+
 %\setlength{\headheight}{12pt}
 %\setlength{\headheight}{15.2pt}
 %\pagestyle{empty}
@@ -167,9 +174,9 @@ a 3-dimensional shape ($28, 28, 3)$ representing height, width, and rgb
 color "channel". This creates some confusion as to what one means by dimensions.
 For example a vector $\x \in \R^5$ is represented as a 1 dimensional shape
 but it has $5$ \emph{dimensions in total}. Similarly the color image has a $3$ dimensional shape
-but it has $28 \cdot 28 \cdot 3$ dimesnions in total, 
-but it has $28$ dimensions on its first (and second) \emph{axis}, and $3$ dimesnions of
-its third axis. 
+but it has $28 \cdot 28 \cdot 3$ dimesnions in total. It has 3 \emph{axes},
+whose repective sizes are
+$28$, $28$, and $3$. 
 
 A (real valued) \emph{tensor} is an element of a tensor product space, for exmaple
 the color image described above,
@@ -190,18 +197,20 @@ It has $0$ \emph{dimensions}, $0$ \emph{axes} and \emph{shape} $(,)$.
 A \emph{vector} $\x \in \R^n$ has $n$ dimensions, $1$ axis, and sahpe $(n,)$.
 
 A matrix $\X \in \R^{m \times n}$ has $mn$ dimensions (in total), $2$ axes, and shape of $(m,n)$.
-Its first and second axes are said to be of dimensions $m$ and $n$ respectively.
+Its first and second axes are said to be of sizes $m$ and $n$ respectively.
 
 A tensor $\x \in \R^{n_1 \times \dots \times n_k}$
 has $\prod_1^k n_i$ dimensions, $k$ axes, and shape $(n_1, \dots, n_k)$.
-Its $i$'s axis is said to be of dimension $n_i$.
+Its $i$'s axis is said to be of size $n_i$.
 \end{mydef}
 
 In practice a tensor $\x \in \R^{n_1 \times \dots \times n_k}$
 is represented as a $k$ dimensional array.
-We call its first axis the \emph{batch axis} or alternatively the \emph{row
-axis}. And $\x_i = \x[i]$, which is the $k-1$ dimensional sub-array with the first
-coordinate held fixed is called the $i$'th "row" of $\x$.
+We call its first axis the \emph{row axis} or alternatively when we
+want to emphasize that this is a collection of several tensors, the \emph{batch
+axis}.
+We call $\x_i = \x[i]$, which is the $k-1$ dimensional sub-array with the first
+coordinate held fixed is called the \emph{$i$'th row} of $\x$.
 Sometimes we want to represent a tensor $\x$ as a collections of tensors. For
 example it can represent a collection of several images. Each "row" then
 represents an image tensor.
@@ -211,12 +220,12 @@ For example we might have a tensor $\x$ representing an ordered set of images,
 and a tensor $\y$ which represents the category of each image.
 Because they have different shapes they don't fit together in one tensor.
 However since they refer to the same entities (images) their first axes have equal
-dimensions. We use the notation $(\x, \y)$ to denote the matching pairs of
-image/category, implicitly requiring them to have equal dimensional first axis.
+sizes. We use the notation $(\x, \y)$ to denote the matching pairs of
+image/category, implicitly requiring them to have equally sized first axes.
 
-If $\x,\y$ have the same number of axes and their dimensions are equal on all
-but the last axis then we can concatenate them by "stacking" $\y$ on top of $\x$
-along the last axis.
+If $\x,\y$ have the same number of axes and their repective axes sizes are equal
+on all but the last axis then we can concatenate them by "stacking" $\y$ on top
+of $\x$ along the last axis.
 
 \begin{mydef}
 \label{def:rowrep}
@@ -229,7 +238,7 @@ representation} of $\x$.
 \begin{mydef}
 \label{def:pairnotaion}
 Let $\x, \y$ be tensors whose first axes have equal dimensions, $n$. Then $(\x, \y)$
-is the set of ordered pairs $(\x,\y) \triangleq \{(\x_i,\y_i) : i=1 \to n\}$.
+is the set of ordered pairs $(\x,\y) \triangleq \{(\x_i,\y_i) : i=1 \dots n\}$.
 \end{mydef}
 
 \begin{mydef}
@@ -238,6 +247,7 @@ If $\x,\y$ have the same number of axes and equal dimension on all but their las
 the $(\x|\y)$ is their concatenation on the last axis. 
 \end{mydef}
 
+%\boldmath
 \section{samples, batches, mean-sum rule}
 
 We distinguish between two types of tensors depending on what they represents.
@@ -306,8 +316,13 @@ concatenation of two matrices which implicitly means they have the same number
 of rows.
 
 Zero--blocks are indicated with $0$ or are simply left as voids. For
-example $ \left( \begin{array}{c c} \bv{A} & \bv{B} \\ \bv{0} & \bv{D}
-\end{array} \right) $ represents block notation of an upper--triangular matrix.
+example
+$ \left( \begin{array}{c c} \bv{A} & \bv{B} \\ \bv{0} & \bv{D}
+\end{array} \right) $ 
+,
+$ \left( \begin{array}{c c} \bv{A} & \bv{B} \\  & \bv{D}
+\end{array} \right) $ 
+both represent block notation of the same upper--triangular matrix.
 
 \begin{mydef}
 Let $\X = \{\x_1, \dots \x_m\} \in \R^{m \times n}$
@@ -325,8 +340,8 @@ be a matrix in \textbf{row} notation. Then its \emph{squared Frobenius norm} is
 see~\ref{meansumrule}
 Functions are usually understood to be scalar, namely $f:\R^n \to \R$ while maps
 are more general $g:\R^n \to \R^m$. When we say that a map (or function) $\phi
-:\R^n \to \R^m$ is \emph{parameterized}, it means that implicitly has additional 
-variables that we treat as parameters $\phi_{\w}(\x) = \phi(\x, \w)$ where $\x \in \R^n$
+:\R^n \to \R^m$ is \emph{parameterized}, it implicitly means that $\phi$ has additional 
+variables which we treat as parameters $\phi_{\w}(\x) = \phi(\x, \w)$ where $\x \in \R^n$
 and $\w$ is the parameter set which we don't always specify its domain and we may not
 always subscript $\phi$ with it. The parameterized map $\phi$ itself may be
 identified with its parameter set and then both are designated with $\phi$.
@@ -344,16 +359,16 @@ Rows represent \emph{samples} and columns represent \emph{variables}. We assume
 that each raw is a realization of a random vector. If we have $N$ rows, then the
 corresponding $N$ random vectors are assumed to be independent. So depending on
 the context, when we say observation, or row, we may mean the actual observed
-values, or to the random vector who was realized by said observation.
+values, or to the random vector which was realized by said observation.
 
-We deal with two type of concrete datasets in this thesis. One of them is
-Single cell RNAseq data. This data represents gene expression levels in 
+We deal with two kinds of datasets in this thesis. One of them is
+Single cell RNAseq data. This kind of data represents gene expression levels in 
 individual cells, where rows represent cells and columns represent genes.
 So if we see a reading of
 $0.5$ in row $2$ column $4$ in means that in cell $2$ gene $4$ has normalized
 expression of $0.5$.
 
-The other type of data is images. For example the MNIST data set contains 
+The other kind of data is images. For example the MNIST data set contains 
 greyscale $28 \times 28$ images of hand written digits.
 We still think of such data set as a matrix. The first axis always represents
 the samples, so each "row" represent an image. The rest of the axes represent
@@ -364,14 +379,14 @@ There could possibly be additional data matrices with information about
 class or conditions. We use \emph{one-hot encoding} to represent such
 information.
 For example in the case of the MNIST dataset every image also comes with a label
-which indicate which digit it shows. Since there are $10$ classes of digits ($0$
+which indicates what digit it is. Since there are $10$ digits ($0$
 to $9$) the class matrix is going to have $10$ columns and each row is a one-hot
 vector indicating the digit of the corresponding image.
 
 \begin{mydef}
 \label{def:datamatrix}
 A \emph{data matrix} is a real--valued matrix $\bv{X} \in \R^{N \times n}$
-which represent a set of $N$ $n$-dimensional data points.
+which represents a set of $N$ $n$-dimensional data points.
 The $N$ rows are also called \emph{observations} and the $n$ columns are
 \emph{variables}.
 \end{mydef}
@@ -379,14 +394,14 @@ The $N$ rows are also called \emph{observations} and the $n$ columns are
 \begin{mydef}
 \label{def:classmatrix}
 A \emph{class matrix}, or also a \emph{condition matrix}
-$\bv{C} \in \R^{\N \times c}$ is simply a real matrix which
+$\bv{C} \in \R^{\N \times c}$ is a real matrix which
 represents one-hot encoding of $c$ classes or conditions over $N$ samples.
 For example if sample $i$ has class $j$, then 
 $(\forall k\in 1, \dots, c) \bv{C}[i,k] = \delta_{jk}$.
 
 We say that that $\bv{C}$ is a \emph{class probability matrix} or a \emph{relaxed
 class matrix} (same with condition)
-if instead of being one-hot it is a distribution matrix, namely each row is
+if instead of being one-hot its rows are distributions---each row is
 non-negative and sums up to $1$.
 \end{mydef}
 
@@ -395,22 +410,24 @@ class matrix (pure one-hot) but the output (the prediction) is naturally
 probabilistic and hence is relaxed.
 
 \subsection{Input set and target set}
-Sometimes the data paired into the input data $\X$ and the
+Our data may come in several, two or more matrices. 
+Sometimes the data is paired into the input data $\X$ and the
 target data $\Y$, 
 representing for example, samples from some unknown function $f(\x) = \y$
-that we want to "learn" to represent.
-In classification tasks for example, $\X$ can be for example a set of images,
-and $\Y$ can be their labels.
+that we want to "learn".
+For example in an image classification task,$\X$ may be a set of images,
+and $\Y$ is their labels.
+Implicitly $\X,\Y$ must have the same number of rows. And when we speak about 
+paired input/target $\x,\y$ it means some $(\x,\y) \in (\X,\Y)$ and $\x,\y$
+belong to the same sample (same row number).
 
-In the case of autoencoders, the target set is also the input set and $f$ is the
-identity (in this case $f$ is known but we want to learn an efficient way
-to represent the data).
+%In the case of autoencoders, the target set is also the input set and $f$ is the
+%identity (in this case $f$ is known but we want to learn an efficient way
+%to represent the data).
 
-When our data comes in several matrices, for example it could be a single cell RNAseq data
-with normalized gene expression data $\X$,  and cell types as target
-matrix $\Y$. It means they have must the same number of rows. And when we speak about 
-paired input/target $\x,\y$ it means some $(\x,\y) \in (\X,\Y)$ so it should be
-clear they belong to the same sample (row).
+%For example it could be a single cell RNAseq data
+%with normalized gene expression data $\X$,  cell types as target
+%matrix $\Y$. 
 
 \subsection{Probabilistic interpretation of the data}
 Suppose that we have a data matrix $\X = \{\x_1, \dots , \x_N\}$.
@@ -550,9 +567,9 @@ a $3$-variable function $f(a,b,x)$.
 In general we can define one or more multivariate
 functions $g : \R^{n+m} \to \R^k$ (for simplicity of the discussion lets assume 
 it is defined everywhere) and partition the set of its variables into $2$. 
-$g_{\w}(x) \triangleq g(\w,\x)$ where 
+$g_{\w}(x) \triangleq g(\w,\x) \in \R^k$ where 
 $\x \in \R^n, \w
-\in \R^m$ and let $g_{\w}(\x) := g(w,x) \in \R^k$.
+\in \R^m$.
 
 
 We call a class $\mathcal{F}$ of parameterized functions \emph{universal} if

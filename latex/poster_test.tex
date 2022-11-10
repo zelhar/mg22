@@ -1,16 +1,13 @@
 \documentclass[final]{beamer}
 %\documentclass[10pt, ]{beamer}
 %\documentclass[10pt, handout]{beamer}
-\usepackage[orientation=portrait,
-            size=a0,
-            scale=1.25
-            ]{beamerposter}
+\usepackage[orientation=portrait, size=a0, scale=1.25]{beamerposter}
 %\usepackage{markdown} 
 \usepackage[utf8]{inputenc}
 \usepackage{multicol}
 \usepackage{hyperref}
 \usepackage{graphicx}
-\usepackage{color}
+%\usepackage{color}
 \usepackage{framed}
 \usepackage{subcaption}
 \usepackage{float}
@@ -22,6 +19,7 @@
 \usepackage{amsthm}
 \usepackage[backend=biber]{biblatex}
 \addbibresource{mybib.bib}
+%\usepackage[dvipsnames]{xcolor}
 
 %\usepackage[a4paper, width=150mm, top=25mm, bottom=25mm]{geometry}
 %\usepackage{fancyhdr}
@@ -30,18 +28,19 @@
 %\pagestyle{empty}
 \usepackage{lipsum}
 
-\usetheme{Madrid}
+%\usetheme{Madrid}
 %\usetheme{Frankfurt}
+%\mode<presentation>{\usetheme{Madrid}}
+\mode<presentation>{\usetheme{Berlin}}
 
 \title{Spam Beamer}
 \subtitle{boring slides about spam}
 \author{Kolb, Yiftach}
-\date{\today}
 \institute[FU and MPG]{
 \centering
 \vfill
-{\includegraphics[width=0.2\linewidth]{images/MPIMG_RGB_gruen.png}}\\
-\vfill
+{\includegraphics[width=0.2\linewidth]{images/MPIMG_RGB_gruen.png}} %\\
+%\vfill
 {\includegraphics[width=0.2\linewidth]{images/fu-logo_bildschirm_RGB1.jpg}}
 }
 \date{\today}
@@ -49,6 +48,13 @@
 
 
 \begin{document}
+%\section{Foo}
+
+%\begin{frame}
+%%\titlepage
+%\maketitle
+%foo
+%\end{frame}
 
 
 
@@ -57,14 +63,20 @@
 %\begin{frame}
 
 %\begin{multicols}{2}
+%fo fi foo
+%\hrule
 
 
 \begin{frame}[t]
+%\begin{frame}
 %\frametitle{Spam}
 %\maketitle
 
 \begin{block}
-\titlepage
+%fooooo
+\maketitle
+%\titlepage
+%\hrule
 \end{block}
 
 \begin{block}{bar}
@@ -72,14 +84,31 @@ foo
 
 \end{block}
 
-\begin{multicols}{3}
 
-\section{Intro}
-\title{Introduction}
+\begin{block}{barbi}
+\fcolorbox{gray}{brown}{\textcolor{cyan}{test color}}
+\end{block}
+
+\begin{multicols}{3}[onlytextwidth]
+
+\hrulefill\\
+\pagecolor{purple}{
+\fcolorbox{teal}{olive}{\textcolor{magenta}{test color \hrulefill}}\\
+\hrulefill\\
+}
+
+\begin{block}{barbiiii}
+another block
+\end{block}
+
+%\section{Intro}
+%\title{Introduction}
 Spam~\footfullcite{russkikh2020style} is good.
 %\end{frame}
-
+%\rule
 \lipsum[0]
+
+%\hrule
 
 %\begin{frame}
 And now to something~\cite{guo2017improved} completely different \dots
@@ -93,7 +122,7 @@ foo ...
 foo ...
 foo ...
 
-\section{foo}
+%\section{foo}
 \lipsum[1]
 foo ...
 foo ...
@@ -101,7 +130,7 @@ foo ...
 
 \lipsum[2]
 
-\section{bar}
+%\section{bar}
 
 \lipsum[3]
 
@@ -109,7 +138,7 @@ foo ...
 
 \lipsum[5-8]
 
-\section{Reference}
+%\section{Reference}
 %\printbibliography
 
 foo ...
@@ -122,16 +151,24 @@ foo ...
 \begin{frame}{manual column setting}
 \begin{columns}
 
-\begin{column}{0.55\textwidth}
+\begin{column}{0.50\textwidth}
 \begin{block}{block headline}
 \lipsum
 \end{block}
 \end{column}
 
-\begin{column}{0.43\textwidth}
+\begin{column}{0.50\textwidth}
 \begin{block}{block headline0}
-\lipsum[0]
+\lipsum[1]
 \end{block}
+
+\begin{minipage}[c]{.65\textwidth}
+\hrule
+this is a 
+minipage
+
+lalalal
+\end{minipage}
 
 \begin{block}{block headline1}
 \lipsum[1]

@@ -1,5 +1,7 @@
-\documentclass[10pt, ]{beamer}
+\documentclass[final]{beamer}
 %\documentclass[10pt, handout]{beamer}
+\mode<presentation>{\usetheme{Berlin}}
+\usepackage[orientation=portrait, size=a0, scale=1.25, debug]{beamerposter}
 \usepackage[utf8]{inputenc}
 \usepackage{multicol}
 \usepackage{hyperref}
@@ -30,41 +32,41 @@
 \institute[FU and MPG]{
 \centering
 \vfill
-{\includegraphics[width=0.8\linewidth]{images/MPIMG_RGB_gruen.png}}\\
-\vfill
-{\includegraphics[width=0.8\linewidth]{images/fu-logo_bildschirm_RGB1.jpg}}
+{\includegraphics[width=0.3\linewidth]{images/MPIMG_RGB_gruen.png}} 
+{\includegraphics[width=0.3\linewidth]{images/fu-logo_bildschirm_RGB1.jpg}}
+%\vfill
 }
 
 
 
+
+
+
+
+%\section{Intro}
+
 \begin{document}
-
-
-\maketitle
-
-
-\section{Intro}
-
 \begin{frame}
 \frametitle{Spam}
+\begin{block}
+\maketitle
+\end{block}
+%\titlepage
 \begin{multicols}{2}
 Spam~\footfullcite{russkikh2020style} is good.
-
-\lipsum[0]
-
+spam spam spam
 \lipsum[1]
-
+\lipsum[2]
 \end{multicols}
-
 \end{frame}
 
-\begin{frame}
-And now to something~\cite{guo2017improved} completely different \dots
-\end{frame}
+%\begin{frame}
+%And now to something~\cite{guo2017improved} completely different \dots
+%\end{frame}
 
-\section{Reference}
-\begin{frame}
-\printbibliography
-\end{frame}
+%\section{Reference}
+%\begin{frame}
+%\printbibliography
+%\end{frame}
 
 \end{document}
