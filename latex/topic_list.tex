@@ -337,7 +337,8 @@ be a matrix in \textbf{row} notation. Then its \emph{squared Frobenius norm} is
 
 
 \section{Functions and maps}
-see~\ref{meansumrule}
+%see~\ref{meansumrule}
+\label{seq:functions}
 Functions are usually understood to be scalar, namely $f:\R^n \to \R$ while maps
 are more general $g:\R^n \to \R^m$. When we say that a map (or function) $\phi
 :\R^n \to \R^m$ is \emph{parameterized}, it implicitly means that $\phi$ has additional 
@@ -559,50 +560,57 @@ on specific values, then we get a linear function on $x$. Every assignment of
 $(a,b)$ defines a different linear function and in fact every linear function on
 one dimension can be uniquely described by these $a$ and $b$. So we can say that
 $\{f_{a,b}\}_{a,b \in \R}$ is a \emph{parameterization} of the class of all real
-linear functions on one variable. The distinction between what are the variables and what are
+linear functions on one variable. 
+The distinction between what are the variables and what are
 the parameters is somewhat arbitrary
 and in the end, $f_{a,b}(x)$ is just another way to represent 
 a $3$-variable function $f(a,b,x)$. 
+As we mentioned~\ref{seq:functions} sometimes we don't specify the parameters
+and we identify the parametrize map $f$ with its parameter set as this set
+uniquely determines $f$. 
 
-In general we can define one or more multivariate
-functions $g : \R^{n+m} \to \R^k$ (for simplicity of the discussion lets assume 
-it is defined everywhere) and partition the set of its variables into $2$. 
-$g_{\w}(x) \triangleq g(\w,\x) \in \R^k$ where 
-$\x \in \R^n, \w
-\in \R^m$.
+The way we parameterize a function is important. Usually given a parameterized
+map $\phi (\x)$ we want $\phi$ to be differentiable in its
+parameters so that $\frac{\partial}{\partial \w} \phi$ exits for every parameter $\w$. 
+
+%In general we can define one or more multivariate
+%Suppose that we a function $g : \R^{n+m} \to \R^k$ (for simplicity of the discussion lets assume 
+%it is defined everywhere). We partition the set of its variables into
+%$2$---parameters ($\w$) and variables ($\x$). 
+%$g_{\w}(x) \triangleq g(\w,\x) \in \R^k$ where 
+%$\x \in \R^n, \w
+%\in \R^m$.
 
 
 We call a class $\mathcal{F}$ of parameterized functions \emph{universal} if
 every continuous function can be uniformly approximated (inside a bounded
-domain) by functions of that class. The class of all linear functions is not
+domain) by a function of that class. The class of all linear functions is not
 universal. But taking "any function" $g$ is too general. What we actually want
 is a class of parameterized functions that is:
 \begin{itemize}
 \item{} as simple as possible to construct
-\item{} derivable in both the parameters as well as the variables
+\item{} differentiable in both the parameters as well as the variables
 \item{} can uniformly approximate any continuous function in a bounded domain
 given sufficiently large set of
 parameters (i.e. is universal).
 \end{itemize}
 
-However these requirements are still not enough.
+Still these requirements are not enough.
 For example, the class of multivariate polynomials can
 uniformly approximate any function. However it may not be a good idea to try
 to learn very complicated high dimensional data using polynomial representation. 
-For one reason is that the number of terms (monomials) grows very rapidly with the
+One reason is that the number of terms (monomials) grows very rapidly with the
 dimension and the degree of the polynomials: for $n$ dimensions and $m$ degrees
-there are something like $\binom{m + n}{n}$ monomial terms.
+there are something like $\binom{m + n}{m}$ monomial terms.
 
-We want this class of simpler functions, that are almost as simple as linear,
+We want a universal class of simpler functions, that are almost as simple as linear,
 and yet that suits well for statistical learning. For example we want to
-represent complicated functions with relatively few parameters.
-
+be able to represent complicated functions with relatively few parameters.
 One such class of functions is the feed forward neural networks,
 which is the class of functions that are comprised from "neurons".
 
 \section{Neurons}
 
-So what a "neuron"?. 
 Inspired from biology, a \emph{neuron} is a many--to--one ($\R^n \to \R$) parameterized
 function which
 "integrates" the input with a linear, or affine~(see~remark~\ref{affinelinear})
@@ -645,7 +653,7 @@ f_{\w}$.
 The parameters $\w$ are called the \emph{weights} of the neuron $\nu$.
 \end{mydef}
 
-Think of the weights of a neuron as some mutable, tunable property, some sort of memory.
+%Think of the weights of a neuron as some mutable, tunable property, some sort of memory.
 
 \begin{figure}[!h]
 \begin{framed}
@@ -667,8 +675,8 @@ shown, while in the right they are not.
 
 Connecting many neurons together can create powerful parameterized
 functions which we call neural networks.
-Connecting means that the output of one neuron is the input to one of the
-variables of a different neuron.
+%Connecting means that the output of one neuron is the input to one of the
+%variables of a different neuron.
 In feed forward networks the information only goes in one direction (no
 feedback) and as we will see it means the network is a directed acyclic graph.
 
@@ -711,9 +719,8 @@ edges) corresponds to a neuron.
 You can think of figure~\ref{fig:neuron2} left as depicting the neuron "component" 
 in a network, while figure~\ref{fig:neuron2} right shows a neural network
 description of single neuron, comprised from elementary neurons.
-If we add more neurons and add depth to the
 
-If rule 5 of the definition is not used in the construction of $\phi$, then the
+If rule 5 of the definition~\ref{def:NN} is not used in the construction of $\phi$, then the
 resulting network is hierarchical. Its graph can be partitioned into \emph{levels}
 $l_0, l_1\dots$ and there are only directed edges between two consecutive
 levels $l_i \to l_{i+1}$ (see figure~\ref{fig:nn1}).
@@ -730,15 +737,15 @@ diagrams but still implicitly assumed.
 A directed edge between neurons means that the output of the neuron at the tail
 is multiplied by the edge weight and assigned to the input variable of the
 neuron it connects to.
+A Node's output is therefore only dependent on the output of its direct
+ancestral nodes 
+(plus the bias which is usually not shown).
 Input-level neurons (sources) have no incoming edges and they represent the
 beginning of the
 computation.
 Output neurons (sinks) have no outgoing edges and their output is the final result of
 the computation.
 
-A Node's output is therefore only dependent on the output of its direct
-ancestral nodes 
-(plus the bias which is usually not shown).
 
 \begin{figure}[!h]
 \begin{framed}
@@ -889,13 +896,13 @@ sum and don't average over the dimensions will be cleared later when we get into
 variational inference.
 
 There is also a probabilistic way to interpret the total loss.
-We assume that the data points $\x, \y$ were randomly sampled from the unknown
-data distribution $P(\x, \y)$.
+We assume that the data points $\X, \Y$ were randomly and independently sampled from the unknown
+data distribution $p(\x, \y)$.
 Then equation~\ref{eq:NNbatchloss} can be reformulated as the expected 
 loss~\cite{bishop2006pattern}:
 
 \begin{equation}
-\mathcal{L}(\phi(\x), \y) \approx
+\mathcal{L}(\phi(\X), \Y) \approx
 \mathrm{E}_{\x,\y \sim P(\x,\y)} \mathcal{L}(\phi(\x), \y)
 \label{eq:NNbatchlossE}
 \end{equation}
@@ -1033,7 +1040,7 @@ on the original input, and which is using the square error loss function,
 a "vanilla" autoencoder. 
 
 \subsection{Relation between PCA and AE}
-For \textbf{centered} data, meaning every variable (column of $\bv{X}$)
+For \textbf{centered} data, where every variable (column of $\bv{X}$)
 has a sample mean of $0$, the first $k \leq \text{rank}(\bv{X})$ principle components
 $\bv{P}$ are the solution for equation~\ref{eqn:pca}; Whereas a \textbf{linear}
 autoencoder solves equation~\ref{eqn:pca3}. As mentioned, it must hold that $E =
@@ -1058,7 +1065,7 @@ dimensionality reduction.
 \caption{MNIST: UMAP of the AE}
 \end{subfigure}
 \end{framed}
-\caption{"vanilla" autoencoder compared with PCA, on the MNIST dataset}
+\caption{PCA (l) compared with "vanilla" autoencoder (r) on the MNIST dataset}
 \label{fig:pcavae}
 \end{figure}
 
@@ -1080,9 +1087,9 @@ For more details see~\fullcite{bishop2006pattern}.
 We treat the data matrix as a set of independent observations (its rows)
 $\bv{X} = \{\bv{x}_1, \dots
 , \bv{x}_N\}$ which we try to explain by a probabilistic model. 
-Each row $\x_i$ is thought of a realization of a random vector, which we also 
-denote as $\x_i$ (as explained in the notation section) and similarly $\X$
-represent both the set of r.vs as well as the realization itself.
+Each row $\x_i$ is considered a realization of a random vector, which we also 
+denote by $\x_i$ (as explained in the notation section) and similarly $\X$
+represents both the set of r.vs as well as the realization.
 
 We assume that
 the $\bv{x}_i$'s are independent and identically distributes (i.i.d) random vectors
@@ -1114,7 +1121,7 @@ Suppose that we have a fully Bayesian model. In this case there are no
 parameters because the parameters are themselves stochastic variables with some
 suitable priors. We can therefore pack all the latent variables and stochastic
 parameters into one latent "meta variable" $\z$,
-which is some multidimensional r.v and possibly composed of several simpler r.vs (for
+which is some multidimensional r.v and which is possibly composed of several simpler r.vs (for
 example a categorical and a normal r.vs).
 We similarly pack all the observed variables into one meta variable $\bv{x}$.
 Together we have a distribution $p(\bv{x},\bv{z})$ and the working assumption is that it
@@ -1124,7 +1131,7 @@ $p(\bv{x})$ is unknown.
 
 We are being Bayesian here so we consider $\bv{X} = \{\bv{x}_1, \bv{x}_2, \dots
 \}$ to be
-a constant a set of observations and we want to best explain $p(\bv{X})$ by finding as
+a constant set of observations and we want to best explain $p(\bv{X})$ by finding as
 high as possible lower bound for it (or rather to $\log p(\bv{X})$, the \emph{log
 evidence}).
 A second goal is to approximate the intractable $p(\bv{z}|\bv{x})$ by some simpler
@@ -1218,7 +1225,7 @@ For any $\theta$ and any $\phi$, the equations from the previous chapter hold
 also in the parametrize form, i.e 
 $\log p_{\theta}(\x) =
 -\mathcal{L}(q_{\phi},p_{\theta},\x) -
-KL(q_{\phi}(\z) \| p_{\theta}(\z|\x)$.
+KL(q_{\phi}(\z) \| p_{\theta}(\z|\x))$.
 
 We assume that we can only approach the "real" distribution using
 $\theta$ from below $\log p(\x) \geq \log p_{\theta}(\x)$.
@@ -1286,7 +1293,7 @@ The decoder network is similarly defined as neural network $g_{\phi}(\x)$ which
 maps $\x$ into the parameters defining the family $q_{\phi}(\z)$. Here too $\phi$
 represent the weights of the decoder.
 
-For the prior $p(z)$ we set some fixed prior distribution.
+For the prior $p(\z)$ we set some fixed prior distribution.
 
 Note that the encoder network (similarly the decoder) is used to define a distribution over
 $\z \in \R^m$, but the encoder itself maps into some other space. 
@@ -1311,14 +1318,14 @@ A \emph{variational autoencoder (VAE)} consists of a pair $(E,D)$ of neural netw
 $E : \R^n \to \Phi$ and $D : \R^m \to \Theta$ and some fixed distribution $p \in
 \Phi$.
 
-We call $\R^m$ or more genrally the domain of the decoder, \emph{the latent
-space}, and $\R^n$ (or more generally the domain of the encoder) is called
+We call $\R^m$ or more genrally the distribution space of the decoder, \emph{the latent
+space}, and $\R^n$ (or more generally the distribution space of the encoder) is called
 \emph{the observed space}.
 $p$ is called \emph{the prior distribution of the latent space}.
 \end{mydef}
 
 An autoencoder works deterministically, where 
-the encoder mapping input $\x \mapsto \z$ and the decoder then maps the
+the encoder maps the input $\x \mapsto \z$ and the decoder then maps the
 latent space $\z \mapsto \hat{\x}$ to the reconstruction. A VAE does
 basically the same thing but non-deterministically.
 It maps $\x$ into a distribution over $\z$: $\x \mapsto q(\z|\x) =
@@ -1341,7 +1348,7 @@ the encoder network maps $\x$ into the distribution parameters $E(\x) = \phi(\x)
 \in \Phi$;
 in the case we use diagonal normal distribution $\phi(\x) = (\mu(\x), \sigma(\x))$
 . Thus we defined a distribution over $\z$ by using $\x$ to map into
-the parameter domain: $q(\z | \x) = q_{\phi(x)}(\z)$
+the parameter domain: $q(\z | \x) = q_{\phi(\x)}(\z)$
 
 Similarly we call $p(\x | \z)$ the decoder although it is
 technically the distribution defined by the decoder. $D(\z) = \theta(\z)$:
