@@ -170,15 +170,15 @@ so-so--so---so
 In machine learning one often encounters data structures that have
 multi-dimensional \emph{shape} which we call \emph{tensors}.
 For example a 28 over 28 color image can be represented as
-a 3-dimensional shape ($28, 28, 3)$ representing height, width, and rgb
+a 3-dimensional shape ($28, 28, 3)$ representing pixel's height, width, and rgb
 color "channel". This creates some confusion as to what one means by dimensions.
 For example a vector $\x \in \R^5$ is represented as a 1 dimensional shape
 but it has $5$ \emph{dimensions in total}. Similarly the color image has a $3$ dimensional shape
-but it has $28 \cdot 28 \cdot 3$ dimesnions in total. It has 3 \emph{axes},
-whose repective sizes are
+but it has $28 \cdot 28 \cdot 3$ dimensions in total. It has 3 \emph{axes},
+whose respective sizes are
 $28$, $28$, and $3$. 
 
-A (real valued) \emph{tensor} is an element of a tensor product space, for exmaple
+A (real valued) \emph{tensor} is an element of a tensor product space, for example
 the color image described above,
 $\x \in  \R^{28 \times 28 \times 3} 
 \triangleq \R^{28} \otimes \R^{28} \otimes \R^3$. 
@@ -209,8 +209,8 @@ is represented as a $k$ dimensional array.
 We call its first axis the \emph{row axis} or alternatively when we
 want to emphasize that this is a collection of several tensors, the \emph{batch
 axis}.
-We call $\x_i = \x[i]$, which is the $k-1$ dimensional sub-array with the first
-coordinate held fixed is called the \emph{$i$'th row} of $\x$.
+The tensor $\x_i = \x[i]$, which is the $k-1$ dimensional sub-array with the first
+coordinate held fixed, is called the \emph{$i$'th row} of $\x$.
 Sometimes we want to represent a tensor $\x$ as a collections of tensors. For
 example it can represent a collection of several images. Each "row" then
 represents an image tensor.
@@ -223,7 +223,7 @@ However since they refer to the same entities (images) their first axes have equ
 sizes. We use the notation $(\x, \y)$ to denote the matching pairs of
 image/category, implicitly requiring them to have equally sized first axes.
 
-If $\x,\y$ have the same number of axes and their repective axes sizes are equal
+If $\x,\y$ have the same number of axes and their respective axes sizes are equal
 on all but the last axis then we can concatenate them by "stacking" $\y$ on top
 of $\x$ along the last axis.
 
@@ -309,11 +309,13 @@ sense.
 We use \textbf{curly} brackets to indicate the \textbf{row} representations of a matrix.
 For example $\{\x, \y\}$ represents a matrix whose \textbf{rows} are $\x$ and $\y$
 (as row vectors), which alternatively could be represented as
-$(\x, \y)^T$.
+$(\x, \y)^T$ (and symmetrically $(\x,\y) = \{\x,\y\}^T$).
 
 $(\X,\Y)$ or $(\X | \Y)$ represent
-concatenation of two matrices which implicitly means they have the same number
-of rows.
+concatenation of two matrices along the second axis (concatenation of rows) 
+which implicitly means they have the same number
+of rows. $\{\X, \Y\}$ represents concatenation along the first axis
+(concatenation of columns) which implies they must have equal number of columns.
 
 Zero--blocks are indicated with $0$ or are simply left as voids. For
 example
