@@ -50,8 +50,8 @@ from my_torch_utils import scsimDataset
 import my_torch_utils as ut
 
 
-import pytorch_lightning as pl
-from pl_bolts.models.autoencoders.components import resnet18_decoder, resnet18_encoder
+#import pytorch_lightning as pl
+#from pl_bolts.models.autoencoders.components import resnet18_decoder, resnet18_encoder
 
 print(torch.cuda.is_available())
 
