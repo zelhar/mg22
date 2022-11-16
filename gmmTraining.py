@@ -113,6 +113,8 @@ def preTrain(
             optimizer.step()
             if loss < best_loss:
                 best_result = model.state_dict()
+            if report_interval == 0:
+                continue
             if epoch % report_interval == 0 and idx % 1500 == 0:
                 print("epoch " + str(epoch))
                 print("training phase")
@@ -237,6 +239,8 @@ def advancedTrain(
             optimizer.step()
             if loss < best_loss:
                 best_result = model.state_dict()
+            if report_interval == 0:
+                continue
             if epoch % report_interval == 0 and idx % 1500 == 0:
                 print("epoch " + str(epoch))
                 print("training phase")
@@ -248,36 +252,6 @@ def advancedTrain(
                     ut.test_accuracy_helper(model, x, y, device)
                 model.train()
                 model.to(device)
-            #if advanced_semi:
-            #    model.train()
-            #    model.to(device)
-            #    model.requires_grad_(True)
-            #    batch_size = x.shape[0]
-            #    ww = torch.randn(batch_size,model.nw).to(device)
-            #    zz = model.Pz(ww)[:,:,:model.nz]
-            #    rr = model.Px(zz.reshape(batch_size * model.nclasses, model.nz))
-            #    yy = model.justPredict(rr).to(device)
-            #    cc = torch.eye(model.nclasses, device=device)
-            #    cc = cc.repeat(batch_size,1)
-            #    loss_cc = model.yscale * (yy - cc).abs().sum(-1).mean()
-            #    loss_cc = loss_cc - model.yscale * (cc * yy.log()).sum(-1).mean()
-            #    #model.eval()
-            #    #model.to(device)
-            #    #model.requires_grad_(False)
-            #    #batch_size = x.shape[0]
-            #    #ww = torch.randn(batch_size,model.nw).to(device)
-            #    #zz = model.Pz(ww)[:,:,:model.nz]
-            #    #rr = model.Px(zz.reshape(batch_size * model.nclasses, model.nz))
-            #    #yy = model.justPredict(rr).to(device)
-            #    #cc = torch.eye(model.nclasses, device=device)
-            #    #cc = cc.repeat(batch_size,1)
-            #    #model.train()
-            #    #model.requires_grad_(True)
-            #    #output = model.forward(rr, y=cc)
-            #    #loss = output["losses"]["total_loss"]
-            #    optimizer.zero_grad()
-            #    loss_cc.backward()
-            #    optimizer.step()
     model.cpu()
     model.eval()
     optimizer = None
@@ -337,7 +311,7 @@ def basicTrain(
     device: str = "cuda:0",
     wt: float = 1e-4,
     loss_type: str = "total_loss",
-    report_interval: int = 3,
+    report_interval: int = 10,
     best_loss: float = 1e6,
     do_plot: bool = False,
     test_accuracy: bool = False,
@@ -374,7 +348,9 @@ def basicTrain(
             optimizer.step()
             if loss < best_loss:
                 best_result = model.state_dict()
-            if epoch % report_interval == 0 and idx % 1500 == 0:
+            if report_interval == 0:
+                continue
+            elif epoch % report_interval == 0 and idx % 1500 == 0:
                 print("epoch " + str(epoch))
                 print("training phase")
                 model.printDict(output["losses"])
@@ -385,6 +361,9 @@ def basicTrain(
                     ut.test_accuracy_helper(model, x, y, device)
                 model.train()
                 model.to(device)
+            else:
+                #print("epoch " + str(epoch))
+                pass
     model.cpu()
     model.eval()
     optimizer = None
@@ -484,7 +463,9 @@ def basicTrainCond(
             optimizer.step()
             if loss < best_loss:
                 best_result = model.state_dict()
-            if epoch % report_interval == 0 and idx % 1500 == 0:
+            if report_interval == 0:
+                continue
+            elif epoch % report_interval == 0 and idx % 1500 == 0:
                 print("epoch " + str(epoch))
                 print("training phase")
                 model.printDict(output["losses"])
@@ -526,6 +507,9 @@ def basicTrainCond(
                     )
                     model.train()
                     model.to(device)
+            else:
+                pass
+                #print("epoch " + str(epoch))
     model.cpu()
     optimizer = None
     model.load_state_dict(best_result)
@@ -645,7 +629,9 @@ def trainSemiSuper(
             optimizer.step()
             if loss < best_loss:
                 best_result = model.state_dict()
-            if epoch % report_interval == 0 and idx % 1500 == 0:
+            if report_interval == 0:
+                continue
+            elif epoch % report_interval == 0 and idx % 1500 == 0:
                 print("unlabeled phase")
                 model.printDict(output["losses"])
                 print()
@@ -763,6 +749,8 @@ def trainSemiSuperCond(
             if not do_unlabeled:
                 if loss < best_loss:
                     best_result = model.state_dict()
+            if report_interval == 0:
+                continue
             if epoch % report_interval == 0 and idx % 1500 == 0:
                 print("epoch " + str(epoch))
                 print("labeled phase")
@@ -1044,6 +1032,8 @@ def basicTandemTrain(
             optimizer.step()
             #if loss < best_loss:
             #    best_result = model.state_dict()
+            if report_interval == 0:
+                continue
             if epoch % report_interval == 0 and idx % 1500 == 0:
                 print("epoch " + str(epoch))
                 print("training phase")
@@ -1165,6 +1155,8 @@ def basicDuoTrain(
             optimizer.step()
             #if loss < best_loss:
             #    best_result = model.state_dict()
+            if report_interval == 0:
+                continue
             if epoch % report_interval == 0 and idx % 1500 == 0:
                 print("epoch " + str(epoch))
                 print("training phase")
@@ -1296,6 +1288,8 @@ def basicTripleTrain(
             optimizer.step()
             #if loss < best_loss:
             #    best_result = model.state_dict()
+            if report_interval == 0:
+                continue
             if epoch % report_interval == 0 and idx % 1500 == 0:
                 print("epoch " + str(epoch))
                 print("training phase")

@@ -25,6 +25,7 @@
 \usepackage{bm} %\bm
 \usepackage{IEEEtrantools}
 \usepackage[section]{placeins} %\Floatbarrier
+\usepackage{float}
 %\usepackage{showframe}
 %\usepackage[a4paper, width=150mm, top=5mm, bottom=5mm]{geometry}
 \usepackage[a4paper, width=150mm, top=25mm, bottom=25mm]{geometry}
@@ -97,11 +98,15 @@
 \newcommand{\lt}{<}
 \newcommand{\tuple}[1]{\langle #1 \rangle}
 
+%\floatstyle{ruled}
+\floatstyle{boxed}
+\restylefloat{figure}
+\restylefloat{table}
 \begin{document}
 %\pagestyle{fancy}
 \begin{titlepage}
 \begin{center}
-{\includegraphics{images/MPIMG_RGB_gruen.png}}\\
+{\includegraphics[width=1.0\textwidth]{images/MPIMG_RGB_gruen.png}}\\
 \vspace*{1cm}
 %\vfill
 \Large
@@ -122,7 +127,7 @@ Yiftach Kolb
 Berlin, \today
 
 \vfill
-{\includegraphics{images/fu-logo_bildschirm_RGB1.jpg}}
+{\includegraphics[width=0.8\textwidth]{images/fu-logo_bildschirm_RGB1.jpg}}
 \end{center}
 \end{titlepage}
 
@@ -657,8 +662,8 @@ The parameters $\w$ are called the \emph{weights} of the neuron $\nu$.
 
 %Think of the weights of a neuron as some mutable, tunable property, some sort of memory.
 
-\begin{figure}[!h]
-\begin{framed}
+\begin{figure}[h]
+%\begin{framed}
 \centering
 \begin{subfigure}[b]{0.45\textwidth}
 \includegraphics[width=0.4\textwidth]{./plots/neuron.gv.png}
@@ -672,7 +677,7 @@ $\sigma(w_1x_1 + w_2x_2 + b)$}. Here the bias $b$ is explicitly shown
 but usually it is not depicted. In the left the variable names are explicitly
 shown, while in the right they are not.
 \label{fig:neuron2}
-\end{framed}
+%\end{framed}
 \end{figure}
 
 Connecting many neurons together can create powerful parameterized
@@ -749,8 +754,8 @@ Output neurons (sinks) have no outgoing edges and their output is the final resu
 the computation.
 
 
-\begin{figure}[!h]
-\begin{framed}
+\begin{figure}[h]
+%\begin{framed}
 \centering
 \begin{subfigure}[b]{0.5\textwidth}
 \includegraphics[width=0.8\textwidth]{./plots/neuronlayers.gv.png}
@@ -763,7 +768,7 @@ It is strictly hierarchical and there are only edges between nodes of two
 consecutive layers. The one on the bottom is more general.
 }
 \label{fig:nn1}
-\end{framed}
+%\end{framed}
 \end{figure}
 
 It turns out~\cite{nielsen2015neural} that the feed forward neural networks
@@ -789,8 +794,8 @@ There are additional types of parameterized functions which are used "within the
 layer" such as batch normalization but we won't get into that as this is not a
 thesis about neural networks per se.
 
-\begin{figure}[!h]
-\begin{framed}
+\begin{figure}[h]
+%\begin{framed}
 \centering
 \includegraphics[width=0.5\textwidth]{./plots/multilayer.gv.png}
 \caption{
@@ -800,7 +805,7 @@ connected layer (every neuron has incoming edges from all neurons of the
 previous layer) but it could also be used for describing a convolution.
 }
 \label{fig:nn2}
-\end{framed}
+%\end{framed}
 \end{figure}
 
 As figure~\ref{fig:nn1} shows, 
@@ -996,15 +1001,15 @@ dimensional input layer.
 In the case of the vanilla autoencoder the target for the loss function is the
 same as the input $\Y = \X$.
 
-\begin{figure}[!h]
-\begin{framed}
+\begin{figure}[h]
+%\begin{framed}
 \centering
 \includegraphics[width=0.8\textwidth]{./plots/autoencoderNN.gv.png}
 \caption{
 A graphic description of a "vanilla" autoencoder.
 }
 \label{fig:autoencoder}
-\end{framed}
+%\end{framed}
 \end{figure}
 
 \begin{mydef}
@@ -1055,8 +1060,8 @@ is spanned by the first $k$ principle components of the input $\bv{X}$.
 In general, an AE can be seen a PCA-like, but non-linear method for
 dimensionality reduction.
 
-\begin{figure}[!h]
-\begin{framed}
+\begin{figure}[h]
+%\begin{framed}
 \centering
 \begin{subfigure}[t]{0.45\textwidth}
 \includegraphics[width=0.95\textwidth]{images/pca.umap.mnist.png}
@@ -1066,7 +1071,7 @@ dimensionality reduction.
 \includegraphics[width=0.95\textwidth]{images/ae.umap.mnist.png}
 \caption{MNIST: UMAP of the AE}
 \end{subfigure}
-\end{framed}
+%\end{framed}
 \caption{PCA (l) compared with "vanilla" autoencoder (r) on the MNIST dataset}
 \label{fig:pcavae}
 \end{figure}
@@ -1079,12 +1084,12 @@ function. The autoencoder was
 trained on the training set and didn't "see" the testing images during training.
 The results appear quite similar.
 
-\chapter{Variance inference and variational autoencoders}
+\chapter{Variational inference and variational autoencoders}
 \section{Variational Inference}
 
 Here we briefly explain the idea behind variational inference and introduce the
 ELBO which is the loss function we'll use throughout this text.
-For more details see~\fullcite{bishop2006pattern}.
+For more details see~\cite{bishop2006pattern}.
 
 We treat the data matrix as a set of independent observations (its rows)
 $\bv{X} = \{\bv{x}_1, \dots
@@ -1477,8 +1482,8 @@ non-deterministically drawing $\z \sim q(\z | \x)$ from the encoder
 distribution,
 as is dones in figure~\ref{fig:vaeumapsamples}.
 
-\begin{figure}[!h]
-\begin{framed}
+\begin{figure}[h]
+%\begin{framed}
 \centering
 \begin{subfigure}[t]{0.3\textwidth}
 \includegraphics[width=\textwidth]{images/vae.umap.mnist.mu.png}
@@ -1502,7 +1507,7 @@ a random sample from the distribution is used.
 Third plot shows random digits generated by sampling $z \sim p(\z | \x)$
 and projecting back to the observed space $\x$ by the decoder.}
 \label{fig:vaeumap}
-\end{framed}
+%\end{framed}
 \end{figure}
 
 
@@ -1679,8 +1684,8 @@ The generative model therefore factors as: $p(\x,\z) = p(\x|\z)p(\z|\zeta) =
 p(\x|\z)p(\z)$.
 The inference model in this case is just $q(\z | \x)$.
 
-\begin{figure}[!h]
-\begin{framed}
+\begin{figure}[h]
+%\begin{framed}
 \centering
 \begin{subfigure}[b]{0.2\textwidth}
 \includegraphics[width=\textwidth]{plots/vae_p.gv.png}
@@ -1696,7 +1701,7 @@ The inference model in this case is just $q(\z | \x)$.
 \end{subfigure}
 \caption{VAE graphical model}
 \label{fig:vae_model}
-\end{framed}
+%\end{framed}
 \end{figure}
 
 Note that the graphical model has no assumption about the specific types of
@@ -1838,15 +1843,15 @@ the entity of interest.
 In this case we can use
 a CVAE model with fixed prior to reduce the batch effect.
 
-\begin{figure}[!h]
-\begin{framed}
+\begin{figure}[h]
+%\begin{framed}
 \centering
 \includegraphics[width=0.4 \textwidth]{plots/cvae.gv.png}
 \caption{Graphical model of the CVAE with a learned prior $p(\z | c)$.
 as usual the solid arrows depict the inference model (encoder) and the dotted
 ones the generative model (decoder)}
 \label{fig:cvae}
-\end{framed}
+%\end{framed}
 \end{figure}
 
 Figure~\ref{fig:cvaeumap} shows in the left a umap plot of the latent space for
@@ -1863,8 +1868,8 @@ is directly dependent on both $\z$ and $c$ ($p(\x | \z, c)$).
 The result is an encoding which mixes a lot of the categories in the latent
 space but we can still notice some clustering.
 
-\begin{figure}[!h]
-\begin{framed}
+\begin{figure}[h]
+%\begin{framed}
 \centering
 \begin{subfigure}[b]{0.33\textwidth}
 \includegraphics[width=\textwidth]{images/cvae2lp.umap.mnist.png}
@@ -1880,7 +1885,7 @@ space but we can still notice some clustering.
 \end{subfigure}
 \caption{CVAE, different use cases}
 \label{fig:cvaeumap}
-\end{framed}
+%\end{framed}
 \end{figure}
 
 \chapter{Gaussian mixture model VAEs}
@@ -1927,8 +1932,8 @@ $\x$ space where the data occupies a complex hyper-surface.
 %distribution in $\z$, $p(\z | \w, \y)$. Then reconstruct $\x$ just from $\z$
 %like in a vanilla VAE.
 
-\begin{figure}[!h]
-\begin{framed}
+\begin{figure}[h]
+%\begin{framed}
 \centering
 \begin{subfigure}[b]{0.4\textwidth}
 \includegraphics[width=\textwidth]{plots/mm.gv.png}
@@ -1942,7 +1947,7 @@ $\x$ space where the data occupies a complex hyper-surface.
 \end{subfigure}
 \caption{}
 \label{fig:mixturemodels}
-\end{framed}
+%\end{framed}
 \end{figure}
 
 Figure~\ref{fig:vanillamix} describes the usual Gaussian mixture
@@ -1958,8 +1963,8 @@ distributed around some fixed center which is pretty restrictive and perhaps too
 much so. By moving the random vectors inside the plate
 (figure~\ref{fig:platemix}), we create a much more flexible distribution.
 
-\begin{figure}[!h]
-\begin{framed}
+\begin{figure}[h]
+%\begin{framed}
 \centering
 \begin{subfigure}[b]{0.4\textwidth}
 \includegraphics[width=\textwidth]{plots/mmpd.gv.png}
@@ -1978,7 +1983,7 @@ outside of the plate.
 On the right: modification of the GMMVAE model, where $\pi$ moves inside the plate
 and becomes a variable with a symmetric Dirichlet prior.}
 \label{fig:mixturemodels2}
-\end{framed}
+%\end{framed}
 \end{figure}
 
 Another issue with the original mixture model, if we try to base a VAE model on
@@ -2071,13 +2076,13 @@ And $f(\z),g(\z), \mu_w(\x), \sigma_w(\x), \mu_z(\x), \sigma_z(\x)$ are
 the neural networks of the encoder.
 
 
-\begin{figure}[!hb]
-\begin{framed}
+\begin{figure}[h]
+%\begin{framed}
 \centering
 \includegraphics[width=0.5\textwidth]{plots/dirichlet_gmm.gv.png}
 \caption{DGMMVAE: GMMVAE with Dirichlet prior}
 \label{fig:dirgmm}
-\end{framed}
+%\end{framed}
 \end{figure}
 
 \section{Computing the loss function of DGMMVAE model}
@@ -2197,14 +2202,14 @@ The full factorization in the supervised case becomes:
 \end{aligned}
 \end{equation}
 
-\begin{figure}[!hb]
-\begin{framed}
+\begin{figure}[h]
+%\begin{framed}
 \centering
 \includegraphics[width=0.5\textwidth]{plots/dirichlet_gmm_supervised.gv.png}
 \caption{DGMMVAE: the supervised case, where $\y$ is an observed variable.
 }
 \label{fig:dirgmm_sup}
-\end{framed}
+%\end{framed}
 \end{figure}
 %\subsection{Conditional VAE}
 
@@ -2268,22 +2273,22 @@ visible to use because we know for each sample from which group it was
 taken.
 
 
-\begin{figure}[!hb]
-\begin{framed}
+\begin{figure}[h]
+%\begin{framed}
 \centering
 \includegraphics[width=0.5\textwidth]{plots/dirichlet_gmm_cvae.gv.png}
 \caption{cDGMMVAE, unsupervised case}
 \label{fig:dirgmmcvae}
-\end{framed}
+%\end{framed}
 \end{figure}
 
-\begin{figure}[!hb]
-\begin{framed}
+\begin{figure}[h]
+%\begin{framed}
 \centering
 \includegraphics[width=0.5\textwidth]{plots/dirichlet_gmm_cvae_supervised.gv.png}
 \caption{cDGMMVAE, supervised case}
 \label{fig:dirgmmcvae_super}
-\end{framed}
+%\end{framed}
 \end{figure}
 
 The factorization in the unsupervised case is:
@@ -2319,28 +2324,207 @@ cells, as we'll see in a later chapter.
 \chapter{Experiments and results MNIST}
 %\section{Tests with MNIST and FMNIST}
 
-\begin{figure}
-\begin{framed}
+The first dataset we tested the model on was MNIST~\cite{mnist} which is 
+easy to machine learn yet it is also the most tested and compared dataset.
+This is a collection of $28 \times 28$ pixel gray--scale images of hand written 
+digits. The images are labeled with the ground truth so it is an $(\X,\Y)$ kind
+of data, with $\X$ being numerical and $\Y$ categorical.
+
+MNIST images are close to being binary black and wight (either close to $0$ or
+close to $1$), so it is better to model them with Bernoulli distribution than
+with Gaussian, with the intensity of each pixel is regarded as a Bernoulli
+probability.
+Unless otherwise stated, for MNIST we set $p(\x | \z)$ to be Bernoulli
+distribution.
+
+\section{semi-supervised learning}
+
+In the first test we partition the training set into labeled
+($5\%$ of the total) and unlabeled subset (the other $95\%$).
+As we have some labeled images, we set the number--of--categories hyperparameter
+on $10$ and the goal here is to be able to predict the true categorical
+partitioning of the testing set.
+
+There are several qualitative aspects that we are particularly interested in
+this experiment:
+
+\begin{itemize}
+\item{} The overall prediction accuracy of the model
+\item{} Comparing the models predicted clusters to Louvain clusters
+\subitem{} in the PCA space
+\subitem{} in the latent space
+\end{itemize}
+
+
+\begin{figure}[h]
+%\begin{framed}
 \centering
-\begin{subfigure}[b]{0.4\textwidth}
-\includegraphics[width=\textwidth]{images/model_mnist_10c_generation.png}
-\caption{}
-%\caption{blabla}
-%\label{bla}
+\begin{subfigure}[b]{0.95\textwidth}
+\includegraphics[width=\textwidth]{images/gmmvae_mnist_ss_pca_umap.png}
+\caption{UMAP of the PCA space}
+\label{fig:mnist_ss_pca}
 \end{subfigure}
-%\includegraphics[width=0.4\linewidth]{images/model_mnist_10c_generation.png}
-\begin{subfigure}[b]{0.4\textwidth}
-\includegraphics[width=\textwidth]{images/model_mnist_10c_umap.png}
-\caption{}
-%\includegraphics[width=0.4\linewidth]{images/model_mnist_10c_umap.png}
+\begin{subfigure}[b]{0.95\textwidth}
+\includegraphics[width=\textwidth]{images/gmmvae_mnist_ss_latent_umap.png}
+\caption{UMAP of the latent space}
+\label{fig:mnist_ss_latent}
 \end{subfigure}
-\caption{a figure}
-\label{fig:myfig}
-\end{framed}
+\caption{Comparison of the predictive quality of the model vs. Louvain
+clustering on the PCA space (top) and on the latent space (bottom).}
+\label{fig:mnist_ss_umaps}
+%\end{framed}
 \end{figure}
 
+The overall accuracy of the model is $0.955$ and as
+the figures~\ref{fig:mnist_ss_umaps} the prediction basically identifies the
+real classes.
+When performed on the PCA space, Louvain clustering with default settings identifies $12$ clusters
+. The "$0$" and "$9$" classes each are split
+between two Louvain clusters. The Louvain clusters themselves appear to be
+homogeneous (each cluster contain practically only samples from one ground-truth
+class).
 
-\section{Tests with scRNAseq Data}
+It is interesting to compare the PCA results to the same procedure done on the
+latent space.
+The umap appears a little bit better (the ground truth classes have more
+separation from each other).
+This time there are $11$ louvain clusters and only the "9"
+category is split between two louvain clusters.
+This is despite the latent $z$ space being only $16$-dimensional, while the PCA
+is done on the $50$ most significant components.
+
+\begin{figure}[h]
+%\begin{framed}
+\centering
+\includegraphics[width=0.3\textwidth]{images/gmmvae_mnist_ss_samples.png}
+\caption{Images generated by random sampling from the latent mixture
+distribution. As we can see it fits perfectly with the right ground truth
+classes.}
+\label{fig:mnist_ss_samples}
+%\end{framed}
+\end{figure}
+
+Figure~\ref{fig:mnist_ss_samples} shows the decoder's reconstruction of random
+samples from the mixture distribution which was imposed on the latent space.
+As we can see each component generates exactly one of the digit classes.
+Sampling from the latent mixture distribution ($z$-space) is done as follows:
+Firs we take random samples from the $w$-space, on which we imposed a standard
+normal diagonal distribution. Each sample corresponds to one row in the image.
+Then each $w$-sample is projected by the decoder into $10$ (number of defined
+classes) mixture component. Each of these component if then further projected by
+the decoder network into the sample space ($x$). 
+
+\section{Unsupervised learning}
+\subsection{10 Clusters (exact clustering)}
+Getting the model to learn exactly the $10$ ground truth classes is a daunting
+task. It requires a lot of tuning and micromanaging of the training procedure.
+In my experiments, the model first needs to be trained with standard learning
+rate ($1e-3$) to the point where it can adequately reconstruct digits and uses
+all $10$ classes. Then the learning rate should be reduced to the range $5e-2$
+--- $5e-3$. This makes reconstruction less exact and allows the model to "jump"
+class predictions during training. If the learning rate is too big
+eventually the model might completely drift away and become inaccurate and
+unstable and if it is not sufficiently large the model remains stuck 
+on a suboptimal classification. 
+After this course training finds the correct classes, it needs to be further
+trained to improve accuracy and reconstruction with decreasing learning rates.
+
+In my experiments, an accuracy of about $0.9$---$0.95$ can be achieved
+however due the micromanagement involved it is hard to make the training fully
+automated. Moreover it may be completely unrealistic to expect the model
+to perform that well in unsupervised exact clustering tasks with harder
+datasets. 
+
+\begin{figure}[h]
+%\begin{framed}
+\centering
+\begin{subfigure}[b]{1.01\textwidth}
+\includegraphics[width=\textwidth]{images/gmmvae_mnist_us_latent_umap.png}
+\caption{UMAP of the latent space}
+\label{fig:mnist_us_latent}
+\end{subfigure}
+\begin{subfigure}[b]{0.3\textwidth}
+\includegraphics[width=\textwidth]{images/gmmvae_mnist_us_samples2.png}
+\caption{Randomly generated samples}
+\label{fig:mnist_us_samples}
+\end{subfigure}
+\caption{GMMVAE: unsupervised learning of MNIST. This particular model
+achieved 0.93 accyracy which probably could be a little bit further
+improved with fine-tune training. The Louvain clustering of the latent space is even better
+than the prediction.}
+\label{fig:mnist_us_10}
+%\end{framed}
+\end{figure}
+
+Figures~\ref{fig:mnist_us_10} shows the results of unsupervised, exact clustering
+of MNIST by the GMMVAE model with 8 dimensional latent $z$-space and
+$w$-space.
+As both the umap and the generated samples show, there is still a little bit
+inaccuracies left, mainly with "7","4", and "9" digits.
+Despite this, the actual latent space is very nicely clustered and louvain
+clustering over this space retrieves the true classification of the the data
+set, even to higher accuracy than the model prediction.
+Note that in unsupervised learning the predicted classes are naturally untagged
+with the ground truth class tag, the point is that it should find essentially
+the true partitioning of the data. The tag assignment can be done later. for
+example each predicted cluster is tagged with the class with which it has the
+most overlap.
+
+\subsection{With overclustering}
+Overclustering means defining a mixture distribution with more components then
+ground truth classes. This helps the model to create homogenous classes,
+where each component is nearly a subset of a single class.
+Moreover In the case of MNIST each digit has actually 2 or more basic appearance (e.g. 
+strait vs. italic version, closed vs. open top "4" figure etc.). One can argue
+that there are more "natural" classes in this dataset than the 10 digits.
+We ran unsupervised training of a GMMVAE model with $20$ components.
+
+\begin{figure}[h]
+\centering
+\begin{subfigure}[b]{1.01\textwidth}
+\includegraphics[width=\textwidth]{images/gmmvae_mnist_us_20c_umap4.png}
+\caption{UMAP (20 components, MNIST)}
+\label{fig:mnist_us_20c_latent}
+\end{subfigure}
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics[width=\textwidth]{images/gmmvae_mnist_us_20c_samples4.png}
+\caption{20 components: generated digits}
+\label{fig:mnist_us_20c_samples}
+\end{subfigure}
+\caption{GMMVAE with 20 components, unsupervised learning of MNIST.}
+\label{fig:mnist_us_20}
+\end{figure}
+
+Figures~\ref{fig:mnist_us_20} show the results of the 20--component GMMVAE
+model. "0" constitutes its own cluster, while "5" is split between 3 clusters.
+The rest of the classes are each split between two clusters. Each cluster has
+its own digit-style (e.g. a strait "7" in one cluster, and more cursive version
+in the other cluster). Unfortunately there is some misclassifications between
+"4" and "9". Overall accuracy is about $0.946$, probably with some room for
+improvement with additional training rounds. Louvain clustering of the latent
+space is able to almost perfectly capture the true classes, with the "1" class
+split between two Louvain clusters and the other classes correspond each to a
+single Louvain cluster.
+
+Training an overclustering model provides much more consistent results without
+training micromanagement. It is probably advisable to set up a model with more
+mixture components than the ground truth classes when trying unsupervised
+classification of more complex datasets.
+
+\chapter{Experiments and results fashion-MNIST}
+Fashion-MNIST (FMNIST)~\cite{fmnist} is a drop-in replacement for MNIST which
+is a lot more challenging to machine--learn. Instead of digits we are dealing
+here with grayscale images of clothing and accessory items of 10
+classes:~
+\emph{
+T-shirt, trouser, pullover, dress, coat, sandal, shirt, sneaker, bag, boot.
+}
+Although each image is tagged with a single category, it is not always obvious
+even for a human observer whether a certain image is actually a coat or a shirt,
+for example. There might be a little bit of this type of unclaritty in MNIST
+too, but it is much more pronounced in the fashion-MNIST dataset.
+
+\chapter{Tests with scRNAseq Data}
 some words about (sc)RNAseq and published papers where 
 AE and VAE models have been applied.
 What we were hoping to achieve and compare with.
@@ -2351,6 +2535,25 @@ punkt.
 punkt.
 
 
+\begin{figure}[h]
+%\begin{framed}
+\centering
+\begin{subfigure}[b]{0.9\textwidth}
+\includegraphics[width=\textwidth]{images/model_mnist_10c_generation.png}
+\caption{}
+%\caption{blabla}
+%\label{bla}
+\end{subfigure}
+%\includegraphics[width=0.4\linewidth]{images/model_mnist_10c_generation.png}
+\begin{subfigure}[b]{0.3\textwidth}
+\includegraphics[width=\textwidth]{images/model_mnist_10c_umap.png}
+\caption{}
+%\includegraphics[width=0.4\linewidth]{images/model_mnist_10c_umap.png}
+\end{subfigure}
+\caption{a figure}
+\label{fig:myfig}
+%\end{framed}
+\end{figure}
 
 
 

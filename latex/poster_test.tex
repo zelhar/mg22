@@ -1,4 +1,5 @@
 \documentclass[final]{beamer}
+\mode<presentation>{\usetheme{Berlin}}
 %\documentclass[10pt, ]{beamer}
 %\documentclass[10pt, handout]{beamer}
 \usepackage[orientation=portrait, size=a0, scale=1.25]{beamerposter}
@@ -22,7 +23,7 @@
 %\usepackage[dvipsnames]{xcolor}
 
 %\usepackage[a4paper, width=150mm, top=25mm, bottom=25mm]{geometry}
-%\usepackage{fancyhdr}
+\usepackage{fancyhdr}
 %\setlength{\headheight}{12pt}
 %\pagestyle{fancy}
 %\pagestyle{empty}
@@ -31,52 +32,113 @@
 %\usetheme{Madrid}
 %\usetheme{Frankfurt}
 %\mode<presentation>{\usetheme{Madrid}}
-\mode<presentation>{\usetheme{Berlin}}
+%\mode<presentation>{\usetheme{Berlin}}
 
-\title{Spam Beamer}
-\subtitle{boring slides about spam}
+\title{GMMVAE model for scRNAseq}
+\subtitle{Classification, synthetic data generation and treatment effect
+prediction}
 \author{Kolb, Yiftach}
 \institute[FU and MPG]{
 \centering
 \vfill
-{\includegraphics[width=0.2\linewidth]{images/MPIMG_RGB_gruen.png}} %\\
+{\includegraphics[width=0.3\linewidth]{images/MPIMG_RGB_gruen.jpg}} %\\
+%\hfill
 %\vfill
-{\includegraphics[width=0.2\linewidth]{images/fu-logo_bildschirm_RGB1.jpg}}
+\hspace{0.3cm}
+{\includegraphics[width=0.25\linewidth]{images/fu-logo_bildschirm_RGB1.jpg}}
 }
+%\institute1[MPG]{
+%{\includegraphics[width=0.2\linewidth]{images/MPIMG_Kompakt_RGB_gruen.jpg}} %\\
+%}
+%\institute2[FU Berlin]{
+%{\includegraphics[width=0.2\linewidth]{images/fu-logo_bildschirm_RGB1.jpg}}
+%}
 \date{\today}
 
 
 
 \begin{document}
-%\section{Foo}
-
-%\begin{frame}
-%%\titlepage
-%\maketitle
-%foo
-%\end{frame}
-
-
-
-%\begin{frame}[t]
-
-%\begin{frame}
-
-%\begin{multicols}{2}
-%fo fi foo
-%\hrule
-
 
 \begin{frame}[t]
-%\begin{frame}
-%\frametitle{Spam}
-%\maketitle
+%\begin{block}
+%%title page
+\begin{center}
+\includegraphics[width=0.5\textwidth]{images/MPIMG_RGB_gruen.png}\\
+%\vspace{1cm}
+%%\vfill
 
 \begin{block}
-%fooooo
+
+~ \includegraphics[width=0.22\linewidth]{plots/dirichlet_gmm_cvae.gv.png}
+
+\Large
+\textbf{GMMVAE model for scRNAseq
+}
+\vspace{0.5cm}
+%%\normalsize
+
+
+\large
+Classification, synthetic data generation and treatment effect
+prediction 
+%\includegraphics[width=0.4\textwidth]{images/MPIMG_RGB_gruen.png}
+
+%%\vfill
+\vspace{1.0cm}
+
+Yiftach Kolb
+%\includegraphics[width=0.4\textwidth]{images/fu-logo_bildschirm_RGB1.jpg}
+\includegraphics[width=0.22\linewidth]{plots/dirichlet_gmm.gv.png}
+~
+\includegraphics[width=0.22\linewidth]{plots/dirichlet_gmm_cvae.gv.png}
+
+Berlin, \today
+
+%%\vfill
+\end{block}
+%\vspace{1.0cm}
+
+\includegraphics[width=0.5\textwidth]{images/MPIMG_RGB_gruen.png}
+~
+\includegraphics[width=0.4\textwidth]{images/fu-logo_bildschirm_RGB1.jpg}
+%\normalsize
+\end{center}
+%\end{block}
+
+\begin{block}{Abstract}
+\begin{abstract}
+the abstract.
+\end{abstract}
+\end{block}
+\end{frame}
+
+\begin{frame}[t]
+\begin{block}
+\maketitle
+\end{block}
+\begin{block}{Abstract}
+\begin{abstract}
+the abstract.
+\end{abstract}
+\end{block}
+\begin{block}
+%\begin{center}
+%\includegraphics[width=0.2\textwidth]{images/fu-logo_bildschirm_RGB1.jpg}
+
+%\end{center}
+\end{block}
+\includegraphics[width=0.2\textwidth]{images/fu-logo_bildschirm_RGB1.jpg}
+\begin{block}
+
+\end{block}
+\end{frame}
+
+\begin{frame}[t]
+\frametitle{frame title: Spam}
+
+\begin{block}
 \maketitle
 %\titlepage
-%\hrule
 \end{block}
 
 \begin{block}{bar}
@@ -146,9 +208,20 @@ foo ...
 foo ...
 
 \end{multicols}
+
+\begin{block}{multicols block}
+\begin{multicols}{3}[onlytextwidth]
+\lipsum[1-4]
+\end{multicols}
+\end{block}
 \end{frame}
 
-\begin{frame}{manual column setting}
+
+\begin{frame}[t]{manual column setting}
+\begin{block}
+\maketitle
+%\titlepage
+\end{block}
 \begin{columns}
 
 \begin{column}{0.50\textwidth}
