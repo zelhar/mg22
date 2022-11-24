@@ -1118,6 +1118,16 @@ Train.trainSemiSuperLoop(
         report_interval=5,
         )
 
+model.eval()
+ut.do_plot_helper(model, "cpu")
+r,p,s = ut.estimateClusterImpurityLoop(model, test_data, test_labels, "cuda", )
+print(r)
+print(s)
+s = s[s>=0]
+r = r[r>=0]
+#print(p, "\n", r.mean(), "\n", r)
+print((r*s).sum() / s.sum())
+
 ut.saveModelParameters(
         model,
         "./results/" + str(datetime.timestamp(datetime.now())) + "ss_fmnist__model_params.pt",

@@ -1311,6 +1311,27 @@ def estimateClusterImpurityLoop(
             s[i] = c.shape[0]
     return r, p, s
 
+def estimateClusterAccuracy(
+        y : Tensor,
+        labels : Tensor,
+        ):
+    """
+    y : (relaxed) one_hot tensor (cluster indicator)
+    labels: one_hot vector (ground truth class indicator)
+    returns: r,p,s 
+    """
+    n = y.shape[1] # number of clusters
+    r = -np.ones(n) # homogeny index
+    p = -np.ones(n) # label assignments to the clusters
+    s = -np.ones(n) # label assignments to the clusters
+    for i in range(n):
+        c = labels[y.argmax(-1) == i]
+        if c.shape[0] > 0:
+            r[i] = c.sum(0).max().item() / c.shape[0] 
+            p[i] = c.sum(0).argmax().item()
+            s[i] = c.shape[0]
+    return r, p, s
+
 def do_plot_helper(model, device : str = "cpu",):
     """
     ploting helper function for 
@@ -1437,6 +1458,8 @@ def balanceAnnData(
     catKey: str,
     numSamples: int = 2500,
     noreps: bool = False,
+    eps : float = 1e-4,
+    add_noise : bool = False,
 ) -> ad._core.anndata.AnnData:
     """
     creates a balanced set with numSamples objects per each
@@ -1467,6 +1490,9 @@ def balanceAnnData(
         label="set",
     )
     xdata.obs_names_make_unique()
+    if add_noise:
+        noise = eps * np.random.randn(*xdata.X.shape).astype("float32")
+        xdata.X = xdata.X + noise
     return xdata
     
 

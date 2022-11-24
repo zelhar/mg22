@@ -2,7 +2,8 @@
 \mode<presentation>{\usetheme{Berlin}}
 %\documentclass[10pt, ]{beamer}
 %\documentclass[10pt, handout]{beamer}
-\usepackage[orientation=portrait, size=a0, scale=1.25]{beamerposter}
+%\usepackage[orientation=portrait, size=a0, scale=1.25]{beamerposter}
+\usepackage[orientation=portrait, size=a0, scale=1.0]{beamerposter}
 %\usepackage{markdown} 
 \usepackage[utf8]{inputenc}
 \usepackage{multicol}
@@ -21,6 +22,8 @@
 \usepackage[backend=biber]{biblatex}
 \addbibresource{mybib.bib}
 %\usepackage[dvipsnames]{xcolor}
+\usepackage[section]{placeins} %\Floatbarrier
+\usepackage{float}
 
 %\usepackage[a4paper, width=150mm, top=25mm, bottom=25mm]{geometry}
 \usepackage{fancyhdr}
@@ -37,7 +40,7 @@
 \title{GMMVAE model for scRNAseq}
 \subtitle{Classification, synthetic data generation and treatment effect
 prediction}
-\author{Kolb, Yiftach}
+\author{Yiftach Kolb and Martin Vingron}
 \institute[FU and MPG]{
 \centering
 \vfill
@@ -58,6 +61,76 @@ prediction}
 
 
 \begin{document}
+
+\begin{frame}[t]
+\begin{block}
+\maketitle
+\end{block}
+\begin{columns}
+
+
+\begin{column}{0.50\textwidth}
+\begin{block}{Abstract}
+\begin{multicols}{3}
+The Gaussian Mixture VAE Model has been demonstrated to be a rather powerful 
+model for unsupervised and (semi)supervised learning tasks on image
+sets~\cite{dilokthanakul2016deep}.
+We use a slightly modified and theoretically improved GMMVAE model and tested it on scRNAseq data.
+We also tested a conditional version of our GMMVAE for the purpose of predicting
+treatment effect on control cells of specific cell type.
+
+Our results suggests that the GMMVAE in (semi)supervised learning is able to 
+learn to both accurately classify and to generate the data.
+synthetic data generation is one possible application.
+
+As for prediction of treatment effect--- our cGMMVAE have similar results to one
+method we compared~\cite{lotfollahi2018generative}.
+\end{multicols}
+\vspace{10cm}
+\end{block}
+\end{column}
+
+\begin{column}{0.50\textwidth}
+\begin{block}{GMMVAE models}
+\begin{figure}[h]
+\begin{subfigure}[b]{0.35\linewidth}
+\includegraphics[width=0.92\linewidth]{plots/dirichlet_gmm.gv.png}
+\caption{GMMVAE}
+%\includegraphics[width=0.8\textwidth]{./plots/neuronlayers.gv.png}
+
+\end{subfigure}
+\begin{subfigure}[b]{0.39\linewidth}
+\includegraphics[width=0.97\linewidth]{./plots/dirichlet_gmm_cvae.gv.png}
+%\includegraphics[width=0.8\textwidth]{./plots/neuronlayers.gv.png}
+\caption{cGMMVAE}
+\end{subfigure}
+\end{figure}
+\end{block}
+\end{column}
+
+\end{columns}
+
+
+\begin{block}{Reference}
+\printbibliography
+\end{block}
+
+\begin{block}{Abstract}
+\begin{multicols}{3}[onlytextwidth]
+%\begin{abstract}
+The Gaussian Mixture VAE Model has been demonstrated to be a rather powerful 
+model for unsupervised and (semi)supervised learning tasks on image
+sets~\cite{dilokthanakul2016deep}.
+We use a slightly modified and theoretically improved GMMVAE model and tested it on scRNAseq data.
+We also tested a conditional version of our GMMVAE for the purpose of predicting
+treatment effect on control cells of specific cell type.
+
+%\lipsum
+%\end{abstract}
+
+\end{multicols}
+\end{block}
+\end{frame}
 
 \begin{frame}[t]
 %\begin{block}

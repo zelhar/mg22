@@ -597,6 +597,8 @@ def trainSemiSuper(
             if not do_unlabeled:
                 if loss < best_loss:
                     best_result = model.state_dict()
+            if report_interval == 0:
+                continue
             if epoch % report_interval == 0 and idx % 1500 == 0:
                 print("epoch " + str(epoch))
                 print("labeled phase")
@@ -652,6 +654,8 @@ def trainSemiSuper(
             loss = output["losses"]["total_loss"]
             q_y = output["q_y"]
             ce_loss = (y * q_y.log()).sum(-1).mean()
+            if report_interval == 0:
+                continue
             if epoch % report_interval == 0 and idx % 1500 == 0:
                 print("eval phase")
                 model.printDict(output["losses"])
@@ -661,7 +665,7 @@ def trainSemiSuper(
     model.load_state_dict(best_result)
     # optimizer = None
     del optimizer
-    print("done training")
+    #print("done training")
     return None
 
 def trainSemiSuperLoop(
@@ -686,6 +690,10 @@ def trainSemiSuperLoop(
     non-conditional version of trainSemiSuperLoop
     """
     for lr in lrs:
+        print(
+            "epoch's lr = ",
+            lr,
+        )
         trainSemiSuper(
             model,
             train_loader_labeled,
@@ -701,6 +709,8 @@ def trainSemiSuperLoop(
             do_plot=do_plot,
             test_accuracy=test_accuracy,
         )
+    print("done training")
+    return None
 
 
 def trainSemiSuperCond(
@@ -810,6 +820,8 @@ def trainSemiSuperCond(
             optimizer.step()
             if loss < best_loss:
                 best_result = model.state_dict()
+            if report_interval == 0:
+                continue
             if epoch % report_interval == 0 and idx % 1500 == 0:
                 print("unlabeled phase")
                 model.printDict(output["losses"])
@@ -833,6 +845,8 @@ def trainSemiSuperCond(
             loss = output["losses"]["total_loss"]
             q_y = output["q_y"]
             ce_loss = (y * q_y.log()).sum(-1).mean()
+            if report_interval == 0:
+                continue
             if epoch % report_interval == 0 and idx % 1500 == 0:
                 print("eval phase")
                 model.printDict(output["losses"])
@@ -842,7 +856,7 @@ def trainSemiSuperCond(
     model.load_state_dict(best_result)
     # optimizer = None
     del optimizer
-    print("done training")
+    #print("done training")
     return None
 
 
@@ -868,6 +882,10 @@ def trainSemiSuperLoopCond(
     Tandem training for two models
     """
     for lr in lrs:
+        print(
+            "epoch's lr = ",
+            lr,
+        )
         trainSemiSuperCond(
             model,
             train_loader_labeled,
@@ -883,6 +901,8 @@ def trainSemiSuperLoopCond(
             do_plot=do_plot,
             test_accuracy=test_accuracy,
         )
+    print("done training")
+    return None
 
 def trainSuperCond(
     model,
@@ -930,7 +950,7 @@ def trainSuperCond(
     model.cpu()
     model.load_state_dict(best_result)
     del optimizer
-    print("done training")
+    #print("done training")
     return None
 
 
@@ -958,6 +978,8 @@ def trainSuperLoopCond(
             wt,
             report_interval,
         )
+    print("done training")
+    return None
 
 
 

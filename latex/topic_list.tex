@@ -199,7 +199,7 @@ inconsistent with the way dimension is used in mathematics with regards to vecto
 A \emph{scalar} $x \in \R$ is an element of the (real) field.
 It has $0$ \emph{dimensions}, $0$ \emph{axes} and \emph{shape} $(,)$.
 
-A \emph{vector} $\x \in \R^n$ has $n$ dimensions, $1$ axis, and sahpe $(n,)$.
+A \emph{vector} $\x \in \R^n$ has $n$ dimensions, $1$ axis, and shape $(n,)$.
 
 A matrix $\X \in \R^{m \times n}$ has $mn$ dimensions (in total), $2$ axes, and shape of $(m,n)$.
 Its first and second axes are said to be of sizes $m$ and $n$ respectively.
@@ -2243,6 +2243,34 @@ $\y$ in the weighted sum.
 The two $y$-terms are the log probability of the observed category given the
 sampled $\z$ and $\dd$.
 
+\section{Combining GMMVAE with another clustering method}
+
+Because GMMVAE performs particularly well in (semi)supervised 
+it can learn a given cluster/class assignment of a dataset by.
+But when might it be useful to train GMMVAE if we already have a different
+clustering algorithm or any other unsupervised classifier that works well?
+Suppose that we have a "nice" training set where a given clustering algorithm
+performs well on.
+We can supervised train GMMVAE on the nice dataset using the cluster assignment
+as labels. At this point the model should learn to represent the data clusters
+nearly perfect.
+It is often the case that the GMMVAE trained in this manner will out-perform 
+a "naive" GMMVAE which was unsupervised trained.
+
+We can than run unsupervised training on the dataset, if we are
+lucky the accuracy might improve. So that's one use case but a minor one.
+
+The more important usage is that we can now classify with GMMVAE other datasets
+of the same kind.
+We should compare the performance of the trained model on the testing set with
+the performance of the clustering algorithm \emph{on the testing set} which per
+assumption was not that good. If we are lucky the GMMVAE might outperform the
+clustering algorithm on the not--so--nice testing data.
+
+We tested a combination of GMMVAE with Louvain~\cite{que2015scalable} clustering
+on several datasets (results shown in subsequent chapters).
+
+
 \section{The conditional mixture model, cDGMMVAE}
 %\section{Motivation}
 
@@ -2511,10 +2539,38 @@ training micromanagement. It is probably advisable to set up a model with more
 mixture components than the ground truth classes when trying unsupervised
 classification of more complex datasets.
 
+\section{Combination with Louvain clustering}
+
+Louvain clustering achieves on its own an accuracy of 0.967 on the
+\emph{training set} which is larger (60k images) and 0.925 on the smaller (10k) 
+testing set.
+
+We performed supervised training of GMMVAE model using Louvain clusters as the
+labels.
+After this step, the model was 0.966 accurate \emph{on the testing set}.
+After further unsupervised training of the model the accuracy marginally
+improved to 0.968.
+
+MNIST is an easy data set but still the improvement over Louvain from 0.92 to 0.968 is
+noticeable. There was also an improvement over the unsupervised model and it
+basically solved the misclassification issue between 9,7 and 4 which is
+the main problem we observes with unsupervised learning as we see in
+figure~\ref{fig:mnist_us_louvain}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.4\textwidth]{images/gmmvae_mnist_us_louvain_samples1.png}
+\label{fig:mnist_us_louvain_samples}
+\caption{GMMVAE with 12 components guided by Louvain clustering: randomly generated digits}
+\label{fig:mnist_us_louvain}
+\end{figure}
+
+
+
 \chapter{Experiments and results fashion-MNIST}
 Fashion-MNIST (FMNIST)~\cite{fmnist} is a drop-in replacement for MNIST which
 is a lot more challenging to machine--learn. Instead of digits we are dealing
-here with grayscale images of clothing and accessory items of 10
+here with greyscale images of clothing and accessory items of 10
 classes:~
 \emph{
 T-shirt, trouser, pullover, dress, coat, sandal, shirt, sneaker, bag, boot.
@@ -2524,15 +2580,169 @@ even for a human observer whether a certain image is actually a coat or a shirt,
 for example. There might be a little bit of this type of unclaritty in MNIST
 too, but it is much more pronounced in the fashion-MNIST dataset.
 
-\chapter{Tests with scRNAseq Data}
-some words about (sc)RNAseq and published papers where 
-AE and VAE models have been applied.
-What we were hoping to achieve and compare with.
+\section{Unsupervised learning}
+
+GMMVAE achieved an overall $0.75$ accuracy after \emph{a lot} of training epochs.
+It is easier to achieve about $0.67$ accuracy after a quick training (about 10
+epochs).
+Choice of hyperparameters also have significant effect. For example choosing 
+a high dimensional latent space or deepening the networks tend to make the model
+perform to not use all the components of the mixture.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.6\textwidth]{images/gmmvae_fmnist_us_20c_samples0.png}
+\caption{20 components: generated digits}
+\label{fig:fmnist_us_20c_samples}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{images/gmmvae_fmnist_us_20c_umap0.png}
+\caption{UMAP (20 components, MNIST)}
+\label{fig:fmnist_us_20c_latent}
+\end{figure}
+
+Judging from the randomly generated images in
+figure~\ref{fig:fmnist_us_20c_samples}, the model learns to 
+generate what looks like a distinct classes in each of the mixture components.
+However as far as prediction accuracy, there is a major confusion between
+"shirt", "coat", and "pullover" classes, which is apparent from the UMAP in 
+figure~\ref{fig:fmnist_us_20c_latent}.
+
+\section{Semisupervised learning}
+
+Our GMMVAE model achieved accuracy of $0.85$ on semisupervised learning with
+$0.1$ --- $0.9$ split between known and hidden labels. 
+Considering that this accuracy was semisupervised and that the network 
+layer architecture we used was just fully connected with 2 hidden layers 
+we think this accuracy is not bad.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.5\textwidth]{images/gmmvae_fmnist_ss_samples.png}
+\caption{FMNIST, semisupervised. Randomly generated samples.}
+\label{fig:fmnist_ss_samples}
+\end{figure}
+
+Figure~\ref{fig:fmnist_ss_samples} shows randomly generated samples 
+by the model. The $10$ components match the ground truth classes
+fairly well.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.1\textwidth]{images/gmmvae_fmnist_ss_latent_umap.png}
+\caption{FMNIST, semisupervised. UMAP}
+\label{fig:fmnist_ss_latent}
+\end{figure}
+
+Figure~\ref{fig:fmnist_ss_latent} shows UMAP of the laten space.
+The top-wear (shirt, coat, pullover, T-shirt) are still pretty mixed and that's
+where most of the misclassifications occur.
+
+%\begin{figure}[h]
+%\centering
+%\begin{subfigure}[b]{1.01\textwidth}
+%\includegraphics[width=\textwidth]{images/gmmvae_fmnist_us_20c_umap0.png}
+%\caption{UMAP (20 components, MNIST)}
+%\label{fig:fmnist_us_20c_latent}
+%\end{subfigure}
+%\begin{subfigure}[b]{0.5\textwidth}
+%\includegraphics[width=\textwidth]{images/gmmvae_fmnist_us_20c_samples0.png}
+%\caption{20 components: generated digits}
+%\label{fig:fmnist_us_20c_samples}
+%\end{subfigure}
+%\caption{GMMVAE with 20 components, unsupervised learning of MNIST.}
+%\label{fig:fmnist_us_20}
+%\end{figure}
+
+\section{Combination with Louvain clustering}
+
+Louvain clustering achieves accuracy of 0.71 on both the training and the
+testing sets.
+We supervised trained a GMMVAE and it achieved 0.714 accuracy, an insignificant
+difference from Louvain. With further unsupervised training rounds it reached 
+0.725 accuracy. Still below the 0.75 we achieved with the best model during 
+unsupervised only training but but we were only able to
+achieve it with much trying and tuning.
+The combination with Louvain is much more consistent as a method.
+
+%Moreover the Louvain clustering on the latent space at least looks nicer than on
+%the original space. We didn't have time to confirm this in terms of accuracy.
+%If indeed it is the case we could iterate this combined training method with the
+%new clusters and see if there is improvement.
+
+\chapter{Tests with PBMCs scRNAseq Data -- Zheng et al}
+
+We first selected a scRNAseq data set~\cite{zheng2017massively} which is easy
+because the cells are nicely clustered by cell type.
+The main challenge with this data is that it is imbalanced. It has 2623 samples
+of 7 cell types overall but in particularly one type (dendritic cells) only has 37 samples.
+
+While Louvain clustering performs well: it achieved 0.93--0.94 accuracy and found 9
+clusters, GMMVAE failed to cluster the smallest cell type (see
+figure~\ref{fig:zheng_ss_latent}). With the other types
+it did ok with accuracy of around 0.92.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.1\textwidth]{images/gmmvae_zheng_us_9c_umap.png}
+\caption{Zheng dataset, UMAPs. The main issue with GMMVAE is it fails to 
+classify the smallest group (Dendritic) in its own cluster.}
+\label{fig:zheng_ss_latent}
+\end{figure}
+
+In order to overcome this issue we generated a rebalanced data set by selecting 
+$300$ samples from each types with repetitions. In addition we added small
+Gaussian noise. We also scaled the log-count matrix of the original data set 
+so each gene has near standard normal distribution across the samples.
+
+We trained a GMMVAE model by taking turns, first on the rebalanced data, then on
+the original data, repeating several times.
+We were able to achieve 0.93 accuracy consistently and probably the method can
+be a little bit improved by tuning the model and the balancing preprocessing.
+In particular it appears that adding the small noise to the rebalanced data
+helped the model to learn all the cell types with fewer components.
+Figure~\ref{fig:zheng_ss_latent_balanced} visualize with umaps the results 
+of this rebalancing method.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.1\textwidth]{images/gmmvae_zheng_us_balanced_10c_umap1.png}
+\caption{Zheng dataset, UMAPs of the latent space after training 
+on the rebalanced and the original data set.
+}
+\label{fig:zheng_ss_latent_balanced}
+\end{figure}
+
+
+Of course for this particular data it would be easier and faster to use Louvain
+clustering and train a GMMVAE model on the clustering if it were needed for some
+purpose.
+However this experiment gives some insight on the importance of data balancing.
+
+\chapter{Tests with PBMCs scRNAseq Data (Kang et al)}
+In these tests we used a scRNAseq dataset~\cite{kang2018multiplexed} of PBMCs
+(peripheral blood mononuclear cells) of $7$ cell types which comes from two groups:
+control  and treatment. The cells in the treatment group have been exposed to
+interferon beta (INF-$\beta$).
+
+Because the data comes from different classes (=cell types) and from two
+different batches (control/treatment), 
+the conditional version of our mixture model, cDGMMVAE, 
+seems to be the most suitable for this type of data. The mixture
+components correspond to the cell types, and the condition corresponds to
+control/treatment.
+
+\subsection{Unsupervised learning}
+
+
 
 \chapter{Discussion, some remarks and conclusions}
 punkt.
 punkt.
 punkt.
+
 
 
 \begin{figure}[h]
