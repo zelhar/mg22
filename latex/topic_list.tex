@@ -110,7 +110,7 @@
 \vspace*{1cm}
 %\vfill
 \Large
-\textbf{List of topics to cover}
+\textbf{scGMVAE}
 %\vfill
 
 %\vspace{0.5cm}
@@ -118,9 +118,12 @@
 
 %\normalsize
 \large
-With section titles and brief explantions.
+a Master's thesis
+\vspace{1.0cm}
+
+Instructor: professor Martin Vingron
+
 \vfill
-%\vspace{1.0cm}
 
 Yiftach Kolb
 
@@ -139,16 +142,16 @@ Berlin, \today
 \chapter*{Abstract}
 punkt.
 punkt.
-\nocite{guo2017improved}
 
 \chapter*{Declaration}
 punkt.
 punkt.
-\nocite{bishop2006pattern}
-\nocite{serre2001matrices}
-\nocite{kingma2013auto}
-\nocite{lotfollahi2018generative}
-\nocite{luecken2019current}
+%\nocite{guo2017improved}
+%\nocite{bishop2006pattern}
+%\nocite{serre2001matrices}
+%\nocite{kingma2013auto}
+%\nocite{lotfollahi2018generative}
+%\nocite{luecken2019current}
 
 \chapter*{Acknowledgement}
 punkt.\cite{kingma2013auto}
@@ -157,7 +160,7 @@ bip/bop\slash boop
 $\X \x \Z \z \Y \y \W \w \mathbb{Z}$
 so-so--so---so
 
-\listoftables
+%\listoftables
 
 \listoffigures
 
@@ -173,64 +176,61 @@ so-so--so---so
 
 \section{Tensors, shape, axis, dimension}
 In machine learning one often encounters data structures that have
-multi-dimensional \emph{shape} which we call \emph{tensors}.
-For example a 28 over 28 color image can be represented as
-a 3-dimensional shape ($28, 28, 3)$ representing pixel's height, width, and rgb
-color "channel". This creates some confusion as to what one means by dimensions.
-For example a vector $\x \in \R^5$ is represented as a 1 dimensional shape
-but it has $5$ \emph{dimensions in total}. Similarly the color image has a $3$ dimensional shape
-but it has $28 \cdot 28 \cdot 3$ dimensions in total. It has 3 \emph{axes},
-whose respective sizes are
-$28$, $28$, and $3$. 
+multi-dimensional \emph{shape} which we call \emph{tensors}. For example a 28
+over 28 color image can be represented as a 3-dimensional shape ($28, 28, 3)$
+representing pixel's height, width, and rgb color "channel". This creates some
+confusion as to what one means by dimensions. For example a vector $\x \in \R^5$
+is represented as a 1 dimensional shape but it has $5$ \emph{dimensions in
+total}. Similarly the color image has a $3$ dimensional shape but it has $28
+\cdot 28 \cdot 3$ dimensions in total. It has 3 \emph{axes}, whose respective
+sizes are $28$, $28$, and $3$. 
 
-A (real valued) \emph{tensor} is an element of a tensor product space, for example
-the color image described above,
-$\x \in  \R^{28 \times 28 \times 3} 
-\triangleq \R^{28} \otimes \R^{28} \otimes \R^3$. 
-A \emph{tensor} has $0$ or more axes and it generalizes 
-scalar, vector, matrix and higher dimensional shaped entities.
+A (real valued) \emph{tensor} is an element of a tensor product space, for
+example the color image described above, $\x \in  \R^{28 \times 28 \times 3}
+\triangleq \R^{28} \otimes \R^{28} \otimes \R^3$. A \emph{tensor} has $0$ or
+more axes and it generalizes scalar, vector, matrix and higher dimensional
+shaped entities.
 
-In Pytorch~\cite{pytorch2018pytorch} terminology dimension
-is used for the number of axes but I think it is
-inconsistent with the way dimension is used in mathematics with regards to vectors.
+In Pytorch~\cite{pytorch2018pytorch} terminology dimension is used for the
+number of axes but I think it is inconsistent with the way dimension is used in
+mathematics with regards to vectors.
 
 \begin{mydef}
 \label{def:tensor}
-A \emph{scalar} $x \in \R$ is an element of the (real) field.
-It has $0$ \emph{dimensions}, $0$ \emph{axes} and \emph{shape} $(,)$.
+A \emph{scalar} $x \in \R$ is an element of the (real) field. It has $0$
+\emph{dimensions}, $0$ \emph{axes} and \emph{shape} $(,)$.
 
 A \emph{vector} $\x \in \R^n$ has $n$ dimensions, $1$ axis, and shape $(n,)$.
 
-A matrix $\X \in \R^{m \times n}$ has $mn$ dimensions (in total), $2$ axes, and shape of $(m,n)$.
-Its first and second axes are said to be of sizes $m$ and $n$ respectively.
+A matrix $\X \in \R^{m \times n}$ has $mn$ dimensions (in total), $2$ axes, and
+shape of $(m,n)$. Its first and second axes are said to be of sizes $m$ and $n$
+respectively.
 
-A tensor $\x \in \R^{n_1 \times \dots \times n_k}$
-has $\prod_1^k n_i$ dimensions, $k$ axes, and shape $(n_1, \dots, n_k)$.
-Its $i$'s axis is said to be of size $n_i$.
+A tensor $\x \in \R^{n_1 \times \dots \times n_k}$ has $\prod_1^k n_i$
+dimensions, $k$ axes, and shape $(n_1, \dots, n_k)$. Its $i$'s axis is said to
+be of size $n_i$.
 \end{mydef}
 
-In practice a tensor $\x \in \R^{n_1 \times \dots \times n_k}$
-is represented as a $k$ dimensional array.
-We call its first axis the \emph{row axis} or alternatively when we
-want to emphasize that this is a collection of several tensors, the \emph{batch
-axis}.
-The tensor $\x_i = \x[i]$, which is the $k-1$ dimensional sub-array with the first
-coordinate held fixed, is called the \emph{$i$'th row} of $\x$.
-Sometimes we want to represent a tensor $\x$ as a collections of tensors. For
-example it can represent a collection of several images. Each "row" then
-represents an image tensor.
+In practice a tensor $\x \in \R^{n_1 \times \dots \times n_k}$ is represented as
+a $k$ dimensional array. We call its first axis the \emph{row axis} or
+alternatively when we want to emphasize that this is a collection of several
+tensors, the \emph{batch axis}. The tensor $\x_i = \x[i]$, which is the $k-1$
+dimensional sub-array with the first coordinate held fixed, is called the
+\emph{$i$'th row} of $\x$. Sometimes we want to represent a tensor $\x$ as a
+collections of tensors. For example it can represent a collection of several
+images. Each "row" then represents an image tensor.
 
-It may be that our data set comes not as one tensor but in several tensors.
-For example we might have a tensor $\x$ representing an ordered set of images,
-and a tensor $\y$ which represents the category of each image.
-Because they have different shapes they don't fit together in one tensor.
-However since they refer to the same entities (images) their first axes have equal
-sizes. We use the notation $(\x, \y)$ to denote the matching pairs of
-image/category, implicitly requiring them to have equally sized first axes.
+It may be that our data set comes not as one tensor but in several tensors. For
+example we might have a tensor $\x$ representing an ordered set of images, and a
+tensor $\y$ which represents the category of each image. Because they have
+different shapes they don't fit together in one tensor. However since they refer
+to the same entities (images) their first axes have equal sizes. We use the
+notation $(\x, \y)$ to denote the matching pairs of image/category, implicitly
+requiring them to have equally sized first axes.
 
-If $\x,\y$ have the same number of axes and their respective axes sizes are equal
-on all but the last axis then we can concatenate them by "stacking" $\y$ on top
-of $\x$ along the last axis.
+If $\x,\y$ have the same number of axes and their respective axes sizes are
+equal on all but the last axis then we can concatenate them by "stacking" $\y$
+on top of $\x$ along the last axis.
 
 \begin{mydef}
 \label{def:rowrep}
@@ -256,18 +256,17 @@ the $(\x|\y)$ is their concatenation on the last axis.
 \section{samples, batches, mean-sum rule}
 
 We distinguish between two types of tensors depending on what they represents.
-Let $\x \in \R^{m \times n \times l}$ be a tensor.
-If we say that $\x$ is a \emph{sample} or a \emph{data point} it means it is a
-single sample from our data set. If we say that it is a \emph{batch}, then 
-it represent a collection of $m$ samples. In this case the first axis is the batch
-axis and the rest of the axes are the sample axes.
+Let $\x \in \R^{m \times n \times l}$ be a tensor. If we say that $\x$ is a
+\emph{sample} or a \emph{data point} it means it is a single sample from our
+data set. If we say that it is a \emph{batch}, then it represent a collection of
+$m$ samples. In this case the first axis is the batch axis and the rest of the
+axes are the sample axes.
 
-As a rule the default reduction is summation over sample axes 
-and mean over the batch axes.
-For example if $\x$ is a sample, 
-then $\|\x \|_1 = \sum_i \sum_j \sum_k |x_{i,j,k}|$ because it has no batch axis.
-If $\x$ is a batch, then we take the mean over the first axis:
-$\| \x \|_1 = \frac{1}{m} \sum_i \| \x_i \|_1 = \frac{1}{m} \sum_i \sum_j \sum_k |x_{i,j,k}|$.
+As a rule the default reduction is summation over sample axes and mean over the
+batch axes. For example if $\x$ is a sample, then $\|\x \|_1 = \sum_i \sum_j
+\sum_k |x_{i,j,k}|$ because it has no batch axis. If $\x$ is a batch, then we
+take the mean over the first axis: $\| \x \|_1 = \frac{1}{m} \sum_i \| \x_i \|_1
+= \frac{1}{m} \sum_i \sum_j \sum_k |x_{i,j,k}|$.
 
 The reason that we do that is that for batches, we want batches of different
 sizes to be comparable so it is straight forward to take mean. For the other
@@ -279,15 +278,15 @@ to sum over the sample axes.
 
 \section{Matrices and vectors}
 
-The type of data we work with in this paper can be represented as vectors.
-For example images of shape $(h,w,c)$ can be flattened into a single axis shape
-$(h \cdot w \cdot c,)$ vector.
+The type of data we work with in this paper can be represented as vectors. For
+example images of shape $(h,w,c)$ can be flattened into a single axis shape $(h
+\cdot w \cdot c,)$ vector.
 
-Throughout this paper (modulo typing errors) we use
-capital bold math Latin or Greek letters ($\bv{X, \Sigma}$) to represent
-matrices. To stress that we talk about matrices rather than vectors we show
-product ($\times$) in the dimension, i.e $\bv{X} \in \R^{m \times n}$. Although
-technically the matrix--space is the tensor product $\R^m \otimes \R^n$.
+Throughout this paper (modulo typing errors) we use capital bold math Latin or
+Greek letters ($\bv{X, \Sigma}$) to represent matrices. To stress that we talk
+about matrices rather than vectors we show product ($\times$) in the dimension,
+i.e $\bv{X} \in \R^{m \times n}$. Although technically the matrix--space is the
+tensor product $\R^m \otimes \R^n$.
 
 Bold small math letters ($\bv{x}$) represent usually row vectors, but in cases
 where it makes sense may also represent matrices such as a batch of several
@@ -299,27 +298,24 @@ scalar or vectors in some cases and hopefully it is clear from the context or
 explicitly stated.
 
 Since we are only dealing with real matrices the transpose and the conjugation
-operators are the same ($A^T = A^*$) but over $\C$ conjugation is
-usually the "natural" operation and we use it to indicate that some property is
-still valid over $\C$ with conjugation.
+operators are the same ($A^T = A^*$) but over $\C$ conjugation is usually the
+"natural" operation and we use it to indicate that some property is still valid
+over $\C$ with conjugation.
 
 Sometimes matrices are given in row/column/block notations inside brackets where
-the elements are concatenated in a way that makes positional sense.
-For example
+the elements are concatenated in a way that makes positional sense. For example
 both $(\x,\y)$ and $(\x | \y)$ represent a matrix with 2 \textbf{columns}.
 
 As mentioned usually just $\x$ means a column vector and $\x^T$ means a row
 vector but sometimes in matrix notation $\x$ represents a row when it makes
-sense.
-We use \textbf{curly} brackets to indicate the \textbf{row} representations of a matrix.
-For example $\{\x, \y\}$ represents a matrix whose \textbf{rows} are $\x$ and $\y$
-(as row vectors), which alternatively could be represented as
-$(\x, \y)^T$ (and symmetrically $(\x,\y) = \{\x,\y\}^T$).
+sense. We use \textbf{curly} brackets to indicate the \textbf{row}
+representations of a matrix. For example $\{\x, \y\}$ represents a matrix whose
+\textbf{rows} are $\x$ and $\y$ (as row vectors), which alternatively could be
+represented as $(\x, \y)^T$ (and symmetrically $(\x,\y) = \{\x,\y\}^T$).
 
-$(\X,\Y)$ or $(\X | \Y)$ represent
-concatenation of two matrices along the second axis (concatenation of rows) 
-which implicitly means they have the same number
-of rows. $\{\X, \Y\}$ represents concatenation along the first axis
+$(\X,\Y)$ or $(\X | \Y)$ represent concatenation of two matrices along the
+second axis (concatenation of rows) which implicitly means they have the same
+number of rows. $\{\X, \Y\}$ represents concatenation along the first axis
 (concatenation of columns) which implies they must have equal number of columns.
 
 Zero--blocks are indicated with $0$ or are simply left as voids. For
@@ -348,17 +344,18 @@ be a matrix in \textbf{row} notation. Then its \emph{squared Frobenius norm} is
 \label{seq:functions}
 Functions are usually understood to be scalar, namely $f:\R^n \to \R$ while maps
 are more general $g:\R^n \to \R^m$. When we say that a map (or function) $\phi
-:\R^n \to \R^m$ is \emph{parameterized}, it implicitly means that $\phi$ has additional 
-variables which we treat as parameters $\phi_{\w}(\x) = \phi(\x, \w)$ where $\x \in \R^n$
-and $\w$ is the parameter set which we don't always specify its domain and we may not
-always subscript $\phi$ with it. The parameterized map $\phi$ itself may be
-identified with its parameter set and then both are designated with $\phi$.
+:\R^n \to \R^m$ is \emph{parameterized}, it implicitly means that $\phi$ has
+additional variables which we treat as parameters $\phi_{\w}(\x) = \phi(\x, \w)$
+where $\x \in \R^n$ and $\w$ is the parameter set which we don't always specify
+its domain and we may not always subscript $\phi$ with it. The parameterized map
+$\phi$ itself may be identified with its parameter set and then both are
+designated with $\phi$.
 
-In the context of neural networks, when we say \emph{linear} map, we actually mean an
-\emph{affine} map.
-An affine map $f(x_1 \dots x_n)$ can always be represented as a linear map with one extra variable 
-which is held fixed $x_0 \equiv 1$: $f(x_0, \dots x_n) = b + a_1 x_1 + \dots a_n
-x_n$. We call $b$ the \emph{bias} of the linear map $f$.
+In the context of neural networks, when we say \emph{linear} map, we actually
+mean an \emph{affine} map. An affine map $f(x_1 \dots x_n)$ can always be
+represented as a linear map with one extra variable which is held fixed $x_0
+\equiv 1$: $f(x_0, \dots x_n) = b + a_1 x_1 + \dots a_n x_n$. We call $b$ the
+\emph{bias} of the linear map $f$.
 \label{affinelinear}
 
 \section{Data types}
@@ -369,65 +366,57 @@ corresponding $N$ random vectors are assumed to be independent. So depending on
 the context, when we say observation, or row, we may mean the actual observed
 values, or to the random vector which was realized by said observation.
 
-We deal with two kinds of datasets in this thesis. One of them is
-Single cell RNAseq data. This kind of data represents gene expression levels in 
-individual cells, where rows represent cells and columns represent genes.
-So if we see a reading of
-$0.5$ in row $2$ column $4$ in means that in cell $2$ gene $4$ has normalized
-expression of $0.5$.
+We deal with two kinds of datasets in this thesis. One of them is Single cell
+RNAseq data. This kind of data represents gene expression levels in individual
+cells, where rows represent cells and columns represent genes. So if we see a
+reading of $0.5$ in row $2$ column $4$ in means that in cell $2$ gene $4$ has
+normalized expression of $0.5$.
 
-The other kind of data is images. For example the MNIST data set contains 
-greyscale $28 \times 28$ images of hand written digits.
-We still think of such data set as a matrix. The first axis always represents
-the samples, so each "row" represent an image. The rest of the axes represent
-the image. Alternatively we can also flatten the images into one axis and think
-of an image as a row vector of $28*28$ dimensions.
+The other kind of data is images. For example the MNIST data set contains
+greyscale $28 \times 28$ images of hand written digits. We still think of such
+data set as a matrix. The first axis always represents the samples, so each
+"row" represent an image. The rest of the axes represent the image.
+Alternatively we can also flatten the images into one axis and think of an image
+as a row vector of $28*28$ dimensions.
 
-There could possibly be additional data matrices with information about
-class or conditions. We use \emph{one-hot encoding} to represent such
-information.
-For example in the case of the MNIST dataset every image also comes with a label
-which indicates what digit it is. Since there are $10$ digits ($0$
-to $9$) the class matrix is going to have $10$ columns and each row is a one-hot
-vector indicating the digit of the corresponding image.
+There could possibly be additional data matrices with information about class or
+conditions. We use \emph{one-hot encoding} to represent such information. For
+example in the case of the MNIST dataset every image also comes with a label
+which indicates what digit it is. Since there are $10$ digits ($0$ to $9$) the
+class matrix is going to have $10$ columns and each row is a one-hot vector
+indicating the digit of the corresponding image.
 
 \begin{mydef}
 \label{def:datamatrix}
-A \emph{data matrix} is a real--valued matrix $\bv{X} \in \R^{N \times n}$
-which represents a set of $N$ $n$-dimensional data points.
-The $N$ rows are also called \emph{observations} and the $n$ columns are
-\emph{variables}.
+A \emph{data matrix} is a real--valued matrix $\bv{X} \in \R^{N \times n}$ which
+represents a set of $N$ $n$-dimensional data points. The $N$ rows are also
+called \emph{observations} and the $n$ columns are \emph{variables}.
 \end{mydef}
 
 \begin{mydef}
 \label{def:classmatrix}
-A \emph{class matrix}, or also a \emph{condition matrix}
-$\bv{C} \in \R^{\N \times c}$ is a real matrix which
-represents one-hot encoding of $c$ classes or conditions over $N$ samples.
-For example if sample $i$ has class $j$, then 
+A \emph{class matrix}, or also a \emph{condition matrix} $\bv{C} \in \R^{\N
+\times c}$ is a real matrix which represents one-hot encoding of $c$ classes or
+conditions over $N$ samples. For example if sample $i$ has class $j$, then
 $(\forall k\in 1, \dots, c) \bv{C}[i,k] = \delta_{jk}$.
 
-We say that that $\bv{C}$ is a \emph{class probability matrix} or a \emph{relaxed
-class matrix} (same with condition)
-if instead of being one-hot its rows are distributions---each row is
-non-negative and sums up to $1$.
+We say that that $\bv{C}$ is a \emph{class probability matrix} or a
+\emph{relaxed class matrix} (same with condition) if instead of being one-hot
+its rows are distributions---each row is non-negative and sums up to $1$.
 \end{mydef}
 
 Usually if the input data includes class/condition information, it comes as a
-class matrix (pure one-hot) but the output (the prediction) is naturally 
+class matrix (pure one-hot) but the output (the prediction) is naturally
 probabilistic and hence is relaxed.
 
 \subsection{Input set and target set}
-Our data may come in several, two or more matrices. 
-Sometimes the data is paired into the input data $\X$ and the
-target data $\Y$, 
-representing for example, samples from some unknown function $f(\x) = \y$
-that we want to "learn".
-For example in an image classification task,$\X$ may be a set of images,
-and $\Y$ is their labels.
-Implicitly $\X,\Y$ must have the same number of rows. And when we speak about 
-paired input/target $\x,\y$ it means some $(\x,\y) \in (\X,\Y)$ and $\x,\y$
-belong to the same sample (same row number).
+Our data may come in several, two or more matrices. Sometimes the data is paired
+into the input data $\X$ and the target data $\Y$, representing for example,
+samples from some unknown function $f(\x) = \y$ that we want to "learn". For
+example in an image classification task,$\X$ may be a set of images, and $\Y$ is
+their labels. Implicitly $\X,\Y$ must have the same number of rows. And when we
+speak about paired input/target $\x,\y$ it means some $(\x,\y) \in (\X,\Y)$ and
+$\x,\y$ belong to the same sample (same row number).
 
 %In the case of autoencoders, the target set is also the input set and $f$ is the
 %identity (in this case $f$ is known but we want to learn an efficient way
@@ -449,21 +438,18 @@ then $\|\X\| = \frac{1}{N} \sum_1^N \|\x_i\| \approx \E [\|\x\|]$.
 
 \section{Linear algebra preliminary: SVD and PCA}
 In the following state some facts and bring without proof what are the singular
-value decomposition and the principle components of a matrix. For a
-full proof see~\cite{serre2001matrices}.
+value decomposition and the principle components of a matrix. For a full proof
+see~\cite{serre2001matrices}.
 
 %\section{SVD and PCA}
-Let $\bv{X} \in \R^{N \times n}$ be a real-valued matrix
-representing $N$ samples of some
-$n$-dimensional data points and let
-$r= \text{rank}(\bv{X}) \leq \min(n,N)$. 
+Let $\bv{X} \in \R^{N \times n}$ be a real-valued matrix representing $N$
+samples of some $n$-dimensional data points and let $r= \text{rank}(\bv{X}) \leq
+\min(n,N)$. 
 
-$\X \X^*$ and $\X^* \X$ are both symmetric and positive semi-definite.
-Their eigenvalues are non-negative, and they both have
-the same positive 
-eigenvalues, exactly $r$ such, which we mark
-$s_1^2 \geq s_2^2 \geq \dots s_r^2 \gt 0$. The values
-$s_1 \dots s_r$ are called the \emph{singular values} of $\bv{X}$.
+$\X \X^*$ and $\X^* \X$ are both symmetric and positive semi-definite. Their
+eigenvalues are non-negative, and they both have the same positive eigenvalues,
+exactly $r$ such, which we mark $s_1^2 \geq s_2^2 \geq \dots s_r^2 \gt 0$. The
+values $s_1 \dots s_r$ are called the \emph{singular values} of $\bv{X}$.
 
 Let $\bv{S} = 
 \begin{pmatrix}
@@ -474,22 +460,18 @@ s_1 & & &\\
 \end{pmatrix} \in \R^{r \times r}
 $
 
-Let $\bv{U} = (\bv{u}_1 | \dots | \bv{u}_N) \in \R^{N \times N}$
-be the (column) right eigenvectors of $\X \X^*$ sorted
-by their eigenvalues. 
-Then $\bv{U} = (\bv{U}_r, \bv{U}_k)$ 
-where $\bv{U}_r = (\bv{u}_1 | \dots | \bv{u}_r) \ \in \R^{N \times r}$ are the first $r$
-eigenvectors corresponding to the non-zero eigenvalues, and $\bv{U}_k$ are the
-eigenvectors corresponding to the $N-r$ $0$-eigenvalues.
-Similarly let 
-$\bv{V}  = (\bv{V}_r, \bv{V}_k)\in \R^{n \times n}$
-be the (column) right eigenvectors of $\X^* \X$, sorted
-by the eigenvalues, 
-where $\bv{V}_r  = (\bv{v}_1 | \dots | \bv{v}_r) \in \R^{n \times r}$ are the firs $r$
-eigenvalues and $\bv{V}_k$ are the $n-r$ null-eigenvectors.
+Let $\bv{U} = (\bv{u}_1 | \dots | \bv{u}_N) \in \R^{N \times N}$ be the (column)
+right eigenvectors of $\X \X^*$ sorted by their eigenvalues. Then $\bv{U} =
+(\bv{U}_r, \bv{U}_k)$ where $\bv{U}_r = (\bv{u}_1 | \dots | \bv{u}_r) \ \in
+\R^{N \times r}$ are the first $r$ eigenvectors corresponding to the non-zero
+eigenvalues, and $\bv{U}_k$ are the eigenvectors corresponding to the $N-r$
+$0$-eigenvalues. Similarly let $\bv{V}  = (\bv{V}_r, \bv{V}_k)\in \R^{n \times
+n}$ be the (column) right eigenvectors of $\X^* \X$, sorted by the eigenvalues,
+where $\bv{V}_r  = (\bv{v}_1 | \dots | \bv{v}_r) \in \R^{n \times r}$ are the
+firs $r$ eigenvalues and $\bv{V}_k$ are the $n-r$ null-eigenvectors.
 
-The critical observations is that $\bv{V}_r = \bv{X}^* \bv{U}_r S^{-1}$
-and then $\bv{U}_r^* \X \bv{V}_r = S$.
+The critical observations is that $\bv{V}_r = \bv{X}^* \bv{U}_r S^{-1}$ and then
+$\bv{U}_r^* \X \bv{V}_r = S$.
 
 The \textit{singular value decomposition (SVD)} of $\X$ is 
 
@@ -528,8 +510,7 @@ $l$-dimensional subspace of $R^n$, and $\bv{V_l}$ minimizes
 
 Where $\| \cdot \|_F^2$ is simply the sum of squares of the matrix' entries.
 
-If we consider the more general
-minimization problems: 
+If we consider the more general minimization problems: 
 
 %\begin{subequations}
 \begin{IEEEeqnarray}{C}
@@ -546,15 +527,13 @@ l},\}
 \end{IEEEeqnarray}
 %\end{subequations} 
 
-It can be shown~\cite{plaut2018principal} that the 
-last two problems~\ref{eqn:pca2},~\ref{eqn:pca3} are equivalent
-and that for any solution $E,D$ it must hold that 
-$\bv{D}=\bv{E}^{\dagger}$. ($\bv{D}$ is the Moore--Penrose generalized
-inverse of $\bv{E}$).
-Moreover,
-$\bv{V}_l$ still minimizes the general problem~\ref{eqn:pca2} and for every
-solution $\bv{W}$, it must hold that $\text{span}\{\bv{W}\} =
-\text{span}\{\bv{V}_l\}$ (but it isn't necessarily an orthogonal matrix).
+It can be shown~\cite{plaut2018principal} that the last two
+problems~\ref{eqn:pca2},~\ref{eqn:pca3} are equivalent and that for any solution
+$E,D$ it must hold that $\bv{D}=\bv{E}^{\dagger}$. ($\bv{D}$ is the
+Moore--Penrose generalized inverse of $\bv{E}$). Moreover, $\bv{V}_l$ still
+minimizes the general problem~\ref{eqn:pca2} and for every solution $\bv{W}$, it
+must hold that $\text{span}\{\bv{W}\} = \text{span}\{\bv{V}_l\}$ (but it isn't
+necessarily an orthogonal matrix).
 
 \chapter{Neural networks}
 
@@ -567,18 +546,16 @@ on specific values, then we get a linear function on $x$. Every assignment of
 $(a,b)$ defines a different linear function and in fact every linear function on
 one dimension can be uniquely described by these $a$ and $b$. So we can say that
 $\{f_{a,b}\}_{a,b \in \R}$ is a \emph{parameterization} of the class of all real
-linear functions on one variable. 
-The distinction between what are the variables and what are
-the parameters is somewhat arbitrary
-and in the end, $f_{a,b}(x)$ is just another way to represent 
-a $3$-variable function $f(a,b,x)$. 
-As we mentioned~\ref{seq:functions} sometimes we don't specify the parameters
-and we identify the parametrize map $f$ with its parameter set as this set
-uniquely determines $f$. 
+linear functions on one variable. The distinction between what are the variables
+and what are the parameters is somewhat arbitrary and in the end, $f_{a,b}(x)$
+is just another way to represent a $3$-variable function $f(a,b,x)$. As we
+mentioned~\ref{seq:functions} sometimes we don't specify the parameters and we
+identify the parametrize map $f$ with its parameter set as this set uniquely
+determines $f$. 
 
 The way we parameterize a function is important. Usually given a parameterized
-map $\phi (\x)$ we want $\phi$ to be differentiable in its
-parameters so that $\frac{\partial}{\partial \w} \phi$ exits for every parameter $\w$. 
+map $\phi (\x)$ we want $\phi$ to be differentiable in its parameters so that
+$\frac{\partial}{\partial \w} \phi$ exits for every parameter $\w$. 
 
 %In general we can define one or more multivariate
 %Suppose that we a function $g : \R^{n+m} \to \R^k$ (for simplicity of the discussion lets assume 
@@ -602,46 +579,39 @@ given sufficiently large set of
 parameters (i.e. is universal).
 \end{itemize}
 
-Still these requirements are not enough.
-For example, the class of multivariate polynomials can
-uniformly approximate any function. However it may not be a good idea to try
-to learn very complicated high dimensional data using polynomial representation. 
-One reason is that the number of terms (monomials) grows very rapidly with the
-dimension and the degree of the polynomials: for $n$ dimensions and $m$ degrees
-there are something like $\binom{m + n}{m}$ monomial terms.
+Still these requirements are not enough. For example, the class of multivariate
+polynomials can uniformly approximate any function. However it may not be a good
+idea to try to learn very complicated high dimensional data using polynomial
+representation. One reason is that the number of terms (monomials) grows very
+rapidly with the dimension and the degree of the polynomials: for $n$ dimensions
+and $m$ degrees there are something like $\binom{m + n}{m}$ monomial terms.
 
-We want a universal class of simpler functions, that are almost as simple as linear,
-and yet that suits well for statistical learning. For example we want to
-be able to represent complicated functions with relatively few parameters.
-One such class of functions is the feed forward neural networks,
-which is the class of functions that are comprised from "neurons".
+We want a universal class of simpler functions, that are almost as simple as
+linear, and yet that suits well for statistical learning. For example we want to
+be able to represent complicated functions with relatively few parameters. One
+such class of functions is the feed forward neural networks, which is the class
+of functions that are comprised from "neurons".
 
 \section{Neurons}
 
-Inspired from biology, a \emph{neuron} is a many--to--one ($\R^n \to \R$) parameterized
-function which
-"integrates" the input with a linear, or affine~(see~remark~\ref{affinelinear})
-function, and 
-then applies a non-linear scalar function, which we call an \emph{activation
-function}.
-In a sense it is the simplest
-function that is not linear.
-Moreover we only need one type of non-linear activation, e.g sigmoid, to
-construct arbitrarily complex neural networks.
-A degree 2 polynomial would be considered "less 
-simple" because it applies multiple non-linear multi-variable
-functions $x_i x_j\dots$.
+Inspired from biology, a \emph{neuron} is a many--to--one ($\R^n \to \R$)
+parameterized function which "integrates" the input with a linear, or
+affine~(see~remark~\ref{affinelinear}) function, and then applies a non-linear
+scalar function, which we call an \emph{activation function}. In a sense it is
+the simplest function that is not linear. Moreover we only need one type of
+non-linear activation, e.g sigmoid, to construct arbitrarily complex neural
+networks. A degree 2 polynomial would be considered "less simple" because it
+applies multiple non-linear multi-variable functions $x_i x_j\dots$.
 
 \begin{mydef}
 \label{def:activationfunction}
-An \emph{activation function} $\sigma : \R \to \R$ is any one of the following functions:
-$x \mapsto 1$ (constant), $x \mapsto x$ (identity)
-$ x \mapsto \frac{e^x}{1 + e^x}$ (sigmoid), and $x \mapsto \max(0,x)$ (ReLU).
+An \emph{activation function} $\sigma : \R \to \R$ is any one of the following
+functions: $x \mapsto 1$ (constant), $x \mapsto x$ (identity) $ x \mapsto
+\frac{e^x}{1 + e^x}$ (sigmoid), and $x \mapsto \max(0,x)$ (ReLU).
 
-$\sigma$ can be applied on tensors by element-wise application.
-For example
-If $\x = (x_1, \dots x_n) \in \R^n$ then $\sigma(\x)$ is the element-wise application
-$\sigma(\x) \triangleq (\sigma(x_1), \dots , \sigma(x_n))$.
+$\sigma$ can be applied on tensors by element-wise application. For example If
+$\x = (x_1, \dots x_n) \in \R^n$ then $\sigma(\x)$ is the element-wise
+application $\sigma(\x) \triangleq (\sigma(x_1), \dots , \sigma(x_n))$.
 \end{mydef}
 
 In the official definition we narrowed it down to just 4 kinds but in general
@@ -712,47 +682,40 @@ $\phi = \nu(\psi_1, \dots, \psi_n)$ is a NN
 .
 \end{enumerate}
 
-The parameter set $\w$ is called the \emph{weights} of $\phi$.
-Often we don't distinguish between the network $\phi$ and its weights, and
-we identify both as $\phi$.
+The parameter set $\w$ is called the \emph{weights} of $\phi$. Often we don't
+distinguish between the network $\phi$ and its weights, and we identify both as
+$\phi$.
 
-In the definition we made the range and domain to be the entire $\R^n$ but
-it is not necessary, we just need for the composition to be valid.
+In the definition we made the range and domain to be the entire $\R^n$ but it is
+not necessary, we just need for the composition to be valid.
 \end{mydef}
 
-Feed forward neural network 
-are depicted as a directed acyclic graph where every node (with its incoming
-edges) corresponds to a neuron.
-You can think of figure~\ref{fig:neuron2} left as depicting the neuron "component" 
-in a network, while figure~\ref{fig:neuron2} right shows a neural network
-description of single neuron, comprised from elementary neurons.
+Feed forward neural network are depicted as a directed acyclic graph where every
+node (with its incoming edges) corresponds to a neuron. You can think of
+figure~\ref{fig:neuron2} left as depicting the neuron "component" in a network,
+while figure~\ref{fig:neuron2} right shows a neural network description of
+single neuron, comprised from elementary neurons.
 
-If rule 5 of the definition~\ref{def:NN} is not used in the construction of $\phi$, then the
-resulting network is hierarchical. Its graph can be partitioned into \emph{levels}
-$l_0, l_1\dots$ and there are only directed edges between two consecutive
-levels $l_i \to l_{i+1}$ (see figure~\ref{fig:nn1}).
+If rule 5 of the definition~\ref{def:NN} is not used in the construction of
+$\phi$, then the resulting network is hierarchical. Its graph can be partitioned
+into \emph{levels} $l_0, l_1\dots$ and there are only directed edges between two
+consecutive levels $l_i \to l_{i+1}$ (see figure~\ref{fig:nn1}).
 
-The label inside the neuron describes its activation function.
-In the diagrams, we let $\sigma$ represent the sigmoid function.
-We represent the identity function either by the name of the variable ($x_1$,
-$y$ etc.) it acts on or simple by 
-$id$.   We let the label $1$ represent the constant function. We need the
-constant function because with it we can represent any affine map as a linear
-map with the first input always clamped to $1$. But connecting $1$ to every
-(non-input level) neuron would clutter the graph so it is not shown in most
-diagrams but still implicitly assumed.
-A directed edge between neurons means that the output of the neuron at the tail
-is multiplied by the edge weight and assigned to the input variable of the
-neuron it connects to.
-A Node's output is therefore only dependent on the output of its direct
-ancestral nodes 
-(plus the bias which is usually not shown).
-Input-level neurons (sources) have no incoming edges and they represent the
-beginning of the
-computation.
-Output neurons (sinks) have no outgoing edges and their output is the final result of
+The label inside the neuron describes its activation function. In the diagrams,
+we let $\sigma$ represent the sigmoid function. We represent the identity
+function either by the name of the variable ($x_1$, $y$ etc.) it acts on or
+simple by $id$.   We let the label $1$ represent the constant function. We need
+the constant function because with it we can represent any affine map as a
+linear map with the first input always clamped to $1$. But connecting $1$ to
+every (non-input level) neuron would clutter the graph so it is not shown in
+most diagrams but still implicitly assumed. A directed edge between neurons
+means that the output of the neuron at the tail is multiplied by the edge weight
+and assigned to the input variable of the neuron it connects to. A Node's output
+is therefore only dependent on the output of its direct ancestral nodes (plus
+the bias which is usually not shown). Input-level neurons (sources) have no
+incoming edges and they represent the beginning of the computation. Output
+neurons (sinks) have no outgoing edges and their output is the final result of
 the computation.
-
 
 \begin{figure}[h]
 %\begin{framed}
@@ -771,24 +734,21 @@ consecutive layers. The one on the bottom is more general.
 %\end{framed}
 \end{figure}
 
-It turns out~\cite{nielsen2015neural} that the feed forward neural networks
-with a single type of non-linear activation (e.g. sigmoid) and a single hidden
-layer
-are "universal"; Which means that
-any continuous function $f$ can be
-uniformly approximated by a feed forward neural network
-with a single hidden layer and Sigmoid as the non-linear
-activation function.
-More precisely, let $B \subseteq \R^n$ be a bounded domain. Let $f : B \to \R^m$
-be continuous, and let $\epsilon \in (0,1)$. Then there is a feed forward neural
-network with a single hidden layer $\phi = \phi_{\w}$ and there is some value assignment
-for the parameters $\w$ such that 
-$(\forall \x \in B) \|\phi(\x) - f(\x)\|_2 \lt \epsilon $. The size of that single
-hidden layer (the number of parameters) depends on $f$ and $\epsilon$.
+It turns out~\cite{nielsen2015neural} that the feed forward neural networks with
+a single type of non-linear activation (e.g. sigmoid) and a single hidden layer
+are "universal"; Which means that any continuous function $f$ can be uniformly
+approximated by a feed forward neural network with a single hidden layer and
+Sigmoid as the non-linear activation function. More precisely, let $B \subseteq
+\R^n$ be a bounded domain. Let $f : B \to \R^m$ be continuous, and let $\epsilon
+\in (0,1)$. Then there is a feed forward neural network with a single hidden
+layer $\phi = \phi_{\w}$ and there is some value assignment for the parameters
+$\w$ such that $(\forall \x \in B) \|\phi(\x) - f(\x)\|_2 \lt \epsilon $. The
+size of that single hidden layer (the number of parameters) depends on $f$ and
+$\epsilon$.
 
-In the definitions we only used linear maps to grow the network. 
-There are other types of maps which are used, most commonly are convolutions 
-but the principles and the graphical description remain essentially the same.
+In the definitions we only used linear maps to grow the network. There are other
+types of maps which are used, most commonly are convolutions but the principles
+and the graphical description remain essentially the same.
 
 There are additional types of parameterized functions which are used "within the
 layer" such as batch normalization but we won't get into that as this is not a
@@ -819,15 +779,13 @@ because we don't usually know what is the input/output value in these.
 
 In the claim about neural networks being "universal" in terms of approximating
 function $f(\x)=\y$ with neural network $\phi(\x)$. We stated specifically
-convergence in terms of $l_2$ norm
-$\|\phi(\x) - \y \|_2$, but the claim holds in theory and in
-practice with other types of "distance-like" functions which we call loss
-functions.
+convergence in terms of $l_2$ norm $\|\phi(\x) - \y \|_2$, but the claim holds
+in theory and in practice with other types of "distance-like" functions which we
+call loss functions.
 
 Moreover we usually don't know what is the function $f$ which we try to
-approximate. Rather we are given 
-paired samples of input/target $(\x, \y)$ and we
-try to minimize the total error.
+approximate. Rather we are given paired samples of input/target $(\x, \y)$ and
+we try to minimize the total error.
 
 \begin{mydef}
 \label{def:lossfunc}
@@ -842,17 +800,14 @@ form $(\forall \y,\z \in \R^m) \mathcal{L}(\y, \z)) = \sum_{i=1}^m \psi(y_i,
 z_i))$
 
 Let $\X \in \R^{N \times n}, \Y \in \R^{N \times m}$ be the input and the target
-set and let $(\x,\y)$ be a paired input/target. 
-We use the loss function $\mathcal{L}$ as the target function for 
-the minimization problem,
- $\min_{\w} \sum_{(\x,\y)}\mathcal{L}(\phi(\x), \y)$ where the sum goes over all
-paires ($N$ rows)  (input, target).
+set and let $(\x,\y)$ be a paired input/target. We use the loss function
+$\mathcal{L}$ as the target function for the minimization problem, $\min_{\w}
+\sum_{(\x,\y)}\mathcal{L}(\phi(\x), \y)$ where the sum goes over all paires ($N$
+rows)  (input, target).
 
 
-For example
-$\mathcal{L}(\y, \z)) = \|\y - \z\|_2^2 = 
-\sum_i |y_i - z_i|^2$ is a one such loss function (the
-square error).
+For example $\mathcal{L}(\y, \z)) = \|\y - \z\|_2^2 = \sum_i |y_i - z_i|^2$ is a
+one such loss function (the square error).
 
 So far we defined $\phi$ and $\mathcal{L}$ on single input/target data points
 $\x$ and $\y$. But we are interested in minimizing the total error
@@ -897,16 +852,15 @@ Then $\phi$ and $\mathcal{L}$ \emph{extended} over batches are:
 \end{IEEEeqnarray}
 \end{mydef}
 
-If $\mathcal{L}$ is the square error function $\| \cdot \|_2^2$ on vectors,
-then its extension to batches is $\frac{1}{b}\| \cdot \|_F^2$. The reason why we
-sum and don't average over the dimensions will be cleared later when we get into
+If $\mathcal{L}$ is the square error function $\| \cdot \|_2^2$ on vectors, then
+its extension to batches is $\frac{1}{b}\| \cdot \|_F^2$. The reason why we sum
+and don't average over the dimensions will be cleared later when we get into
 variational inference.
 
-There is also a probabilistic way to interpret the total loss.
-We assume that the data points $\X, \Y$ were randomly and independently sampled from the unknown
-data distribution $p(\x, \y)$.
-Then equation~\ref{eq:NNbatchloss} can be reformulated as the expected 
-loss~\cite{bishop2006pattern}:
+There is also a probabilistic way to interpret the total loss. We assume that
+the data points $\X, \Y$ were randomly and independently sampled from the
+unknown data distribution $p(\x, \y)$. Then equation~\ref{eq:NNbatchloss} can be
+reformulated as the expected loss~\cite{bishop2006pattern}:
 
 \begin{equation}
 \mathcal{L}(\phi(\X), \Y) \approx
@@ -1907,8 +1861,8 @@ We want to create some mixture distribution, where a latent categorical random
 variable $\y$ functions as the component selector. We could try to directly
 create the mixture $p(\x | \z, \y)$ in the $\x$ space, as the M2 model
 in~\cite{kingma2014semi}.
-The other option, following the Gaussian mixture model proposed by
-Dilokthanakul et.al~\cite{dilokthanakul2016deep} and which base our model
+The other option, following the Gaussian mixture VAE model, \emph{GMVAE}, proposed by
+Dilokthanakul et.al~\cite{dilokthanakul2016deep} and on which we base our model,
 is to create a mixture prior distribution $p(\z | \w, \y)$ on the lower
 dimensional latent $\z$ space.
 
@@ -1968,7 +1922,7 @@ much so. By moving the random vectors inside the plate
 \centering
 \begin{subfigure}[b]{0.4\textwidth}
 \includegraphics[width=\textwidth]{plots/mmpd.gv.png}
-\caption{The generative model of GMMVAE~\cite{dilokthanakul2016deep}}
+\caption{The generative model of GMVAE~\cite{dilokthanakul2016deep}}
 \label{fig:dilomix}
 \end{subfigure}
 \begin{subfigure}[b]{0.4\textwidth}
@@ -1978,9 +1932,9 @@ much so. By moving the random vectors inside the plate
 \end{subfigure}
 \caption{
 On the left we see the generative model used by
-GMMVAE~\cite{dilokthanakul2016deep}, where $\pi$ is a fixed hyper parameter and resides
+GMVAE~\cite{dilokthanakul2016deep}, where $\pi$ is a fixed hyper parameter and resides
 outside of the plate.
-On the right: modification of the GMMVAE model, where $\pi$ moves inside the plate
+On the right: modification of the GMVAE model, where $\pi$ moves inside the plate
 and becomes a variable with a symmetric Dirichlet prior.}
 \label{fig:mixturemodels2}
 %\end{framed}
@@ -1998,21 +1952,21 @@ predictor. $\alpha$ is a symmetric Dirichlet hyper-parameter and "tweaking" with
 it has influence on the number of non-empty categories that the model finds
 during training.
 
-Figure~\ref{fig:dilomix} shows the generative model of the 
-GMMVAE~\cite{dilokthanakul2016deep}, where the mixtures components ($\mu, \sigma$)
-are inside the plate but the selection distribution $(\pi)$ is a fixed parameter
-which is outside the of the plate.
-The latent $\z$ space is a mixture distribution. As explained above, the $\y$-prior is
-"bad" because it will be uniform categorical, while we want to use the inference
-model $q(\y | \z)$ to predict the category.
-In figure~\ref{fig:mymix} $\pi$ is moved inside the plate and becomes a variable. Its prior is a
-symmetric Dirichlet with hyper-parameter $\alpha$.
-We call our modification the \emph{DGMMVAE} model (D stands for the Dirichlet prior
-obviously).
+Figure~\ref{fig:dilomix} shows the generative model of the
+GMVAE~\cite{dilokthanakul2016deep}, where the mixtures components ($\mu,
+\sigma$) are inside the plate but the selection distribution $(\pi)$ is a fixed
+parameter which is outside the of the plate. The latent $\z$ space is a mixture
+distribution. As explained above, the $\y$-prior is "bad" because it will be
+uniform categorical, while we want to use the inference model $q(\y | \z)$ to
+predict the category. In figure~\ref{fig:mymix} $\pi$ is moved inside the plate
+and becomes a variable. Its prior is a symmetric Dirichlet with hyper-parameter
+$\alpha \in \R$.
+%We call our modification the \emph{dGMVAE} model (d stands for the Dirichlet prior
+%obviously).
 
-\section{The DGMMVAE model}
+\section{The GMVAE model with Dirichlet prior}
 
-Our DGMMVAE model is based on figure~\ref{fig:mymix}.
+Our variation of the GMVAE model is based on figure~\ref{fig:mymix}.
 In addition to the latent variables $\z$ (mixture), and $\y$ (categorical), there
 $2$ more variables.
 The third latent variabel $\w$ has standard normal prior.
@@ -2080,12 +2034,12 @@ the neural networks of the encoder.
 %\begin{framed}
 \centering
 \includegraphics[width=0.5\textwidth]{plots/dirichlet_gmm.gv.png}
-\caption{DGMMVAE: GMMVAE with Dirichlet prior}
+\caption{GMMAE with Dirichlet prior}
 \label{fig:dirgmm}
 %\end{framed}
 \end{figure}
 
-\section{Computing the loss function of DGMMVAE model}
+\section{Computing the loss function of GMVAE model}
 
 The loss function remains the -ELBO and we can break it into
 different terms:
@@ -2149,9 +2103,9 @@ calculate $KL(q(\dd | \z) \| p(\dd))$ analytically
 formula and it's builtin function in Pytorch).
 \end{enumerate}
 
-\section{The DGMMVAE model in the supervised case}
+\section{The GMVAE model in the supervised case}
 
-The DGMMVAE model can also be used for supervised training. While the
+The GMVAE model can also be used for supervised training. While the
 architecture of the neural network remains the same, the probabilistic
 interpretation and consequently the calculation of the loss function is
 different.
@@ -2206,7 +2160,7 @@ The full factorization in the supervised case becomes:
 %\begin{framed}
 \centering
 \includegraphics[width=0.5\textwidth]{plots/dirichlet_gmm_supervised.gv.png}
-\caption{DGMMVAE: the supervised case, where $\y$ is an observed variable.
+\caption{GMVAE: the supervised case, where $\y$ is an observed variable.
 }
 \label{fig:dirgmm_sup}
 %\end{framed}
@@ -2243,40 +2197,40 @@ $\y$ in the weighted sum.
 The two $y$-terms are the log probability of the observed category given the
 sampled $\z$ and $\dd$.
 
-\section{Combining GMMVAE with another clustering method}
+\section{Combining GMVAE with another clustering method}
 
-Because GMMVAE performs particularly well in (semi)supervised 
+Because GMVAE performs particularly well in (semi)supervised 
 it can learn a given cluster/class assignment of a dataset by.
-But when might it be useful to train GMMVAE if we already have a different
+But when might it be useful to train GMVAE if we already have a different
 clustering algorithm or any other unsupervised classifier that works well?
 Suppose that we have a "nice" training set where a given clustering algorithm
 performs well on.
-We can supervised train GMMVAE on the nice dataset using the cluster assignment
+We can supervised train GMVAE on the nice dataset using the cluster assignment
 as labels. At this point the model should learn to represent the data clusters
 nearly perfect.
-It is often the case that the GMMVAE trained in this manner will out-perform 
-a "naive" GMMVAE which was unsupervised trained.
+It is often the case that the GMVAE trained in this manner will out-perform 
+a "naive" GMVAE which was unsupervised trained.
 
 We can than run unsupervised training on the dataset, if we are
 lucky the accuracy might improve. So that's one use case but a minor one.
 
-The more important usage is that we can now classify with GMMVAE other datasets
+The more important usage is that we can now classify with GMVAE other datasets
 of the same kind.
 We should compare the performance of the trained model on the testing set with
 the performance of the clustering algorithm \emph{on the testing set} which per
-assumption was not that good. If we are lucky the GMMVAE might outperform the
+assumption was not that good. If we are lucky the GMVAE might outperform the
 clustering algorithm on the not--so--nice testing data.
 
-We tested a combination of GMMVAE with Louvain~\cite{que2015scalable} clustering
+We tested a combination of GMVAE with Louvain~\cite{que2015scalable} clustering
 on several datasets (results shown in subsequent chapters).
 
 
-\section{The conditional mixture model, cDGMMVAE}
+\section{The conditional mixture model, cGMVAE}
 %\section{Motivation}
 
 We have seen two types of models that deal with data that is both numerical and
-categorical, namely the conditional VAE (CVAE), and the GMMVAE.
-The cDGMMVAE is a combination of both, a conditional DGMMVAE. 
+categorical, namely the conditional VAE (CVAE), and the GMVAE.
+The cGMVAE is a combination of both, a conditional GMVAE. 
 It is technically very easy to implement a conditional version from a 
 given VAE model. Basically it just requires 
 concatenating the condition $c$ to whatever variable we want to condition.
@@ -2305,7 +2259,7 @@ taken.
 %\begin{framed}
 \centering
 \includegraphics[width=0.5\textwidth]{plots/dirichlet_gmm_cvae.gv.png}
-\caption{cDGMMVAE, unsupervised case}
+\caption{cGMVAE, unsupervised case}
 \label{fig:dirgmmcvae}
 %\end{framed}
 \end{figure}
@@ -2314,7 +2268,7 @@ taken.
 %\begin{framed}
 \centering
 \includegraphics[width=0.5\textwidth]{plots/dirichlet_gmm_cvae_supervised.gv.png}
-\caption{cDGMMVAE, supervised case}
+\caption{cGMVAE, supervised case}
 \label{fig:dirgmmcvae_super}
 %\end{framed}
 \end{figure}
@@ -2476,7 +2430,7 @@ datasets.
 \caption{Randomly generated samples}
 \label{fig:mnist_us_samples}
 \end{subfigure}
-\caption{GMMVAE: unsupervised learning of MNIST. This particular model
+\caption{GMVAE: unsupervised learning of MNIST. This particular model
 achieved 0.93 accyracy which probably could be a little bit further
 improved with fine-tune training. The Louvain clustering of the latent space is even better
 than the prediction.}
@@ -2485,7 +2439,7 @@ than the prediction.}
 \end{figure}
 
 Figures~\ref{fig:mnist_us_10} shows the results of unsupervised, exact clustering
-of MNIST by the GMMVAE model with 8 dimensional latent $z$-space and
+of MNIST by the GMVAE model with 8 dimensional latent $z$-space and
 $w$-space.
 As both the umap and the generated samples show, there is still a little bit
 inaccuracies left, mainly with "7","4", and "9" digits.
@@ -2505,7 +2459,7 @@ where each component is nearly a subset of a single class.
 Moreover In the case of MNIST each digit has actually 2 or more basic appearance (e.g. 
 strait vs. italic version, closed vs. open top "4" figure etc.). One can argue
 that there are more "natural" classes in this dataset than the 10 digits.
-We ran unsupervised training of a GMMVAE model with $20$ components.
+We ran unsupervised training of a GMVAE model with $20$ components.
 
 \begin{figure}[h]
 \centering
@@ -2519,11 +2473,11 @@ We ran unsupervised training of a GMMVAE model with $20$ components.
 \caption{20 components: generated digits}
 \label{fig:mnist_us_20c_samples}
 \end{subfigure}
-\caption{GMMVAE with 20 components, unsupervised learning of MNIST.}
+\caption{GMVAE with 20 components, unsupervised learning of MNIST.}
 \label{fig:mnist_us_20}
 \end{figure}
 
-Figures~\ref{fig:mnist_us_20} show the results of the 20--component GMMVAE
+Figures~\ref{fig:mnist_us_20} show the results of the 20--component GMVAE
 model. "0" constitutes its own cluster, while "5" is split between 3 clusters.
 The rest of the classes are each split between two clusters. Each cluster has
 its own digit-style (e.g. a strait "7" in one cluster, and more cursive version
@@ -2545,7 +2499,7 @@ Louvain clustering achieves on its own an accuracy of 0.967 on the
 \emph{training set} which is larger (60k images) and 0.925 on the smaller (10k) 
 testing set.
 
-We performed supervised training of GMMVAE model using Louvain clusters as the
+We performed supervised training of GMVAE model using Louvain clusters as the
 labels.
 After this step, the model was 0.966 accurate \emph{on the testing set}.
 After further unsupervised training of the model the accuracy marginally
@@ -2561,7 +2515,7 @@ figure~\ref{fig:mnist_us_louvain}.
 \centering
 \includegraphics[width=0.4\textwidth]{images/gmmvae_mnist_us_louvain_samples1.png}
 \label{fig:mnist_us_louvain_samples}
-\caption{GMMVAE with 12 components guided by Louvain clustering: randomly generated digits}
+\caption{GMVAE with 12 components guided by Louvain clustering: randomly generated digits}
 \label{fig:mnist_us_louvain}
 \end{figure}
 
@@ -2582,7 +2536,7 @@ too, but it is much more pronounced in the fashion-MNIST dataset.
 
 \section{Unsupervised learning}
 
-GMMVAE achieved an overall $0.75$ accuracy after \emph{a lot} of training epochs.
+GMVAE achieved an overall $0.75$ accuracy after \emph{a lot} of training epochs.
 It is easier to achieve about $0.67$ accuracy after a quick training (about 10
 epochs).
 Choice of hyperparameters also have significant effect. For example choosing 
@@ -2612,7 +2566,7 @@ figure~\ref{fig:fmnist_us_20c_latent}.
 
 \section{Semisupervised learning}
 
-Our GMMVAE model achieved accuracy of $0.85$ on semisupervised learning with
+Our GMVAE model achieved accuracy of $0.85$ on semisupervised learning with
 $0.1$ --- $0.9$ split between known and hidden labels. 
 Considering that this accuracy was semisupervised and that the network 
 layer architecture we used was just fully connected with 2 hidden layers 
@@ -2652,7 +2606,7 @@ where most of the misclassifications occur.
 %\caption{20 components: generated digits}
 %\label{fig:fmnist_us_20c_samples}
 %\end{subfigure}
-%\caption{GMMVAE with 20 components, unsupervised learning of MNIST.}
+%\caption{GMVAE with 20 components, unsupervised learning of MNIST.}
 %\label{fig:fmnist_us_20}
 %\end{figure}
 
@@ -2660,7 +2614,7 @@ where most of the misclassifications occur.
 
 Louvain clustering achieves accuracy of 0.71 on both the training and the
 testing sets.
-We supervised trained a GMMVAE and it achieved 0.714 accuracy, an insignificant
+We supervised trained a GMVAE and it achieved 0.714 accuracy, an insignificant
 difference from Louvain. With further unsupervised training rounds it reached 
 0.725 accuracy. Still below the 0.75 we achieved with the best model during 
 unsupervised only training but but we were only able to
@@ -2680,14 +2634,14 @@ The main challenge with this data is that it is imbalanced. It has 2623 samples
 of 7 cell types overall but in particularly one type (dendritic cells) only has 37 samples.
 
 While Louvain clustering performs well: it achieved 0.93--0.94 accuracy and found 9
-clusters, GMMVAE failed to cluster the smallest cell type (see
+clusters, GMVAE failed to cluster the smallest cell type (see
 figure~\ref{fig:zheng_ss_latent}). With the other types
 it did ok with accuracy of around 0.92.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=1.1\textwidth]{images/gmmvae_zheng_us_9c_umap.png}
-\caption{Zheng dataset, UMAPs. The main issue with GMMVAE is it fails to 
+\caption{Zheng dataset, UMAPs. The main issue with GMVAE is it fails to 
 classify the smallest group (Dendritic) in its own cluster.}
 \label{fig:zheng_ss_latent}
 \end{figure}
@@ -2697,7 +2651,7 @@ $300$ samples from each types with repetitions. In addition we added small
 Gaussian noise. We also scaled the log-count matrix of the original data set 
 so each gene has near standard normal distribution across the samples.
 
-We trained a GMMVAE model by taking turns, first on the rebalanced data, then on
+We trained a GMVAE model by taking turns, first on the rebalanced data, then on
 the original data, repeating several times.
 We were able to achieve 0.93 accuracy consistently and probably the method can
 be a little bit improved by tuning the model and the balancing preprocessing.
@@ -2715,9 +2669,8 @@ on the rebalanced and the original data set.
 \label{fig:zheng_ss_latent_balanced}
 \end{figure}
 
-
 Of course for this particular data it would be easier and faster to use Louvain
-clustering and train a GMMVAE model on the clustering if it were needed for some
+clustering and train a GMVAE model on the clustering if it were needed for some
 purpose.
 However this experiment gives some insight on the importance of data balancing.
 
@@ -2729,7 +2682,7 @@ interferon beta (INF-$\beta$).
 
 Because the data comes from different classes (=cell types) and from two
 different batches (control/treatment), 
-the conditional version of our mixture model, cDGMMVAE, 
+the conditional version of our mixture model, cGMVAE, 
 seems to be the most suitable for this type of data. The mixture
 components correspond to the cell types, and the condition corresponds to
 control/treatment.
@@ -2745,25 +2698,25 @@ punkt.
 
 
 
-\begin{figure}[h]
-%\begin{framed}
-\centering
-\begin{subfigure}[b]{0.9\textwidth}
-\includegraphics[width=\textwidth]{images/model_mnist_10c_generation.png}
-\caption{}
-%\caption{blabla}
-%\label{bla}
-\end{subfigure}
-%\includegraphics[width=0.4\linewidth]{images/model_mnist_10c_generation.png}
-\begin{subfigure}[b]{0.3\textwidth}
-\includegraphics[width=\textwidth]{images/model_mnist_10c_umap.png}
-\caption{}
-%\includegraphics[width=0.4\linewidth]{images/model_mnist_10c_umap.png}
-\end{subfigure}
-\caption{a figure}
-\label{fig:myfig}
-%\end{framed}
-\end{figure}
+%\begin{figure}[h]
+%%\begin{framed}
+%\centering
+%\begin{subfigure}[b]{0.9\textwidth}
+%\includegraphics[width=\textwidth]{images/model_mnist_10c_generation.png}
+%\caption{}
+%%\caption{blabla}
+%%\label{bla}
+%\end{subfigure}
+%%\includegraphics[width=0.4\linewidth]{images/model_mnist_10c_generation.png}
+%\begin{subfigure}[b]{0.3\textwidth}
+%\includegraphics[width=\textwidth]{images/model_mnist_10c_umap.png}
+%\caption{}
+%%\includegraphics[width=0.4\linewidth]{images/model_mnist_10c_umap.png}
+%\end{subfigure}
+%\caption{a figure}
+%\label{fig:myfig}
+%%\end{framed}
+%\end{figure}
 
 
 
