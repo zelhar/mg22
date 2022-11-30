@@ -86,8 +86,308 @@ adatakv = sc.read_h5ad("data/scgen/scGen_datasets/valid_study.h5ad",)
 adataz.X = adataz.X.toarray()
 adatakt.X = adatakt.X.toarray()
 adatakv.X = adatakv.X.toarray()
-
 adatakt = adatakt[adatakt.obs["condition"]=="control"].copy()
 adatakv = adatakv[adatakv.obs["condition"]=="control"].copy()
 
 countby(identity, adataz.obs["cell_type"])
+countby(identity, adatakt.obs["cell_type"])
+countby(identity, adatakv.obs["cell_type"])
+
+#adataz = ut.balanceAnnData(adataz, "cell_type", noreps=True, )
+adatakt = ut.balanceAnnData(adatakt, "cell_type", noreps=True,)
+#adatakv = ut.balanceAnnData(adatakv, "cell_type", noreps=True,)
+
+#sc.pp.scale(adataz,)
+#sc.pp.scale(adatakt,)
+#sc.pp.scale(adatakv,)
+
+#adataz = ut.balanceAnnData(adataz, "cell_type", numSamples=200, eps=1e-6, add_noise=True,)
+#adatakt = ut.balanceAnnData(adatakt, "cell_type", numSamples=200, eps=1e-6, add_noise=True,)
+#adatakv = ut.balanceAnnData(adatakv, "cell_type", numSamples=200, eps=1e-6, add_noise=True,)
+#countby(identity, adataz.obs["cell_type"])
+#countby(identity, adatakt.obs["cell_type"])
+#countby(identity, adatakv.obs["cell_type"])
+#sc.pp.scale(adataz,)
+#sc.pp.scale(adatakt,)
+#sc.pp.scale(adatakv,)
+
+#adatakv.X.mean(0)
+#adatakv.X.std(0)
+#adatakv.X.var(0)
+
+sc.pp.pca(adataz,)
+sc.pp.pca(adatakt,)
+sc.pp.pca(adatakv,)
+sc.pp.neighbors(adataz,)
+sc.pp.neighbors(adatakt,)
+sc.pp.neighbors(adatakv,)
+sc.tl.umap(adataz,)
+sc.tl.umap(adatakt,)
+sc.tl.umap(adatakv,)
+sc.tl.louvain(adataz,)
+sc.tl.louvain(adatakt,)
+sc.tl.louvain(adatakv,)
+
+
+sc.pl.umap(
+        adataz,
+        color = [
+            "cell_type",
+            "louvain",
+            ],
+            ncols=2,
+            show=False,
+            save="_temp.png",
+            )
+
+sc.pl.umap(
+        adatakt,
+        color = [
+            "cell_type",
+            "louvain",
+            ],
+            ncols=2,
+            show=False,
+            save="_temp.png",
+            )
+
+sc.pl.umap(
+        adatakv,
+        color = [
+            "cell_type",
+            "louvain",
+            ],
+            ncols=2,
+            show=False,
+            save="_temp.png",
+            )
+
+enc_labels = LabelEncoder()
+labelskt = enc_labels.fit_transform(adatakt.obs["cell_type"],)
+labelskt = F.one_hot(torch.tensor(labelskt)).float()
+enc_conds = LabelEncoder()
+conditionskt = enc_conds.fit_transform(adatakt.obs["condition"],)
+conditionskt = F.one_hot(torch.tensor(conditionskt)).float()
+datakt = torch.tensor(adatakt.X)
+datakt.shape
+adatakt.obs["label"] = enc_labels.inverse_transform(
+    labelskt.argmax(-1).detach().numpy(),
+)
+adatakt.obs["label_num"] = labelskt.argmax(-1).detach().numpy().astype('str')
+louvainkt = [int(x) for x in adatakt.obs["louvain"]]
+louvainkt = F.one_hot(torch.tensor(louvainkt)).float()
+
+
+labelskv = enc_labels.fit_transform(adatakv.obs["cell_type"],)
+labelskv = F.one_hot(torch.tensor(labelskv)).float()
+conditionskv = enc_conds.fit_transform(adatakv.obs["condition"],)
+conditionskv = F.one_hot(torch.tensor(conditionskv)).float()
+datakv = torch.tensor(adatakv.X)
+datakv.shape
+adatakv.obs["label"] = enc_labels.inverse_transform(
+    labelskv.argmax(-1).detach().numpy(),
+)
+adatakv.obs["label_num"] = labelskv.argmax(-1).detach().numpy().astype('str')
+louvainkv = [int(x) for x in adatakv.obs["louvain"]]
+louvainkv = F.one_hot(torch.tensor(louvainkv)).float()
+
+
+
+data_loader = torch.utils.data.DataLoader(
+        dataset = ut.SynteticDataSetV2(
+            [
+                datakt,
+                labelskt,
+                #conditions,
+                ],),
+            batch_size=2**11,
+            shuffle=True,
+            )
+
+model = Mb0.VAE_Dirichlet_GMM_TypeB1602z(
+    nx=adatakt.n_vars,
+    #nz=12,
+    #nw=12,
+    nz=18,
+    nw=18,
+    nclasses=labelskt.shape[1]*3,
+    concentration=1e0,
+    dropout=15e-2,
+    bn=True,
+    reclosstype="mse",
+    #reclosstype="Gauss",
+    restrict_w=True,
+    restrict_z=True,
+    #positive_rec=True,
+    numhidden=3,
+    numhiddenp=3,
+    numhiddenq=3,
+)
+model.apply(init_weights)
+print(model.__class__)
+
+Train.basicTrainLoop(
+    model,
+    data_loader,
+    data_loader,
+    num_epochs=100,
+    lrs = [
+        #1e-5,
+        #1e-4,
+        #1e-3,
+        1e-3,
+        1e-3,
+        1e-4,
+        1e-5,
+    ],
+    report_interval=0,
+    wt=0,
+)
+r,p,s = ut.estimateClusterImpurityLoop(model, datakt, labelskt, "cuda", )
+print(p,r,s)
+r = r[r>=0]
+s = s[s>=0]
+print((r*s).sum().item() / s.sum().item(), r.mean().item())
+
+
+r,p,s = ut.estimateClusterAccuracy(louvainkt, labelskt)
+print(p,r,s)
+r = r[r>=0]
+s = s[s>=0]
+print((r*s).sum().item() / s.sum().item(), r.mean().item())
+
+r,p,s = ut.estimateClusterImpurityLoop(model, datakv, labelskv, "cuda", )
+print(p,r,s)
+r = r[r>=0]
+s = s[s>=0]
+print((r*s).sum().item() / s.sum().item(), r.mean().item())
+
+
+
+output = model(datakv)
+adatakv.obs["predict"] =  output["q_y"].argmax(-1).detach().numpy().astype(str)
+adatakv.obsm["mu_z"] = output["mu_z"].detach().numpy()
+adatakv.obsm["z"] = output["z"].detach().numpy()
+adatakv.obsm["mu_w"] = output["mu_w"].detach().numpy()
+adatakv.obsm["w"] = output["w"].detach().numpy()
+rec = output["rec"].detach()
+del output
+
+
+sc.pp.pca(adatakv,)
+sc.pp.neighbors(adatakv,)
+#sc.pp.neighbors(adatakv, use_rep="mu_z",)
+sc.tl.umap(adatakv,)
+sc.tl.louvain(adatakv,)
+
+
+sc.pl.umap(
+        adatakv,
+        color = [
+            "louvain",
+            "predict",
+            "label",
+            ],
+            ncols=2,
+            show=False,
+            save="_temp.png",
+            )
+
+
+r,p,s = ut.estimateClusterAccuracy(louvainkv, labelskv)
+print(p,r,s)
+r = r[r>=0]
+s = s[s>=0]
+print((r*s).sum().item() / s.sum().item(), r.mean().item())
+
+
+ut.saveModelParameters(
+        model,
+        "./results/temp_gmmvaez_kang_control_us" + ut.timeStamp() + ut.randomString() + "params.pt",
+        method="json",
+        )
+torch.save(
+        model.state_dict(),
+        "./results/temp_gmmvaez_kang_control_us" + ut.timeStamp() + ut.randomString() + "state.pt",
+        )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

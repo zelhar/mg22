@@ -2669,26 +2669,86 @@ on the rebalanced and the original data set.
 \label{fig:zheng_ss_latent_balanced}
 \end{figure}
 
-Of course for this particular data it would be easier and faster to use Louvain
-clustering and train a GMVAE model on the clustering if it were needed for some
-purpose.
-However this experiment gives some insight on the importance of data balancing.
+However there is a logical failure in the rebalancing approach because in order
+to rebalance by cell type we have to know the cell type.
+What we showed perhaps is that if somehow we were given a balanced dataset with
+unknown cell types, than probably GMVAE in unsupervised mode would perform better.
+
+There is another issue which should be mentioned. We treat the annotation (the
+given cell types) in the scRNAseq datasets as ground truth but it is not
+necessary so and some of the cells are likely mislabeled.
 
 \chapter{Tests with PBMCs scRNAseq Data (Kang et al)}
 In these tests we used a scRNAseq dataset~\cite{kang2018multiplexed} of PBMCs
-(peripheral blood mononuclear cells) of $7$ cell types which comes from two groups:
-control  and treatment. The cells in the treatment group have been exposed to
+(peripheral blood mononuclear cells) of the same $7$ cell types as in Zheng
+dataset.
+However the cells in this dataset comes from two groups:
+control and treatment. The cells in the treatment group have been exposed to
 interferon beta (INF-$\beta$).
+Moreover,
+the Kang dataset is much more challenging than the Zheng dataset because the
+cell types are not nicely clustered as they are in Zheng.
 
-Because the data comes from different classes (=cell types) and from two
-different batches (control/treatment), 
-the conditional version of our mixture model, cGMVAE, 
-seems to be the most suitable for this type of data. The mixture
-components correspond to the cell types, and the condition corresponds to
-control/treatment.
+We use the same train/validation split of the data as is used
+by~\cite{lotfollahi2019scgen}.
+%Because the data comes from different classes (=cell types) and from two
+%different batches (control/treatment), 
+%the conditional version of our mixture model, cGMVAE, 
+%seems to be the most suitable for this type of data. The mixture
+%components correspond to the cell types, and the condition corresponds to
+%control/treatment.
 
-\subsection{Unsupervised learning}
+\section{Unsupervised learning of the control subset}
 
+In this section we subset the Kang dataset to just the control group. We first
+test unsupervised learning of GMVAE. Then we try to see if pre-learning the
+Zheng dataset with supervised learning can help classify the Kang dataset.
+
+When Louvain clustering with default values was performed on the Kang train data,
+it missed the CD8 cell type (which was merged with NK type) as
+figure~\ref{fig:kang_control_train_gmvae_us_umap} (top left vs bottom) is showing.
+The same issue occurred in
+the smaller validation subset.
+The accuracy of the Louvain clustering was $0.81$ in the train subset and
+$0.78$ in the validation subset.
+
+%\begin{figure}[h]
+%\centering
+%\includegraphics[width=1.1\textwidth]{images/gmmvae_Kang_control_train_umap.png}
+%\caption{
+%Kang train data. CD8 type is missed by the Louvain clustering.
+%}
+%\label{fig:kang_control_train_umap}
+%\end{figure}
+
+Kang dataset isn't as unbalanced as the Zheng one, and it is larger.
+Every cell type has over $400$ samples from each condition at least.
+
+GMVAE with 21 components achieved $0.78$ accuracy on both the train set and the
+validation set. However it also captured all $7$ cell types in its clusters 
+unlike Louvain which missed the CD8.
+
+Figure~\ref{fig:kang_control_train_gmvae_us_umap} shows the umap on the pca
+space, which lets us compare the original Louvain clustering with the GMVAE
+classification. The situation with Louvain cluster on the latent space and umap
+of the latent space is essentially the same so we are not showing it here. 
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.1\textwidth]{images/gmmvae_Kang_control_train_us_21c_umap.png}
+\caption{
+Kang train data. It is interesting that the GMVAE "clusters" can be fuzzy,
+unlike Louvain clusters which tend to have clear borders.
+}
+\label{fig:kang_control_train_gmvae_us_umap}
+\end{figure}
+
+Perhaps the GMVAE performed essentially as well as Louvain and even was able to
+capture the cell type missed by Louvain is that the Dataset is larger and
+better balanced than the Zheng data.
+The sample size per cell type in the train set is in the range 500--2000 unlike
+the situation in the Zheng data where one cell type has 37 samples and another
+over 2000.
 
 
 \chapter{Discussion, some remarks and conclusions}

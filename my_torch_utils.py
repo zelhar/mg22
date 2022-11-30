@@ -1421,8 +1421,14 @@ def balanceAnnData(
     )
     xdata.obs_names_make_unique()
     if add_noise:
-        noise = eps * np.random.randn(*xdata.X.shape).astype("float32")
-        xdata.X = xdata.X + noise
+        #sc.pp.scale(xdata,)
+        #xdata.obs_names_make_unique()
+        #noise = eps * np.random.randn(*xdata.X.shape).astype("float32")
+        #xdata.X = xdata.X + noise
+        xdata.X += eps * (np.random.randn(*xdata.X.shape)).astype("float32")
+        #sc.pp.scale(xdata,)
+        xdata.X -= xdata.X.mean(0)
+        xdata.X /= xdata.X.std(0)
     return xdata
     
 
