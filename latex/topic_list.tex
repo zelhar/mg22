@@ -2617,7 +2617,7 @@ testing sets.
 We supervised trained a GMVAE and it achieved 0.714 accuracy, an insignificant
 difference from Louvain. With further unsupervised training rounds it reached 
 0.725 accuracy. Still below the 0.75 we achieved with the best model during 
-unsupervised only training but but we were only able to
+unsupervised only training but we were only able to
 achieve it with much trying and tuning.
 The combination with Louvain is much more consistent as a method.
 
@@ -2743,13 +2743,67 @@ unlike Louvain clusters which tend to have clear borders.
 \label{fig:kang_control_train_gmvae_us_umap}
 \end{figure}
 
-Perhaps the GMVAE performed essentially as well as Louvain and even was able to
-capture the cell type missed by Louvain is that the Dataset is larger and
+Perhaps the GMVAE performed essentially as well as Louvain and was even able to
+capture the cell type missed by Louvain because that the Dataset is larger and
 better balanced than the Zheng data.
 The sample size per cell type in the train set is in the range 500--2000 unlike
 the situation in the Zheng data where one cell type has 37 samples and another
 over 2000.
 
+\section{Using Zheng to learn Kang}
+
+The Zheng and the (control) Kang datasets both represent the same PBMCs
+However the former is a much nicer dataset.
+The idea here is to do semi-supervised training, where a re-balanced Zheng
+dataset is used as the labeled training subset, and the Kang training dataset is the
+unlabeled subset.
+
+As mentioned in the previous section, Louvain clustering performs ok-ish on the
+Kang in terms of overall accuaracy (0.78-0.8) but it missed completely
+one of the classes (CD14).
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.1\textwidth]{images/gmmvae_zheng_new_louvain_umap1.png}
+\caption{
+UMAP of the Zheng dataset.
+}
+\label{fig:zheng_pca_umap_new}
+\end{figure}
+
+Figure~\ref{fig:zheng_pca_umap_new} shows the UMAP of the Zheng data.
+There are 8 Louvain clusters (not sure why in the previous chapter there were
+8), and they capture fairly accurately (0.92) the real classes.
+Moreover the Louvain clusters have well defined borders whereas the true labels
+are somewhat mixed in with each other (CD8 spots inside the CD4 blob).
+We tried two variations for the labeled subset: using the true labels and using
+the Louvain labels.
+With the first variation, we couldn't consistently train a model which captures
+all the classes.
+The second variation turned out better.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.1\textwidth]{images/gmmvae_kang_new_latent_louvain_pred_umap1.png}
+\caption{
+UMAP of the latent space of the Kang validation subset (the holdout).
+}
+\label{fig:kang_new_latent}
+\end{figure}
+
+Figure~\ref{fig:kang_new_latent} shows the result of the semisupervised
+training, where Zheng Louvain clusters were used as the labels. Technically
+speaking this was a form of unsupervised clustering in the sense that we didn't
+use the label information in the training at all. The accuracy was 0.81 so still
+not great but edging out the unsupervised training from the previous section.
+Moreover we have used minimal overclustering (just 1 extra component) and we
+think the umap of the latent space at least looks better. The main issue is with
+component 4 (predicting CD14) and component 4 (predicting CD8). It is also
+possible that the accuracy of the provided cell typing for the Kang dataset is
+itself not very good.
+It is also interesting that the Louvain clustering of the latent space is very
+similar to the prediction, except that it unites components 4 and 5 of the
+model, and consequently missed the CD8 class.
 
 \chapter{Discussion, some remarks and conclusions}
 punkt.

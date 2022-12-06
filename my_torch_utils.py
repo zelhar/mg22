@@ -1390,6 +1390,7 @@ def balanceAnnData(
     noreps: bool = False,
     eps : float = 1e-4,
     add_noise : bool = False,
+    augment_mode: bool = False,
 ) -> ad._core.anndata.AnnData:
     """
     creates a balanced set with numSamples objects per each
@@ -1398,8 +1399,12 @@ def balanceAnnData(
     IF noreps == True, numSamples is ignored and instead
     from each group m samples without repetitions are choses,
     where m is the size of the smallest group.
+    if augment_mode is True, the original data will be included together
+    with the samples, so the result dataset will not be exactly balanced.
     """
     andata_list = []
+    if augment_mode:
+        andata_list = [adata,]
     cats = list(np.unique(adata.obs[catKey]))
     m = 0
     if noreps:
@@ -1427,7 +1432,7 @@ def balanceAnnData(
         #xdata.X = xdata.X + noise
         xdata.X += eps * (np.random.randn(*xdata.X.shape)).astype("float32")
         #sc.pp.scale(xdata,)
-        xdata.X -= xdata.X.mean(0)
+        xdata.X -= (adata.X.var(0) > 0) * xdata.X.mean(0)
         xdata.X /= xdata.X.std(0)
     return xdata
     
