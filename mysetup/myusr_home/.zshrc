@@ -124,7 +124,7 @@ bindkey -v
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-alias condact="conda activate mgen"
+#alias condact="conda activate mgen"
 #alias nvim="~/bin/./nvim.appimage"
 alias code="~/bin/./VSCode.AppImage"
 #
@@ -137,32 +137,29 @@ alias rscript="Rscript --no-init-file --slave"
 #alias ghc="prun haskell ghc"
 #alias ghci="prun haskell ghci"
 
-
-# <<< conda initialize <<<
-#auto activate my fav environment
-#conda activate mgen
-#conda activate base
-#conda activate mgen
-
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/ykolb/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/home/ykolb/miniconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/ykolb/miniconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/home/ykolb/miniconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
+# disable conda autoactivate
+#unset __conda_setup
 
 ##export MANPAGER="vim -M +MANPAGER -"
 #export MANPAGER='nvim +Man!'
 ##export PAGER="vim -M +MANPAGER -"
 #export PAGER='nvim +Man!'
 export MANWIDTH=80
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/ykolb/mambaforge/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/ykolb/mambaforge/etc/profile.d/conda.sh" ]; then
+        . "/home/ykolb/mambaforge/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/ykolb/mambaforge/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+

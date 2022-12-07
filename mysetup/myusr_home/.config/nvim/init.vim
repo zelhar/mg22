@@ -41,8 +41,8 @@ Plug 'Twinside/vim-hoogle' "haskell hoogle plgin
 Plug 'neovimhaskell/haskell-vim' "syntax highlighter
 
 "snakemake
-Plug 'snakemake/snakefmt'
-Plug 'snakemake/snakemake', {'rtp': 'misc/vim'}
+"Plug 'snakemake/snakefmt'
+"Plug 'snakemake/snakemake', {'rtp': 'misc/vim'}
 
 "julia
 Plug 'JuliaEditorSupport/julia-vim'
@@ -132,11 +132,6 @@ tnoremap <C-Tab> <C-\><C-n>:tabnext<Cr>
 nnoremap <Leader><Enter> o<Esc>
 nnoremap <M-Enter> i<Enter><Esc>
 
-" yank/paste to/from PRIMARY (selection) clipboard
-vnoremap <Leader>y  "*y
-nnoremap <Leader>y  "*yy
-nnoremap <Leader>p  "*p
-nnoremap <Leader>P  "*P
 " can also simply use the unnamed register by default
 set clipboard+=unnamed
 "copy by default to system clipboard
@@ -144,6 +139,7 @@ set clipboard+=unnamedplus
 
 "Compile a Latex File with xelatex
 nnoremap <Leader>xe :!xelatex -synctex=1 -interaction=nonstopmode -shell-escape
+vnoremap <Leader>l :!pandoc -f latex -t plain<CR>
 
 "wraps selected text in ()
 vnoremap <Leader>0 di()<Esc>hpe
@@ -171,10 +167,10 @@ inoremap <expr> <cr> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
 "inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 "inoremap <expr> <S-Tab> pumvisible() ? "\<C-y>\<Tab>" : "\<Tab>"
 
-inoremap <C-l> <right>
-inoremap <C-h> <left>
-inoremap <C-k> <up>
-inoremap <C-j> <down>
+inoremap <A-l> <right>
+inoremap <A-h> <left>
+inoremap <A-k> <up>
+inoremap <A-j> <down>
 
 "highlight all matches to search results
 set hlsearch

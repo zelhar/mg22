@@ -27,6 +27,7 @@ import XMonad.Actions.DwmPromote
 import XMonad.Config.Xfce
 import XMonad.Hooks.SetWMName
 import XMonad.Layout
+import XMonad.Layout.Master
 import XMonad.Layout.Accordion
 import qualified XMonad.Layout.BinarySpacePartition as BSP
 import XMonad.Layout.Column
@@ -54,6 +55,7 @@ import qualified XMonad.StackSet as W
 import XMonad.Actions.WindowMenu
 import XMonad.Actions.GridSelect
 import XMonad.Config.Desktop
+import XMonad.Hooks.InsertPosition
 
 
 
@@ -137,7 +139,7 @@ myConfig = def
     , keys = \c -> myKeys c `M.union` keys def c
     , focusFollowsMouse = False
     , layoutHook = myLayout
-    , manageHook = myManageHook
+    , manageHook = insertPosition Below Newer <+> myManageHook
     , startupHook        = myStartupHook
     }
 
@@ -195,6 +197,8 @@ myKeys (XConfig {modMask = myModMask}) = M.fromList $
 myLayout =windowNavigation $ smartBorders . avoidStruts $ 
 --myLayout =windowNavigation $ smartBorders $ 
     Full
+    ||| fixMastered 0.01 0.5 (tabbed shrinkText tabConfig)
+    ||| (reflectHoriz $ fixMastered 0.01 0.5 (tabbed shrinkText tabConfig) )
     ||| BSP.emptyBSP
     ||| (reflectHoriz $ combineTwo (TwoPane 0.01 0.5) (tabbed shrinkText tabConfig) (tabbed shrinkText tabConfig))
     ||| combineTwo (TwoPane 0.01 0.5) (Simplest) (Simplest)
@@ -248,3 +252,4 @@ myXmobarPP = def
 
 myStartupHook = do
   spawnOnce "~/bin/myxkb.sh"
+  spawnOnce "xbanish -t 5"
