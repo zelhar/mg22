@@ -2805,6 +2805,16 @@ It is also interesting that the Louvain clustering of the latent space is very
 similar to the prediction, except that it unites components 4 and 5 of the
 model, and consequently missed the CD8 class.
 
+\chapter{Applying cGMVAE on the full Kang dataset}
+As mentioned the full Kang dataset contains two groups of PBMCs, 
+the control group (used in the previous chapter) and the stimulated group, the latter contains the gene
+expressions after exposure to INF-β.
+The cGMVAE model may fit well for this data, where a binary condition variable
+represents control/stimulated and the mixture component of the represent cell
+types. In particular we aim at obtaining some interesting results from
+(semi)supervised learning. This dataset is too hard for the model to learn
+unsupervised, as we have seen in the previous chapter.
+
 \chapter{Discussion, some remarks and conclusions}
 punkt.
 punkt.
