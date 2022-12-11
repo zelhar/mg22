@@ -8,6 +8,15 @@ import anndata
 import scanpy as sc
 import plotly.express as px
 from mpl_toolkits.mplot3d import Axes3D
+import plotly.io as pio
+from dash import Dash, html, dcc
+
+sns.set_palette(sns.color_palette("pastel"),)
+sns.set(rc={"figure.dpi":200, 'savefig.dpi':100})
+
+pio.renderers.default = "png"
+
+pio.renderers.default = "browser"
 
 X = torch.randn(1000,2)
 X = torch.concat([X, X+1],)
@@ -101,6 +110,8 @@ ax=sns.relplot(
         )
 sns.move_legend(ax,loc="upper right")
 
+#plt.ioff()
+
 fig = px.scatter_3d(df,
                     x="x",y="y",z="z",
                     color="label",
@@ -117,3 +128,17 @@ ax.scatter(df.obs["x"],df.obs["y"],df.obs["z"],c=list(toolz.concat([np.arange(5)
 
 sc.pl.scatter(df,x="x",y=["y","z"], projection='3d', color="label",)
 
+
+app = Dash("foodash")
+
+app.layout = html.Div(children = [
+    html.H1(
+        children="hello",
+        ),
+    dcc.Graph(
+        id="plotly graph",
+        figure=fig
+        )
+    ])
+
+app.run_server(port=8888,)
