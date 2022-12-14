@@ -15,6 +15,7 @@
 \usepackage{subcaption}
 \usepackage{float}
 \graphicspath{ {images/} }
+\usepackage{svg}
 \usepackage{blindtext}
 \usepackage{mathtools}
 \usepackage{amssymb}
@@ -2233,9 +2234,10 @@ categorical, namely the conditional VAE (CVAE), and the GMVAE.
 The cGMVAE is a combination of both, a conditional GMVAE. 
 It is technically very easy to implement a conditional version from a 
 given VAE model. Basically it just requires 
-concatenating the condition $c$ to whatever variable we want to condition.
-But why do we need it?
+concatenating the condition $c$ to whatever variable we want to condition
+(which are all the variables in this case).
 
+But why do we need it?
 Suppose that we have again numerical/categorical type of data $(\x, \y)$ which 
 comes in two or more types of "flavors" $c$, so the full data type 
 is $(\x, \y, c)$. For example $\x$ can be an image of on of $k$ 
@@ -2245,9 +2247,11 @@ smiles or not.
 Also suppose that $\y$ might not be provided at all or just for
 a subset of the data but $c$ is always provided for us.
 
-The data we actually use for this model is scRNAseq data that comes from two types 
+The data we pirposed this model for is the Kang scRNAseq
+dataset~\cite{kang2018multiplexed} that comes from two types 
 of conditions (control and stimulated), 
-which are the conditions before and after exposure to some pathogen or some chemical.
+The condition represents the states before and after exposure to some treatment
+(INF-$\beta$).
 $\x$ is normalized gene expression levels, $\y$ is the cell type 
 we want to infer but may not know the ground truth, and $c$ indicates from which
 group the measurement was taken (control/stimulate) and this information is
@@ -2258,8 +2262,8 @@ taken.
 \begin{figure}[h]
 %\begin{framed}
 \centering
-\includegraphics[width=0.5\textwidth]{plots/dirichlet_gmm_cvae.gv.png}
-\caption{cGMVAE, unsupervised case}
+\includegraphics[width=0.5\textwidth]{plots/dirichlet_gmm_cvae.v2.gv.png}
+\caption{cGMVAE, unsupervised case. Sorry for the arrow clutter}
 \label{fig:dirgmmcvae}
 %\end{framed}
 \end{figure}
@@ -2267,7 +2271,7 @@ taken.
 \begin{figure}[h]
 %\begin{framed}
 \centering
-\includegraphics[width=0.5\textwidth]{plots/dirichlet_gmm_cvae_supervised.gv.png}
+\includegraphics[width=0.5\textwidth]{plots/dirichlet_gmm_cvae_supervised.v2.gv.png}
 \caption{cGMVAE, supervised case}
 \label{fig:dirgmmcvae_super}
 %\end{framed}
@@ -2277,11 +2281,11 @@ The factorization in the unsupervised case is:
 
 \begin{equation}
 \begin{aligned}
-&p(\x, \y, \z, \w, \dd, c) &=& 
-&p(\x | \z, c) p(\z | \w, \y) p(\y | \dd) p(\dd) p(\w | c) \\
+&p(\x, \y, \z, \w, \dd | c) &=& 
+&p(\x | \z, c) p(\z | \w, \y, c) p(\y | \dd, c) p(\dd | c) p(\w | c) \\
 &q(\z, \w, \dd | \x, \y, c) &=& 
-&q(\z | \x, c) q(\w | \x, c) q(\y | \z) q(\dd | \z)
-\label{eq:cgmmfact_unsupervised}
+&q(\z | \x, c) q(\w | \x, c) q(\y | \z, c) q(\dd | \z, c)
+\label{eq:cgmmfact_unsupervised.}
 \end{aligned}
 \end{equation}
 
@@ -2289,19 +2293,18 @@ And in the supervised case:
 
 \begin{equation}
 \begin{aligned}
-&p(\x, \y, \z, \w, \dd, c) &=& 
-&p(\x | \z, c) p(\y | \dd) p(\y | \z) p(\z | \w) p(\dd) p(\w | c) \\
-&q(\z, \w, \dd | \x, \y) &=& 
-&q(\z | \x, c) q(\w | \x, c) q(\dd | \z)
+&p(\x, \y, \z, \w, \dd | c) &=& 
+&p(\x | \z, c) p(\y | \dd, c) p(\y | \z, c) p(\z | \w, c) p(\dd | c) p(\w | c) \\
+&q(\z, \w, \dd | \x, \y, c) &=& 
+&q(\z | \x, c) q(\w | \x, c) q(\dd | \z, c)
 \label{eq:cgmmfact_supervised}
 \end{aligned}
 \end{equation}
 
-In this model we want to keep the dependency of $\x$ on $c$, hence
+In this model we in particularly want to keep the dependency of $\x$ on $c$, hence
 $p(\x | \z, c)$. This allows us to "flip" condition of the reconstruction,
 which we can interpret as converting for example control cells to stimulated
 cells, as we'll see in a later chapter.
-
 
 \chapter{Experiments and results MNIST}
 %\section{Tests with MNIST and FMNIST}
@@ -2368,10 +2371,10 @@ class).
 
 It is interesting to compare the PCA results to the same procedure done on the
 latent space.
-The umap appears a little bit better (the ground truth classes have more
+The UMAP appears a little bit better (the ground truth classes have more
 separation from each other).
-This time there are $11$ louvain clusters and only the "9"
-category is split between two louvain clusters.
+This time there are $11$ Louvain clusters and only the "9"
+category is split between two Louvain clusters.
 This is despite the latent $z$ space being only $16$-dimensional, while the PCA
 is done on the $50$ most significant components.
 
@@ -2805,10 +2808,171 @@ It is also interesting that the Louvain clustering of the latent space is very
 similar to the prediction, except that it unites components 4 and 5 of the
 model, and consequently missed the CD8 class.
 
+\chapter{Testing cGMVAE on toy data}
+The conditional model cGMVAE~\ref{fig:dirgmmcvae} is the most complicated one we
+specified. We decided to first test it on a toy dataset to see if it was worse
+its salt otherwise why bother with it any further.
+
+The toy dataset is a synthetic 5-class 2-conditions 16-dimensional Gaussian "blobs".
+Every class at a specific condition is a Gaussian blob. 
+On the same class, the difference in condition is a small random shift plus some
+noise. We specifically aimed for the condition difference to be smaller than a
+class switch.
+Figure~\ref{fig:blobs_3d} shows the toy dataset (by its 3 major pca components).
+
+\begin{figure}[h]
+\centering
+\includesvg [width=1.1\textwidth]{images/blobs3d_pca.svg}
+\caption{The toy dataset, showing a 3d plot of its 3 major pca components.
+}
+\label{fig:blobs_3d}
+\end{figure}
+
+We also would like to directly observe (rather than using UMAP or PCA) the
+latent spaces $\z$ and $\w$ so we set their dimensions to $2$.
+In general these dimensions are hyperparameters of the model and fixing them on 
+too low can lead to sub-optimal results and also cause problems of numerical
+stability during training.
+The numerical stability issue is largely solved by constraining $\z$ and $\w$ to
+a bounded domain. Without it, 
+it is much more likely to get a Nan/Inf error during training.
+We use this constraint in all of our results which are brought
+in this paper.
+
+\subsection{cGMVAE with learned prior}
+
+In this model, $\w$ has a learned prior $(\w | c)$ which encoder $q(\w | \x, c)$ 
+tries to stay close to.
+With this setup, we expect that in the $\w$ space of the 
+encoder, we'll see some separation between the two conditions.
+Within the same condition, we expect to see the classes roughly normally
+distributed, since each $\w$ as input decodes to any of the classes in the $\z$
+space (then to be selected by the $y$ variable for the reconstruction.
+
+On the $\z$ space, we expect to see clustering based on the classes (assuming
+the model will pick the correct classes for its mixture components).
+There may also be a visible condition effect within a class on the $\z$ space.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.1\textwidth]{images/blobs_cgmvae_learnedprior_mu_w.png}
+\caption{The encoded means of the $\w$ space, learned prior case.
+}
+\label{fig:blobs_lp_muw}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.1\textwidth]{images/blobs_cgmvae_learnedprior_w.png}
+\caption{Random sampling from the encoded distribution of the $\w$ space. 
+}
+\label{fig:blobs_lp_w}
+\end{figure}
+
+Figure~\ref{fig:blobs_lp_muw} shows the means of the encoded $\w$-distribution.
+We clearly see the two clusters for the "ctrl" and "trmtmnt" conditions.
+Within each condition, there is some clustering of the classes too.
+However if we sample randomly from this distribution (\ref{fig:blobs_lp_w}, it
+is hard to distinguish any pattern. Everything (class and condition) appears
+mixed together.
+
+
+We forgot to mention that the model achieved perfect accuracy on this dataset.
+We defined it with exactly the same number of mixture component as there are
+classes in the data and it captured every class in its own component with $1.0$
+accuracy.
+
+Move on to the $\z$ space.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.1\textwidth]{images/blobs_cgmvae_learnedprior_mu_z.png}
+\caption{The encoded means of the $\z$ space, learned prior case.
+}
+\label{fig:blobs_lp_muz}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.1\textwidth]{images/blobs_cgmvae_learnedprior_z.png}
+\caption{Random sampling from the encoded distribution of the $\z$ space. 
+}
+\label{fig:blobs_lp_z}
+\end{figure}
+
+We see that in figure~\ref{fig:blobs_lp_muz} the means, and in
+figure\ref{fig:blobs_lp_z} (random samples) that each mixture captures its own
+class of the dataset. They are completely separated. When looking at the means
+plot, within a class, we
+see some hardly visible subdivision based on conditions.
+Ideally we may want a model that doesn't encode condition-difference into the
+$\z$ space, because such a model 
+suggests that the decoder is able to reconstruct from the same input in $\z$,
+A good thing if we want to use such a
+model to predict treatment effect.
+
+\subsection{cGMVAE with fixed standard normal prior}
+
+In this model, $\w$ doesn't learn a prior but is given a fixed standard normal
+prior $p(\w)$ regardless of condition.
+The encoder $q(\w | \x, c)$ 
+tries to stay close to $p(\w)$.
+With this setup, we expect that in the $\w$ space of the 
+encoder will mix the two conditions together. This can be a good thing for
+example, for batch effect reduction.
+
+On the $\z$ space, we expect to see clustering based on the classes (assuming
+the model will pick the correct classes for its mixture components).
+There may also be a visible condition effect within a class on the $\z$ space
+because the condition $c$ is always passed forward as input for the models
+sub-networks.
+
+We again were able to achieve perfect accuracy with this model as well.
+
+In figure~\ref{fig:blobs_nop_muw} we see the means of the encoded $\w$ space.
+Here we get complete separation to different classes, but in each class-cluster
+the conditions are tight together, even if somewhat not mixed in perfectly.
+An interesting contrast to the learned prior case
+(figure~\ref{fig:blobs_lp_muw}.
+We don't plot again random samples from $\w$ because again, it looks the same 
+as in the learned prior case, with everything mixed together.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.1\textwidth]{images/blobs_cgmvae_stdprior_mu_w.png}
+\caption{The encoded means of the $\w$ space, fixed standard normal prior case.
+}
+\label{fig:blobs_nop_muw}
+\end{figure}
+
+In figure~\ref{fig:blobs_nop_muz} we see the encoded means and in
+figure~\ref{fig:blobs_nop_z} we see samples of the $\z$ space. The means look
+very tight together. There is hardly any difference within  the same class for
+the different conditions, which again, should be what we want to achieve for the
+purpose of treatment effect prediction and for batch effect reduction.
+
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.1\textwidth]{images/blobs_cgmvae_stdprior_mu_z.png}
+\caption{The encoded means of the $\z$ space, fixed standard normal prior case.
+}
+\label{fig:blobs_nop_muz}
+\end{figure}
+
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.1\textwidth]{images/blobs_cgmvae_stdprior_z.png}
+\caption{Sampling from encoded $\z$ space, fixed standard normal prior case.
+}
+\label{fig:blobs_nop_z}
+\end{figure}
+
 \chapter{Applying cGMVAE on the full Kang dataset}
 As mentioned the full Kang dataset contains two groups of PBMCs, 
 the control group (used in the previous chapter) and the stimulated group, the latter contains the gene
-expressions after exposure to INF-β.
+expressions after exposure to INF-$\beta$.
 The cGMVAE model may fit well for this data, where a binary condition variable
 represents control/stimulated and the mixture component of the represent cell
 types. In particular we aim at obtaining some interesting results from
