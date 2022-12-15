@@ -16,6 +16,7 @@
 \usepackage{float}
 \graphicspath{ {images/} }
 \usepackage{svg}
+\usepackage{pdfpages}
 \usepackage{blindtext}
 \usepackage{mathtools}
 \usepackage{amssymb}
@@ -140,13 +141,20 @@ Berlin, \today
 %\title{Topic List}
 %\maketitle
 
+\includepdf[pages=-,
+scale=.8,
+%pagecommand=\chapter*{Declaration},
+linktodoc=true,
+]{./Selbstaendigkeitserklaerung_EN.pdf}
+
+
 \chapter*{Abstract}
 punkt.
 punkt.
 
-\chapter*{Declaration}
-punkt.
-punkt.
+%\chapter*{Declaration}
+%punkt.
+%punkt.
 %\nocite{guo2017improved}
 %\nocite{bishop2006pattern}
 %\nocite{serre2001matrices}
@@ -2979,11 +2987,364 @@ types. In particular we aim at obtaining some interesting results from
 (semi)supervised learning. This dataset is too hard for the model to learn
 unsupervised, as we have seen in the previous chapter.
 
+We used the same normalization and the same training/testing (they called it validation) split
+which was provided by~\cite{lotfollahi2019scgen}. All the training was done on
+the training subset, and all the plots and evaluations are on the validation
+subset.
+
+\section{Unsupervised learning (full Kang dataset)}
+
+The Kang dataset has a strong batch effect, where surely part of it is due to
+the actual treatment effect and the rest (perhaps even the majority) is 
+actual batch effect of taking two separate measurements of different cell
+populations.
+Louvain clustering with default usually misses completely class 3 or 4 (CD14 and
+Dentritic cells).
+Figure~\ref{fig:Kang_val_full} shows the situation.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.1\textwidth]{images/Kang_val_full.png}
+\caption{
+UMAP of the Kang validation dataset
+}
+\label{fig:Kang_val_full}
+\end{figure}
+
+We trained a cGMVAE model without learned prior with latent $z$ and $w$ dimensions of $2$ and $28$
+mixture components.
+The overall accuracy was $0.78$ which isn't very good but at least
+it was able to pick up all the classes.
+%We specifically wanted the model to mix together the two batches (control and
+%stimulated) as this would allow us to generate from the same latent input
+%in the $w$ space, all classes and all conditions on demand (which we show in the
+%next chapters).
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.10\textwidth]{images/Kang_val_mu_z_labels.png}
+\caption{Kang data: labels and conditions. The conditions are fairly mixed in.}
+\label{fig:Kang_val_mu_z_labels}
+\end{figure}
+
+Figure~\ref{fig:Kang_val_mu_z_labels} shows the encoded means in the latent $z$
+space. Color indicates class label and node shape indicates condition.
+We can see that the classes are pretty much clustered together and within a
+class, the conditions are mixed in together. Its the decoders "job" to map from
+the latent space back to the reconstruction space and given a condition, it
+should be able to construct both conditions in the original space from the same
+input. Figure~\ref{fig:Kang_val_mu_z_predicts_labels} shows the same graph but
+this time color indicate mixture components and node shape indicate actual class
+label.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.10\textwidth]{images/Kang_val_mu_z_predicts_labels.png}
+\caption{Kang dataset. The encoded means of the $z$ latent space.
+Colors are coded by mixture component ("predict") and node shape are coded by
+class label.}
+\label{fig:Kang_val_mu_z_predicts_labels}
+\end{figure}
+
+We also want to see whats going on in the $w$ space. There we ecpect everything
+to really be mixed together. The less clustering and batch effect the better.
+Figures~\ref{fig:Kang_val_mu_w_labels} shows the encoded means of the Kang
+validation dataset. We see that labels and condition are fairly mixed in
+together. It is interesting that all of the action takes place along 
+a narrow diagonal strip. It looks like the means are encoded pretty much one
+dimensionally. It suggests that the variance will be working on the other
+dimension \dots which is confirmed by
+figure~\ref{fig:Kang_val_w_labels}. When we take samples from the encoded
+distribution we get a Jackson Pollock like picture.  Everything is
+mixed in in space.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.1\textwidth]{images/Kang_val_mu_w_labels.png}
+\caption{
+The encoded means in the latent $w$ space.
+}
+\label{fig:Kang_val_mu_w_labels}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.1\textwidth]{images/Kang_val_w_labels.png}
+\caption{
+The encoded validation subset in the latent $w$ space. This time by random
+samples from the encoded distribution.
+}
+\label{fig:Kang_val_w_labels}
+\end{figure}
+
+\section{Supervised training (full Kang dataset)}
+
+The main purpose here is to see by supervised training on
+this dataset cGMVAE learns something meaningful and potentially useful.
+We specifically wanted here the version with standard normal prior on the $w$
+space. We want the conditions and the labels to be deliberately mixed in by the encoder
+into the $w$ space. Then we can sample from it and from one sample in this
+latent space, generate every class and in both conditions.
+
+The latent dimensions this time were set at $24$ for both $z$ and $w$ because
+with these higher dimensions we achieved somewhat higher accuracy.
+The accuracy on the training set reached $0.99$ but on the validation subset it
+dropped to $0.9$. Figure~\ref{fig:Kang_super_val_mu_z} shows the encoded means
+in the latent $z$ space by way of PCA. The class labels are fairly if not
+perfectly clustered. Withing some of the classes there is a clear separation to
+control and treatment.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.1\textwidth]{images/Kang_super_val_mu_z.png}
+\caption{
+The latent $z$ space (encoded means)
+}
+\label{fig:Kang_super_val_mu_z}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.1\textwidth]{images/Kang_super_val_mu_z_predict.png}
+\caption{
+The latent $z$ space (encoded means) The mixture's component fit pretty nicely
+to the real labels (see previous image)
+}
+\label{fig:Kang_super_val_mu_z_predict}
+\end{figure}
+
+
+When we move to the $w$ space (figure\ref{Kang_super_val_w}), we see everything
+is nicely mixed together and normally distributed, which is what we aimed for.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.1\textwidth]{images/Kang_super_val_w.png}
+\caption{
+The latent $w$ space (sampling)
+}
+\label{fig:Kang_super_val_mu_z}
+\end{figure}
+
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.1\textwidth]{images/Kang_super_val_umap.png}
+\caption{UMAP of the Kang validation dataset
+}
+\label{fig:Kang_super_val_umap}
+\end{figure}
+
+\section{Simulating treatment effect}
+
+In this section we use the supervised trained model and see if it can
+realistically convert cells from the control group to the treatment group.
+Specifically we take cells from the control group, and encode them into the $w$
+latent space, using the real label and condition information.
+
+We take this encoding, keep the correct label but flip the condition and decode
+it into the $z$ latent space and then back to the input/reconstruction $x$ space.
+We want that the reconstructed data will look more like the stimulated group
+than the control group it was mapped from. We also want that cells of the same
+class will still be clustered together.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.1\textwidth]{images/Kang_super_val_umap_converted_control.png}
+\caption{
+UMAP of the combined validation subset with its control group remapped into
+stimulated state.
+}
+\label{fig:Kang_super_val_umap_converted_control}
+\end{figure}
+
+Figure~\ref{fig:Kang_super_val_umap_converted_control} shows a UMAP of the $x$
+(input/reconstructed) space of the validation subset combined with the control
+subset remapped into stimulated state by the cGMVAE. We can see that the decoder
+learned to preserve batch effect in the $x$ space just by using the condition
+information, since in the latent $w$ space the batch effect was deliberately
+erased. Moreover, we see that cells of different types map close to each other,
+so for example the B-cells from the control group are mapped (after condition
+flipping) to B cells of the stimulated group.
+The mapping though appear somewhat one dimensional. Especially the CD14 cells
+end up in a long "chain". If we used sampling instead of taking means we would
+end up with a graph that has more volume to it but we chose to take the mean as
+they are the best approximation that the model can give us.
+
+We performed gene ranking to see if the genes that are good markers for control
+vs stimulated are also good at marking control vs the cells we converted to
+stimulated state. As figure~\ref{fig:Kang_super_gene_markers} shows, among the
+top 10 marker genes in the two cases, there are many that are common.
+
+
+\begin{figure}[h]
+\centering
+\begin{subfigure}[t]{0.99\textwidth}
+\includegraphics[width=0.99\textwidth]{images/Kang_super_val_ctrl_vs_stimulated.png}
+\caption{Control vs stimualted}
+\end{subfigure}
+\begin{subfigure}[t]{0.99\textwidth}
+\includegraphics[width=0.99\textwidth]{images/Kang_super_val_ctrl_vs_converted.png}
+\caption{}
+\end{subfigure}
+\caption{control vs. control--converted--to--stimulated}
+\label{fig:Kang_super_gene_markers}
+\end{figure}
+
+We also picked one cell type (B cells) and performed regression comparison,
+using the same method (in fact the same function) as
+in~\cite{lotfollahi2019scgen}. This method comparing mean expression of genes
+between 2 groups (again only for one cell type).
+As figures~\ref{fig:Kang_bcells_ctrl_stim, fig:Kang_bcells_ctrl_converted,
+fig:Kang_bcells_stimulated_converted} show,
+Stimulated and converted--to--stimulated have a very close to perfect
+correlation correlation, whereas comparing control vs. either one of them yields 
+equally "bad" regressions.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.1\textwidth]{images/Kang_bcells_ctrl_stim.png}
+\caption{
+B Cells mean expression regression, control vs stimulated.
+}
+\label{fig:Kang_bcells_ctrl_stim}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.1\textwidth]{images/Kang_bcells_ctrl_converted.png}
+\caption{
+B Cells mean expression regression, control vs
+control--converted--to--stimulated.
+}
+\label{fig:Kang_bcells_ctrl_converted}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.1\textwidth]{images/Kang_bcells_stimulated_converted.png}
+\caption{
+B Cells mean expression regression, stimulated vs
+control--converted--to--stimulated.
+}
+\label{fig:Kang_bcells_stimulated_converted}
+\end{figure}
+
+We preformed the same regression of mean expression comparisons, but this time
+over all the cells rather than on just one cell type. The results are a repeat
+of the B-cells case.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.1\textwidth]{images/Kang_allcells_ctrl_stim.png}
+\caption{
+All cells mean expression regression, control vs stimulated.
+}
+\label{fig:Kang_allcells_ctrl_stim}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.1\textwidth]{images/Kang_allcells_ctrl_converted.png}
+\caption{
+All Cells mean expression regression, control vs
+control--converted--to--stimulated.
+}
+\label{fig:Kang_allcells_ctrl_converted}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.1\textwidth]{images/Kang_allcells_stim_converted.png.png}
+\caption{
+All Cells mean expression regression, stimulated vs
+control--converted--to--stimulated.
+}
+\label{fig:Kang_allcells_stimulated_converted}
+\end{figure}
+
+\section{Generating data}
+
+What we did in the previous section didn't require us to use cGMVAE because we
+kept the cell type information known anyone. A conditional VAE likely produce
+similar results.
+In this section we generate data that looks like the original Kang dataset, and
+for that we do need the mixture model of the cGMVAE.
+
+The process goes as follows:
+\begin{itemize}
+\item{} sample from the $w$ space using standard normal distribution.
+\item{} use the decoder to map each sampled $w$ into all the mixture components
+on the $z$ space, and do that for all conditions.
+\item{} Map each of the sampled $z$ points into the reconstruction $x$ space,
+using the decoder.
+\end{itemize}
+
+Since we have 2 conditions and
+7 classes in this case, each sample $w$ is used to generate 14 different samples
+in the latent $z$ and then $x$ space.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.1\textwidth]{images/Kang_generated_data.png}
+\caption{
+The Kang UMAP of real data combined with randomly generated data.
+}
+\label{fig:Kang_generated_data}
+\end{figure}
+
+Figure~\ref{fig:Kang_generated_data} shows the final result we present for this
+paper.It is a UMAP of a hybrid dataset, comprised from the Kang validation
+dataset and randomly generated samples by cGMVAE.
+We can see that "synthetic" stimulated (control) data appears next to real
+stimulated (control) data. So the decoder preserves batch effect also for
+random samples from the latent space.
+The class labels of the real and the generated data also appear together or
+nearby.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.15\textwidth]{images/Kang_generated_data_sns.png}
+\caption{
+The Kang UMAP of real data combined with randomly generated data.
+Generated data appears close together with real data of the same label and
+condition.
+}
+\label{fig:Kang_generated_data_sns}
+\end{figure}
+
+
+
+
+
 \chapter{Discussion, some remarks and conclusions}
 punkt.
 punkt.
 punkt.
 
+%\begin{figure}[h]
+%\centering
+%\includegraphics[width=1.1\textwidth]{}
+%\caption{
+%}
+%\label{}
+%\end{figure}
+
+%\begin{figure}[h]
+%%\begin{framed}
+%\centering
+%\begin{subfigure}[t]{0.45\textwidth}
+%\includegraphics[width=0.95\textwidth]{}
+%\caption{}
+%\end{subfigure}
+%\begin{subfigure}[t]{0.45\textwidth}
+%\includegraphics[width=0.95\textwidth]{}
+%\caption{}
+%\end{subfigure}
+%%\end{framed}
+%\caption{}
+%\label{}
+%\end{figure}
 
 
 %\begin{figure}[h]
