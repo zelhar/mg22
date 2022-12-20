@@ -112,7 +112,18 @@
 \vspace*{1cm}
 %\vfill
 \Large
-\textbf{scGMVAE}
+%$\mathrlap{\text{sc}{\ast}$ GMV\AE
+%\textbf{scGMV\AE}
+%$\mathrlap{\mathrm{sc}}{\ast}$GMV\AE
+$\mathrm{sc}\ast$GMV\AE
+%\textbf{$\mathclap{sc}{\ast}$GMV\AE}
+%\textbf{{\ae}g$\mathllap{sc}{\ast}$cGMV\AE}
+%\textbf{{\ae}g$\text{sc}{\ast}$cGMV\AE}\\
+%%\normalsize \textbf{{\ae}g$\text{sc}{\ast}$cGMV\AE} stands for\\
+%\textbf{A}nalysis \textbf{E}ncoding and \textbf{G}eneration of 
+%\textbf{S}ingell cell RNAseq and whatever 
+%$\bf{\ast}$ with \textbf{C}onditional \textbf{G}aussian 
+%\textbf{M}ixture \textbf{V}ariation \textbf{A}uto\textbf{E}ncoders. 
 %\vfill
 
 %\vspace{0.5cm}
@@ -120,14 +131,15 @@
 
 %\normalsize
 \large
-a Master's thesis
+a Master thesis in Bioinformatics
 \vspace{1.0cm}
 
-Instructor: professor Martin Vingron
+Instructor / 1st Supervisor: professor Martin Vingron\\
+2nd Supervisor: professor Tim Conrad
 
 \vfill
 
-Yiftach Kolb
+Yiftach Kolb (Matrikelnummer 5195763)
 
 Berlin, \today
 
@@ -149,8 +161,18 @@ linktodoc=true,
 
 
 \chapter*{Abstract}
-punkt.
-punkt.
+Single cells RNASeq data (scRNAseq) can be thought of as coming from a conditional mixture distribution, where
+the categories indicate cell types and the conditions indicate either technical
+batches or post/pre--exposure effects.
+In this thesis we take the GMVAE (Gaussian mixture variational autoencoder) model~\cite{dilokthanakul2016deep},
+introduce some modifications to the underlying probabilistic model
+and test its suitability for analysis, embedding and generation of scRNAseq
+data.
+We think that the model is particularly suitable for (semi)supervised use case,
+where information on the cell types of the dataset is partially available.
+$\text{sc}{\ast}$GMVAE stands for 
+"Single cell RNAseq ($\ast$) Conditional Gaussian Mixture Variation
+AutoEncoder".
 
 %\chapter*{Declaration}
 %punkt.
@@ -264,7 +286,7 @@ the $(\x|\y)$ is their concatenation on the last axis.
 %\boldmath
 \section{samples, batches, mean-sum rule}
 
-We distinguish between two types of tensors depending on what they represents.
+We distinguish between two types of tensors depending on what they represent.
 Let $\x \in \R^{m \times n \times l}$ be a tensor. If we say that $\x$ is a
 \emph{sample} or a \emph{data point} it means it is a single sample from our
 data set. If we say that it is a \emph{batch}, then it represent a collection of
@@ -355,10 +377,18 @@ Functions are usually understood to be scalar, namely $f:\R^n \to \R$ while maps
 are more general $g:\R^n \to \R^m$. When we say that a map (or function) $\phi
 :\R^n \to \R^m$ is \emph{parameterized}, it implicitly means that $\phi$ has
 additional variables which we treat as parameters $\phi_{\w}(\x) = \phi(\x, \w)$
-where $\x \in \R^n$ and $\w$ is the parameter set which we don't always specify
+where $\x \in \R^n$ and $\w$ is the function's parameter set which we don't always specify
 its domain and we may not always subscript $\phi$ with it. The parameterized map
 $\phi$ itself may be identified with its parameter set and then both are
 designated with $\phi$.
+It is important to stress out that the
+parameterization is not just an enumeration of the functions in our class, rather we 
+want $\w$ to come from some domain and that the parameterized function
+$\phi(\x,\w)$ should be \emph{differentiable in its parameters} $\w$.
+It is of lesser concern whether $\phi$ is also differentiable in $\x$.
+For example a classifier is a discrete function over $\x$ so a neural network
+$\phi$ that classifies $\x$ is not differentiable in $\x$ but it is on its
+parameters $\w$.
 
 In the context of neural networks, when we say \emph{linear} map, we actually
 mean an \emph{affine} map. An affine map $f(x_1 \dots x_n)$ can always be
@@ -368,9 +398,9 @@ represented as a linear map with one extra variable which is held fixed $x_0
 \label{affinelinear}
 
 \section{Data types}
-we assume that the input data unless otherwise stated is real-valued matrix.
+We assume that the input data unless otherwise stated is real-valued matrix.
 Rows represent \emph{samples} and columns represent \emph{variables}. We assume
-that each raw is a realization of a random vector. If we have $N$ rows, then the
+that each row is a realization of a random vector. If we have $N$ rows, then the
 corresponding $N$ random vectors are assumed to be independent. So depending on
 the context, when we say observation, or row, we may mean the actual observed
 values, or to the random vector which was realized by said observation.
@@ -419,10 +449,13 @@ class matrix (pure one-hot) but the output (the prediction) is naturally
 probabilistic and hence is relaxed.
 
 \subsection{Input set and target set}
-Our data may come in several, two or more matrices. Sometimes the data is paired
-into the input data $\X$ and the target data $\Y$, representing for example,
-samples from some unknown function $f(\x) = \y$ that we want to "learn". For
-example in an image classification task,$\X$ may be a set of images, and $\Y$ is
+Our data usually comes in several, two or more matrices,
+and when it does, the rows of these matrices are paired (or tupled if they are
+more than 2).
+For example we could have an input data $\X$ and a target data $\Y$, representing 
+samples from some unknown function $f(\x) = \y$ that we want to learn. 
+This is generally how things are in an image classification task,
+where $\X$ may be a set of images, and $\Y$ is
 their labels. Implicitly $\X,\Y$ must have the same number of rows. And when we
 speak about paired input/target $\x,\y$ it means some $(\x,\y) \in (\X,\Y)$ and
 $\x,\y$ belong to the same sample (same row number).
@@ -441,12 +474,12 @@ We think of $\X$ as a set of $N$ independent samples, all drawn from the same
 data distribution $\x \sim p(\x)$. We think of $\x_i$ as a realization of a
 random vector which we also denote with $\x_i$. 
 The random vectors $\x_i$ are independent replications of a random vector $\x$.
-This is another motivation why we take mean for the batch dimension because
+This is another motivation why we take mean over the batch dimension, because
 then $\|\X\| = \frac{1}{N} \sum_1^N \|\x_i\| \approx \E [\|\x\|]$.
 
 
 \section{Linear algebra preliminary: SVD and PCA}
-In the following state some facts and bring without proof what are the singular
+In the following we state some facts and bring without proof what are the singular
 value decomposition and the principle components of a matrix. For a full proof
 see~\cite{serre2001matrices}.
 
@@ -455,7 +488,8 @@ Let $\bv{X} \in \R^{N \times n}$ be a real-valued matrix representing $N$
 samples of some $n$-dimensional data points and let $r= \text{rank}(\bv{X}) \leq
 \min(n,N)$. 
 
-$\X \X^*$ and $\X^* \X$ are both symmetric and positive semi-definite. Their
+$\X \X^*$ and $\X^* \X$ are both symmetric and positive semi-definite
+(since we are only dealing with real-valued data $\X^* = \X^T$). Their
 eigenvalues are non-negative, and they both have the same positive eigenvalues,
 exactly $r$ such, which we mark $s_1^2 \geq s_2^2 \geq \dots s_r^2 \gt 0$. The
 values $s_1 \dots s_r$ are called the \emph{singular values} of $\bv{X}$.
@@ -562,7 +596,8 @@ mentioned~\ref{seq:functions} sometimes we don't specify the parameters and we
 identify the parametrize map $f$ with its parameter set as this set uniquely
 determines $f$. 
 
-The way we parameterize a function is important. Usually given a parameterized
+As mentioned in the previous chapter,
+the way we parameterize a function is important. Given a parameterized
 map $\phi (\x)$ we want $\phi$ to be differentiable in its parameters so that
 $\frac{\partial}{\partial \w} \phi$ exits for every parameter $\w$. 
 
@@ -1083,9 +1118,12 @@ An observation r.v $\bv{x}$ is high dimensional however
 we have some reason to believe that behind the scenes there is some hidden
 (latent), smaller dimensional random vector $\z$ that generates it.
 In other words we think that $\x$ is conditioned on $\z$ and we can speak of
-the joint distribution $p(\x,\z) = p(\x | \z)p(\z)$.
+the joint distribution: $$p(\x,\z) = p(\x | \z)p(\z)$$.
 And again $\x_i$ only depends on $\z_i$ so everything factors nicely, e.g. 
 $p(\X | \Z) = \prod_i p(\x_i | \z_i)$.
+Informally, $\z$ is a simpler variable which "explains" $\x$ and can be used to
+for example, to classify $\x$. For this reason we are
+interested in knowing the flipped conditional distribution $p(\z | \x)$.
 
 Suppose that we have a fully Bayesian model. In this case there are no
 parameters because the parameters are themselves stochastic variables with some
@@ -1098,6 +1136,7 @@ Together we have a distribution $p(\bv{x},\bv{z})$ and the working assumption is
 is easy to factorize $p(\bv{x},\bv{z}) = p(\bv{x}|\bv{z})p(\bv{z})$,
 however $p(\bv{z}|\bv{x})$ is intractable and
 $p(\bv{x})$ is unknown.
+
 
 We are being Bayesian here so we consider $\bv{X} = \{\bv{x}_1, \bv{x}_2, \dots
 \}$ to be
@@ -1294,6 +1333,9 @@ space}, and $\R^n$ (or more generally the distribution space of the encoder) is 
 $p$ is called \emph{the prior distribution of the latent space}.
 \end{mydef}
 
+The definitions given for Autoencoder and for VAE are independent.
+We don't require for one to be a subtype of the other. However as the name
+suggests these two are connected.
 An autoencoder works deterministically, where 
 the encoder maps the input $\x \mapsto \z$ and the decoder then maps the
 latent space $\z \mapsto \hat{\x}$ to the reconstruction. A VAE does
@@ -2637,6 +2679,24 @@ The combination with Louvain is much more consistent as a method.
 %If indeed it is the case we could iterate this combined training method with the
 %new clusters and see if there is improvement.
 
+\section{Comparison with other models}
+
+The Fashion-MNIST repository~\cite{fmnist} includes information about the
+classification accuracy obtained by various models. It is not stated which of
+the models if at all is unsupervised or semisupervised (for what we see none
+are). To be fair with the comparison we tested our model in fully supervised
+mode and achieved $0.9$ accuracy. The best classifier listed on the
+Fashion-MNIST website achieved $0.963$ accuracy (WRN-28-10+). It looks like
+methods that don't use image specific tricks and tweaks (things like convolution
+network, augmentation by flips, rotations etc \dots) achieve $0.9$ or less
+accuracy. For example a support vector classifier (SVC), a kind of supervised
+classifier, is achieved accuracy of $0.897$.
+
+In principle it is possible to utilize neural networks that prove to be good
+classifiers in the Encoder modules of the GMVAE model as a drop in replacement
+; And networks that include reconstruction modules can be utilized in the 
+GMVAE decoder modules.
+
 \chapter{Tests with PBMCs scRNAseq Data -- Zheng et al}
 
 We first selected a scRNAseq data set~\cite{zheng2017massively} which is easy
@@ -3380,6 +3440,8 @@ punkt.
 %\appendix
 %\section{Spam}
 %\lipsum{3}
+
+\nocite{szczurek2010introducing}
 
 \printbibliography
 

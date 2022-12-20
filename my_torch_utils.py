@@ -852,11 +852,11 @@ def blobs(
     df["label"] = label
     df["cond"] = condition
     if nx == 1:
-        df[["x",]] = X
+        df[["x1",]] = X
     elif nx == 2:
-        df[["x","y"]] = X
+        df[["x1","x2"]] = X
     else:
-        df[["x","y", "z"]] = X[:,:3]
+        df[["x1","x2", "x3"]] = X[:,:3]
     adata.obs = df
     return adata
 
@@ -1261,22 +1261,34 @@ def estimateClusterImpurityLoop(
         xs,
         labels,
         device : str = "cpu",
-        cond1 : Optional[torch.Tensor] = None,
+        cond1 : Optional[torch.Tensor] = None, #broken for now
         ):
     y = []
     model.eval()
     model.to(device)
+    if cond1 != None:
+        dataset = SynteticDataSetV2(
+                dati=[xs, labels, cond1,],
+                )
+    else:
+        dataset = SynteticDataSetV2(
+                dati=[xs, labels, ],
+                )
     data_loader = torch.utils.data.DataLoader(
-            dataset=SynteticDataSet(
-                data=xs,
-                labels=labels,
-                ),
+            dataset=dataset,
             batch_size=128,
             shuffle=False,
             )
-    for x, label in data_loader.__iter__():
+    for input in data_loader.__iter__():
+        x = input[0]
+        label = input[1]
+        c = None
+        if len(input) > 2:
+            c = input[2]
+            c.to(device)
         x.to(device)
-        q_y = estimateClusterImpurityHelper(model, x, label, device, cond1)
+        label.to(device)
+        q_y = estimateClusterImpurityHelper(model, x, label, device, c)
         y.append(q_y.cpu())
     y = torch.concat(y, dim=0)
     n = y.shape[1] # number of clusters
