@@ -69,43 +69,6 @@ class Timer():
             self.counter = time.perf_counter() - self._previous
         return self.counter
 
-class TimerOld():
-    """
-    Basic timer class for measuring runtime.
-    """
-    def __init__(self, state : str = "idle"):
-        self.elapsedTime = 0e0
-        self.startTime = 0e0
-        self.stopTime = 0e0
-        if state != "idle":
-            self.state = "running"
-        else:
-            self.state = "idle"
-    def start(self,) -> float:
-        if self.state == "idle":
-            self.state = "running"
-            self.startTime = time.perf_counter()
-            self.elapsedTime = 0
-        else:
-            self.elapsedTime = time.perf_counter() - self.startTime
-        return self.elapsedTime
-    def restart(self,) -> float:
-        self.state = "running"
-        self.startTime = time.perf_counter()
-        self.elapsedTime = 0
-        return self.elapsedTime
-    def stop(self,) -> float:
-        if self.state == "running":
-            self.state = "idle"
-            self.stopTime = time.perf_counter()
-            self.elapsedTime = self.stopTime - self.startTime
-        else:
-            self.state = "idle"
-        return self.elapsedTime
-    def getElapsed(self,) -> float:
-        if self.state == "running":
-            self.elapsedTime = time.perf_counter() - self.startTime
-        return self.elapsedTime
 
 def get_session():
     if not hasattr(thread_local, "session"):
@@ -123,16 +86,6 @@ def download_all_sites(sites):
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
         executor.map(download_site, sites)
 
-
-if __name__ == "__main__":
-    sites = [
-        "https://www.jython.org",
-        "http://olympus.realpython.org/dice",
-    ] * 80
-    start_time = time.time()
-    download_all_sites(sites)
-    duration = time.time() - start_time
-    print(f"Downloaded {len(sites)} in {duration} seconds")
 
 def testRun():
     sites = [
@@ -160,36 +113,36 @@ def isPrime(x : typing.Union[int,float]) -> bool:
             if y % i == 0:
                 return False
     return True
-isPrime(7)
-isPrime(8)
 
+def primeTest(n=10000000, threads=8, chunksize=1000,):
+    timer = Timer()
+    print("starting single threaded task")
+    timer.start()
+    l = [isPrime(i) for i in range(n) ]
+    timer.stop()
+    print("took it {} time".format(timer.getCount()))
+    # for io speedup use ThreadPoolExecutor and for cpu speedup ProcessPoolExecutor
+    # probably because of GIL, threading is very slow for cpu bound tasks
+    # chunksize only used for process, and should be sufficently large as long
+    # as free memory is available.
+    print("now multithread")
+    #executor = concurrent.futures.ThreadPoolExecutor(max_workers=threads,)
+    executor = concurrent.futures.ProcessPoolExecutor(max_workers=threads,)
+    timer.start()
+    l = executor.map(isPrime, range(n), chunksize=chunksize)
+    #print(list(toolz.take(10, l)))
+    timer.stop()
+    print("took it {} time".format(timer.getCount()))
 
+if __name__ == "__main__":
+    n = 1000000
+    chunksize = 10000
+    threads = 8
+    if len(sys.argv) > 1:
+        n=int(sys.argv[1])
+    if len(sys.argv) > 2:
+        chunksize=int(sys.argv[2])
+    if len(sys.argv) > 3:
+        threads = int(sys.argv[3])
+    primeTest(n, chunksize=chunksize, threads=threads)
 
-timer = Timer()
-
-timer.start()
-#l = [i for i in range(1000000) if isPrime(i) ]
-#l = list(l)
-#l = (i for i in range(1000000) if isPrime(i) )
-l = [isPrime(i) for i in range(1000000)  ]
-print(timer.stop())
-
-executor = concurrent.futures.ThreadPoolExecutor(max_workers=5,)
-
-executor = concurrent.futures.ProcessPoolExecutor(max_workers=6,)
-
-timer.start()
-#l = executor.map(isPrime, list(range(1000000)))
-l = executor.map(isPrime, range(1000000), chunksize=1000)
-print(timer.stop())
-
-l = list(l)
-
-l = [i for i in range(len(l)) if l[i]==True]
-
-
-l = executor.map(math.sqrt, range(1000))
-
-toolz.reduce(lambda x,y: x+y, range(100))
-
-toolz.reduce(lambda x,y : x and y, (False for i in range(1000000000)), True)
