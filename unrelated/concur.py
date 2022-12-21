@@ -14,6 +14,66 @@ class Timer():
     Basic timer class for measuring runtime.
     """
     def __init__(self, state : str = "idle"):
+        """
+        if state != 'idle'  it will 
+        be counting from its initiation.
+        default is idle.
+        """
+        self.counter = 0e0
+        self._previous = -9e10
+        self._state = "idle"
+        if state != "idle":
+            self._previous = time.perf_counter()
+            self._state = "running"
+        else:
+            self._state = "idle"
+        return
+    def getState(self,) -> str:
+        return self._state
+    def start(self,) -> float:
+        """
+        if was idle start counting. otherwise just measure current time lapse.
+        return time lapsed (counter)
+        """
+        if self._state == "idle": # start counting from 0
+            self._state = "running"
+            self._previous = time.perf_counter()
+            self.counter = 0
+        else: # had already been running
+            self.counter = time.perf_counter() - self._previous
+        return self.counter
+    def restart(self,) -> float:
+        """
+        always reset counter and initiate new counting.
+        """
+        self._state = "running"
+        self._previous= time.perf_counter()
+        self.counter = 0
+        return self.counter
+    def stop(self,) -> float:
+        """
+        stop running if it were running.
+        returns counter.
+        """
+        if self._state == "running":
+            self.counter = time.perf_counter() - self._previous
+            self._state = "idle"
+        else:
+            self._state = "idle"
+        return self.counter
+    def getCount(self,) -> float:
+        """
+        returns time counter without changing _state
+        """
+        if self._state == "running":
+            self.counter = time.perf_counter() - self._previous
+        return self.counter
+
+class TimerOld():
+    """
+    Basic timer class for measuring runtime.
+    """
+    def __init__(self, state : str = "idle"):
         self.elapsedTime = 0e0
         self.startTime = 0e0
         self.stopTime = 0e0
@@ -104,13 +164,25 @@ isPrime(7)
 isPrime(8)
 
 
+
+timer = Timer()
+
 timer.start()
-l = [i for i in range(10000000) if isPrime(i)]
+#l = [i for i in range(1000000) if isPrime(i) ]
+#l = list(l)
+#l = (i for i in range(1000000) if isPrime(i) )
+l = [isPrime(i) for i in range(1000000)  ]
 print(timer.stop())
 
 executor = concurrent.futures.ThreadPoolExecutor(max_workers=5,)
 
-l = executor.map(isPrime, list(range(1000)))
+executor = concurrent.futures.ProcessPoolExecutor(max_workers=6,)
+
+timer.start()
+#l = executor.map(isPrime, list(range(1000000)))
+l = executor.map(isPrime, range(1000000), chunksize=1000)
+print(timer.stop())
+
 l = list(l)
 
 l = [i for i in range(len(l)) if l[i]==True]
