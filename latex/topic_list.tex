@@ -121,7 +121,7 @@ $\mathrm{sc}\ast$GMV\AE
 %\textbf{{\ae}g$\text{sc}{\ast}$cGMV\AE}\\
 %%\normalsize \textbf{{\ae}g$\text{sc}{\ast}$cGMV\AE} stands for\\
 %\textbf{A}nalysis \textbf{E}ncoding and \textbf{G}eneration of 
-%\textbf{S}ingell cell RNAseq and whatever 
+%\textbf{S}ingell cell RNASeq and whatever 
 %$\bf{\ast}$ with \textbf{C}onditional \textbf{G}aussian 
 %\textbf{M}ixture \textbf{V}ariation \textbf{A}uto\textbf{E}ncoders. 
 %\vfill
@@ -161,17 +161,17 @@ linktodoc=true,
 
 
 \chapter*{Abstract}
-Single cells RNASeq data (scRNAseq) can be thought of as coming from a conditional mixture distribution, where
+Single cells RNASeq data (scRNASeq) can be thought of as coming from a conditional mixture distribution, where
 the categories indicate cell types and the conditions indicate either technical
 batches or post/pre--exposure effects.
 In this thesis we take the GMVAE (Gaussian mixture variational autoencoder) model~\cite{dilokthanakul2016deep},
 introduce some modifications to the underlying probabilistic model
-and test its suitability for analysis, embedding and generation of scRNAseq
+and test its suitability for analysis, embedding and generation of scRNASeq
 data.
 We think that the model is particularly suitable for (semi)supervised use case,
 where information on the cell types of the dataset is partially available.
 $\text{sc}{\ast}$GMVAE stands for 
-"Single cell RNAseq ($\ast$) Conditional Gaussian Mixture Variation
+"Single cell RNASeq ($\ast$) Conditional Gaussian Mixture Variation
 AutoEncoder".
 
 %\chapter*{Declaration}
@@ -223,7 +223,7 @@ more axes and it generalizes scalar, vector, matrix and higher dimensional
 shaped entities.
 
 In Pytorch~\cite{pytorch2018pytorch} terminology dimension is used for the
-number of axes but I think it is inconsistent with the way dimension is used in
+number of axes but it is inconsistent with the way dimension is used in
 mathematics with regards to vectors.
 
 \begin{mydef}
@@ -406,7 +406,7 @@ the context, when we say observation, or row, we may mean the actual observed
 values, or to the random vector which was realized by said observation.
 
 We deal with two kinds of datasets in this thesis. One of them is Single cell
-RNAseq data. This kind of data represents gene expression levels in individual
+RNASeq data. This kind of data represents gene expression levels in individual
 cells, where rows represent cells and columns represent genes. So if we see a
 reading of $0.5$ in row $2$ column $4$ in means that in cell $2$ gene $4$ has
 normalized expression of $0.5$.
@@ -464,18 +464,18 @@ $\x,\y$ belong to the same sample (same row number).
 %identity (in this case $f$ is known but we want to learn an efficient way
 %to represent the data).
 
-%For example it could be a single cell RNAseq data
+%For example it could be a single cell RNASeq data
 %with normalized gene expression data $\X$,  cell types as target
 %matrix $\Y$. 
 
 \subsection{Probabilistic interpretation of the data}
-Suppose that we have a data matrix $\X = \{\x_1, \dots , \x_N\}$.
-We think of $\X$ as a set of $N$ independent samples, all drawn from the same
-data distribution $\x \sim p(\x)$. We think of $\x_i$ as a realization of a
-random vector which we also denote with $\x_i$. 
-The random vectors $\x_i$ are independent replications of a random vector $\x$.
-This is another motivation why we take mean over the batch dimension, because
-then $\|\X\| = \frac{1}{N} \sum_1^N \|\x_i\| \approx \E [\|\x\|]$.
+Suppose that we have a data matrix $\X = \{\x_1, \dots , \x_N\}$. We think of
+$\X$ as a set of $N$ independent samples, all drawn from the same data
+distribution $\x \sim p(\x)$. We think of $\x_i$ as a realization of a random
+vector which we also denote with $\x_i$. The random vectors $\x_i$ are
+independent replications of a random vector $\x$. This is another motivation why
+we take mean over the batch dimension, because then $\|\X\| = \frac{1}{N}
+\sum_1^N \|\x_i\| \approx \E [\|\x\|]$.
 
 
 \section{Linear algebra preliminary: SVD and PCA}
@@ -1089,17 +1089,15 @@ Here we briefly explain the idea behind variational inference and introduce the
 ELBO which is the loss function we'll use throughout this text.
 For more details see~\cite{bishop2006pattern}.
 
-We treat the data matrix as a set of independent observations (its rows)
-$\bv{X} = \{\bv{x}_1, \dots
-, \bv{x}_N\}$ which we try to explain by a probabilistic model. 
-Each row $\x_i$ is considered a realization of a random vector, which we also 
-denote by $\x_i$ (as explained in the notation section) and similarly $\X$
-represents both the set of r.vs as well as the realization.
+We treat the data matrix as a set of independent observations (its rows) $\bv{X}
+= \{\bv{x}_1, \dots , \bv{x}_N\}$ which we try to explain by a probabilistic
+model. Each row $\x_i$ is considered a realization of a random vector, which we
+also denote by $\x_i$ (as explained in the notation section) and similarly $\X$
+represents both the set of random vectors as well as the realization.
 
-We assume that
-the $\bv{x}_i$'s are independent and identically distributes (i.i.d) random vectors
-with some distribution function $\x \sim p(\x)$ and therefore for
-the entire dataset it holds that $p(\bv{X}) = \prod p(\bv{x}_i)$.
+We assume that the $\bv{x}_i$'s are independent and identically distributes
+(i.i.d) random vectors with some distribution function $\x \sim p(\x)$ and
+therefore for the entire dataset it holds that $p(\bv{X}) = \prod p(\bv{x}_i)$.
 
 \begin{mydef}
 \label{def:logevidence}
@@ -1114,28 +1112,26 @@ mean-sum rule for data sets and
 batches~\ref{meansumrule}).
 \end{mydef}
 
-An observation r.v $\bv{x}$ is high dimensional however
-we have some reason to believe that behind the scenes there is some hidden
-(latent), smaller dimensional random vector $\z$ that generates it.
-In other words we think that $\x$ is conditioned on $\z$ and we can speak of
-the joint distribution: $$p(\x,\z) = p(\x | \z)p(\z)$$.
-And again $\x_i$ only depends on $\z_i$ so everything factors nicely, e.g. 
-$p(\X | \Z) = \prod_i p(\x_i | \z_i)$.
+An observation random vector $\bv{x}$ is high dimensional however we have some
+reason to believe that behind the scenes there is some hidden (latent), smaller
+dimensional random vector $\z$ that generates it. In other words we think that
+$\x$ is conditioned on $\z$ and we can speak of the joint distribution:
+$$p(\x,\z) = p(\x | \z)p(\z)$$. And again $\x_i$ only depends on $\z_i$ so
+everything factors nicely, e.g. $p(\X | \Z) = \prod_i p(\x_i | \z_i)$.
 Informally, $\z$ is a simpler variable which "explains" $\x$ and can be used to
-for example, to classify $\x$. For this reason we are
-interested in knowing the flipped conditional distribution $p(\z | \x)$.
+for example, to classify $\x$. For this reason we are interested in knowing the
+flipped conditional distribution $p(\z | \x)$.
 
 Suppose that we have a fully Bayesian model. In this case there are no
 parameters because the parameters are themselves stochastic variables with some
 suitable priors. We can therefore pack all the latent variables and stochastic
-parameters into one latent "meta variable" $\z$,
-which is some multidimensional r.v and which is possibly composed of several simpler r.vs (for
-example a categorical and a normal r.vs).
-We similarly pack all the observed variables into one meta variable $\bv{x}$.
-Together we have a distribution $p(\bv{x},\bv{z})$ and the working assumption is that it
-is easy to factorize $p(\bv{x},\bv{z}) = p(\bv{x}|\bv{z})p(\bv{z})$,
-however $p(\bv{z}|\bv{x})$ is intractable and
-$p(\bv{x})$ is unknown.
+parameters into one latent "meta variable" $\z$, which is some multidimensional
+random vector and which is possibly composed of several simpler random vectors
+(for example a categorical and a normal random vectors). We similarly pack all
+the observed variables into one meta variable $\bv{x}$. Together we have a
+distribution $p(\bv{x},\bv{z})$ and the working assumption is that it is easy to
+factorize $p(\bv{x},\bv{z}) = p(\bv{x}|\bv{z})p(\bv{z})$, however
+$p(\bv{z}|\bv{x})$ is intractable and $p(\bv{x})$ is unknown.
 
 
 We are being Bayesian here so we consider $\bv{X} = \{\bv{x}_1, \bv{x}_2, \dots
@@ -1215,8 +1211,8 @@ We can rewrite equation~\ref{eq:kl_bound} as:
 \log p(\bv{x}) = -\mathcal{L}(q,p,\x) - KL(q(\bv{z}) \| p(\bv{z}|\bv{x}))
 \end{equation}
 
-Equation~\ref{eq:elbokl} shows that the ELBO minus the kl-divergence are constant
-and equal the log evidence. Therefore minimizing the kl-divergence (which is
+Equation~\ref{eq:elbokl} shows that the ELBO minus the KL-divergence are constant
+and equal the log evidence. Therefore minimizing the KL-divergence (which is
 always non-negative) simultaneously maximizes the ELBO and vicer-versa.
 
 \section{Variational Autoencoder}
@@ -1368,10 +1364,9 @@ $p(\x | \z) = p_{\theta}(\x)$
 
 
 \subsection{Mean field approximation}
-Usually we treat the dimensions of $\x$, $\z$ etc. as independent.
-That means if $\x = (x_1, \dots, x_n)$ is a r.v. in $\R^n$ 
-we assume that the $x_i$ are independent and therefore 
-$P(\x) = \prod_1^n p_i(x_i)$.
+Usually we treat the dimensions of $\x$, $\z$ etc. as independent. That means if
+$\x = (x_1, \dots, x_n)$ is a random vector. in $\R^n$ we assume that the $x_i$
+are independent and therefore $P(\x) = \prod_1^n p_i(x_i)$.
 
 Specifically the mean fields approximation of a multivariate Gaussian
 $\NN(\x | \bv{\mu}, \bv{\Sigma})$ is a diagonal Gaussian 
@@ -1859,7 +1854,7 @@ ones the generative model (decoder)}
 %\end{framed}
 \end{figure}
 
-Figure~\ref{fig:cvaeumap} shows in the left a umap plot of the latent space for
+Figure~\ref{fig:cvaeumap} shows in the left a UMAP plot of the latent space for
 the CVAE model which we described first, on the MNIST data set.
 It uses the learned prior $p(\z|c)$ and
 $\x$ and $c$ are conditionally independent given $\z$.
@@ -2090,6 +2085,22 @@ the neural networks of the encoder.
 %\end{framed}
 \end{figure}
 
+Let's call the GMVAE model as presented in figure~\ref{fig:dirgmm} our
+"canonical" model. The results we present here unless otherwise stated were
+obtained on the canonical model. As mentioned the choice of how to factor the
+inference ($q$) distribution is somewhat arbitrary and we have tested some other
+possibilities, for example by letting $\x$ play a direct role in the
+classifier $q(\y | \dot)$:
+$q(\y, \z, \w, \dd, | \x) = 
+q(\z | \x)q(\w | \x)q(\y | \z, \x)q(\dd | \z)$ 
+
+The canonical model is more theoretically pure in the sense that since the
+mixture distribution is on the latent space $\z$ it should be possible to
+determine the class just from $\z$. The other model has the advantage that no
+information is lost on the encoding into $\z$ because the classifier observes
+both $\z$ and the original input. From tests we made we can't see a clear
+advantage to one factoring of $q$ over others, from those we have tried.
+
 \section{Computing the loss function of GMVAE model}
 
 The loss function remains the -ELBO and we can break it into
@@ -2142,7 +2153,7 @@ and then take the weighted average with respect
 to $q(\y | \z)$:
 $$\sum_{j=1}^k [ q(\y=j | \z) KL(q(\z | \x) \| p(\z | \w, \y=j))]$$.
 \item{$\w$-error}: calculate $KL(q(\w | \x) \| p(\w))$ analytically 
-the kl-divergence between two diagonal Gaussians (equation~\ref{eq:kldivnormal}).
+the KL-divergence between two diagonal Gaussians (equation~\ref{eq:kldivnormal}).
 \item{$\y$-error}:
 calculate $KL(q(\y | \z) \| p(\y | \dd))$ analytically (kl-div of
 two categorical distributions, ):
@@ -2150,7 +2161,7 @@ $$KL(q(\y | \z) \| p(\y | \dd)) =
 \sum_{j=1}^k [ q(\y=j | \z) \log \frac{q(\y=j | \z)}{p(\y = j | \dd)}]$$
 \item{$\dd$-error}:
 calculate $KL(q(\dd | \z) \| p(\dd))$ analytically
-(kl-divergence of two Dirichlet distributions also has a closed formed
+(KL-divergence of two Dirichlet distributions also has a closed formed
 formula and it's builtin function in Pytorch).
 \end{enumerate}
 
@@ -2297,7 +2308,7 @@ smiles or not.
 Also suppose that $\y$ might not be provided at all or just for
 a subset of the data but $c$ is always provided for us.
 
-The data we pirposed this model for is the Kang scRNAseq
+The data we pirposed this model for is the Kang scRNASeq
 dataset~\cite{kang2018multiplexed} that comes from two types 
 of conditions (control and stimulated), 
 The condition represents the states before and after exposure to some treatment
@@ -2494,7 +2505,7 @@ than the prediction.}
 Figures~\ref{fig:mnist_us_10} shows the results of unsupervised, exact clustering
 of MNIST by the GMVAE model with 8 dimensional latent $z$-space and
 $w$-space.
-As both the umap and the generated samples show, there is still a little bit
+As both the UMAP and the generated samples show, there is still a little bit
 inaccuracies left, mainly with "7","4", and "9" digits.
 Despite this, the actual latent space is very nicely clustered and louvain
 clustering over this space retrieves the true classification of the the data
@@ -2697,9 +2708,9 @@ classifiers in the Encoder modules of the GMVAE model as a drop in replacement
 ; And networks that include reconstruction modules can be utilized in the 
 GMVAE decoder modules.
 
-\chapter{Tests with PBMCs scRNAseq Data -- Zheng et al}
+\chapter{Tests with PBMCs scRNASeq Data -- Zheng et al}
 
-We first selected a scRNAseq data set~\cite{zheng2017massively} which is easy
+We first selected a scRNASeq data set~\cite{zheng2017massively} which is easy
 because the cells are nicely clustered by cell type.
 The main challenge with this data is that it is imbalanced. It has 2623 samples
 of 7 cell types overall but in particularly one type (dendritic cells) only has 37 samples.
@@ -2728,7 +2739,7 @@ We were able to achieve 0.93 accuracy consistently and probably the method can
 be a little bit improved by tuning the model and the balancing preprocessing.
 In particular it appears that adding the small noise to the rebalanced data
 helped the model to learn all the cell types with fewer components.
-Figure~\ref{fig:zheng_ss_latent_balanced} visualize with umaps the results 
+Figure~\ref{fig:zheng_ss_latent_balanced} visualize with UMAPs the results 
 of this rebalancing method.
 
 \begin{figure}[h]
@@ -2746,11 +2757,11 @@ What we showed perhaps is that if somehow we were given a balanced dataset with
 unknown cell types, than probably GMVAE in unsupervised mode would perform better.
 
 There is another issue which should be mentioned. We treat the annotation (the
-given cell types) in the scRNAseq datasets as ground truth but it is not
+given cell types) in the scRNASeq datasets as ground truth but it is not
 necessary so and some of the cells are likely mislabeled.
 
-\chapter{Tests with PBMCs scRNAseq Data (Kang et al)}
-In these tests we used a scRNAseq dataset~\cite{kang2018multiplexed} of PBMCs
+\chapter{Tests with PBMCs scRNASeq Data (Kang et al)}
+In these tests we used a scRNASeq dataset~\cite{kang2018multiplexed} of PBMCs
 (peripheral blood mononuclear cells) of the same $7$ cell types as in Zheng
 dataset.
 However the cells in this dataset comes from two groups:
@@ -2799,9 +2810,9 @@ GMVAE with 21 components achieved $0.78$ accuracy on both the train set and the
 validation set. However it also captured all $7$ cell types in its clusters 
 unlike Louvain which missed the CD8.
 
-Figure~\ref{fig:kang_control_train_gmvae_us_umap} shows the umap on the pca
+Figure~\ref{fig:kang_control_train_gmvae_us_umap} shows the UMAP on the pca
 space, which lets us compare the original Louvain clustering with the GMVAE
-classification. The situation with Louvain cluster on the latent space and umap
+classification. The situation with Louvain cluster on the latent space and UMAP
 of the latent space is essentially the same so we are not showing it here. 
 
 \begin{figure}[h]
@@ -2868,7 +2879,7 @@ speaking this was a form of unsupervised clustering in the sense that we didn't
 use the label information in the training at all. The accuracy was 0.81 so still
 not great but edging out the unsupervised training from the previous section.
 Moreover we have used minimal overclustering (just 1 extra component) and we
-think the umap of the latent space at least looks better. The main issue is with
+think the UMAP of the latent space at least looks better. The main issue is with
 component 4 (predicting CD14) and component 4 (predicting CD8). It is also
 possible that the accuracy of the provided cell typing for the Kang dataset is
 itself not very good.

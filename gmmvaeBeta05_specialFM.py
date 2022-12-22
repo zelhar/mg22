@@ -284,6 +284,35 @@ Train.trainSemiSuperLoop(
         )
 print("done training")
 
+Train.trainSemiSuperLoop(
+        model,
+        data_loader,
+        data_loader,
+        test_loader,
+        num_epochs=1500,
+        lrs=[
+            1e-6,
+            1e-5,
+            1e-5,
+            1e-4,
+            1e-4,
+            1e-4,
+            1e-4,
+            1e-4,
+            1e-4,
+            1e-5,
+            1e-6,
+            ],device="cuda",
+        wt=0e-3,
+        do_unlabeled=False,
+        do_validation=False,
+        report_interval=10,
+        do_plot=False,
+        #test_accuracy=True,
+        test_accuracy=False,
+        )
+
+print("done training")
 r,p,s = ut.estimateClusterImpurityLoop(model, test_data, test_labels, device="cuda",
         cond1=None) #broken need to fix this for conditional
 print(p,r,s)
