@@ -60,71 +60,7 @@ import XMonad.Hooks.InsertPosition
 
 
 
-
---main :: IO ()
---main = xmonad xfceConfig
---main = xmonad =<< xmobar def
---main = xmonad =<< withWindowNavigation (xK_w, xK_a, xK_s, xK_d) =<< xmobar (ewmh def)
---main = xmonad =<< withWindowNavigation (xK_w, xK_a, xK_s, xK_d) =<< xmobar (ewmh xfceConfig)
---main = xmonad =<< withWindowNavigation (xK_w, xK_a, xK_s, xK_d) =<< xmobar xfceConfig
---main = xmonad =<< 
---  withWindowNavigation (xK_w, xK_a, xK_s, xK_d) =<<
---    statusBar myBar myPP toggleStrutsKey xfceConfig
---
---main = xmonad =<< withWindowNavigation (xK_w, xK_a, xK_s, xK_d) =<< xmobar (ewmh def)
---main = xmonad =<< withWindowNavigation (xK_w, xK_a, xK_s, xK_d) =<< xmobar (ewmh xfceConfig)
---main = xmonad =<< withWindowNavigation (xK_w, xK_a, xK_s, xK_d) =<< xmobar (ewmh xfceConfig)
---  { terminal = "alacritty"
---  , modMask = mod4Mask
---  , keys = \c -> myKeys c `M.union` keys def c
---  , focusFollowsMouse = False
---  --, layoutHook = myLayout
---  , manageHook = manageHook xfceConfig <+> manageDocks
---  --, handleEventHook = handleEventHook defaultConfig <+> docksEventHook
---  , layoutHook = avoidStruts $ myLayout
---  , logHook = dynamicLog
---  --, layoutHook = avoidStruts $ layoutHook def
---  }
-
---main = xmonad =<< withWindowNavigation (xK_w, xK_a, xK_s, xK_d) =<< xmobar myConfig
---main = xmonad =<< withWindowNavigation (xK_w, xK_a, xK_s, xK_d) =<< statusBar myBar myPP toggleStrutsKey myConfig
---  where
---    myConfig = docks xfceConfig
---      { terminal = "alacritty"
---      , modMask = mod4Mask
---      , keys = \c -> myKeys c `M.union` keys def c
---      , focusFollowsMouse = False
---      --, layoutHook = myLayout
---      , manageHook = manageHook xfceConfig <+> manageDocks
---      --, manageHook = manageDocks <+> manageHook def
---      --, handleEventHook = handleEventHook defaultConfig <+> docksEventHook
---      , layoutHook = avoidStruts $ myLayout
---      --, logHook = dynamicLog
---      --, logHook = do
---      --    dynamicLogWithPP xmobarPP
---      --    logHook desktopConfig
---      ----, layoutHook = avoidStruts $ layoutHook def
---      }
---
---myBar = "xmobar"
---myPP = xmobarPP
---toggleStrutsKey XConfig {XMonad.modMask = modMask} = (modMask, xK_b)
---main = xmonad def
--- Command to launch the bar.
---myBar = "xmobar"
----- Custom PP, configure it as you like. It determines what is being written to the bar.
---myPP = xmobarPP { ppCurrent = xmobarColor "#429942" "" . wrap "<" ">" }
----- Key binding to toggle the gap for the bar.
---toggleStrutsKey XConfig {XMonad.modMask = modMask} = (modMask, xK_b)
-
-
 main :: IO ()
---main = xmonad =<< withWindowNavigation (xK_w, xK_a, xK_s, xK_d)
---      ( ewmhFullscreen 
---      . ewmh 
---      . xmobarProp 
---      . withEasySB (statusBarProp "xmobar" (pure myXmobarPP)) defToggleStrutsKey
---      $ myConfig)
 main = xmonad
       . ewmhFullscreen 
       . ewmh 

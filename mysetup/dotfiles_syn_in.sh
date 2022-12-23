@@ -10,6 +10,7 @@ rsync -tlPvr --delete-excluded --delete --ignore-errors \
     --exclude '*.AppImage' \
     --exclude '*.appimage' \
     --exclude 'bin/*.jar' \
+    --exclude 'bin/sioyek' \
     $HOME ./myusr_home/
 
 #backup installed packages list
