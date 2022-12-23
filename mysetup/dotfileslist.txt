@@ -57,4 +57,5 @@ dictionaries
 .config/xmonad/stack.yaml
 .config/xmonad/xmonad.hs
 .config/zathura
+.config/sioyek
 
