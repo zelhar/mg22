@@ -1,0 +1,32 @@
+\documentclass[a4paper,11pt]{scrartcl}
+
+\usepackage[ngerman]{babel}
+\usepackage{molgenletter}
+
+% TESTING
+\usepackage{lipsum}
+
+\setkomavar{date}{Berlin, \today}
+
+\setkomavar{fromdepartment}   {[Position oder Abteilung]}
+\setkomavar{fromname}         {[NAME NACHNAME]}
+\setkomavar{fromphone} [Tel. ]{+ 49 30 8413 [XXXX]}
+\setkomavar{fromfax}   [Fax ] {+ 49 30 8413 [XXXX]}
+\setkomavar*{fromemail}       {USERNAME@molgen.mpg.de}
+
+\setkomavar{subject}{BETREFF}
+
+\begin{document}
+    \begin{letter}{Max Mustermann\\
+                   Musterallee 123a\\
+                   99999 Musterstadt\\
+                   ~\\
+                   ~\\
+                   ~\\}
+        \opening{Sehr geehrte(r) Herr/Frau XXXXXXX,}
+
+        \lipsum[1-10]
+
+        \closing{Mit freundlichen Gr\"u{\ss}en}
+    \end{letter}
+\end{document}

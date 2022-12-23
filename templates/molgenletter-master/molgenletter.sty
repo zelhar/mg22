@@ -1,0 +1,80 @@
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage[sfdefault]{roboto}
+\usepackage{scrlayer-scrpage}
+\usepackage{scrletter}
+
+%%% Layout
+\geometry{top   =2.3 in,
+          left  = .98in,
+          right =1.26in,
+          bottom=1.5 in,}
+
+\DeclareNewLayer[
+    foreground,
+    hoffset =  3.28in,
+    voffset =-10.54in,
+    contents={\parbox[b][\layerheight][b]{\layerwidth}{
+                 \includegraphics[width=4.87in]{MPIMG_LOGO.PDF}}}]{logo}
+\AddLayersToPageStyle{@everystyle@}{logo}
+
+\KOMAoptions{backaddress=plain,
+             firsthead  =off,
+             foldmarks  =bPT,
+             fromphone  =true,
+             fromfax    =true,
+             fromemail  =true,}
+
+\setplength{firstfoothpos} {  .98in}
+\setplength{firstfootvpos} {10.90in}
+\setplength{firstfootwidth}{ 6.90in}
+\setplength{toaddrhpos}    {  .98in}
+\setplength{toaddrindent}  {  .00in}
+
+\setkomavar{firstfoot}{
+    \fontsize{7}{8.4}\fontseries{l}\selectfont
+    \begin{tabular}[t]{@{}l@{}}
+        Max-Planck-Gesellschaft\\
+        zur F\"orderung der Wissenschaften e.V.\\
+        c/o Max-Planck-Institut f\"ur molekulare Genetik
+    \end{tabular}
+    \hfill
+    \begin{tabular}[t]{l}
+        Deutsche Bank AG, M\"unchen\\
+        IBAN: DE06 7007 0010 0195 1300 45\\
+        BIC Code (Swift): DEUTDEMMXXX
+    \end{tabular}
+    \hfill
+    \begin{tabular}[t]{l}
+        UST-Nr.: 143/219/10158\\
+        UST-ID-Nr.: DE129517720
+    \end{tabular}
+    \hfill
+    \begin{tabular}[t]{l}
+        www.molgen.mpg.de
+    \end{tabular}}
+
+\setkomavar{location}{%
+    \fontsize{7}{8.4}\fontseries{l}\selectfont
+    \usekomavar{fromdepartment}\\
+    ~\\
+    {\bfseries\usekomavar{fromname}}\\
+    ~\\
+    \usekomavar{fromaddress}\\
+    ~\\
+    \usekomavar*{fromphone}\usekomavar{fromphone}\\
+    \usekomavar*{fromfax}\usekomavar{fromfax}\\
+    \usekomavar*{fromemail}\usekomavar{fromemail}%
+}
+
+\newkomavar[]{fromdepartment}
+
+\addtokomafont{subject}{\sffamily\bfseries}
+\addtokomafont{fromname}{\bfseries}
+\addtokomafont{backaddress}{\fontseries{l}\selectfont}
+
+\setkomavar{backaddress}{MPI f\"ur molekulare Genetik, Ihnestra{\ss}e 63--73, 14195 Berlin}
+\setkomavar{fromaddress}{Ihnestra{\ss}e 63--73\\D-14195 Berlin}
+
+\setlength{\parindent}{0em}
+\setlength{\parskip}{1em}
