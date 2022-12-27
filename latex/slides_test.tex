@@ -1,7 +1,8 @@
-\documentclass[final]{beamer}
+%\documentclass[final]{beamer}
 %\documentclass[10pt, handout]{beamer}
-\mode<presentation>{\usetheme{Berlin}}
-\usepackage[orientation=portrait, size=a0, scale=1.25, debug]{beamerposter}
+%\mode<presentation>{\usetheme{Berlin}}
+%\usepackage[orientation=portrait, size=a0, scale=1.25, debug]{beamerposter}
+\documentclass[a4paper,]{article}
 \usepackage[utf8]{inputenc}
 \usepackage{multicol}
 \usepackage{hyperref}
@@ -20,45 +21,111 @@
 \addbibresource{mybib.bib}
 
 %\usepackage[a4paper, width=150mm, top=25mm, bottom=25mm]{geometry}
-\usepackage{fancyhdr}
+%\usepackage{fancyhdr}
 %\setlength{\headheight}{12pt}
 %\pagestyle{fancy}
 %\pagestyle{empty}
 \usepackage{lipsum}
 
+
+%newcommands
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\R}{\mathbb{R}}
+%\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\E}{\mathbf{E}}
+\newcommand{\X}{\mathbf{X}}
+\newcommand{\x}{\mathbf{x}}
+\newcommand{\Z}{\mathbf{Z}}
+\newcommand{\z}{\mathbf{z}}
+\newcommand{\Y}{\mathbf{Y}}
+\newcommand{\y}{\mathbf{y}}
+\newcommand{\W}{\mathbf{W}}
+\newcommand{\w}{\mathbf{w}}
+\newcommand{\DD}{\mathbf{D}}
+\newcommand{\dd}{\mathbf{d}}
+\newcommand{\LL}{\mathcal{L}}
+\newcommand{\NN}{\mathcal{N}}
+%\newcommand{\B}{\{-1,1\}}
+%\newcommand{\bvec}[1]{\mathbf{#1}}
+%\newcommand{\bv}[1]{\mathbf{#1}}
+%\newcommand{\b}[1]{\boldsymbol{#1}}
+\newcommand{\bv}[1]{\boldsymbol{#1}}
+\newcommand{\bvec}[1]{\boldsymbol{#1}}
+\newcommand{\ceil}[1]{\lceil{#1}\rceil}
+\newcommand{\floor}[1]{\lfloor{#1}\rfloor}
+\newcommand{\gt}{>}
+\newcommand{\lt}{<}
+\newcommand{\tuple}[1]{\langle #1 \rangle}
+
 \title{Spam Beamer}
-\subtitle{boring slides about spam}
+%\subtitle{boring slides about spam}
 \author{Kolb, Yiftach}
-\institute[FU and MPG]{
-\centering
-\vfill
-{\includegraphics[width=0.3\linewidth]{images/MPIMG_RGB_gruen.png}} 
-{\includegraphics[width=0.3\linewidth]{images/fu-logo_bildschirm_RGB1.jpg}}
+%\institute[FU and MPG]{
+%\centering
 %\vfill
-}
-
-
-
-
-
-
-
-%\section{Intro}
+%{\includegraphics[width=0.3\linewidth]{images/MPIMG_RGB_gruen.png}} 
+%{\includegraphics[width=0.3\linewidth]{images/fu-logo_bildschirm_RGB1.jpg}}
+%%\vfill
+%}
+%
 
 \begin{document}
-\begin{frame}
-\frametitle{Spam}
-\begin{block}
-\maketitle
-\end{block}
-%\titlepage
-\begin{multicols}{2}
-Spam~\footfullcite{russkikh2020style} is good.
-spam spam spam
-\lipsum[1]
-\lipsum[2]
-\end{multicols}
-\end{frame}
+
+
+
+
+
+\section{bigass equation}
+
+{\tiny
+\begin{equation}
+\label{eq:elbo}
+\begin{aligned}
+\frac{1}{N} \log p(\bv{X}) &= \frac{1}{N} \log \int p(\bv{X},\bv{Z}) d\bv{Z} 
+& \text{taking marginal} \\
+& = \frac{1}{N} \log \int \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})} q(\bv{Z})d\bv{Z} 
+& \text{multiplying by 1 inside}\\
+&=  \frac{1}{N} \log \int \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})}dq(\bv{Z}) 
+& \text{definition of } dq(\Z)\\
+&\geq  \frac{1}{N} \int \log \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})}dq(\bv{Z}) 
+& \text{Jensen inequality}\\
+&= \frac{1}{N} \int \sum_1^N \log \frac{p(\x_i, \z_i)}{q(\z_i)}dq(\z_i) 
+& \text{using the iid property}\\
+&= \frac{1}{N} \sum_1^N - \LL(q,p,\x_i)
+& \text{definition of } \LL(q,p,\x_i)\\
+& = -\mathcal{L}(q,p,X) \triangleq -\mathcal{L}(q,p)
+& \text{again definition of } \LL(p,q) \qed
+\end{aligned}
+\end{equation}
+}
+
+normal text
+\tiny
+tiny text
+\normalsize
+normal text
+
+%\begin{frame}
+%\frametitle{Spam}
+%\begin{block}
+%\maketitle
+%\end{block}
+%%\titlepage
+%\begin{multicols}{2}
+%Spam~\footfullcite{russkikh2020style} is good.
+%spam spam spam
+%\lipsum[1]
+%\lipsum[2]
+%\end{multicols}
+%\end{frame}
+%
+%\begin{frame}
+%\frametitle{Bigass equation}
+%foo
+%far
+%\end{frame}
 
 %\begin{frame}
 %And now to something~\cite{guo2017improved} completely different \dots

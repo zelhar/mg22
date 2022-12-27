@@ -131,10 +131,10 @@ $\mathrm{sc}\ast$GMV\AE
 
 %\normalsize
 \large
-a Master thesis in Bioinformatics
+a Master Thesis in Bioinformatics
 \vspace{1.0cm}
 
-Instructor / 1st Supervisor: professor Martin Vingron\\
+Thesis advisor / 1st Supervisor: professor Martin Vingron\\
 2nd Supervisor: professor Tim Conrad
 
 \vfill
@@ -157,7 +157,7 @@ Berlin, \today
 scale=.8,
 %pagecommand=\chapter*{Declaration},
 linktodoc=true,
-]{./Selbstaendigkeitserklaerung_EN.pdf}
+]{./Selbstaendigkeitserklaerung_EN-Flattened.pdf}
 
 
 \chapter*{Abstract}
@@ -185,11 +185,16 @@ AutoEncoder".
 %\nocite{luecken2019current}
 
 \chapter*{Acknowledgement}
-punkt.\cite{kingma2013auto}
-punkt.
-bip/bop\slash boop
-$\X \x \Z \z \Y \y \W \w \mathbb{Z}$
-so-so--so---so
+
+I am very thankful to
+professor Martin Vingron for 
+for being my mentor and advisor and for directing me through this work. 
+I owe Martin, his department and the Max Planck institute  a lot of gratitude
+for providing me a very welcoming, productive and scientifically rich
+environment.
+Thanks to professor Tim Conrad for being my thesis defense supervisor twice in a
+row!
+
 
 %\listoftables
 
@@ -208,9 +213,13 @@ so-so--so---so
 \section{Tensors, shape, axis, dimension}
 In machine learning one often encounters data structures that have
 multi-dimensional \emph{shape} which we call \emph{tensors}. For example a 28
-over 28 color image can be represented as a 3-dimensional shape ($28, 28, 3)$
-representing pixel's height, width, and rgb color "channel". This creates some
-confusion as to what one means by dimensions. For example a vector $\x \in \R^5$
+over 28 color image can be represented as a 3-dimensional shape ($3,28, 28)$
+representing pixel's RGB channels (AKA its color), its height, and its
+width. This creates some
+confusion as to what one means by "dimensions"-- the dimensions of the data shape
+which is $3$,
+or the number of dimensions of the data content (for lack of a better term),
+which is  $3 \times 28 \times 28$. For example a vector $\x \in \R^5$
 is represented as a 1 dimensional shape but it has $5$ \emph{dimensions in
 total}. Similarly the color image has a $3$ dimensional shape but it has $28
 \cdot 28 \cdot 3$ dimensions in total. It has 3 \emph{axes}, whose respective
@@ -222,9 +231,14 @@ example the color image described above, $\x \in  \R^{28 \times 28 \times 3}
 more axes and it generalizes scalar, vector, matrix and higher dimensional
 shaped entities.
 
-In Pytorch~\cite{pytorch2018pytorch} terminology dimension is used for the
-number of axes but it is inconsistent with the way dimension is used in
-mathematics with regards to vectors.
+In Pytorch~\cite{pytorch2018pytorch} terminology \emph{dimension} is used for the
+number of axes (data shape) but it is inconsistent with the way dimension is used in
+mathematics with regards to vectors which is the number of entries (data
+content size). 
+We suggest that \emph{dimension} should only refer to data content size,  
+and \emph{shape size} to the number of axes it comes in. So for the same $\x$ color
+image: $\text{dim}(\x) = 3 \times 28 \times 28$ and $\text{shape}(\x) =
+(3,28,28)$ and $\text{shape size}(\x) = \text{axes}(\x) = 3$.
 
 \begin{mydef}
 \label{def:tensor}
@@ -473,7 +487,8 @@ Suppose that we have a data matrix $\X = \{\x_1, \dots , \x_N\}$. We think of
 $\X$ as a set of $N$ independent samples, all drawn from the same data
 distribution $\x \sim p(\x)$. We think of $\x_i$ as a realization of a random
 vector which we also denote with $\x_i$. The random vectors $\x_i$ are
-independent replications of a random vector $\x$. This is another motivation why
+iid we designate with by $\x$ a 'generic' random vector with the same
+distribution. This is another motivation why
 we take mean over the batch dimension, because then $\|\X\| = \frac{1}{N}
 \sum_1^N \|\x_i\| \approx \E [\|\x\|]$.
 
@@ -1044,6 +1059,28 @@ definition~\ref{def:autoencoder} which aims to learn the identity function
 on the original input, and which is using the square error loss function, 
 a "vanilla" autoencoder. 
 
+\subsection{A word choosing latent space dimension and plotting it}
+The dimension of the latent space is a hyperparameter of the model. It's choice
+can affect the model's performance and its numerical stability.
+We don't claim that we some sort of a system of how to choose it. For us it's a
+matter of trial and error with some common sense. For example it should be in
+the same order as PCA dimensions (which defaults on $50$). We usually choose
+something in the range 8---64.
+
+When it comes to plotting the latent space, one option is to set the dimension
+on 2 or 3 so it can be plotted directly. This works ok for some datasets but
+generally we need more freedom in choosing this value.
+And in the higher dimension case, first we perform PCA on the latent space. Then
+either directly plot the 2 or 3 most significant PCs, or use
+UMAP~\cite{mcinnes2018umap}. UMAP seems to be the golden standard nowadays,
+and it is used both in the machine learning as well as in the RNASeq
+milieus.
+For us UMAP is a black box that projects input into 2 dimensions relatively
+faithfully and does it fast (unlike TSNE). 
+In some other cases, we show UMAP of the input space $\X$ rather than of latent
+space. In each image it should be stated which space and which projection is
+used.
+
 \subsection{Relation between PCA and AE}
 For \textbf{centered} data, where every variable (column of $\bv{X}$)
 has a sample mean of $0$, the first $k \leq \text{rank}(\bv{X})$ principle components
@@ -1117,7 +1154,7 @@ reason to believe that behind the scenes there is some hidden (latent), smaller
 dimensional random vector $\z$ that generates it. In other words we think that
 $\x$ is conditioned on $\z$ and we can speak of the joint distribution:
 $$p(\x,\z) = p(\x | \z)p(\z)$$. And again $\x_i$ only depends on $\z_i$ so
-everything factors nicely, e.g. $p(\X | \Z) = \prod_i p(\x_i | \z_i)$.
+everything factors nicely, e.g.\label{nicefactor} $p(\X | \Z) = \prod_i p(\x_i | \z_i)$.
 Informally, $\z$ is a simpler variable which "explains" $\x$ and can be used to
 for example, to classify $\x$. For this reason we are interested in knowing the
 flipped conditional distribution $p(\z | \x)$.
@@ -1170,20 +1207,49 @@ loss function for VAEs.
 The following equation shows that the \emph{ELBO} is a lower bound for the
 \emph{mean log
 evidence}.
-(using Jensen's inequality)
+(using Jensen inequality)
 
+%\begin{equation}
+%\label{eq:elbo}
+%\begin{aligned}
+%\frac{1}{N} \log p(\bv{X}) &= \frac{1}{N} \log \int p(\bv{X},\bv{Z}) d\bv{Z} 
+%& \text{taking marginal} \\
+%& = \frac{1}{N} \log \int \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})} q(\bv{Z})d\bv{Z} 
+%& \text{multiplying by 1 inside}\\
+%&=  \frac{1}{N} \log \int \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})}dq(\bv{Z}) 
+%& \text{definition of $dq(\Z)$}\\
+%\geq  \frac{1}{N} \int \log \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})}dq(\bv{Z}) 
+%& \text{Jensen inequality}\\
+%&= \frac{1}{N} \int \sum_1^N \log \frac{p(\x_i, \z_i)}{q(\z_i)}dq(\z_i) 
+%& \text{using the iid property which makes everything factor nicely}\\
+%&= \frac{1}{N} \sum_1^N - \LL(q,p,\x_i)
+%& \text{definition of } \LL(q,p,\x_i)\\
+%& = -\mathcal{L}(q,p,X) \triangleq -\mathcal{L}(q,p)
+%\text{again definition of } \LL(p,q) \qed
+%\end{aligned}
+%\end{equation}
+
+{\small
 \begin{equation}
 \label{eq:elbo}
 \begin{aligned}
 \frac{1}{N} \log p(\bv{X}) &= \frac{1}{N} \log \int p(\bv{X},\bv{Z}) d\bv{Z} 
-= \frac{1}{N} \log \int \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})} q(\bv{Z})d\bv{Z} \\
+& \text{taking marginal} \\
+& = \frac{1}{N} \log \int \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})} q(\bv{Z})d\bv{Z} 
+& \text{multiplying by 1 inside}\\
 &=  \frac{1}{N} \log \int \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})}dq(\bv{Z}) 
-\geq  \frac{1}{N} \int \log \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})}dq(\bv{Z}) \\
-&= \frac{1}{N} \int \sum_1^N \log \frac{p(\x_i, \z_i)}{q(\z_i)}dq(\z_i) \\
+& \text{definition of } dq(\Z)\\
+&\geq  \frac{1}{N} \int \log \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})}dq(\bv{Z}) 
+& \text{Jensen inequality}\\
+&= \frac{1}{N} \int \sum_1^N \log \frac{p(\x_i, \z_i)}{q(\z_i)}dq(\z_i) 
+& \text{using the iid property~\ref{nicefactor}}\\
 &= \frac{1}{N} \sum_1^N - \LL(q,p,\x_i)
-= -\mathcal{L}(q,p,X) \triangleq -\mathcal{L}(q,p)
+& \text{definition of } \LL(q,p,\x_i)\\
+& = -\mathcal{L}(q,p,X) \triangleq -\mathcal{L}(q,p)
+& \text{again definition of } \LL(p,q) \qed
 \end{aligned}
 \end{equation}
+}
 
 In equation~\ref{eq:elbo} we found a lower bound $-\mathcal{L}(q,p)$ for the
 mean log
@@ -1193,7 +1259,7 @@ greater than the real log evidence so we are looking for the $q$ which
 \textbf{maximizes} it.
 
 Now we show that maximizing the ELBO actually obtains the mean log evidence and it is
-equivalent to minimizing $KL(q(\bv{Z}) \| p(\bv{Z}|\bv{X})$:
+equivalent to minimizing $KL(q(\bv{Z}) \| p(\bv{Z}|\bv{X}))$:
 
 \begin{equation}\label{eq:kl_bound}
 \begin{aligned}
@@ -1475,12 +1541,14 @@ the latent space by taking the mean: $\x \mapsto \E [E(\x)]$.
 Since $q(\x | \z)$ is some kind of parameterized distribution for example 
 $\NN(\z: \mu(\x), \sigma(\x))$  
 the mean is a known parameter of the distribution so we don't need to estimate
-it. See for example in figure~\ref{fig:vaeumapmeans}.
-
-Alternatively we can deliberately add stockanticity to the encoding by 
+it. See for example in figure~\ref{fig:vaeumapmeans}. Typically encoding by the
+means looks more like an encoding with a deterministic autoencoder would look.
+Alternatively we can deliberately add stochasticity to the encoding by 
 non-deterministically drawing $\z \sim q(\z | \x)$ from the encoder
 distribution,
 as is dones in figure~\ref{fig:vaeumapsamples}.
+When we use this sampling technique for the encoding, we see how the VAE
+approximates the standard normal prior distribution in the latent space.
 
 \begin{figure}[h]
 %\begin{framed}
@@ -1512,7 +1580,7 @@ and projecting back to the observed space $\x$ by the decoder.}
 
 
 \subsection{Choosing the distribution types}
-This is another topic that can get arbitrarily complex.
+%This is another topic that can get arbitrarily complex.
 
 Recall that our loss function in the case that we take just one sample $\z$ for input $\x$
 is:
@@ -1529,7 +1597,7 @@ The left term is called the reconstruction error and the
 right term is called the regularization term or the kl-term.
 
 
-Lets suppose that we just want to use diagonal Gaussian distributions (which is
+Now suppose that we just want to use diagonal Gaussian distributions (which is
 a type of mean field approximation).
 The advantage is that it is easy to compute them because we just sum over the
 dimensions:
@@ -1564,38 +1632,43 @@ KL(\NN(;\mu_1, \sigma_1) \| \NN(;\mu_2, \sigma_2)) =
 + \frac{\sigma_1^2 + (\mu_1 - \mu_2)^2}{2 \sigma_2^2}
 \end{equation}
 
-The reconstruction term is more tricky.
+Choosing the right type of distribution $p(\x | \z)$ for the reconstruction term
+$-\log p (\x | \z)$ is also important.
 Lets say we still want some sort of Gaussian diagonal distribution for $\x$,
 so $p(\x | \z) = \NN(\x ; \bv{\mu}(\z), \bv{\sigma}(\z))$.
-If we allow the decoder to create arbitrarily small variances, then the
-decoder will stop being stochastic and it becomes deterministic. 
-The decoder will also be able to pinpoint the sources in the latent space.
-As a result the encoding becomes meaning-less and the encoded data will tend to
-be arbitrarily spread in the latent space without meaningful clusters.
-In addition there is a problem of numerical instability because the distribution
-function can become arbitrarily large and the reconstruction loss might approach
+If we allow the decoder to create arbitrarily small variances, then 
+the Monte Carlo integration, at least the simple one we use, fails.
+The reason is that the decoder make the variance infinitesimally close to $0$ and
+then the density function becomes essentially unbounded from below. The error term becomes
+negative and is dominated by the negative reconstruction term and the model
+might also become numerically unstable in training because the loss diverges to
 $-\infty$.
 
-A common approach is to use a fixed variance of $1$, because then the
+A common approach to avoid this problem is to use a fixed variance of $1$, because then the
 reconstruction term becomes square error loss.
 $p(\x | \z) = \NN(\x ; \bv{\mu}(\z), 1))$.
-
-Another approach, $\sigma$-VAE~\cite{rybkin2021simple}, is to let the variance
-be a trainable parameter but not a function of $\z$.
+Another method, $\sigma$-VAE~\cite{rybkin2021simple}, is to let the variance
+be a trainable parameter of the model, but not a function of $\z$, rather it is
+is shared by all the samples.
 $p(\x | \z) = \NN(\x ; \bv{\mu}(\z), \bv{\sigma})$.
-In this case as well in my experiments at least, if $\sigma$ is allowed to be
-too small we sometimes get similar issues of numerical stability, 
-non-stochastic decoder and meaningless 
-encoding in the latent
-space.
+In this case as well, in our experiments at least, if $\sigma$ is allowed to be
+too small we sometimes get similar issues of unbounded negative loss and
+numerical instability. 
+
+In the case that the data $\x$ contains only values in the range $[0,1]$, which
+is the case for example for images, it is common to choose Bernoulli
+distribution to model the reconstruction distribution.
+Every pixel is interpreted as a Bernoulli random variable with probability equal
+to the measure intensity. The loss function for the reconstruction term becomes
+binary cross--entropy.
 
 \subsection{VAE as a generalization of AE}
 Suppose that we take a $\sigma$-VAE as described above, and suppose that we hold
 $\sigma$ fixed.
 
-So the decoder is $p(\x | \z) = \NN(\x ; \mu(\z), \sigma)$ where $\mu(z)$ is a a
-function of $\z$ the decoder neural network. The decoder is $q(\z | \x) = \NN(\z
-; \mu(\x), \sigma(\x))$ For the kl-term we use the analytical solution and for
+The decoded distribution is $p(\x | \z) = \NN(\x ; \mu(\z), \sigma)$ where $\mu(z)$ is a
+function of $\z$ the decoder's neural network. The encoded distribution is $q(\z | \x) = \NN(\z
+; \mu(\x), \sigma(\x))$. For the kl-term we use the analytical solution and for
 the reconstruction error we use Monte Carlo integration with one sample. We can
 assume that the KL term is uniformly (with respect to $\x$) bounded by some
 constant $M$. We could also make sure that the encoder map is bounded but
@@ -1636,7 +1709,7 @@ Thus the VAE becomes essentially a vanilla auto encoder at the limit.
 \label{sseq:graphical_representation}
 
 It is both convenient as well as informative to include a graphical description
-of our probabilistic models by way of modified plate diagrams which describes
+of our probabilistic models. To that end we use a modified plate diagram which describes
 both the generative model ($p$ distribution) and the inference model ($q$) on
 the same graph.
 
@@ -1647,25 +1720,32 @@ models with respectively
 distributions $p$ and $q$, according to the following scheme.
 
 \emph{Round or oval} nodes represent \emph{random variables}, \emph{rectangular
-or square} nodes represent \emph{hyperparameters} or stochastic parameters,
-and \emph{arrows} represent
-dependency.
+or square} nodes represent \emph{hyperparameters} or parameters, which are used
+for specifying prior distributions.
+\emph{Arrows} represent
+dependency relation.
 
 \emph{Solid arrows with pointed arrowhead} represent the dependencies of the $p$
 distribution. \emph{Dotted arrows with round arrowheads} represent the dependencies of
 the $q$ distribution.
 In order to describe a legal distribution the subgraph of just the pointed
-(and of just round) arrows must form a DAG.
+(and of just round) arrows must form a \emph{DAG} (=directed acyclic graph).
+A \emph{Plate} Is a rectangular frame which encapsulates one or more round/oval
+nodes. It represents the packing of $N$ i.i.d random vectors.
+Specifically in all the diagrams we will show here, $N$ represents the number
+of observations in the dataset.
 
-Plate represents the packing of $N$ i.i.d random vectors.
-
-Shaded nodes represent known values.
+Shaded nodes represent known values or observations.
 Shaded oval or round nodes are called \emph{observations} or \emph{observed
 variables}.
 Clear oval nodes are called \emph{latent} variables. 
-
-Shaded square or rectangular nodes represent fixed hyperparameters of the model.
-Clear square or rectangular nodes represent stochastic parameters of the model.
+Shaded square or rectangular nodes represent hyperparameters of the model.
+We need them to specify prior distributions of the generative model.
+It is possible to drop the shaded square nodes and just assume that
+every clear round/oval node in the DAG which is a source (no incoming solid arrows or no
+incoming dotted arrows) implicitly has some predefined prior distribution.
+In this thesis we don't use clear square or rectangular nodes.
+In principle those can be used to represent learnable non-stochastic parameters of the model.
 \end{mydef}
 
 Figure~\ref{fig:vae_model} is a modified plate diagram of the VAE model.
@@ -1676,9 +1756,9 @@ diagram describes the two networks together.
 
 The squared $\zeta$ node represent some \emph{fixed hyperparameter} which describes the
 prior distribution of $p(\z) := p(\z | \zeta)$.
-It is possible to make $\zeta$ a non-fixed stochastic parameter but in the case of this
-vanilla VAE I don't think it has any advantage and don't know of anyone who 
-does that. 
+%It is possible to make $\zeta$ a non-fixed stochastic parameter but in the case of this
+%vanilla VAE I don't think it has any advantage and don't know of anyone who 
+%does that. 
 
 The generative model therefore factors as: $p(\x,\z) = p(\x|\z)p(\z|\zeta) =
 p(\x|\z)p(\z)$.
@@ -1711,10 +1791,11 @@ for the actual implementation.
 In the case of a "vanilla" VAE $(E,D,p)$, 
 We use mean field approximation for $p$ and $q$ with Gaussian distributions.
 We set the prior $p(\z)$ to be diagonal standard Gaussian
-$p(\z) \sim \NN(;\bv{0},\bv{1})$.
-And $p(\z | \x) \sim \NN(;D(\z))$ is a diagonal Gaussian, where the decoder
-determines its means and variances $D(\z) = (\bv{\mu}(\z), \bv{\sigma}(\z))$, 
-And similarly $q(\z | \x) \sim \NN(;E(\x))$.
+$p(\z) \sim \NN(\z ; \bv{0},\bv{1})$.
+$p(\z | \x) \sim \NN(\z ;E(\x))$ is a diagonal Gaussian, where the encoder
+neural network $E(\x)$ 
+determines its means and variances $E(\x) = (\bv{\mu}(\x), \bv{\sigma}(\x))$, 
+And similarly with the decoder $p(\x | \z) \sim \NN(\x ;D(\z))$.
 
 %\begin{mydef}
 %\end{mydef}
@@ -2308,7 +2389,7 @@ smiles or not.
 Also suppose that $\y$ might not be provided at all or just for
 a subset of the data but $c$ is always provided for us.
 
-The data we pirposed this model for is the Kang scRNASeq
+The data we purposed this model for is the Kang scRNASeq
 dataset~\cite{kang2018multiplexed} that comes from two types 
 of conditions (control and stimulated), 
 The condition represents the states before and after exposure to some treatment
@@ -2367,7 +2448,7 @@ $p(\x | \z, c)$. This allows us to "flip" condition of the reconstruction,
 which we can interpret as converting for example control cells to stimulated
 cells, as we'll see in a later chapter.
 
-\chapter{Experiments and results MNIST}
+\chapter{Tests on MNIST}
 %\section{Tests with MNIST and FMNIST}
 
 The first dataset we tested the model on was MNIST~\cite{mnist} which is 
@@ -2585,7 +2666,7 @@ figure~\ref{fig:mnist_us_louvain}.
 
 
 
-\chapter{Experiments and results fashion-MNIST}
+\chapter{More challenging tests with fashion-MNIST}
 Fashion-MNIST (FMNIST)~\cite{fmnist} is a drop-in replacement for MNIST which
 is a lot more challenging to machine--learn. Instead of digits we are dealing
 here with greyscale images of clothing and accessory items of 10
@@ -2696,7 +2777,9 @@ The Fashion-MNIST repository~\cite{fmnist} includes information about the
 classification accuracy obtained by various models. It is not stated which of
 the models if at all is unsupervised or semisupervised (for what we see none
 are). To be fair with the comparison we tested our model in fully supervised
-mode and achieved $0.9$ accuracy. The best classifier listed on the
+mode and achieved $0.9$ accuracy. We were also able to achieve $0.92$ with the
+with a modified model that uses a kind of deep convolution neural network
+(RESNET18\cite{he2016deep}) in its decoder network. The best classifier listed on the
 Fashion-MNIST website achieved $0.963$ accuracy (WRN-28-10+). It looks like
 methods that don't use image specific tricks and tweaks (things like convolution
 network, augmentation by flips, rotations etc \dots) achieve $0.9$ or less
@@ -2708,7 +2791,7 @@ classifiers in the Encoder modules of the GMVAE model as a drop in replacement
 ; And networks that include reconstruction modules can be utilized in the 
 GMVAE decoder modules.
 
-\chapter{Tests with PBMCs scRNASeq Data -- Zheng et al}
+\chapter{Learning PBMCs}
 
 We first selected a scRNASeq data set~\cite{zheng2017massively} which is easy
 because the cells are nicely clustered by cell type.
@@ -2728,7 +2811,9 @@ classify the smallest group (Dendritic) in its own cluster.}
 \label{fig:zheng_ss_latent}
 \end{figure}
 
-In order to overcome this issue we generated a rebalanced data set by selecting 
+In order to confirm that the imbalance and in particular the small sample size
+of the Dentritic class was the culprit to the misclassification of GMVAE we 
+generated a rebalanced data set by selecting 
 $300$ samples from each types with repetitions. In addition we added small
 Gaussian noise. We also scaled the log-count matrix of the original data set 
 so each gene has near standard normal distribution across the samples.
@@ -2740,7 +2825,12 @@ be a little bit improved by tuning the model and the balancing preprocessing.
 In particular it appears that adding the small noise to the rebalanced data
 helped the model to learn all the cell types with fewer components.
 Figure~\ref{fig:zheng_ss_latent_balanced} visualize with UMAPs the results 
-of this rebalancing method.
+of this rebalancing method. It goes without saying that such rebalancing process
+is only possible if the labels are known. It would still be possible to balance
+the data by using louvain clusters, and a possible another fix would be to just
+generate more noisy replicates of all the cells without accessing the label
+information. In this case we would still habe an imbalanced dataset but we will
+have sufficient quantity from every cell type.
 
 \begin{figure}[h]
 \centering
@@ -2751,16 +2841,16 @@ on the rebalanced and the original data set.
 \label{fig:zheng_ss_latent_balanced}
 \end{figure}
 
-However there is a logical failure in the rebalancing approach because in order
-to rebalance by cell type we have to know the cell type.
-What we showed perhaps is that if somehow we were given a balanced dataset with
-unknown cell types, than probably GMVAE in unsupervised mode would perform better.
+%However there is a logical failure in the rebalancing approach because in order
+%to rebalance by cell type we have to know the cell type.
+%What we showed perhaps is that if somehow we were given a balanced dataset with
+%unknown cell types, than probably GMVAE in unsupervised mode would perform better.
 
-There is another issue which should be mentioned. We treat the annotation (the
-given cell types) in the scRNASeq datasets as ground truth but it is not
-necessary so and some of the cells are likely mislabeled.
+%There is another issue which should be mentioned. We treat the annotation (the
+%given cell types) in the scRNASeq datasets as ground truth but it is not
+%necessary so and some of the cells are likely mislabeled.
 
-\chapter{Tests with PBMCs scRNASeq Data (Kang et al)}
+\chapter{Larger but messier PBMCs data}
 In these tests we used a scRNASeq dataset~\cite{kang2018multiplexed} of PBMCs
 (peripheral blood mononuclear cells) of the same $7$ cell types as in Zheng
 dataset.
@@ -2819,7 +2909,7 @@ of the latent space is essentially the same so we are not showing it here.
 \centering
 \includegraphics[width=1.1\textwidth]{images/gmmvae_Kang_control_train_us_21c_umap.png}
 \caption{
-Kang train data. It is interesting that the GMVAE "clusters" can be fuzzy,
+UMAP of the Kang train data. It is interesting that the GMVAE "clusters" can be fuzzy,
 unlike Louvain clusters which tend to have clear borders.
 }
 \label{fig:kang_control_train_gmvae_us_umap}
@@ -2832,7 +2922,7 @@ The sample size per cell type in the train set is in the range 500--2000 unlike
 the situation in the Zheng data where one cell type has 37 samples and another
 over 2000.
 
-\section{Using Zheng to learn Kang}
+\section{Transfer learning}
 
 The Zheng and the (control) Kang datasets both represent the same PBMCs
 However the former is a much nicer dataset.
@@ -2853,16 +2943,16 @@ UMAP of the Zheng dataset.
 \label{fig:zheng_pca_umap_new}
 \end{figure}
 
-Figure~\ref{fig:zheng_pca_umap_new} shows the UMAP of the Zheng data.
-There are 8 Louvain clusters (not sure why in the previous chapter there were
-8), and they capture fairly accurately (0.92) the real classes.
-Moreover the Louvain clusters have well defined borders whereas the true labels
-are somewhat mixed in with each other (CD8 spots inside the CD4 blob).
-We tried two variations for the labeled subset: using the true labels and using
-the Louvain labels.
-With the first variation, we couldn't consistently train a model which captures
-all the classes.
-The second variation turned out better.
+Figure~\ref{fig:zheng_pca_umap_new} shows the UMAP of the Zheng data. There are
+8 Louvain clusters (not sure why in the previous chapter there were 9), and they
+capture fairly accurately (0.92) the real classes. Moreover the Louvain clusters
+have well defined borders whereas the true labels are somewhat mixed in with
+each other (CD8 spots inside the CD4 blob). We tried two variations for the
+labeled subset: using the true labels and using the Louvain labels. With the
+first variation, we couldn't consistently train a model which captures all the
+classes. The second variation turned out better. We think that the extra mixture
+component (there are more Louvain cluster than cell types) helps the model to
+capture all the ground truth classes
 
 \begin{figure}[h]
 \centering
@@ -2876,7 +2966,7 @@ UMAP of the latent space of the Kang validation subset (the holdout).
 Figure~\ref{fig:kang_new_latent} shows the result of the semisupervised
 training, where Zheng Louvain clusters were used as the labels. Technically
 speaking this was a form of unsupervised clustering in the sense that we didn't
-use the label information in the training at all. The accuracy was 0.81 so still
+use the label information in the training at all. The accuracy was $0.81$ so still
 not great but edging out the unsupervised training from the previous section.
 Moreover we have used minimal overclustering (just 1 extra component) and we
 think the UMAP of the latent space at least looks better. The main issue is with
@@ -3048,7 +3138,7 @@ purpose of treatment effect prediction and for batch effect reduction.
 \label{fig:blobs_nop_z}
 \end{figure}
 
-\chapter{Applying cGMVAE on the full Kang dataset}
+\chapter{cGMVAE on the treatment/control type PBMC dataset}
 As mentioned the full Kang dataset contains two groups of PBMCs, 
 the control group (used in the previous chapter) and the stimulated group, the latter contains the gene
 expressions after exposure to INF-$\beta$.
@@ -3117,7 +3207,7 @@ class label.}
 \label{fig:Kang_val_mu_z_predicts_labels}
 \end{figure}
 
-We also want to see whats going on in the $w$ space. There we ecpect everything
+We also want to see whats going on in the $w$ space. There we expect everything
 to really be mixed together. The less clustering and batch effect the better.
 Figures~\ref{fig:Kang_val_mu_w_labels} shows the encoded means of the Kang
 validation dataset. We see that labels and condition are fairly mixed in
@@ -3453,6 +3543,7 @@ punkt.
 %\lipsum{3}
 
 \nocite{szczurek2010introducing}
+\nocite{kingma2013auto}
 
 \printbibliography
 
