@@ -24,6 +24,7 @@
 \usepackage[section]{placeins} %\Floatbarrier
 \usepackage{float}
 \usepackage{verbatim}
+\usepackage{cleveref}
 \usepackage[a4paper, width=150mm, top=25mm, bottom=25mm]{geometry}
 \usepackage{fancyhdr}
 \hypersetup{linktocpage,
@@ -84,6 +85,10 @@
 \newcommand{\lt}{<}
 \newcommand{\tuple}[1]{\langle #1 \rangle}
 
+%\newcommand{\gmvae}{$\mathrm{sc}{\ast}GMV{\ast}$\AE}
+%%%\newcommand{\gmvae}{$\mathrm{sc}\text{\ast}\mathrm{GMV}\text{\ast}$\AE}
+\newcommand{\gmvae}{$\mathrm{sc}{\ast}\mathrm{GM\Delta}$V\AE}
+
 %\floatstyle{ruled}
 \floatstyle{boxed}
 \restylefloat{figure}
@@ -101,6 +106,8 @@
 %$\mathrlap{\text{sc}{\ast}$ GMV\AE
 %\textbf{scGMV\AE}
 %$\mathrlap{\mathrm{sc}}{\ast}$GMV\AE
+
+\gmvae\\
 $\mathrm{sc}\ast$GMV\AE
 %\textbf{$\mathclap{sc}{\ast}$GMV\AE}
 %\textbf{{\ae}g$\mathllap{sc}{\ast}$cGMV\AE}
@@ -1094,10 +1101,20 @@ function. The autoencoder was
 trained on the training set and didn't "see" the testing images during training.
 The results appear quite similar.
 
+These figures~\cref{fig:pcavae,fig:neuron2,}
 
-\nocite{martinunsupervised}
-\nocite{kingma2013auto}
-\nocite{szczurek2010introducing}
+See figure~\ref{fig:neuron2}
+
+This citations~\cite{bishop2006pattern,guo2017improved,} is based.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1\textwidth]{images/mnist_comparisons.png}
+\caption{Comparison of results by GMVAE and other
+methods as reported by~\cite{dilokthanakul2016deep}}
+\label{fig:mnist_comparisons}
+\end{figure}
+
 
 \printbibliography
 \end{document}

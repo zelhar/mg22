@@ -29,6 +29,7 @@
 \usepackage[section]{placeins} %\Floatbarrier
 \usepackage{float}
 \usepackage{verbatim}
+\usepackage{cleveref}
 %\usepackage{showframe}
 %\usepackage[a4paper, width=150mm, top=5mm, bottom=5mm]{geometry}
 \usepackage[a4paper, width=150mm, top=25mm, bottom=25mm]{geometry}
@@ -101,6 +102,12 @@
 \newcommand{\lt}{<}
 \newcommand{\tuple}[1]{\langle #1 \rangle}
 
+%\newcommand{\gmvaec}{$\mathrm{sc}{\ast}\mathrm{GM\Delta}$V\AE}
+%\newcommand{\scgmvae}{$\mathrm{c}{\ast}\mathrm{GM\Delta}$V\AE$\mathrm{sc}$}
+\newcommand{\scgmvae}{$\mathrm{c}{\ast}\mathrm{GM\Delta}$V{\AE}s---q}
+%\newcommand{\gmvae}{$\mathrm{c}{\ast}\mathrm{GM\Delta}$V\AE}
+\newcommand{\gmvae}{c$\ast$GM$\mathrm{\Delta}$V\AE~}
+
 %\floatstyle{ruled}
 \floatstyle{boxed}
 \restylefloat{figure}
@@ -118,7 +125,8 @@
 %$\mathrlap{\text{sc}{\ast}$ GMV\AE
 %\textbf{scGMV\AE}
 %$\mathrlap{\mathrm{sc}}{\ast}$GMV\AE
-$\mathrm{sc}\ast$GMV\AE
+%$\mathrm{sc}\ast$GMV\AE
+\scgmvae
 %\textbf{$\mathclap{sc}{\ast}$GMV\AE}
 %\textbf{{\ae}g$\mathllap{sc}{\ast}$cGMV\AE}
 %\textbf{{\ae}g$\text{sc}{\ast}$cGMV\AE}\\
@@ -167,24 +175,27 @@ linktodoc=true,
 
 
 \chapter*{Abstract}
-Single cells RNASeq data (scRNASeq) can be thought of as coming from a conditional mixture distribution, where
+Single--cell--RNA--Sequencing data (scRNASeq) can be thought of as coming from a conditional mixture distribution, where
 the categories indicate cell types and the conditions indicate either technical
 batches or post/pre--exposure effects.
-In this thesis we take the GMVAE (Gaussian mixture variational autoencoder) model~\cite{dilokthanakul2016deep},
-introduce some modifications to the underlying probabilistic model
-and test its suitability for analysis, embedding and generation of scRNASeq
-data.
-We think that the model is particularly suitable for (semi)supervised use case,
-where information on the cell types of the dataset is partially available.
-$\text{sc}{\ast}$GMVAE stands for 
-"Single cell RNASeq ($\ast$) Conditional Gaussian Mixture Variation
-AutoEncoder".
+This thesis takes
+the GMVAE (Gaussian mixture variational autoencoder) model~\cite{dilokthanakul2016deep},
+and introduces some modifications to its underlying probabilistic model. 
+The resulting model is named (using regex): \emph{\gmvae} which stands for
+(maybe Conditional) Gaussian Mixture with Dirichlet
+prior Variational Auto Encoder.
+Its suitability in various scenarios for analysis, embedding, and generation of scRNASeq
+data is tested.
+The model is particularly suitable for the (semi)supervised use case,
+where individual cell type information is partially available
+in the dataset or exists already in another, similar dataset.
+The name and title "\scgmvae" stands for:\\ 
+\emph{\gmvae (for) s(ingle--cell-RNA--Se)q}.
 
 
 %\chapter*{Declaration}
 %punkt.
 %punkt.
-%\nocite{guo2017improved}
 %\nocite{bishop2006pattern}
 %\nocite{serre2001matrices}
 %\nocite{kingma2013auto}
@@ -193,14 +204,12 @@ AutoEncoder".
 
 \chapter*{Acknowledgement}
 
-I am very thankful to
-professor Martin Vingron 
-for being my mentor and advisor, and for directing me through this work. 
-I owe Martin, his department and the Max Planck institute  a lot of gratitude
+I am very thankful to professor Martin Vingron for being my mentor and advisor,
+and for directing me through this work. A big thank you and much gratitude to
+Martin, his department, and the Max--Planck--Institute for molecular genetics,
 for providing the very welcoming, productive and scientifically rich
-environment.
-Thanks to professor Tim Conrad for being my thesis defense supervisor twice in a
-row!
+environment. Thanks to professor Tim Conrad for being my thesis defense
+supervisor twice in a row!
 
 
 %\listoftables
@@ -216,36 +225,34 @@ row!
 %This sentence can colloquially summarize the following work, where we are making
 %a case for applying them in our field.
 
-When professor Vingron and I originally set up on theme for exploration towards a thesis, 
+When professor Vingron and I originally set on a theme for exploration towards a thesis, 
 it was roughly about researching autoencoders and how they can be applied 
 to single cell RNASeq (scRNASeq) data. I knew a little bit about autoencoders
 and neural networks and basically nothing about scRNASeq.
-
-Pretty soon I found out that we are dealing with datasets of gene expression
+It soon became clear that we are dealing with datasets of gene expression
 levels for individual cells. Each cell is supposed to have an expression profile
 depending on mostly cell type and also other factors such as cell cycle and
-other factors but in the papers I've read it's mainly the cell type so that's
-our main focus here too.
+other factors, but the cell type is the first order of approximation.
 
-So now while doing preliminary research into neural networks I am thinking,
-cell types, that's like categorical data, it sounds like I am dealing with
-classification task, unsupervised learning, something like that, how can an
+So now while doing preliminary research into neural networks I was thinking,
+cell types is categorical data, so I am dealing with
+a classification task, unsupervised learning, something like that; How can an
 autoencoder help me with that. 
-I've seen pretty soon how autoencoders and the like are used on RNASeq and
+So I've looked at what has been done with autoencoders and the like on scRNASeq and
 similar data; Basically it's about replacing PCA with an AE, VAE or some fancier 
-derivative. The rest of the analysis is pretty much identical. Another use is
+derivative. The rest of the analysis is with unrelated methods. Another use is
 for batch effect reduction by way of a conditional model.
 Not very exciting.
 
-The entire construct that is VAE was invented, as far as I know, by
-Kingma and Welling. About two or three followups from their original paper you
-get into their paper on semisupervised learning. Nice. But soon you find out
-from the comments that it just doesn't work unsupervised. Then a little bit more
-search got me into the Gauss mixture model VAE of Dilokthanakul, this one seems
-to work also in unsupervised learning, so I settled on it as the base model to
-experiment with.
-By the end of this thesis, my goal is to provide a skeptical 
-overview of what these models are good for as well as their limitations.
+The entire construct that is VAE was invented, as far as I know, by Kingma and
+Welling~\cite{kingma2013auto,kingma2014semi,}. About one follow--up from
+their original paper they introduce semi--supervised learning. Nice.
+But that one just doesn't work for unsupervised learning.
+Then a little bit more search got me into the Gaussian mixture model VAE of
+Dilokthanakul~\cite{dilokthanakul2016deep}. This one seems to work also in
+unsupervised learning, so I settled on it as the base model to experiment with.
+By the end of this thesis, my goal is to provide a skeptical overview of what
+these models are good for as well as their limitations.
 
 
 \chapter{Notations and definitions, preliminary concepts}
@@ -256,7 +263,7 @@ overview of what these models are good for as well as their limitations.
 
 \section{Tensors, shape, axis, dimension}
 In machine learning one often encounters data structures that have
-multi-dimensional \emph{shape} which we call \emph{tensors}. For example a 28
+multi-dimensional \emph{shape} which are called \emph{tensors}. For example a 28
 over 28 color image can be represented as a 3-dimensional shape ($3,28, 28)$
 representing pixel's RGB channels (AKA its color), its height, and its
 width. This creates some
@@ -279,8 +286,8 @@ In Pytorch~\cite{pytorch2018pytorch} terminology \emph{dimension} is used for th
 number of axes (data shape) but it is inconsistent with the way dimension is used in
 mathematics with regards to vectors which is the number of entries (data
 content size). 
-We suggest that \emph{dimension} should only refer to data content size,  
-and \emph{shape size} to the number of axes it comes in. So for the same $\x$ color
+The author proposes that \emph{dimension} should only refer to data content size,  
+and \emph{shape size} should refer to the number of axes it comes in. For the same $\x$ color
 image: $\text{dim}(\x) = 3 \times 28 \times 28$ and $\text{shape}(\x) =
 (3,28,28)$ and $\text{shape size}(\x) = \text{axes}(\x) = 3$.
 
@@ -301,7 +308,7 @@ be of size $n_i$.
 \end{mydef}
 
 In practice a tensor $\x \in \R^{n_1 \times \dots \times n_k}$ is represented as
-a $k$ dimensional array. We call its first axis the \emph{row axis} or
+a $k$ dimensional array. Its first axis is called the \emph{row axis} or
 alternatively when we want to emphasize that this is a collection of several
 tensors, the \emph{batch axis}. The tensor $\x_i = \x[i]$, which is the $k-1$
 dimensional sub-array with the first coordinate held fixed, is called the
@@ -367,13 +374,13 @@ to sum over the sample axes.
 
 \section{Matrices and vectors}
 
-The type of data we work with in this paper can be represented as vectors. For
+The type of datasets used in this paper can be represented as vectors. For
 example images of shape $(h,w,c)$ can be flattened into a single axis shape $(h
 \cdot w \cdot c,)$ vector.
 
-Throughout this paper (modulo typing errors) we use capital bold math Latin or
-Greek letters ($\bv{X, \Sigma}$) to represent matrices. To stress that we talk
-about matrices rather than vectors we show product ($\times$) in the dimension,
+Throughout this paper (modulo typing errors) capital bold math Latin or
+Greek letters ($\bv{X, \Sigma}$) represent matrices. To stress that we talk
+about matrices rather than vectors, the dimension is displayed as product ($\times$),
 i.e $\bv{X} \in \R^{m \times n}$. Although technically the matrix--space is the
 tensor product $\R^m \otimes \R^n$.
 
@@ -397,7 +404,7 @@ both $(\x,\y)$ and $(\x | \y)$ represent a matrix with 2 \textbf{columns}.
 
 As mentioned usually just $\x$ means a column vector and $\x^T$ means a row
 vector but sometimes in matrix notation $\x$ represents a row when it makes
-sense. We use \textbf{curly} brackets to indicate the \textbf{row}
+sense. \textbf{Curly} brackets indicate the \textbf{row}
 representations of a matrix. For example $\{\x, \y\}$ represents a matrix whose
 \textbf{rows} are $\x$ and $\y$ (as row vectors), which alternatively could be
 represented as $(\x, \y)^T$ (and symmetrically $(\x,\y) = \{\x,\y\}^T$).
@@ -510,7 +517,7 @@ probabilistic and hence is relaxed.
 Our data usually comes in several, two or more matrices,
 and when it does, the rows of these matrices are paired (or tupled if they are
 more than 2).
-For example we could have an input data $\X$ and a target data $\Y$, representing 
+For example there could be an input data $\X$ and a target data $\Y$, representing 
 samples from some unknown function $f(\x) = \y$ that we want to learn. 
 This is generally how things are in an image classification task,
 where $\X$ may be a set of images, and $\Y$ is
@@ -808,7 +815,7 @@ consecutive levels $l_i \to l_{i+1}$ (see figure~\ref{fig:nn1}).
 The label inside the neuron describes its activation function. In the diagrams,
 we let $\sigma$ represent the sigmoid function. We represent the identity
 function either by the name of the variable ($x_1$, $y$ etc.) it acts on or
-simple by $id$.   We let the label $1$ represent the constant function. We need
+simple by $id$. We let the label $1$ represent the constant function. We need
 the constant function because with it we can represent any affine map as a
 linear map with the first input always clamped to $1$. But connecting $1$ to
 every (non-input level) neuron would clutter the graph so it is not shown in
@@ -1834,8 +1841,9 @@ distributions involved (Gaussian, Dirichlet or whatever \dots) and that is left
 for the actual implementation.
 
 In the case of a "vanilla" VAE $(E,D,p)$, 
-We use mean field approximation for $p$ and $q$ with Gaussian distributions.
-We set the prior $p(\z)$ to be diagonal standard Gaussian
+Mean field approximation, with diagonal Gaussian distributions for $p$ and $q$,
+is used.
+The prior $p(\z)$ is set to be diagonal standard Gaussian
 $p(\z) \sim \NN(\z ; \bv{0},\bv{1})$.
 $p(\z | \x) \sim \NN(\z ;E(\x))$ is a diagonal Gaussian, where the encoder
 neural network $E(\x)$ 
@@ -2034,7 +2042,7 @@ variable $\y$ functions as the component selector. We could try to directly
 create the mixture $p(\x | \z, \y)$ in the $\x$ space, as the M2 model
 in~\cite{kingma2014semi}.
 The other option, following the Gaussian mixture VAE model, \emph{GMVAE}, proposed by
-Dilokthanakul et.al~\cite{dilokthanakul2016deep} and on which we base our model,
+Dilokthanakul et.al~\cite{dilokthanakul2016deep} and on which we base our \gmvae model,
 is to create a mixture prior distribution $p(\z | \w, \y)$ on the lower
 dimensional latent $\z$ space.
 
@@ -2063,7 +2071,7 @@ $\x$ space where the data occupies a complex hyper-surface.
 \centering
 \begin{subfigure}[b]{0.4\textwidth}
 \includegraphics[width=\textwidth]{plots/mm.gv.png}
-\caption{"vanilla" Gauss mixture model with fixed centroids.}
+\caption{"vanilla" Gaussian mixture model with fixed centroids.}
 \label{fig:vanillamix}
 \end{subfigure}
 \begin{subfigure}[t]{0.4\textwidth}
@@ -2099,7 +2107,7 @@ much so. By moving the random vectors inside the plate
 \end{subfigure}
 \begin{subfigure}[b]{0.4\textwidth}
 \includegraphics[width=\textwidth]{plots/mmpp.gv.png}
-\caption{modified model}
+\caption{modified model (\gmvae)}
 \label{fig:mymix}
 \end{subfigure}
 \caption{
@@ -2136,9 +2144,16 @@ $\alpha \in \R$.
 %We call our modification the \emph{dGMVAE} model (d stands for the Dirichlet prior
 %obviously).
 
-\section{The GMVAE model with Dirichlet prior}
+\section{\gmvae: GMVAE with Dirichlet prior}
 
-Our variation of the GMVAE model is based on figure~\ref{fig:mymix}.
+Our variation of GMVAE,which we name \gmvae, is based on figure~\ref{fig:mymix}.
+The $\Delta$ stands for Dirichlet and the $\mathrm{c}\ast$ represents a regex
+and it stands for "maybe
+conditional". Think of it as if there are as many 'c's in a model instance's
+name as
+there are conditions in the dataset it was meant to process. As will be shown later,
+this model also has a conditional
+version but for now we formalise the simple case without conditions. The 
 In addition to the latent variables $\z$ (mixture), and $\y$ (categorical), there
 $2$ more variables.
 The third latent variabel $\w$ has standard normal prior.
@@ -2202,7 +2217,7 @@ And $f(\z),g(\z), \mu_w(\x), \sigma_w(\x), \mu_z(\x), \sigma_z(\x)$ are
 the neural networks of the encoder.
 
 
-\begin{figure}[h]
+\begin{figure}[H]
 %\begin{framed}
 \centering
 \includegraphics[width=0.5\textwidth]{plots/dirichlet_gmm.gv.png}
@@ -2211,8 +2226,8 @@ the neural networks of the encoder.
 %\end{framed}
 \end{figure}
 
-Let's call the GMVAE model as presented in figure~\ref{fig:dirgmm} our
-"canonical" model. The results we present here unless otherwise stated were
+Let's call the \gmvae model as presented in figure~\ref{fig:dirgmm} our
+"canonical" version. The results we present here unless otherwise stated were
 obtained on the canonical model. As mentioned the choice of how to factor the
 inference ($q$) distribution is somewhat arbitrary and we have tested some other
 possibilities, for example by letting $\x$ play a direct role in the
@@ -2220,14 +2235,39 @@ classifier $q(\y | \dot)$:
 $q(\y, \z, \w, \dd, | \x) = 
 q(\z | \x)q(\w | \x)q(\y | \z, \x)q(\dd | \z)$ 
 
-The canonical model is more theoretically pure in the sense that since the
+The canonical version is theoretically purer in the sense that since the
 mixture distribution is on the latent space $\z$ it should be possible to
-determine the class just from $\z$. The other model has the advantage that no
+determine the class just from $\z$. The other version has the advantage that no
 information is lost on the encoding into $\z$ because the classifier observes
 both $\z$ and the original input. From tests we made we can't see a clear
 advantage to one factoring of $q$ over others, from those we have tried.
 
-\section{Computing the loss function of GMVAE model}
+\subsection*{}
+%\begin{framed}
+\begin{remark}
+%\begin{mydef}
+In the original GMVAE paper~\cite{dilokthanakul2016deep}, they don't use a neural
+network to define the classifier $q(\y|\z)$. Actually their factorization is
+given as $q(\y|\z,\w)$ but more importantly they rely they define
+$q(\y|\z, \w) \triangleq p(\y | \z, \w)$ (they don't have Dirichlet prior $d$)
+because it is tractable:
+$$p(\y=i | \z, \w) = 
+\frac{p(\y=i)p(\z | \w, \y=i)}{\sum_{j=1}^Kp(\y=j)p(\z | \w, \y=j)}
+$$
+
+There is at least one implementation~\cite{martinunsupervised} of GMVAE which
+doesn't use this tractability in $q$.
+
+In \gmvae with the addition of a Dirichlet prior, we have $q(\y | \d)$ and 
+it isn't possible, or at least not immediately obvious, how to use $p(\y | \w,
+\z)$ in the $q$ factorization.
+Moreover $p$ and $q$ are two separate distributions, and even though $p(\y | \w,
+\z)$ is tractable when $\y$ happens to have discrete distribution, it doesn't
+mean we must impose it on $q$.
+\end{remark}
+%\end{framed}
+
+\section{Computing the loss function of \gmvae}
 
 The loss function remains the -ELBO and we can break it into
 different terms:
@@ -2260,9 +2300,9 @@ The rest of the terms get the repetitive, mundane names:
 \ref{dgmmdloss} is called the $d$-error or $d$-kl-term.
 %\subsection{Relation between AE and VAE}
 
-To actually compute the loss function we will use Monte Carlo integration,
-with one sample for each observation.
-We will need to sample $\z$, $\w$ and $\dd$. For $\y$ we will not sample but
+To actually compute the loss function Monte Carlo integration is used,
+whereby \emph{one} sample is taken for each observation.
+We need to sample $\z$, $\w$ and $\dd$. As for $\y$ we don't sample but
 rather integrate over the categorical probabilities.
 
 
@@ -2291,9 +2331,9 @@ calculate $KL(q(\dd | \z) \| p(\dd))$ analytically
 formula and it's builtin function in Pytorch).
 \end{enumerate}
 
-\section{The GMVAE model in the supervised case}
+\section{\gmvae in the supervised case}
 
-The GMVAE model can also be used for supervised training. While the
+\gmvae can also be used for supervised training. While the
 architecture of the neural network remains the same, the probabilistic
 interpretation and consequently the calculation of the loss function is
 different.
@@ -2348,7 +2388,7 @@ The full factorization in the supervised case becomes:
 %\begin{framed}
 \centering
 \includegraphics[width=0.5\textwidth]{plots/dirichlet_gmm_supervised.gv.png}
-\caption{GMVAE: the supervised case, where $\y$ is an observed variable.
+\caption{\gmvae: the supervised case, where $\y$ is an observed variable.
 }
 \label{fig:dirgmm_sup}
 %\end{framed}
@@ -2385,40 +2425,47 @@ $\y$ in the weighted sum.
 The two $y$-terms are the log probability of the observed category given the
 sampled $\z$ and $\dd$.
 
-\section{Combining GMVAE with another clustering method}
+\section{Combining \gmvae with another clustering method}
 
-Because GMVAE performs particularly well in (semi)supervised 
+Because \gmvae performs particularly well in (semi)supervised 
 it can learn a given cluster/class assignment of a dataset by.
-But when might it be useful to train GMVAE if we already have a different
+But when might it be useful to train \gmvae if we already have a different
 clustering algorithm or any other unsupervised classifier that works well?
 Suppose that we have a "nice" training set where a given clustering algorithm
 performs well on.
-We can supervised train GMVAE on the nice dataset using the cluster assignment
+We can supervised train the model on the nice dataset using the cluster assignment
 as labels. At this point the model should learn to represent the data clusters
 nearly perfect.
-It is often the case that the GMVAE trained in this manner will out-perform 
-a "naive" GMVAE which was unsupervised trained.
+It is often the case that the \gmvae trained in this manner will out-perform 
+a "naive" model which was unsupervised trained.
 
 We can than run unsupervised training on the dataset, if we are
 lucky the accuracy might improve. So that's one use case but a minor one.
 
-The more important usage is that we can now classify with GMVAE other datasets
+The more important usage is that we can now classify with \gmvae other datasets
 of the same kind.
 We should compare the performance of the trained model on the testing set with
 the performance of the clustering algorithm \emph{on the testing set} which per
-assumption was not that good. If we are lucky the GMVAE might outperform the
+assumption was not that good. If we are lucky the model might outperform the
 clustering algorithm on the not--so--nice testing data.
 
-We tested a combination of GMVAE with Louvain~\cite{que2015scalable} clustering
-on several datasets (results shown in subsequent chapters).
+The combination of \gmvae with Louvain~\cite{que2015scalable} clustering
+was tested on several datasets (results shown in subsequent chapters).
 
 
-\section{The conditional mixture model, cGMVAE}
+\section{The conditional version of \gmvae}
 %\section{Motivation}
 
 We have seen two types of models that deal with data that is both numerical and
-categorical, namely the conditional VAE (CVAE), and the GMVAE.
-The cGMVAE is a combination of both, a conditional GMVAE. 
+categorical, namely the conditional VAE (CVAE), and the \gmvae.
+As we hinted before, there is a conditional variation of \gmvae which
+is meant to be used with data that contains both "condition" and "class"
+information. While both are types of categorical data, "condition" is used to
+described information that is always visible in the data. This can be for
+example batch information. It is always known from which "batch" a cell was
+taken. "Class" information might not always be known, and it is more an inherent
+property and not "technical" difference. For example cell types are best
+represented as classes.
 It is technically very easy to implement a conditional version from a 
 given VAE model. Basically it just requires 
 concatenating the condition $c$ to whatever variable we want to condition
@@ -2450,7 +2497,7 @@ taken.
 %\begin{framed}
 \centering
 \includegraphics[width=0.5\textwidth]{plots/dirichlet_gmm_cvae.v2.gv.png}
-\caption{cGMVAE, unsupervised case. Sorry for the arrow clutter}
+\caption{\gmvae (cond.), unsupervised case. Sorry for the arrow clutter}
 \label{fig:dirgmmcvae}
 %\end{framed}
 \end{figure}
@@ -2459,7 +2506,7 @@ taken.
 %\begin{framed}
 \centering
 \includegraphics[width=0.5\textwidth]{plots/dirichlet_gmm_cvae_supervised.v2.gv.png}
-\caption{cGMVAE, supervised case}
+\caption{\gmvae (cond.), supervised case}
 \label{fig:dirgmmcvae_super}
 %\end{framed}
 \end{figure}
@@ -2620,7 +2667,7 @@ datasets.
 \caption{Randomly generated samples}
 \label{fig:mnist_us_samples}
 \end{subfigure}
-\caption{GMVAE: unsupervised learning of MNIST. This particular model
+\caption{\gmvae: unsupervised learning of MNIST. This particular model
 achieved 0.93 accyracy which probably could be a little bit further
 improved with fine-tune training. The Louvain clustering of the latent space is even better
 than the prediction.}
@@ -2629,7 +2676,7 @@ than the prediction.}
 \end{figure}
 
 Figures~\ref{fig:mnist_us_10} shows the results of unsupervised, exact clustering
-of MNIST by the GMVAE model with 8 dimensional latent $z$-space and
+of MNIST by the \gmvae with 8 dimensional latent $z$-space and
 $w$-space.
 As both the UMAP and the generated samples show, there is still a little bit
 inaccuracies left, mainly with "7","4", and "9" digits.
@@ -2649,7 +2696,7 @@ where each component is nearly a subset of a single class.
 Moreover In the case of MNIST each digit has actually 2 or more basic appearance (e.g. 
 strait vs. italic version, closed vs. open top "4" figure etc.). One can argue
 that there are more "natural" classes in this dataset than the 10 digits.
-We ran unsupervised training of a GMVAE model with $20$ components.
+We ran unsupervised training of a \gmvae with $20$ components.
 
 \begin{figure}[h]
 \centering
@@ -2663,12 +2710,12 @@ We ran unsupervised training of a GMVAE model with $20$ components.
 \caption{20 components: generated digits}
 \label{fig:mnist_us_20c_samples}
 \end{subfigure}
-\caption{GMVAE with 20 components, unsupervised learning of MNIST.}
+\caption{\gmvae with 20 components, unsupervised learning of MNIST.}
 \label{fig:mnist_us_20}
 \end{figure}
 
-Figures~\ref{fig:mnist_us_20} show the results of the 20--component GMVAE
-model. "0" constitutes its own cluster, while "5" is split between 3 clusters.
+Figures~\ref{fig:mnist_us_20} show the results of the 20--component \gmvae
+. "0" constitutes its own cluster, while "5" is split between 3 clusters.
 The rest of the classes are each split between two clusters. Each cluster has
 its own digit-style (e.g. a strait "7" in one cluster, and more cursive version
 in the other cluster). Unfortunately there is some misclassifications between
@@ -2689,8 +2736,8 @@ Louvain clustering achieves on its own an accuracy of 0.967 on the
 \emph{training set} which is larger (60k images) and 0.925 on the smaller (10k) 
 testing set.
 
-We performed supervised training of GMVAE model using Louvain clusters as the
-labels.
+Then supervised training of \gmvae using Louvain clusters as the
+labels was performed.
 After this step, the model was 0.966 accurate \emph{on the testing set}.
 After further unsupervised training of the model the accuracy marginally
 improved to 0.968.
@@ -2705,11 +2752,23 @@ figure~\ref{fig:mnist_us_louvain}.
 \centering
 \includegraphics[width=0.4\textwidth]{images/gmmvae_mnist_us_louvain_samples1.png}
 \label{fig:mnist_us_louvain_samples}
-\caption{GMVAE with 12 components guided by Louvain clustering: randomly generated digits}
+\caption{\gmvae with 12 components guided by Louvain clustering: randomly generated digits}
 \label{fig:mnist_us_louvain}
 \end{figure}
 
+\section{Comparing with other methods}
 
+The results obtained in the preceding tests are comparable with the 
+original GMVAE method~\cite{dilokthanakul2016deep}.
+Figure~\ref{fig:mnist_comparisons} is taken from the original paper of Dilokthanakul et. al. 
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1\textwidth]{images/mnist_comparisons.png}
+\caption{Comparison of results by GMVAE and other
+methods as reported by~\cite{dilokthanakul2016deep}}
+\label{fig:mnist_comparisons}
+\end{figure}
 
 \chapter{More challenging tests with fashion-MNIST}
 Fashion-MNIST (FMNIST)~\cite{fmnist} is a drop-in replacement for MNIST which
@@ -2726,7 +2785,7 @@ too, but it is much more pronounced in the fashion-MNIST dataset.
 
 \section{Unsupervised learning}
 
-GMVAE achieved an overall $0.75$ accuracy after \emph{a lot} of training epochs.
+\gmvae achieved an overall $0.75$ accuracy after \emph{a lot} of training epochs.
 It is easier to achieve about $0.67$ accuracy after a quick training (about 10
 epochs).
 Choice of hyperparameters also have significant effect. For example choosing 
@@ -2756,11 +2815,11 @@ figure~\ref{fig:fmnist_us_20c_latent}.
 
 \section{Semisupervised learning}
 
-Our GMVAE model achieved accuracy of $0.85$ on semisupervised learning with
+Our \gmvae achieved accuracy of $0.85$ on semisupervised learning with
 $0.1$ --- $0.9$ split between known and hidden labels. 
 Considering that this accuracy was semisupervised and that the network 
-layer architecture we used was just fully connected with 2 hidden layers 
-we think this accuracy is not bad.
+layer architecture which was used was fully connected with just 2 hidden layers 
+I think this accuracy is not bad.
 
 \begin{figure}[h]
 \centering
@@ -2796,7 +2855,7 @@ where most of the misclassifications occur.
 %\caption{20 components: generated digits}
 %\label{fig:fmnist_us_20c_samples}
 %\end{subfigure}
-%\caption{GMVAE with 20 components, unsupervised learning of MNIST.}
+%\caption{\gmvae with 20 components, unsupervised learning of MNIST.}
 %\label{fig:fmnist_us_20}
 %\end{figure}
 
@@ -2804,11 +2863,11 @@ where most of the misclassifications occur.
 
 Louvain clustering achieves accuracy of 0.71 on both the training and the
 testing sets.
-We supervised trained a GMVAE and it achieved 0.714 accuracy, an insignificant
+With supervised training \gmvae achieved 0.714 accuracy, an insignificant
 difference from Louvain. With further unsupervised training rounds it reached 
-0.725 accuracy. Still below the 0.75 we achieved with the best model during 
-unsupervised only training but we were only able to
-achieve it with much trying and tuning.
+0.725 accuracy. Still below the 0.75 which was achieved with the best model during 
+unsupervised only training but it was only obtained
+with much trying and tuning.
 The combination with Louvain is much more consistent as a method.
 
 %Moreover the Louvain clustering on the latent space at least looks nicer than on
@@ -2821,10 +2880,15 @@ The combination with Louvain is much more consistent as a method.
 The Fashion-MNIST repository~\cite{fmnist} includes information about the
 classification accuracy obtained by various models. It is not stated which of
 the models if at all is unsupervised or semisupervised (for what we see none
-are). To be fair with the comparison we tested our model in fully supervised
-mode and achieved $0.9$ accuracy. We were also able to achieve $0.92$ with the
+are). To be fair with the comparison our model was tested in fully supervised
+mode and achieved $0.9$ accuracy. An accuracy of $0.92$ was reached 
 with a modified model that uses a kind of deep convolution neural network
-(RESNET18\cite{he2016deep}) in its decoder network. The best classifier listed on the
+(RESNET18\cite{he2016deep}) in its decoder network.
+It was done mostly as an anecdote because in this work we don't focus on the
+network architecture as much as in the probabilistic model. The network
+architecture unless otherwise specified, is kept fairly simple (2-4 fully
+connected layers, with batch normalization and dropout).
+The best classifier listed on the
 Fashion-MNIST website achieved $0.963$ accuracy (WRN-28-10+). It looks like
 methods that don't use image specific tricks and tweaks (things like convolution
 network, augmentation by flips, rotations etc \dots) achieve $0.9$ or less
@@ -2832,9 +2896,9 @@ accuracy. For example a support vector classifier (SVC), a kind of supervised
 classifier, is achieved accuracy of $0.897$.
 
 In principle it is possible to utilize neural networks that prove to be good
-classifiers in the Encoder modules of the GMVAE model as a drop in replacement
+classifiers in the Encoder modules of the \gmvae as a drop in replacement
 ; And networks that include reconstruction modules can be utilized in the 
-GMVAE decoder modules.
+\gmvae decoder modules.
 
 \chapter{Learning PBMCs}
 
@@ -2855,8 +2919,8 @@ sloppy technicians or what not.
 
 For the above reasons this data requires preprocessing before it can be
 analysed. A good practical guide for for preprocessing and analysis 
-can be found in the Scnapy~\cite{wolf2018scanpy} documentation, a tool we made
-good use with in this thesis.
+can be found in the Scnapy~\cite{wolf2018scanpy} documentation, a tool which is 
+extensively used with in this thesis.
 In short, the data is filtered to get rid of some bad reads, and then it is
 normalized so that each cell gets an equal amount of total counts. This
 normalized  count data than undergoes $log(1+x)$ transformation.
@@ -2880,34 +2944,40 @@ log-normalized.
 
 \section{a Beginners level dataset for starter}
 
-We first selected a scRNASeq data set~\cite{zheng2017massively} which is easy
-because the cells are nicely clustered by cell type.
-The main challenge with this data is that it is imbalanced. It has 2623 samples
+For the initial tests, an "easy" dataset was selected. In this scRNASeq dataset~\cite{zheng2017massively}
+the cells are nicely clustered by cell type.
+The main challenge with it is that it is imbalanced and some categories are
+sparse. It has 2623 samples
 of 7 cell types overall but in particularly one type (dendritic cells) only has 37 samples.
 
 While Louvain clustering performs well: it achieved 0.93--0.94 accuracy and found 9
-clusters, GMVAE failed to cluster the smallest cell type (see
+clusters, \gmvae failed to cluster the smallest cell type (see
 figure~\ref{fig:zheng_ss_latent}). With the other types
 it did ok with accuracy of around 0.92.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=1.1\textwidth]{images/gmmvae_zheng_us_9c_umap.png}
-\caption{Zheng dataset, UMAPs. The main issue with GMVAE is it fails to 
+\caption{Zheng dataset, UMAPs. The main issue with \gmvae is it fails to 
 classify the smallest group (Dendritic) in its own cluster.}
 \label{fig:zheng_ss_latent}
 \end{figure}
 
 In order to confirm that the imbalance and in particular the small sample size
-of the Dentritic class was the culprit to the misclassification of GMVAE we 
-generated a rebalanced data set by selecting 
-$300$ samples from each types with repetitions. In addition we added small
-Gaussian noise. We also scaled the log-count matrix of the original data set 
+of the Dentritic class was the culprit to the misclassification of \gmvae, 
+a 
+rebalanced dataset was generated by selecting 
+$300$ samples from each types with repetitions. In addition small
+Gaussian noise was added.
+The log-count matrix of the original data set was rescaled,
 so each gene has near standard normal distribution across the samples.
+The last step was optional and most preprocessing "recipes" avoid it.
+In the course of the testing, rescaling seemed to not improve but rather
+somewhat worsen the results.
 
-We trained a GMVAE model by taking turns, first on the rebalanced data, then on
+A \gmvae model was trained by taking turns, first on the rebalanced data, then on
 the original data, repeating several times.
-We were able to achieve 0.93 accuracy consistently and probably the method can
+It was  able to achieve 0.93 accuracy consistently and probably the method can
 be a little bit improved by tuning the model and the balancing preprocessing.
 In particular it appears that adding the small noise to the rebalanced data
 helped the model to learn all the cell types with fewer components.
@@ -2916,8 +2986,8 @@ of this rebalancing method. It goes without saying that such rebalancing process
 is only possible if the labels are known. It would still be possible to balance
 the data by using louvain clusters, and a possible another fix would be to just
 generate more noisy replicates of all the cells without accessing the label
-information. In this case we would still habe an imbalanced dataset but we will
-have sufficient quantity from every cell type.
+information. In this case we would still have an imbalanced dataset but there will
+be sufficient quantity from every cell type.
 
 \begin{figure}[h]
 \centering
@@ -2931,14 +3001,14 @@ on the rebalanced and the original data set.
 %However there is a logical failure in the rebalancing approach because in order
 %to rebalance by cell type we have to know the cell type.
 %What we showed perhaps is that if somehow we were given a balanced dataset with
-%unknown cell types, than probably GMVAE in unsupervised mode would perform better.
+%unknown cell types, than probably \gmvae in unsupervised mode would perform better.
 
 %There is another issue which should be mentioned. We treat the annotation (the
 %given cell types) in the scRNASeq datasets as ground truth but it is not
 %necessary so and some of the cells are likely mislabeled.
 
 \chapter{Larger but messier PBMCs data}
-In these tests we used a scRNASeq dataset~\cite{kang2018multiplexed} of PBMCs
+This chapter involves an scRNASeq dataset~\cite{kang2018multiplexed} of PBMCs
 (peripheral blood mononuclear cells) of the same $7$ cell types as in Zheng
 dataset.
 However the cells in this dataset comes from two groups:
@@ -2948,19 +3018,20 @@ Moreover,
 the Kang dataset is much more challenging than the Zheng dataset because the
 cell types are not nicely clustered as they are in Zheng.
 
-We use the same train/validation split of the data as is used
+The train/validation split which is used is the one given
 by~\cite{lotfollahi2019scgen}.
 %Because the data comes from different classes (=cell types) and from two
 %different batches (control/treatment), 
-%the conditional version of our mixture model, cGMVAE, 
+%the conditional version of our mixture model \gmvae, 
 %seems to be the most suitable for this type of data. The mixture
 %components correspond to the cell types, and the condition corresponds to
 %control/treatment.
 
 \section{Unsupervised learning of the control subset}
 
-In this section we subset the Kang dataset to just the control group. We first
-test unsupervised learning of GMVAE. Then we try to see if pre-learning the
+In this section just the control subset of the Kang dataset is used.
+We first
+test unsupervised learning of \gmvae. Then we try to see if pre-learning the
 Zheng dataset with supervised learning can help classify the Kang dataset.
 
 When Louvain clustering with default values was performed on the Kang train data,
@@ -2983,26 +3054,26 @@ $0.78$ in the validation subset.
 Kang dataset isn't as unbalanced as the Zheng one, and it is larger.
 Every cell type has over $400$ samples from each condition at least.
 
-GMVAE with 21 components achieved $0.78$ accuracy on both the train set and the
+\gmvae with 21 components achieved $0.78$ accuracy on both the train set and the
 validation set. However it also captured all $7$ cell types in its clusters 
 unlike Louvain which missed the CD8.
 
 Figure~\ref{fig:kang_control_train_gmvae_us_umap} shows the UMAP on the pca
-space, which lets us compare the original Louvain clustering with the GMVAE
+space, which lets us compare the original Louvain clustering with the \gmvae
 classification. The situation with Louvain cluster on the latent space and UMAP
-of the latent space is essentially the same so we are not showing it here. 
+of the latent space is essentially the same so it is not shown here. 
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=1.1\textwidth]{images/gmmvae_Kang_control_train_us_21c_umap.png}
 \caption{
-UMAP of the Kang train data. It is interesting that the GMVAE "clusters" can be fuzzy,
+UMAP of the Kang train data. It is interesting that the \gmvae "clusters" can be fuzzy,
 unlike Louvain clusters which tend to have clear borders.
 }
 \label{fig:kang_control_train_gmvae_us_umap}
 \end{figure}
 
-Perhaps the GMVAE performed essentially as well as Louvain and was even able to
+Perhaps the \gmvae performed essentially as well as Louvain and was even able to
 capture the cell type missed by Louvain because that the Dataset is larger and
 better balanced than the Zheng data.
 The sample size per cell type in the train set is in the range 500--2000 unlike
@@ -3034,12 +3105,14 @@ Figure~\ref{fig:zheng_pca_umap_new} shows the UMAP of the Zheng data. There are
 8 Louvain clusters (not sure why in the previous chapter there were 9), and they
 capture fairly accurately (0.92) the real classes. Moreover the Louvain clusters
 have well defined borders whereas the true labels are somewhat mixed in with
-each other (CD8 spots inside the CD4 blob). We tried two variations for the
-labeled subset: using the true labels and using the Louvain labels. With the
-first variation, we couldn't consistently train a model which captures all the
-classes. The second variation turned out better. We think that the extra mixture
+each other (CD8 spots inside the CD4 blob).
+Two variations for the
+labeled subset were tried: the true labels and the Louvain labels. With the
+first variation, it couldn't consistently capture all the
+classes. The second variation turned out better. 
+It must be that the extra mixture
 component (there are more Louvain cluster than cell types) helps the model to
-capture all the ground truth classes
+capture all the ground truth classes.
 
 \begin{figure}[h]
 \centering
@@ -3052,10 +3125,11 @@ UMAP of the latent space of the Kang validation subset (the holdout).
 
 Figure~\ref{fig:kang_new_latent} shows the result of the semisupervised
 training, where Zheng Louvain clusters were used as the labels. Technically
-speaking this was a form of unsupervised clustering in the sense that we didn't
-use the label information in the training at all. The accuracy was $0.81$ so still
+speaking this was a form of unsupervised clustering in the sense that the
+use the label information wasn't used in the training at all.
+The accuracy was $0.81$ so still
 not great but edging out the unsupervised training from the previous section.
-Moreover we have used minimal overclustering (just 1 extra component) and we
+Moreover a minimal overclustering (just 1 extra component) was used and I 
 think the UMAP of the latent space at least looks better. The main issue is with
 component 4 (predicting CD14) and component 4 (predicting CD8). It is also
 possible that the accuracy of the provided cell typing for the Kang dataset is
@@ -3064,38 +3138,41 @@ It is also interesting that the Louvain clustering of the latent space is very
 similar to the prediction, except that it unites components 4 and 5 of the
 model, and consequently missed the CD8 class.
 
-\chapter{Testing cGMVAE on toy data}
-The conditional model cGMVAE~\ref{fig:dirgmmcvae} is the most complicated one we
-specified. We decided to first test it on a toy dataset to see if it was worse
+\chapter{Testing (conditional) \gmvae on toy data}
+\label{chapter:toydata}
+The conditional variation of \gmvae~\ref{fig:dirgmmcvae} is the most complicated one 
+which was 
+specified in this work. 
+It was decided to first test it on a toy dataset to see if it was worse
 its salt otherwise why bother with it any further.
 
 The toy dataset is a synthetic 5-class 2-conditions 16-dimensional Gaussian "blobs".
 Every class at a specific condition is a Gaussian blob. 
 On the same class, the difference in condition is a small random shift plus some
-noise. We specifically aimed for the condition difference to be smaller than a
-class switch.
-Figure~\ref{fig:blobs_3d} shows the toy dataset (by its 3 major pca components).
+noise. It was specifically intended for the condition difference effect to be smaller than a
+class switch effect.
+Figure~\ref{fig:blobs_3d} shows the toy dataset (by its 3 major PCA components).
 
 \begin{figure}[h]
 \centering
 \includesvg [width=1.1\textwidth]{images/blobs3d_pca.svg}
-\caption{The toy dataset, showing a 3d plot of its 3 major pca components.
+\caption{The toy dataset, showing a 3d plot of its 3 major PCA components.
 }
 \label{fig:blobs_3d}
 \end{figure}
 
-We also would like to directly observe (rather than using UMAP or PCA) the
-latent spaces $\z$ and $\w$ so we set their dimensions to $2$.
-In general these dimensions are hyperparameters of the model and fixing them on 
+It is interesting to directly observe (rather than 'lensing' via UMAP or PCA) the
+latent spaces $\z$ and $\w$; So in this instance their dimensions were set to $2$.
+In general these dimensions are hyperparameters of the model and setting them
 too low can lead to sub-optimal results and also cause problems of numerical
 stability during training.
 The numerical stability issue is largely solved by constraining $\z$ and $\w$ to
 a bounded domain. Without it, 
 it is much more likely to get a Nan/Inf error during training.
-We use this constraint in all of our results which are brought
+This constraint was set in all of our testings which are brought
 in this paper.
 
-\subsection{cGMVAE with learned prior}
+\subsection{(cond.) \gmvae with learned prior}
 
 In this model, $\w$ has a learned prior $(\w | c)$ which encoder $q(\w | \x, c)$ 
 tries to stay close to.
@@ -3132,11 +3209,11 @@ However if we sample randomly from this distribution (\ref{fig:blobs_lp_w}, it
 is hard to distinguish any pattern. Everything (class and condition) appears
 mixed together.
 
-
-We forgot to mention that the model achieved perfect accuracy on this dataset.
-We defined it with exactly the same number of mixture component as there are
-classes in the data and it captured every class in its own component with $1.0$
-accuracy.
+A perfect accuracy ($1.0$) was reached with unsupervised training.
+The model was defined with the same number of mixture components as there were 
+classes and it captured every class in its own component with $1.0$ accuracy.
+It suggests that the underlying probabilistic model of \gmvae really matches 
+the distribution of the dataset.
 
 Move on to the $\z$ space.
 
@@ -3167,7 +3244,7 @@ suggests that the decoder is able to reconstruct from the same input in $\z$,
 A good thing if we want to use such a
 model to predict treatment effect.
 
-\subsection{cGMVAE with fixed standard normal prior}
+\subsection{\gmvae with fixed standard normal prior}
 
 In this model, $\w$ doesn't learn a prior but is given a fixed standard normal
 prior $p(\w)$ regardless of condition.
@@ -3182,15 +3259,14 @@ the model will pick the correct classes for its mixture components).
 There may also be a visible condition effect within a class on the $\z$ space
 because the condition $c$ is always passed forward as input for the models
 sub-networks.
-
-We again were able to achieve perfect accuracy with this model as well.
+This time as well perfect accuracy was reached.
 
 In figure~\ref{fig:blobs_nop_muw} we see the means of the encoded $\w$ space.
 Here we get complete separation to different classes, but in each class-cluster
 the conditions are tight together, even if somewhat not mixed in perfectly.
 An interesting contrast to the learned prior case
 (figure~\ref{fig:blobs_lp_muw}.
-We don't plot again random samples from $\w$ because again, it looks the same 
+Random samples from $\w$ aren't shown this time because again, it looks the same 
 as in the learned prior case, with everything mixed together.
 
 \begin{figure}[h]
@@ -3225,18 +3301,18 @@ purpose of treatment effect prediction and for batch effect reduction.
 \label{fig:blobs_nop_z}
 \end{figure}
 
-\chapter{cGMVAE on the treatment/control type PBMC dataset}
+\chapter{\gmvae on the treatment/control type PBMC dataset}
 As mentioned the full Kang dataset contains two groups of PBMCs, 
 the control group (used in the previous chapter) and the stimulated group, the latter contains the gene
 expressions after exposure to INF-$\beta$.
-The cGMVAE model may fit well for this data, where a binary condition variable
+The \gmvae model may fit well for this data, where a binary condition variable
 represents control/stimulated and the mixture component of the represent cell
 types. In particular we aim at obtaining some interesting results from
 (semi)supervised learning. This dataset is too hard for the model to learn
 unsupervised, as we have seen in the previous chapter.
 
-We used the same normalization and the same training/testing (they called it validation) split
-which was provided by~\cite{lotfollahi2019scgen}. All the training was done on
+Again the same normalization and the same training/testing (they called it validation) split
+which was provided by~\cite{lotfollahi2019scgen} were used. All the training was done on
 the training subset, and all the plots and evaluations are on the validation
 subset.
 
@@ -3259,7 +3335,7 @@ UMAP of the Kang validation dataset
 \label{fig:Kang_val_full}
 \end{figure}
 
-We trained a cGMVAE model without learned prior with latent $z$ and $w$ dimensions of $2$ and $28$
+The model used here was \gmvae model without learned prior with latent $z$ and $w$ dimensions of $2$ and $28$
 mixture components.
 The overall accuracy was $0.78$ which isn't very good but at least
 it was able to pick up all the classes.
@@ -3328,14 +3404,14 @@ samples from the encoded distribution.
 \section{Supervised training (full Kang dataset)}
 
 The main purpose here is to see by supervised training on
-this dataset cGMVAE learns something meaningful and potentially useful.
-We specifically wanted here the version with standard normal prior on the $w$
-space. We want the conditions and the labels to be deliberately mixed in by the encoder
+this dataset \gmvae learns something meaningful and potentially useful.
+It was specifically intended here to use the version with standard normal prior on the $w$
+space (aka no learned prior). We want the conditions and the labels to be deliberately mixed in by the encoder
 into the $w$ space. Then we can sample from it and from one sample in this
 latent space, generate every class and in both conditions.
 
 The latent dimensions this time were set at $24$ for both $z$ and $w$ because
-with these higher dimensions we achieved somewhat higher accuracy.
+with these higher dimensions it achieved somewhat higher accuracy.
 The accuracy on the training set reached $0.99$ but on the validation subset it
 dropped to $0.9$. Figure~\ref{fig:Kang_super_val_mu_z} shows the encoded means
 in the latent $z$ space by way of PCA. The class labels are fairly if not
@@ -3362,7 +3438,7 @@ to the real labels (see previous image)
 \end{figure}
 
 
-When we move to the $w$ space (figure\ref{Kang_super_val_w}), we see everything
+When we move to the $w$ space (figure\ref{fig:Kang_super_val_w}), we see everything
 is nicely mixed together and normally distributed, which is what we aimed for.
 
 \begin{figure}[h]
@@ -3371,7 +3447,7 @@ is nicely mixed together and normally distributed, which is what we aimed for.
 \caption{
 The latent $w$ space (sampling)
 }
-\label{fig:Kang_super_val_mu_z}
+\label{fig:Kang_super_val_w}
 \end{figure}
 
 
@@ -3385,7 +3461,7 @@ The latent $w$ space (sampling)
 
 \section{Simulating treatment effect}
 
-In this section we use the supervised trained model and see if it can
+In this section it is tested whether the supervised trained model can
 realistically convert cells from the control group to the treatment group.
 Specifically we take cells from the control group, and encode them into the $w$
 latent space, using the real label and condition information.
@@ -3408,7 +3484,7 @@ stimulated state.
 
 Figure~\ref{fig:Kang_super_val_umap_converted_control} shows a UMAP of the $x$
 (input/reconstructed) space of the validation subset combined with the control
-subset remapped into stimulated state by the cGMVAE. We can see that the decoder
+subset remapped into stimulated state by the \gmvae. We can see that the decoder
 learned to preserve batch effect in the $x$ space just by using the condition
 information, since in the latent $w$ space the batch effect was deliberately
 erased. Moreover, we see that cells of different types map close to each other,
@@ -3419,8 +3495,8 @@ end up in a long "chain". If we used sampling instead of taking means we would
 end up with a graph that has more volume to it but we chose to take the mean as
 they are the best approximation that the model can give us.
 
-We performed gene ranking to see if the genes that are good markers for control
-vs stimulated are also good at marking control vs the cells we converted to
+Gene ranking was performed to see if the genes that are good markers for control
+vs stimulated are also good at marking control vs the cells converted to
 stimulated state. As figure~\ref{fig:Kang_super_gene_markers} shows, among the
 top 10 marker genes in the two cases, there are many that are common.
 
@@ -3439,12 +3515,11 @@ top 10 marker genes in the two cases, there are many that are common.
 \label{fig:Kang_super_gene_markers}
 \end{figure}
 
-We also picked one cell type (B cells) and performed regression comparison,
+A single cell class was picked (B cells) and regression comparison was performed,
 using the same method (in fact the same function) as
 in~\cite{lotfollahi2019scgen}. This method comparing mean expression of genes
 between 2 groups (again only for one cell type).
-As figures~\ref{fig:Kang_bcells_ctrl_stim, fig:Kang_bcells_ctrl_converted,
-fig:Kang_bcells_stimulated_converted} show,
+As~\cref{fig:Kang_bcells_ctrl_stim,fig:Kang_bcells_ctrl_converted,fig:Kang_bcells_stimulated_converted} show,
 Stimulated and converted--to--stimulated have a very close to perfect
 correlation correlation, whereas comparing control vs. either one of them yields 
 equally "bad" regressions.
@@ -3478,7 +3553,7 @@ control--converted--to--stimulated.
 \label{fig:Kang_bcells_stimulated_converted}
 \end{figure}
 
-We preformed the same regression of mean expression comparisons, but this time
+The same regression of mean expression comparisons was tested, but this time
 over all the cells rather than on just one cell type. The results are a repeat
 of the B-cells case.
 
@@ -3513,11 +3588,11 @@ control--converted--to--stimulated.
 
 \section{Generating data}
 
-What we did in the previous section didn't require us to use cGMVAE because we
-kept the cell type information known anyone. A conditional VAE likely produce
+What was done in the previous section didn't require us to use \gmvae because we
+kept the cell type information known anyone. A conditional VAE might produce
 similar results.
-In this section we generate data that looks like the original Kang dataset, and
-for that we do need the mixture model of the cGMVAE.
+In this section it was attempted to generate data that looks like the original Kang dataset.
+In order to generate cells of specific type "on demand" that we need the mixture model of the \gmvae.
 
 The process goes as follows:
 \begin{itemize}
@@ -3541,14 +3616,13 @@ The Kang UMAP of real data combined with randomly generated data.
 \label{fig:Kang_generated_data}
 \end{figure}
 
-Figure~\ref{fig:Kang_generated_data} shows the final result we present for this
-paper. It is a UMAP of a hybrid dataset, comprised from the Kang validation
-dataset and randomly generated samples by cGMVAE.
-We can see that "synthetic" stimulated (control) data appears next to real
-stimulated (control) data. So the decoder preserves batch effect also for
-random samples from the latent space.
-The class labels of the real and the generated data also appear together or
-nearby.
+Figure~\ref{fig:Kang_generated_data} and~\ref{fig:Kang_generated_data_sns} show
+the final result presented for this paper. It is a UMAP of a hybrid dataset,
+comprised from the Kang validation dataset and randomly generated samples by
+\gmvae. We can see that "synthetic" stimulated (control) data appears next to
+real stimulated (control) data. So the decoder preserves batch effect also for
+random samples from the latent space. The class labels of the real and the
+generated data also appear together or nearby.
 
 \begin{figure}[h]
 \centering
@@ -3566,14 +3640,48 @@ appears close together with real data of the same label and condition.
 
 \chapter{Discussion, some remarks and conclusions}
 
-punkt.
-punkt.
-punkt.
+The tests with synthetic conditional-mixture dataset~\ref{chapter:toydata}
+suggest that \gmvae is a correct VAE model for such distribution.
+With "real world" data, it gets more difficult. Is the model too "weak" or
+is the underlying distribution of the real data not sufficiently
+conditional-mixture (or the mixture component not sufficiently Gaussian)? 
+
+To make the model "stronger" it's neural network architecture needs to be
+augmented. It wouldn't do to just add more fully connected layers, this approach
+doesn't scale well. Using proven convolution networks (resnets and the likes)
+should improve performance on image datasets but probably not so much on
+scRNASeq data where the gene order is arbitrary unlike in images. There may be
+better suited architectures for scRNAseq.
+
+Changing the distribution model is another thing that may be worth trying. I am
+thinking of a distribution type that is "transition--mixture", meaning that the
+mixture component are not fixed with sharp transition but rather there
+is gradual and samples have compound states rather than belonging to one pure
+mixture. That is just a general idea at this stage, not concrete implementation.
+
+As is stated in the abstract, the model performed quite well in the
+(semi)supervised case even with complex and noisy dataset. I don't know if there
+is demand for data generation in the realm of scRNAseq but in other types of
+data there is. There is an interesting use case called
+VADEERS~\cite{koras2022generative} which is a "drug recommender system" where 
+the GMVAE is a subsystem of a larger network.
+
+In the last chapter, the section about simulating treatment effects, it is based
+on similar things that are shown with scGen~\cite{lotfollahi2019scgen} on one of
+the datasets they used. Unfortunately I got into time troubles so I couldn't
+present an apples to apples comparison with scGen. In their paper, they show
+that scGen beats a conditional VAE which they tested against. I am quite
+confident \gmvae will perform better.
+
+There is a tutorial Jupyter-lab which demostrates how to use the code. It can be found
+here~\cite{mpgvaeRepo}.
+The entire material used in this thesis can be found here~\cite{mg22Repo}.
 
 
-\nocite{martinunsupervised}
-\nocite{szczurek2010introducing}
+%\nocite{martinunsupervised}
+\nocite{guo2017improved}
 \nocite{kingma2013auto}
+%\nocite{szczurek2010introducing}
 
 
 \printbibliography
