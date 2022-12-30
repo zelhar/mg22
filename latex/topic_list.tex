@@ -28,6 +28,7 @@
 \usepackage{IEEEtrantools}
 \usepackage[section]{placeins} %\Floatbarrier
 \usepackage{float}
+\usepackage{verbatim}
 %\usepackage{showframe}
 %\usepackage[a4paper, width=150mm, top=5mm, bottom=5mm]{geometry}
 \usepackage[a4paper, width=150mm, top=25mm, bottom=25mm]{geometry}
@@ -104,8 +105,10 @@
 \floatstyle{boxed}
 \restylefloat{figure}
 \restylefloat{table}
-\begin{document}
 %\pagestyle{fancy}
+
+\begin{document}
+
 \begin{titlepage}
 \begin{center}
 {\includegraphics[width=1.0\textwidth]{images/MPIMG_RGB_gruen.png}}\\
@@ -139,13 +142,16 @@ Thesis advisor / 1st Supervisor: professor Martin Vingron\\
 
 \vfill
 
-Yiftach Kolb (Matrikelnummer 5195763)
+Yiftach Josef Kolb
+(Matrikelnummer 5195763)
+%\normalsize{(Matrikelnummer 5195763)}
 
 Berlin, \today
 
 \vfill
 {\includegraphics[width=0.8\textwidth]{images/fu-logo_bildschirm_RGB1.jpg}}
 \end{center}
+\normalsize
 \end{titlepage}
 
 %\author{Kolb, Yiftach}
@@ -174,6 +180,7 @@ $\text{sc}{\ast}$GMVAE stands for
 "Single cell RNASeq ($\ast$) Conditional Gaussian Mixture Variation
 AutoEncoder".
 
+
 %\chapter*{Declaration}
 %punkt.
 %punkt.
@@ -187,10 +194,10 @@ AutoEncoder".
 \chapter*{Acknowledgement}
 
 I am very thankful to
-professor Martin Vingron for 
-for being my mentor and advisor and for directing me through this work. 
+professor Martin Vingron 
+for being my mentor and advisor, and for directing me through this work. 
 I owe Martin, his department and the Max Planck institute  a lot of gratitude
-for providing me a very welcoming, productive and scientifically rich
+for providing the very welcoming, productive and scientifically rich
 environment.
 Thanks to professor Tim Conrad for being my thesis defense supervisor twice in a
 row!
@@ -202,7 +209,44 @@ row!
 
 \tableofcontents
 
-\chapter{Introduction} punkt. \emph{punkt}, \textit{punkt}.
+
+\chapter*{Preface}
+
+\emph{VAEs -- why should we (bioinormarticians) care about them?}.
+%This sentence can colloquially summarize the following work, where we are making
+%a case for applying them in our field.
+
+When professor Vingron and I originally set up on theme for exploration towards a thesis, 
+it was roughly about researching autoencoders and how they can be applied 
+to single cell RNASeq (scRNASeq) data. I knew a little bit about autoencoders
+and neural networks and basically nothing about scRNASeq.
+
+Pretty soon I found out that we are dealing with datasets of gene expression
+levels for individual cells. Each cell is supposed to have an expression profile
+depending on mostly cell type and also other factors such as cell cycle and
+other factors but in the papers I've read it's mainly the cell type so that's
+our main focus here too.
+
+So now while doing preliminary research into neural networks I am thinking,
+cell types, that's like categorical data, it sounds like I am dealing with
+classification task, unsupervised learning, something like that, how can an
+autoencoder help me with that. 
+I've seen pretty soon how autoencoders and the like are used on RNASeq and
+similar data; Basically it's about replacing PCA with an AE, VAE or some fancier 
+derivative. The rest of the analysis is pretty much identical. Another use is
+for batch effect reduction by way of a conditional model.
+Not very exciting.
+
+The entire construct that is VAE was invented, as far as I know, by
+Kingma and Welling. About two or three followups from their original paper you
+get into their paper on semisupervised learning. Nice. But soon you find out
+from the comments that it just doesn't work unsupervised. Then a little bit more
+search got me into the Gauss mixture model VAE of Dilokthanakul, this one seems
+to work also in unsupervised learning, so I settled on it as the base model to
+experiment with.
+By the end of this thesis, my goal is to provide a skeptical 
+overview of what these models are good for as well as their limitations.
+
 
 \chapter{Notations and definitions, preliminary concepts}
 %\section{Basic Definitions}
@@ -592,6 +636,7 @@ Moore--Penrose generalized inverse of $\bv{E}$). Moreover, $\bv{V}_l$ still
 minimizes the general problem~\ref{eqn:pca2} and for every solution $\bv{W}$, it
 must hold that $\text{span}\{\bv{W}\} = \text{span}\{\bv{V}_l\}$ (but it isn't
 necessarily an orthogonal matrix).
+
 
 \chapter{Neural networks}
 
@@ -2793,6 +2838,48 @@ GMVAE decoder modules.
 
 \chapter{Learning PBMCs}
 
+\section{About scRNASeq}
+
+Single-cell-RNA-seq~\cite{luecken2019current} (scRNASeq) is gene expression data
+on single cell level. The raw data is a matrix of non-negative integers, where
+rows represent cells and columns represent genes. The integer value represents
+expression "count"-- roughly how many RNA translation copies were captured by
+the sequencing. 
+
+There are are various kinds of noise and distortions which typically afflict
+these datasets. For example some genes might get zero count in a particular cell
+even though they are highly expressed in it. There are batch effects, where
+taking two separate measurements from essentially the same cell population 
+might come out different because of different equipment, or 
+sloppy technicians or what not.
+
+For the above reasons this data requires preprocessing before it can be
+analysed. A good practical guide for for preprocessing and analysis 
+can be found in the Scnapy~\cite{wolf2018scanpy} documentation, a tool we made
+good use with in this thesis.
+In short, the data is filtered to get rid of some bad reads, and then it is
+normalized so that each cell gets an equal amount of total counts. This
+normalized  count data than undergoes $log(1+x)$ transformation.
+The result is a dataset that is comparable to other
+log-normalized datasets because the expression level of a gene per cell is 
+relativizad.
+The scRNASeq datasets used in this work were taken from the sources of one
+paper~\cite{lotfollahi2019scgen} and came already preprocessed and
+log-normalized.
+
+%Cells that are of the same type should have similar "expression profiles",
+%meaning they would have high correlation and big overlap in their sets of highly
+%expressed genes, as well as in their sets of lowly expressed genes. On the other
+%hand cells of one type should have some genes with expression levels that
+%differentiate them from other cell types.
+%There are other technical and biological factors that affect a cell's measured
+%gene expression levels (life cycle stage, noise, measuring errors, cell
+%undergoing transition etc.). 
+
+
+
+\section{a Beginners level dataset for starter}
+
 We first selected a scRNASeq data set~\cite{zheng2017massively} which is easy
 because the cells are nicely clustered by cell type.
 The main challenge with this data is that it is imbalanced. It has 2623 samples
@@ -3455,7 +3542,7 @@ The Kang UMAP of real data combined with randomly generated data.
 \end{figure}
 
 Figure~\ref{fig:Kang_generated_data} shows the final result we present for this
-paper.It is a UMAP of a hybrid dataset, comprised from the Kang validation
+paper. It is a UMAP of a hybrid dataset, comprised from the Kang validation
 dataset and randomly generated samples by cGMVAE.
 We can see that "synthetic" stimulated (control) data appears next to real
 stimulated (control) data. So the decoder preserves batch effect also for
@@ -3467,9 +3554,8 @@ nearby.
 \centering
 \includegraphics[width=1.15\textwidth]{images/Kang_generated_data_sns.png}
 \caption{
-The Kang UMAP of real data combined with randomly generated data.
-Generated data appears close together with real data of the same label and
-condition.
+The Kang UMAP of real data combined with randomly generated data. Generated data
+appears close together with real data of the same label and condition.
 }
 \label{fig:Kang_generated_data_sns}
 \end{figure}
@@ -3479,74 +3565,16 @@ condition.
 
 
 \chapter{Discussion, some remarks and conclusions}
+
 punkt.
 punkt.
 punkt.
 
-%\begin{figure}[h]
-%\centering
-%\includegraphics[width=1.1\textwidth]{}
-%\caption{
-%}
-%\label{}
-%\end{figure}
 
-%\begin{figure}[h]
-%%\begin{framed}
-%\centering
-%\begin{subfigure}[t]{0.45\textwidth}
-%\includegraphics[width=0.95\textwidth]{}
-%\caption{}
-%\end{subfigure}
-%\begin{subfigure}[t]{0.45\textwidth}
-%\includegraphics[width=0.95\textwidth]{}
-%\caption{}
-%\end{subfigure}
-%%\end{framed}
-%\caption{}
-%\label{}
-%\end{figure}
-
-
-%\begin{figure}[h]
-%%\begin{framed}
-%\centering
-%\begin{subfigure}[b]{0.9\textwidth}
-%\includegraphics[width=\textwidth]{images/model_mnist_10c_generation.png}
-%\caption{}
-%%\caption{blabla}
-%%\label{bla}
-%\end{subfigure}
-%%\includegraphics[width=0.4\linewidth]{images/model_mnist_10c_generation.png}
-%\begin{subfigure}[b]{0.3\textwidth}
-%\includegraphics[width=\textwidth]{images/model_mnist_10c_umap.png}
-%\caption{}
-%%\includegraphics[width=0.4\linewidth]{images/model_mnist_10c_umap.png}
-%\end{subfigure}
-%\caption{a figure}
-%\label{fig:myfig}
-%%\end{framed}
-%\end{figure}
-
-
-
-%\author{Yiftach Kolb}
-%\date{Berlin, \today}
-%\maketitle
-
-%\section*{Intro Foo}
-%\lipsum{1}
-%\section{Bar}
-%\lipsum{2}
-%\appendix
-%\section{Spam}
-%\lipsum{3}
-
+\nocite{martinunsupervised}
 \nocite{szczurek2010introducing}
 \nocite{kingma2013auto}
 
+
 \printbibliography
-
 \end{document}
-
-
