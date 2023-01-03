@@ -190,9 +190,9 @@ data is tested.
 It is particularly suitable for the (semi)supervised use case,
 where individual cell type information is partially available
 in the dataset or exists already in another, similar dataset.
-The model's name and title \emph{\scgmvae} stand for:
+The model's name and the thesis' title \emph{\scgmvae} stand for:
 (maybe Conditional) Gaussian Mixture with Dirichlet
-prior Variational Auto Encoder.
+prior Variational Auto Encoder (for) s(ingle--cell-RNA--Se)q.
 
 %"\scgmvae" stands for:\\ 
 %\emph{\gmvae (for) s(ingle--cell-RNA--Se)q}.
@@ -2145,7 +2145,10 @@ distribution. As explained above, the $\y$-prior is "bad" because it will be
 uniform categorical, while we want to use the inference model $q(\y | \z)$ to
 predict the category. In figure~\ref{fig:mymix} $\pi$ is moved inside the plate
 and becomes a variable. Its prior is a symmetric Dirichlet with hyper-parameter
-$\alpha \in \R$.
+$\alpha \in \R$. In the actual models, there is another random vector ($\w$) with  
+a diagonal standard normal Gaussian prior distribution, that is used for
+generating the
+mixture components $\Sigma, \mu$ by a neural network.
 %We call our modification the \emph{dGMVAE} model (d stands for the Dirichlet prior
 %obviously).
 
@@ -2160,10 +2163,10 @@ there are conditions in the dataset it was meant to process. As will be shown la
 this model also has a conditional
 version but for now we formalise the simple case without conditions. The 
 In addition to the latent variables $\z$ (mixture), and $\y$ (categorical), there
-$2$ more variables.
+are 2 more variables.
 The third latent variabel $\w$ has standard normal prior.
 With $\w$ the model generates the means and variances $\mu,
-\sigma$ for the mixture's components, by a of neural network.
+\sigma$ for the mixture's components of $\z$, by a of neural network.
 A fourth variable $\dd$ is the Dirichlet prior.
 The full generative model factors as (figure~\ref{fig:dirgmm}):
 
@@ -2226,7 +2229,7 @@ the neural networks of the encoder.
 %\begin{framed}
 \centering
 \includegraphics[width=0.5\textwidth]{plots/dirichlet_gmm.gv.png}
-\caption{GMMAE with Dirichlet prior}
+\caption{GMVAE with Dirichlet prior}
 \label{fig:dirgmm}
 %\end{framed}
 \end{figure}
@@ -2366,7 +2369,7 @@ network architecture. $p(\y | \dd)$ is determined by
 the same decoder component as in the unsupervised case but $p(\y | \z)$ equals 
 $q(\y | \z)$ of the encoder in the unsupervised case. So while again we keep the same
 architecture we will compute the loss function differently.
-As for the inference model it becomes other than losing the $q(\y | \z)$
+As for the inference model other than losing the $q(\y | \z)$
 component the rest remains the same.
 The full factorization in the supervised case becomes:
 
@@ -2947,18 +2950,18 @@ log-normalized.
 
 
 
-\section{a Beginners level dataset for starter}
+\section{a Beginner level dataset for starters}
 
-For the initial tests, an "easy" dataset was selected. In this scRNASeq dataset~\cite{zheng2017massively}
-the cells are nicely clustered by cell type.
+For the initial tests, an "easy" dataset was selected. In this scRNASeq
+dataset~\cite{zheng2017massively} the cells are nicely clustered by cell type.
 The main challenge with it is that it is imbalanced and some categories are
-sparse. It has 2623 samples
-of 7 cell types overall but in particularly one type (dendritic cells) only has 37 samples.
+sparse. It has 2623 samples of 7 cell types overall but in particularly one type
+(dendritic cells) only has 37 samples.
 
-While Louvain clustering performs well: it achieved 0.93--0.94 accuracy and found 9
-clusters, \gmvae failed to cluster the smallest cell type (see
-figure~\ref{fig:zheng_ss_latent}). With the other types
-it did ok with accuracy of around 0.92.
+While Louvain clustering performs well: it achieved 0.93--0.94 accuracy and
+found 9 clusters, \gmvae failed to cluster the smallest cell type (see
+figure~\ref{fig:zheng_ss_latent}). With the other types it did ok with accuracy
+of around 0.92.
 
 \begin{figure}[h]
 \centering
@@ -3651,34 +3654,38 @@ With "real world" data, it gets more difficult. Is the model too "weak" or
 is the underlying distribution of the real data not sufficiently
 conditional-mixture (or the mixture component not sufficiently Gaussian)? 
 
-To make the model "stronger" it's neural network architecture needs to be
+To make the model "stronger" its neural network architecture needs to be
 augmented. It wouldn't do to just add more fully connected layers, this approach
-doesn't scale well. Using proven convolution networks (resnets and the likes)
-should improve performance on image datasets but probably not so much on
+doesn't scale well. Using proven convolution networks (Resnets and the likes)
+should improve performance on image datasets but probably not so as much on
 scRNASeq data where the gene order is arbitrary unlike in images. There may be
-better suited architectures for scRNAseq.
+better suited architectures for scRNAseq or a need to invent such.
 
 Changing the distribution model is another thing that may be worth trying. I am
 thinking of a distribution type that is "transition--mixture", meaning that the
-mixture component are not fixed with sharp transition but rather there
-is gradual and samples have compound states rather than belonging to one pure
-mixture. That is just a general idea at this stage, not concrete implementation.
+mixture component are not fixed with sharp switches but rather there is gradual
+transition and samples have compound states rather than belonging to one pure
+mixture component. That is just an amorphic idea at this stage, not concrete
+implementation.
 
 As is stated in the abstract, the model performed quite well in the
 (semi)supervised case even with complex and noisy dataset. I don't know if there
 is demand for data generation in the realm of scRNAseq but in other types of
 data there is. There is an interesting use case called
 VADEERS~\cite{koras2022generative} which is a "drug recommender system" where 
-the GMVAE is a subsystem of a larger network.
+the GMVAE is a subsystem of a larger neural network.
 
-In the last chapter, the section about simulating treatment effects, it is based
-on similar things that are shown with scGen~\cite{lotfollahi2019scgen} on one of
-the datasets they used. Unfortunately I got into time troubles so I couldn't
-present an apples to apples comparison with scGen. In their paper, they show
-that scGen beats a conditional VAE which they tested against. I am quite
+In the last chapter, the section about simulating treatment effects is based
+on similar things that are shown with scGen~\cite{lotfollahi2019scgen} using
+their mean-expression regression plot function on one of
+the datasets they used. Unfortunately due to time troubles I couldn't
+present an apples to apples comparison with scGen. In that paper, they show
+that scGen beats a conditional VAE which they compared with scGen. I am quite
 confident \gmvae will perform better.
 
-There is a tutorial Jupyter-lab which demostrates how to use the code. It can be found
+The code written for this project and all software tools which were used are
+free and open source (FOSS).
+There is a tutorial Jupyter-lab which demonstrates how to use the code. It can be found
 here~\cite{mpgvaeRepo}.
 The entire material used in this thesis can be found here~\cite{mg22Repo}.
 
