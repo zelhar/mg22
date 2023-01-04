@@ -145,8 +145,8 @@
 a Master Thesis in Bioinformatics
 \vspace{1.0cm}
 
-Advisor / supervisor: Professor Martin Vingron\\
-Supervisor: Professor Tim Conrad
+Advisor / Reviewer: Professor Martin Vingron\\
+Reviewer: Professor Tim Conrad
 
 \vfill
 
@@ -544,7 +544,7 @@ Suppose that we have a data matrix $\X = \{\x_1, \dots , \x_N\}$. We think of
 $\X$ as a set of $N$ independent samples, all drawn from the same data
 distribution $\x \sim p(\x)$. We think of $\x_i$ as a realization of a random
 vector which we also denote with $\x_i$. The random vectors $\x_i$ are
-iid we designate with by $\x$ a 'generic' random vector with the same
+i.i.d we designate with by $\x$ a 'generic' random vector with the same
 distribution. This is another motivation why
 we take mean over the batch dimension, because then $\|\X\| = \frac{1}{N}
 \sum_1^N \|\x_i\| \approx \E [\|\x\|]$.
@@ -1301,7 +1301,7 @@ evidence}.
 &\geq  \frac{1}{N} \int \log \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})}dq(\bv{Z}) 
 & \text{Jensen inequality}\\
 &= \frac{1}{N} \int \sum_1^N \log \frac{p(\x_i, \z_i)}{q(\z_i)}dq(\z_i) 
-& \text{using the iid property~\ref{nicefactor}}\\
+& \text{using the i.i.d property~\ref{nicefactor}}\\
 &= \frac{1}{N} \sum_1^N - \LL(q,p,\x_i)
 & \text{definition of } \LL(q,p,\x_i)\\
 & = -\mathcal{L}(q,p,X) \triangleq -\mathcal{L}(q,p)
@@ -2257,23 +2257,27 @@ advantage to one factoring of $q$ over others, from those we have tried.
 \begin{remark}
 %\begin{mydef}
 In the original GMVAE paper~\cite{dilokthanakul2016deep}, they don't use a neural
-network to define the classifier $q(\y|\z)$. Actually their factorization is
-given as $q(\y|\z,\w)$ but more importantly they rely they define
-$q(\y|\z, \w) \triangleq p(\y | \z, \w)$ (they don't have Dirichlet prior $d$)
-because it is tractable:
+network to define the encoder's classifier $q(\y|\z)$. Actually their factorization is
+given as $q(\y|\z,\w)$ but more importantly they they define
+$q(\y|\z, \w) \triangleq p(\y | \z, \w)$ 
+because in the GMVAE probabilistic model this posterior is tractable 
+(it has no Dirichlet $\dd$ random vector):
 $$p(\y=i | \z, \w) = 
 \frac{p(\y=i)p(\z | \w, \y=i)}{\sum_{j=1}^Kp(\y=j)p(\z | \w, \y=j)}
 $$
 
 There is at least one implementation~\cite{martinunsupervised} of GMVAE which
-doesn't use this tractability in $q$.
+doesn't use this tractability for factorizing $q$.
 
-In \gmvae with the addition of a Dirichlet prior, we have $q(\y | \d)$ and 
-it isn't possible, or at least not immediately obvious, how to use $p(\y | \w,
-\z)$ in the $q$ factorization.
-Moreover $p$ and $q$ are two separate distributions, and even though $p(\y | \w,
-\z)$ is tractable when $\y$ happens to have discrete distribution, it doesn't
-mean we must impose it on $q$.
+In \gmvae the addition of a Dirichlet prior $q(\dd | \z)$ is specifically
+there to estimate a better prior distribution $q(\y | \dd)$ for $\y$.
+It isn't possible, or at least not immediately obvious, how to use $p(\y | \w, \z)$
+in the $q$ factorization and still use this Dirichlet prior.
+Moreover $p$ and $q$ are two separate distributions,
+and although $p(\y | \w, \z)$ is tractable when $\y$ happens to have discrete
+distribution, it doesn't mean we must use it in the factorization of $q$. We are
+doing variational inference and from that perspective it is theoretically purer
+to not "mix in" any $p$ posterior in the factorization of $q$.
 \end{remark}
 %\end{framed}
 
@@ -2430,7 +2434,7 @@ The loss function in the supervised case is:
 The reconstruction error, the $w$-error and the $d$-error are calculated exactly
 like in the unsupervised loss.
 The $z$-term is also calculated in exactly the same procedure as in unsupervised
-case except that we only need to take the component indicated by the obseved
+case except that we only need to take the component indicated by the observed
 $\y$ in the weighted sum.
 The two $y$-terms are the log probability of the observed category given the
 sampled $\z$ and $\dd$.
@@ -2678,7 +2682,7 @@ datasets.
 \label{fig:mnist_us_samples}
 \end{subfigure}
 \caption{\gmvae: unsupervised learning of MNIST. This particular model
-achieved 0.93 accyracy which probably could be a little bit further
+achieved 0.93 accuracy which probably could be a little bit further
 improved with fine-tune training. The Louvain clustering of the latent space is even better
 than the prediction.}
 \label{fig:mnist_us_10}
@@ -2690,18 +2694,18 @@ of MNIST by the \gmvae with 8 dimensional latent $z$-space and
 $w$-space.
 As both the UMAP and the generated samples show, there is still a little bit
 inaccuracies left, mainly with "7","4", and "9" digits.
-Despite this, the actual latent space is very nicely clustered and louvain
-clustering over this space retrieves the true classification of the the data
+Despite this, the actual latent space is very nicely clustered and Louvain
+clustering over this space retrieves the true classification of the data
 set, even to higher accuracy than the model prediction.
 Note that in unsupervised learning the predicted classes are naturally untagged
 with the ground truth class tag, the point is that it should find essentially
-the true partitioning of the data. The tag assignment can be done later. for
+the true partitioning of the data. The tag assignment can be done later. For
 example each predicted cluster is tagged with the class with which it has the
 most overlap.
 
 \subsection{With overclustering}
 Overclustering means defining a mixture distribution with more components then
-ground truth classes. This helps the model to create homogenous classes,
+ground truth classes. This helps the model to create homogeneous classes,
 where each component is nearly a subset of a single class.
 Moreover In the case of MNIST each digit has actually 2 or more basic appearance (e.g. 
 strait vs. italic version, closed vs. open top "4" figure etc.). One can argue
@@ -2728,7 +2732,7 @@ Figures~\ref{fig:mnist_us_20} show the results of the 20--component \gmvae
 . "0" constitutes its own cluster, while "5" is split between 3 clusters.
 The rest of the classes are each split between two clusters. Each cluster has
 its own digit-style (e.g. a strait "7" in one cluster, and more cursive version
-in the other cluster). Unfortunately there is some misclassifications between
+in the other cluster). Unfortunately there is some misclassification between
 "4" and "9". Overall accuracy is about $0.946$, probably with some room for
 improvement with additional training rounds. Louvain clustering of the latent
 space is able to almost perfectly capture the true classes, with the "1" class
@@ -2790,7 +2794,7 @@ T-shirt, trouser, pullover, dress, coat, sandal, shirt, sneaker, bag, boot.
 }
 Although each image is tagged with a single category, it is not always obvious
 even for a human observer whether a certain image is actually a coat or a shirt,
-for example. There might be a little bit of this type of unclaritty in MNIST
+for example. There might be a little bit of this type of unclarity in MNIST
 too, but it is much more pronounced in the fashion-MNIST dataset.
 
 \section{Unsupervised learning}
@@ -2929,7 +2933,7 @@ sloppy technicians or what not.
 
 For the above reasons this data requires preprocessing before it can be
 analysed. A good practical guide for for preprocessing and analysis 
-can be found in the Scnapy~\cite{wolf2018scanpy} documentation, a tool which is 
+can be found in the Scanpy~\cite{wolf2018scanpy} documentation, a tool which is 
 extensively used with in this thesis.
 In short, the data is filtered to get rid of some bad reads, and then it is
 normalized so that each cell gets an equal amount of total counts. This
@@ -2994,7 +2998,7 @@ helped the model to learn all the cell types with fewer components.
 Figure~\ref{fig:zheng_ss_latent_balanced} visualize with UMAPs the results 
 of this rebalancing method. It goes without saying that such rebalancing process
 is only possible if the labels are known. It would still be possible to balance
-the data by using louvain clusters, and a possible another fix would be to just
+the data by using Louvain clusters, and a possible another fix would be to just
 generate more noisy replicates of all the cells without accessing the label
 information. In this case we would still have an imbalanced dataset but there will
 be sufficient quantity from every cell type.
@@ -3068,7 +3072,7 @@ Every cell type has over $400$ samples from each condition at least.
 validation set. However it also captured all $7$ cell types in its clusters 
 unlike Louvain which missed the CD8.
 
-Figure~\ref{fig:kang_control_train_gmvae_us_umap} shows the UMAP on the pca
+Figure~\ref{fig:kang_control_train_gmvae_us_umap} shows the UMAP on the PCA
 space, which lets us compare the original Louvain clustering with the \gmvae
 classification. The situation with Louvain cluster on the latent space and UMAP
 of the latent space is essentially the same so it is not shown here. 
@@ -3661,7 +3665,7 @@ augmented. It wouldn't do to just add more fully connected layers, this approach
 doesn't scale well. Using proven convolution networks (Resnets and the likes)
 should improve performance on image datasets but probably not so as much on
 scRNASeq data where the gene order is arbitrary unlike in images. There may be
-better suited architectures for scRNAseq or a need to invent such.
+better suited architectures for scRNASeq or a need to invent such.
 
 Changing the distribution model is another thing that may be worth trying. I am
 thinking of a distribution type that is "transition--mixture", meaning that the
@@ -3672,7 +3676,7 @@ implementation.
 
 As is stated in the abstract, the model performed quite well in the
 (semi)supervised case even with complex and noisy dataset. I don't know if there
-is demand for data generation in the realm of scRNAseq but in other types of
+is demand for data generation in the realm of scRNASeq but in other types of
 data there is. There is an interesting use case called
 VADEERS~\cite{koras2022generative} which is a "drug recommender system" where 
 the GMVAE is a subsystem of a larger neural network.
@@ -3687,7 +3691,7 @@ confident \gmvae will perform better.
 
 The code written for this project and all software tools which were used are
 free and open source (FOSS).
-There is a tutorial Jupyter-lab which demonstrates how to use the code. It can be found
+There is a tutorial Jupyter-Lab which demonstrates how to use the code. It can be found
 here~\cite{mpgvaeRepo}.
 The entire material used in this thesis can be found here~\cite{mg22Repo}.
 
