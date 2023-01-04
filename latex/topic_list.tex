@@ -237,22 +237,22 @@ and neural networks and little to nothing about scRNASeq.
 It soon became clear that we are dealing with datasets of gene expression
 levels for individual cells. Each cell is supposed to have an expression profile
 depending on mostly cell type and also other factors such as cell cycle and
-other factors, but the cell type is the first order of approximation.
+, but cell type is the first order of approximation.
 
-So now while doing preliminary research into neural networks I was thinking,
-cell types is categorical data, so I am dealing with a classification task,
+While doing preliminary research into neural networks I was thinking,
+since cell types is categorical data, I am dealing with a classification task,
 unsupervised learning, something like that; How can an autoencoder help me with
-that. So I've non-exhaustively searched what has been done with autoencoders and
-the like on scRNASeq and similar data; Basically it's about replacing PCA with
+that. So I've non-exhaustively searched what has been done with autoencoders
+on scRNASeq and similar data; Basically it's about replacing PCA with
 an AE, VAE or some fancier derivative. The rest of the analysis is with
 unrelated methods. Another use is for batch effect reduction by way of a
-conditional model. Not very exciting.
+conditional model. But VAEs can do more than that.
 
 The entire construct that is VAE was invented, as far as I know, by Kingma and
 Welling~\cite{kingma2013auto,kingma2014semi,}. About one follow--up from
 their original paper they introduce semi--supervised learning. Nice.
 But their models doesn't work well on unsupervised learning.
-Then a little bit more search got me into the Gaussian mixture model VAE of
+Then a little bit more research got me into the Gaussian mixture model VAE of
 Dilokthanakul~\cite{dilokthanakul2016deep}, 
 where they demonstrate
 unsupervised learning on some test datasets like MNIST.
