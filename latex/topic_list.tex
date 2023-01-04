@@ -420,7 +420,7 @@ second axis (concatenation of rows) which implicitly means they have the same
 number of rows. $\{\X, \Y\}$ represents concatenation along the first axis
 (concatenation of columns) which implies they must have equal number of columns.
 
-Zero--blocks are indicated with $0$ or are simply left as voids. For
+Zero--blocks are indicated with $0$ or are left as voids. For
 example
 $ \left( \begin{array}{c c} \bv{A} & \bv{B} \\ \bv{0} & \bv{D}
 \end{array} \right) $ 
@@ -453,7 +453,7 @@ its domain and we may not always subscript $\phi$ with it. The parameterized map
 $\phi$ itself may be identified with its parameter set and then both are
 designated with $\phi$.
 It is important to stress out that the
-parameterization is not just an enumeration of the functions in our class, rather we 
+parameterization is not merely an enumeration of the functions in our class, rather we 
 want $\w$ to come from some domain and that the parameterized function
 $\phi(\x,\w)$ should be \emph{differentiable in its parameters} $\w$.
 It is of lesser concern whether $\phi$ is also differentiable in $\x$.
@@ -623,7 +623,7 @@ $l$-dimensional subspace of $R^n$, and $\bv{V_l}$ minimizes
 \bv{I}_l\}
 \end{equation} 
 
-Where $\| \cdot \|_F^2$ is simply the sum of squares of the matrix' entries.
+Where $\| \cdot \|_F^2$ is the sum of squares of the matrix' entries.
 
 If we consider the more general minimization problems: 
 
@@ -731,7 +731,7 @@ $\x = (x_1, \dots x_n) \in \R^n$ then $\sigma(\x)$ is the element-wise
 application $\sigma(\x) \triangleq (\sigma(x_1), \dots , \sigma(x_n))$.
 \end{mydef}
 
-In the official definition we narrowed it down to just 4 kinds but in general
+In the official definition we narrowed it down to 4 kinds but in general
 there are plenty of other activation functions. Also note that these functions
 have no parameters.
 
@@ -804,7 +804,8 @@ distinguish between the network $\phi$ and its weights, and we identify both as
 $\phi$.
 
 In the definition we made the range and domain to be the entire $\R^n$ but it is
-not necessary, we just need for the composition to be valid.
+not necessary. It suffices that they are arbitrary domains as long as the
+compositions remain valid.
 \end{mydef}
 
 Feed forward neural network are depicted as a directed acyclic graph where every
