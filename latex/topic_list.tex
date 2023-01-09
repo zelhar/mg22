@@ -232,11 +232,11 @@ reviewer.
 
 When professor Vingron and I originally set on a theme for exploration towards a thesis, 
 it was roughly about researching autoencoders and how they can be applied 
-to single cell RNASeq (scRNASeq) data. I knew a little bit about autoencoders
+to single--cell--RNA --Sequencing (scRNASeq) data. I knew a little bit about autoencoders
 and neural networks and little to nothing about scRNASeq.
 It soon became clear that we are dealing with datasets of gene expression
 levels for individual cells. Each cell is supposed to have an expression profile
-depending on mostly cell type and also other factors such as cell cycle and
+depending on cell type and some other factors such as cell cycle and
 , but cell type is the first order of approximation.
 
 While doing preliminary research into neural networks I was thinking,
@@ -244,7 +244,7 @@ since cell types is categorical data, I am dealing with a classification task,
 unsupervised learning, something like that; How can an autoencoder help me with
 that. So I've non-exhaustively searched what has been done with autoencoders
 on scRNASeq and similar data; Basically it's about replacing PCA with
-an AE, VAE or some fancier derivative. The rest of the analysis is with
+an AE, VAE or some fancier derivative. The rest of the analysis is done with
 unrelated methods. Another use is for batch effect reduction by way of a
 conditional model. But VAEs can do more than that.
 
@@ -252,7 +252,7 @@ The entire construct that is VAE was invented, as far as I know, by Kingma and
 Welling~\cite{kingma2013auto,kingma2014semi,}. About one follow--up from
 their original paper they introduce semi--supervised learning. Nice.
 But their models doesn't work well on unsupervised learning.
-Then a little bit more research got me into the Gaussian mixture model VAE of
+A little bit more research brought me to the Gaussian mixture model VAE of
 Dilokthanakul~\cite{dilokthanakul2016deep}, 
 where they demonstrate
 unsupervised learning on some test datasets like MNIST.
@@ -269,7 +269,7 @@ these models are good for as well as their limitations.
 
 \section{Tensors, shape, axis, dimension}
 In machine learning one often encounters data structures that have
-multi-dimensional \emph{shape} which are called \emph{tensors}. For example a 28
+multi-dimensional \emph{shapes} which are called \emph{tensors}. For example a 28
 over 28 color image can be represented as a 3-dimensional shape ($3,28, 28)$
 representing pixel's RGB channels (AKA its color), its height, and its
 width. This creates some
@@ -288,14 +288,14 @@ example the color image described above, $\x \in  \R^{28 \times 28 \times 3}
 more axes and it generalizes scalar, vector, matrix and higher dimensional
 shaped entities.
 
-In Pytorch~\cite{pytorch2018pytorch} terminology \emph{dimension} is used for the
-number of axes (data shape) but it is inconsistent with the way dimension is used in
-mathematics with regards to vectors which is the number of entries (data
-content size). 
-The author proposes that \emph{dimension} should only refer to data content size,  
-and \emph{shape size} should refer to the number of axes it comes in. For the same $\x$ color
-image: $\text{dim}(\x) = 3 \times 28 \times 28$ and $\text{shape}(\x) =
-(3,28,28)$ and $\text{shape size}(\x) = \text{axes}(\x) = 3$.
+In Pytorch~\cite{pytorch2018pytorch} terminology \emph{dimension} is used for
+the number of axes (data shape) but it is inconsistent with the way dimension is
+used in mathematics with regards to vectors which is the number of entries (data
+content size). In the scope of this work, \emph{dimension} only refers to data
+content size,  and \emph{shape size} refers to the number of axes it comes in.
+Take again for the same $\x$ color image: $\text{dim}(\x) = 3 \times 28 \times
+28$ and $\text{shape}(\x) = (3,28,28)$ and $\text{shape size}(\x) =
+\text{axes}(\x) = 3$.
 
 \begin{mydef}
 \label{def:tensor}
@@ -322,7 +322,7 @@ dimensional sub-array with the first coordinate held fixed, is called the
 collections of tensors. For example it can represent a collection of several
 images. Each "row" then represents an image tensor.
 
-It may be that our data set comes not as one tensor but in several tensors. For
+It may be that our dataset comes not as one tensor but in several tensors. For
 example we might have a tensor $\x$ representing an ordered set of images, and a
 tensor $\y$ which represents the category of each image. Because they have
 different shapes they don't fit together in one tensor. However since they refer
@@ -381,8 +381,8 @@ to sum over the sample axes.
 \section{Matrices and vectors}
 
 The type of datasets used in this paper can be represented as vectors. For
-example images of shape $(h,w,c)$ can be flattened into a single axis shape $(h
-\cdot w \cdot c,)$ vector.
+example images of shape $(h,w,c)$ can be flattened into a single axis vector of
+shape $(h \cdot w \cdot c,)$.
 
 Throughout this paper (modulo typing errors) capital bold math Latin or
 Greek letters ($\bv{X, \Sigma}$) represent matrices. To stress that we talk
@@ -448,7 +448,7 @@ Functions are usually understood to be scalar, namely $f:\R^n \to \R$ while maps
 are more general $g:\R^n \to \R^m$. When we say that a map (or function) $\phi
 :\R^n \to \R^m$ is \emph{parameterized}, it implicitly means that $\phi$ has
 additional variables which we treat as parameters $\phi_{\w}(\x) = \phi(\x, \w)$
-where $\x \in \R^n$ and $\w$ is the function's parameter set which we don't always specify
+where $\x \in \R^n$ and $\w$ is the function's \emph{parameter set} which we don't always specify
 its domain and we may not always subscript $\phi$ with it. The parameterized map
 $\phi$ itself may be identified with its parameter set and then both are
 designated with $\phi$.
@@ -477,13 +477,13 @@ the context, when we say observation, or row, we may mean the actual observed
 values, or to the random vector which was realized by said observation.
 
 We deal with two kinds of datasets in this thesis. One of them is Single cell
-RNASeq data. This kind of data represents gene expression levels in individual
+RNASeq data. This kind of data represents normalized gene expression levels in individual
 cells, where rows represent cells and columns represent genes. So if we see a
 reading of $0.5$ in row $2$ column $4$ in means that in cell $2$ gene $4$ has
 normalized expression of $0.5$.
 
-The other kind of data is images. For example the MNIST data set contains
-greyscale $28 \times 28$ images of hand written digits. We still think of such
+The other kind of data is images. For example the MNIST dataset contains
+grayscale $28 \times 28$ images of hand written digits. We still think of such
 data set as a matrix. The first axis always represents the samples, so each
 "row" represent an image. The rest of the axes represent the image.
 Alternatively we can also flatten the images into one axis and think of an image
@@ -749,29 +749,30 @@ The parameters $\w$ are called the \emph{weights} of the neuron $\nu$.
 
 %Think of the weights of a neuron as some mutable, tunable property, some sort of memory.
 
-\begin{figure}[h]
-%\begin{framed}
-\centering
-\begin{subfigure}[b]{0.45\textwidth}
-\includegraphics[width=0.4\textwidth]{./plots/neuron.gv.png}
-%\label{fig:neuron1}
-\end{subfigure}
-\begin{subfigure}[b]{0.45\textwidth}
-\includegraphics[width=0.4\textwidth]{./plots/neuron.2.gv.png}
-\end{subfigure}
-\caption{Two graphical descriptions of the neuron
-$\sigma(w_1x_1 + w_2x_2 + b)$}. Here the bias $b$ is explicitly shown
-but usually it is not depicted. In the left the variable names are explicitly
-shown, while in the right they are not.
-\label{fig:neuron2}
-%\end{framed}
-\end{figure}
+%\begin{figure}[h]
+%%\begin{framed}
+%\centering
+%\begin{subfigure}[b]{0.45\textwidth}
+%\includegraphics[width=0.4\textwidth]{./plots/neuron.gv.png}
+%%\label{fig:neuron1}
+%\end{subfigure}
+%\begin{subfigure}[b]{0.45\textwidth}
+%\includegraphics[width=0.4\textwidth]{./plots/neuron.2.gv.png}
+%\end{subfigure}
+%\caption{Two graphical descriptions of the neuron
+%$\sigma(w_1x_1 + w_2x_2 + b)$. Here the bias $b$ is explicitly shown
+%but usually it is not depicted. In the left the variable names are explicitly
+%shown, while in the right they are not.}
+%\label{fig:neuron2}
+%%\end{framed}
+%\end{figure}
+\nocite{ellson2001graphviz}
 
 Connecting many neurons together can create powerful parameterized
 functions which we call neural networks.
 %Connecting means that the output of one neuron is the input to one of the
 %variables of a different neuron.
-In feed forward networks the information only goes in one direction (no
+In feed forward networks the information only flows in one direction (no
 feedback) and as we will see it means the network is a directed acyclic graph.
 
 \begin{mydef}
@@ -813,6 +814,25 @@ node (with its incoming edges) corresponds to a neuron. You can think of
 figure~\ref{fig:neuron2} left as depicting the neuron "component" in a network,
 while figure~\ref{fig:neuron2} right shows a neural network description of
 single neuron, comprised from elementary neurons.
+
+\begin{figure}[h]
+%\begin{framed}
+\centering
+\begin{subfigure}[b]{0.45\textwidth}
+\includegraphics[width=0.4\textwidth]{./plots/neuron.gv.png}
+%\label{fig:neuron1}
+\end{subfigure}
+\begin{subfigure}[b]{0.45\textwidth}
+\includegraphics[width=0.4\textwidth]{./plots/neuron.2.gv.png}
+\end{subfigure}
+\caption{Two graphical descriptions of the neuron
+$\sigma(w_1x_1 + w_2x_2 + b)$. Here the bias $b$ is explicitly shown
+but usually it is not depicted. In the left the variable names are explicitly
+shown, while in the right they are not.}
+\label{fig:neuron2}
+%\end{framed}
+\end{figure}
+
 
 If rule 5 of the definition~\ref{def:NN} is not used in the construction of
 $\phi$, then the resulting network is hierarchical. Its graph can be partitioned
@@ -1013,7 +1033,7 @@ algorithmically approximating the minimization problem:
 
 During a \emph{training step} the network is applied on a batch $(\x,\y)$. Then the
 loss function is applied on the output of the network and a gradient (with relation to the
-weights) is taken using the efficient backpropagation
+weights) is taken using the backpropagation
 algorithm~\cite{nielsen2015neural}.
 The gradient is used for the weight update rule, which
 varies depending on the specific training algorithm. Typical training algorithms
@@ -1087,14 +1107,14 @@ A graphic description of a "vanilla" autoencoder.
 \begin{mydef}
 \label{def:autoencoder}
 An \textit{Autoencoder} (AE) is a pair 
-$(\phi, \psi)$ of feed forward neural networks 
+$(\psi, \nu)$ of feed forward neural networks 
 $\psi : \R^n \to \R^m, \nu : \R^m \to \R^n$.
 
 $\psi$ is called the \emph{encoder} network, and $\nu$ is called the
 \emph{decoder} network and the composition
 $\phi = \nu \circ \psi$ is called the \emph{autoencoding network}. 
 
-We call $\R^m$ or more genrally the domain of the decoder, \emph{the latent
+We call $\R^m$ or more generally the domain of the decoder, \emph{the latent
 space}, and $\R^n$ (or more generally the domain of the encoder) is called
 \emph{the observed space}.
 
@@ -1110,7 +1130,7 @@ The idea here is that the original high dimensional data can be embedded
 in a low dimensional space by the encoder. The decoder then can reconstruct the
 original data from the embedding.
 
-There are many variations of autoencoders. For example a "denoising" autoencoder is
+There are many variations of autoencoders. For example a "de--noising" autoencoder is
 essentially that same model but it receives a "noisy" version of the input and
 tries to reconstruct the original clean version.
 We informally call the type of autoencoder of
@@ -1216,7 +1236,7 @@ $$p(\x,\z) = p(\x | \z)p(\z)$$. And again $\x_i$ only depends on $\z_i$ so
 everything factors nicely, e.g.\label{nicefactor} $p(\X | \Z) = \prod_i p(\x_i | \z_i)$.
 Informally, $\z$ is a simpler variable which "explains" $\x$ and can be used to
 for example, to classify $\x$. For this reason we are interested in knowing the
-flipped conditional distribution $p(\z | \x)$.
+flipped conditional distribution (the posterior) $p(\z | \x)$.
 
 Suppose that we have a fully Bayesian model. In this case there are no
 parameters because the parameters are themselves stochastic variables with some
@@ -1411,17 +1431,17 @@ A VAE is a neural network which is used to define and optimize the parameters
 $\phi$ and $\theta$ which define $p_{\theta}(\x | \z)$ and $q_{\phi}(\z | \x)$
 and we train the network to maximize equation~\ref{eq:elbo_conditioned}.
 
-Specifically the encoder part of the network is a feed forward neural network 
+Specifically the decoder part of the network is a feed forward neural network 
 $f_{\theta}(\z)$ which is
 used to define the distribution $p_{\theta}(x|z)$. For example, we can assume that $p_{\theta}$
 is a family of multivariate Gaussians and in this case $f_{\theta}(z) =
 (\mu(z), \Sigma(z))$. Meaning the encoder maps $z$ to the location vector and
 covariance matrix. The parameter $\theta$ in this case are the weights of the
-encoder neural network. 
+decoder neural network. 
 
-The decoder network is similarly defined as neural network $g_{\phi}(\x)$ which
+The encoder network is similarly defined as neural network $g_{\phi}(\x)$ which
 maps $\x$ into the parameters defining the family $q_{\phi}(\z)$. Here too $\phi$
-represent the weights of the decoder.
+represent the weights of the encoder.
 
 For the prior $p(\z)$ we set some fixed prior distribution.
 
@@ -1434,7 +1454,7 @@ define the Gaussian distribution $\mathcal{N}(\z ; \mu, \sigma)$.
 We also need to make sure that the range of the network obeys to the constraints
 of the parameters. For example the variance must be non-negative. 
 Alternatively we can use transformations to remove constraints. For example
-instead of letting the network specify the variance. we let it specify the
+instead of letting the network specify the variance. We let it specify the
 log-variance.
 
 \begin{mydef}
@@ -1442,14 +1462,14 @@ log-variance.
 Let $\{p_{\theta}\}_{\theta \in \Theta}$ be a parameterized 
 family of distributions over $\R^n$ and let
 $\{q_{\phi}\}_{\phi \in \Phi}$ be a family of distributions over $\R^m$.
-Where $\Theta$ and $\Phi$ are real domains (i.e $\Theta \subseteq \R^k \dots$).
+Where $\Theta$ and $\Phi$ are real domains (e.g $\Theta \subseteq \R^k \dots$).
 
 A \emph{variational autoencoder (VAE)} consists of a pair $(E,D)$ of neural networks,
 $E : \R^n \to \Phi$ and $D : \R^m \to \Theta$ and some fixed distribution $p \in
 \Phi$.
 
-We call $\R^m$ or more genrally the distribution space of the decoder, \emph{the latent
-space}, and $\R^n$ (or more generally the distribution space of the encoder) is called
+We call $\R^m$ or more generally the domain of the decoder, \emph{the latent
+space}, and $\R^n$ (or more generally the domain of the encoder) is called
 \emph{the observed space}.
 $p$ is called \emph{the prior distribution of the latent space}.
 \end{mydef}
@@ -1545,7 +1565,7 @@ $\z_i \sim q(\z | \x)$ per input $\x$, and take the average. Then we have
 In practice we take just one ($k=1$) sample $z$ for each input data point $x$.
 Remember that we are working on batches and computing an average loss over
 batches so for a given batch we are taking many samples $\z$.
-Experimental data shows that taking larger samples usually brings little
+The current consensus from experience is that taking larger samples usually brings little
 benefit~\cite{kingma2019introduction}.
 
 \subsubsection{Reparameterization trick}
@@ -1697,7 +1717,7 @@ Lets say we still want some sort of Gaussian diagonal distribution for $\x$,
 so $p(\x | \z) = \NN(\x ; \bv{\mu}(\z), \bv{\sigma}(\z))$.
 If we allow the decoder to create arbitrarily small variances, then 
 the Monte Carlo integration, at least the simple one we use, fails.
-The reason is that the decoder make the variance infinitesimally close to $0$ and
+The reason is that the decoder makes the variance infinitesimally close to $0$ and
 then the density function becomes essentially unbounded from below. The error term becomes
 negative and is dominated by the negative reconstruction term and the model
 might also become numerically unstable in training because the loss diverges to
@@ -1728,17 +1748,23 @@ $\sigma$ fixed.
 The decoded distribution is $p(\x | \z) = \NN(\x ; \mu(\z), \sigma)$ where $\mu(z)$ is a
 function of $\z$ the decoder's neural network. The encoded distribution is $q(\z | \x) = \NN(\z
 ; \mu(\x), \sigma(\x))$. For the kl-term we use the analytical solution and for
-the reconstruction error we use Monte Carlo integration with one sample. We can
+the reconstruction error we use Monte Carlo integration with one sample.
+If we observe its definition formula~\ref{eq:kldivnormal} (and consider that in
+this case $\mu_2 = \sigma_2 = 1$, we see it is never
+going to be very large. We could also restrict $\sigma_1$ and $\mu_1$ explicitly 
+to keep it bounded.
+So we can
 assume that the KL term is uniformly (with respect to $\x$) bounded by some
-constant $M$. We could also make sure that the encoder map is bounded but
-normally there is no reason for the encoder to take the mean or the variance to
-infinity during training as it would just increase the loss.
+constant $M$. 
+%We could also make sure that the encoder map is bounded but
+%normally there is no reason for the encoder to take the mean or the variance to
+%infinity during training as it would just increase the loss.
 
-Our -ELBO loss function is:
+Our -ELBO loss function (we show it as 1-dimensional for simplicity) is:
 \begin{equation}
 \begin{aligned}
 \LL(p,q, \x) = -\log \NN(\x; \mu(\z), \sigma) + KL(q(\z | \x) \| p(\z)) \\
-= \frac{1}{2}\|\frac{x - \mu(\z)}{\sigma}\|^2 + \log \sigma + KL(q(\z | \x) \| p(\z))
+= \frac{1}{2}\|\frac{x - \mu(\z)}{\sigma}\|^2 + \log (\sqrt{2 \pi} \sigma) + KL(q(\z | \x) \| p(\z))
 \end{aligned}
 \label{eq:losss}
 \end{equation}
@@ -1750,9 +1776,10 @@ $\sigma \LL(p,q,\x)$, and if we let $\sigma \to 0$ we get:
 \lim_{\sigma \rightarrow 0} \LL(p,q, \x) \sigma 
 = \lim_{\sigma \to 0}[ -\log \NN(\x; \mu(\z), \sigma) \sigma + \sigma KL(q(\z |
 \x) \| p(\z))] \\
-= \lim_{\sigma \to 0} [\frac{1}{2}\|x - \mu(\z)\|^2 + \sigma \log \sigma  +
+= \lim_{\sigma \to 0} [\frac{1}{2}\|x - \mu(\z)\|^2 + \sigma \log (\sqrt{2 \pi}
+\sigma)  +
 \sigma KL(q(\z | \x) \| p(\z))] = 
-\frac{1}{2}\|x - \mu(\z)\|^2
+\frac{1}{2}\|x - \mu(\z)\|^2 \qed
 \end{aligned}
 \label{eq:lossss}
 \end{equation}
@@ -1763,6 +1790,15 @@ encoder. As a result the encoder itself
 will also become point mass in order to minimize the reconstruction term and
 disregarding the constraint on its distribution.
 Thus the VAE becomes essentially a vanilla auto encoder at the limit.
+
+Another way to reach deterministic AE from a VAE is to choose distributions that
+make it so: choose $\z$-prior to be uniform in some bounded domain $p(\z) \sim \text{uniform}(\DD)$
+and choose $q(\z | \x)$ to be point mass. In this setting the KL term
+of~\ref{eq:losss} is constant.
+For the reconstruction term we choose
+Gaussian distribution with a fixed variance. If we fix it to $\sigma =
+\frac{1}{\sqrt{2}}$ then
+loss term~\ref{eq:losss} becomes square error (plus ignorable constant): $\|\x - \mu(\z)\|^2 + \text{const}$. 
 
 \subsection{Graphical representation}
 \label{sseq:graphical_representation}
@@ -1915,7 +1951,7 @@ VAE case but rather the decoder maps the categorical $c$ into some distribution.
 As for the inference model (encoder), given the observation $\x$ and $c$ it will determine
 our only latent variable $\z$, in other words $q(\z | \x, c)$ is the inference
 model without anything further to factorize. 
-Conditioning in $c$ is done here as well by concatenating the inputs $\x$ and
+And again, conditioning in $c$ means concatenating the inputs $\x$ and
 $c$.
 %We might try to remove the
 %dependency on $c$, and make it $q(\z | \x)$.
@@ -1969,7 +2005,7 @@ encode a mixture distribution in $\z$, we will get several blobs in the latent
 space corresponding to the classes.
 
 From equation~\ref{eq:cvaeloss}, we can ignore the constant and see that the
-reconstruction term that will make sure the decoder reconstruct the image in
+reconstruction term will make sure the decoder reconstructs the image in
 our example, while the kl-term imposes a mixture distribution in the latent
 space.
 
@@ -1977,9 +2013,9 @@ Finally there are circumstances that we use CVAE to "forget" the categories
 rather then to encode them by setting a fixed prior $p(\z | c) \equiv p(\z)$.
 An example for such use-case is for batch effect reduction.
 In cases where for example, there are several batches of data
-of the same type and but from different experiments.
-We expect any differences in the data of the same entity are a result of technical differences 
-(different measuring tools etc.) rather than reflecting true differences between
+of the same type but from different experiments.
+We expect that any difference in the data of the same entity is a result of technical difference
+(different measuring tools etc.) rather than reflecting true difference between
 the entity of interest.
 In this case we can use
 a CVAE model with fixed prior to reduce the batch effect.
@@ -2163,7 +2199,7 @@ conditional". Think of it as if there are as many 'c's in a model instance's
 name as
 there are conditions in the dataset it was meant to process. As will be shown later,
 this model also has a conditional
-version but for now we formalise the simple case without conditions. The 
+version but for now we formalise the simple case without conditions.
 In addition to the latent variables $\z$ (mixture), and $\y$ (categorical), there
 are 2 more variables.
 The third latent variabel $\w$ has standard normal prior.
@@ -2238,10 +2274,10 @@ the neural networks of the encoder.
 
 Let's call the \gmvae model as presented in figure~\ref{fig:dirgmm} our
 "canonical" version. The results we present here unless otherwise stated were
-obtained on the canonical model. As mentioned the choice of how to factor the
+obtained with the canonical model. As mentioned the choice of how to factor the
 inference ($q$) distribution is somewhat arbitrary and we have tested some other
 possibilities, for example by letting $\x$ play a direct role in the
-classifier $q(\y | \dot)$:
+classifier $q(\y | \cdot)$:
 $q(\y, \z, \w, \dd, | \x) = 
 q(\z | \x)q(\w | \x)q(\y | \z, \x)q(\dd | \z)$ 
 
@@ -2252,34 +2288,6 @@ information is lost on the encoding into $\z$ because the classifier observes
 both $\z$ and the original input. From tests we made we can't see a clear
 advantage to one factoring of $q$ over others, from those we have tried.
 
-\subsection*{}
-%\begin{framed}
-\begin{remark}
-%\begin{mydef}
-In the original GMVAE paper~\cite{dilokthanakul2016deep}, they don't use a neural
-network to define the encoder's classifier $q(\y|\z)$. Actually their factorization is
-given as $q(\y|\z,\w)$ but more importantly they they define
-$q(\y|\z, \w) \triangleq p(\y | \z, \w)$ 
-because in the GMVAE probabilistic model this posterior is tractable 
-(it has no Dirichlet $\dd$ random vector):
-$$p(\y=i | \z, \w) = 
-\frac{p(\y=i)p(\z | \w, \y=i)}{\sum_{j=1}^Kp(\y=j)p(\z | \w, \y=j)}
-$$
-
-There is at least one implementation~\cite{martinunsupervised} of GMVAE which
-doesn't use this tractability for factorizing $q$.
-
-In \gmvae the addition of a Dirichlet prior $q(\dd | \z)$ is specifically
-there to estimate a better prior distribution $q(\y | \dd)$ for $\y$.
-It isn't possible, or at least not immediately obvious, how to use $p(\y | \w, \z)$
-in the $q$ factorization and still use this Dirichlet prior.
-Moreover $p$ and $q$ are two separate distributions,
-and although $p(\y | \w, \z)$ is tractable when $\y$ happens to have discrete
-distribution, it doesn't mean we must use it in the factorization of $q$. We are
-doing variational inference and from that perspective it is theoretically purer
-to not "mix in" any $p$ posterior in the factorization of $q$.
-\end{remark}
-%\end{framed}
 
 \section{Computing the loss function of \gmvae}
 
@@ -2306,12 +2314,17 @@ different terms:
 \end{IEEEeqnarray}
 
 As we see there are five terms in the reconstruction loss function.
-\ref{dgmmrecloss} is called the reconstruction error.
+%\ref{dgmmrecloss} 
+(4.4) is called the reconstruction error.
 The rest of the terms get the repetitive, mundane names:
-\ref{dgmmzloss} is called the $z$-error or $z$-kl-term,
-\ref{dgmmwloss} is the $w$-error or $w$-kl-term,
-\ref{dgmmyloss} is the $y$-error or $y$-kl-term, and
-\ref{dgmmdloss} is called the $d$-error or $d$-kl-term.
+%\ref{dgmmzloss}
+(4.5) is called the $z$-error or $z$-kl-term,
+%\ref{dgmmwloss}
+(4.6) is the $w$-error or $w$-kl-term,
+%\ref{dgmmyloss}
+(4.7) is the $y$-error or $y$-kl-term, and
+%\ref{dgmmdloss}
+(4.8) is called the $d$-error or $d$-kl-term.
 %\subsection{Relation between AE and VAE}
 
 To actually compute the loss function Monte Carlo integration is used,
@@ -2433,7 +2446,7 @@ The loss function in the supervised case is:
 
 The reconstruction error, the $w$-error and the $d$-error are calculated exactly
 like in the unsupervised loss.
-The $z$-term is also calculated in exactly the same procedure as in unsupervised
+The $z$-term is also calculated in exactly the same procedure as in the unsupervised
 case except that we only need to take the component indicated by the observed
 $\y$ in the weighted sum.
 The two $y$-terms are the log probability of the observed category given the
@@ -2441,28 +2454,23 @@ sampled $\z$ and $\dd$.
 
 \section{Combining \gmvae with another clustering method}
 
-Because \gmvae performs particularly well in (semi)supervised 
-it can learn a given cluster/class assignment of a dataset by.
-But when might it be useful to train \gmvae if we already have a different
-clustering algorithm or any other unsupervised classifier that works well?
-Suppose that we have a "nice" training set where a given clustering algorithm
-performs well on.
-We can supervised train the model on the nice dataset using the cluster assignment
-as labels. At this point the model should learn to represent the data clusters
-nearly perfect.
-It is often the case that the \gmvae trained in this manner will out-perform 
-a "naive" model which was unsupervised trained.
+Because \gmvae performs particularly well in (semi)supervised it can learn a
+given cluster/class assignment of a dataset. But when might it be useful to
+train \gmvae if we already have a different clustering algorithm or any other
+unsupervised classifier that works well? Suppose that we have a "nice" training
+set which a given clustering algorithm performs well on. We can supervised train
+the model on the nice dataset using the cluster assignment as labels. At this
+point the model should learn to represent the data clusters nearly perfect. It
+is often the case that the \gmvae trained in this manner will out-perform a
+"naive" model which was unsupervised trained.
 
-We can than run unsupervised training on the dataset, if we are
-lucky the accuracy might improve. So that's one use case but a minor one.
-
-The more important usage is that we can now classify with \gmvae other datasets
-of the same kind.
-We should compare the performance of the trained model on the testing set with
-the performance of the clustering algorithm \emph{on the testing set} which per
-assumption was not that good. If we are lucky the model might outperform the
-clustering algorithm on the not--so--nice testing data.
-
+We can then run unsupervised training on the dataset, if we are lucky the
+accuracy might improve. So that's one use case but a minor one. The more
+important usage is that we can now classify with \gmvae other datasets of the
+same kind. We should compare the performance of the trained model on the testing
+set with the performance of the clustering algorithm \emph{on the testing set}
+which per assumption was not that good. If we are lucky the model might
+outperform the clustering algorithm on the not--so--nice testing data.
 The combination of \gmvae with Louvain~\cite{que2015scalable} clustering
 was tested on several datasets (results shown in subsequent chapters).
 
@@ -2472,13 +2480,13 @@ was tested on several datasets (results shown in subsequent chapters).
 
 We have seen two types of models that deal with data that is both numerical and
 categorical, namely the conditional VAE (CVAE), and the \gmvae.
-As we hinted before, there is a conditional variation of \gmvae which
+As was previously indicated, there is a conditional variation of \gmvae which
 is meant to be used with data that contains both "condition" and "class"
 information. While both are types of categorical data, "condition" is used to
-described information that is always visible in the data. This can be for
+describe information that is always visible in the data. This can be for
 example batch information. It is always known from which "batch" a cell was
 taken. "Class" information might not always be known, and it is more an inherent
-property and not "technical" difference. For example cell types are best
+property rather than a "technical" difference. For example cell types are best
 represented as classes.
 It is technically very easy to implement a conditional version from a 
 given VAE model. Basically it just requires 
@@ -2503,7 +2511,7 @@ The condition represents the states before and after exposure to some treatment
 $\x$ is normalized gene expression levels, $\y$ is the cell type 
 we want to infer but may not know the ground truth, and $c$ indicates from which
 group the measurement was taken (control/stimulate) and this information is
-visible to use because we know for each sample from which group it was
+visible because we know for each sample from which group it was
 taken.
 
 
@@ -2565,9 +2573,8 @@ of data, with $\X$ being numerical and $\Y$ categorical.
 
 MNIST images are close to being binary black and wight (either close to $0$ or
 close to $1$), so it is better to model them with Bernoulli distribution than
-with Gaussian, with the intensity of each pixel is regarded as a Bernoulli
-probability.
-Unless otherwise stated, for MNIST we set $p(\x | \z)$ to be Bernoulli
+with Gaussian; The intensity of each pixel is regarded as a Bernoulli
+probability. And unless otherwise stated we set $p(\x | \z)$ to be Bernoulli
 distribution.
 
 \section{semi-supervised learning}
@@ -2575,7 +2582,7 @@ distribution.
 In the first test we partition the training set into labeled
 ($5\%$ of the total) and unlabeled subset (the other $95\%$).
 As we have some labeled images, we set the number--of--categories hyperparameter
-on $10$ and the goal here is to be able to predict the true categorical
+to $10$ and the goal here is to be able to predict the true categorical
 partitioning of the testing set.
 
 There are several qualitative aspects that we are particularly interested in
@@ -2614,7 +2621,7 @@ real classes.
 When performed on the PCA space, Louvain clustering with default settings identifies $12$ clusters
 . The "$0$" and "$9$" classes each are split
 between two Louvain clusters. The Louvain clusters themselves appear to be
-homogeneous (each cluster contain practically only samples from one ground-truth
+homogeneous (each cluster contains almost exclusively samples from one ground-truth
 class).
 
 It is interesting to compare the PCA results to the same procedure done on the
@@ -2652,21 +2659,20 @@ the decoder network into the sample space ($x$).
 Getting the model to learn exactly the $10$ ground truth classes is a daunting
 task. It requires a lot of tuning and micromanaging of the training procedure.
 In my experiments, the model first needs to be trained with standard learning
-rate ($1e-3$) to the point where it can adequately reconstruct digits and uses
-all $10$ classes. Then the learning rate should be reduced to the range $5e-2$
---- $5e-3$. This makes reconstruction less exact and allows the model to "jump"
-class predictions during training. If the learning rate is too big
-eventually the model might completely drift away and become inaccurate and
-unstable and if it is not sufficiently large the model remains stuck 
-on a suboptimal classification. 
-After this course training finds the correct classes, it needs to be further
-trained to improve accuracy and reconstruction with decreasing learning rates.
+rate ($10^{-3}$) to the point where it can adequately reconstruct digits and
+uses all $10$ classes. Then the learning rate should be reduced to the range
+$5\cdot 10^{-2}$ --- $5\cdot 10^{-3}$. This makes the reconstruction less exact and
+allows the model to "jump" class predictions during training. If the learning
+rate is too big eventually the model might completely drift away and become
+inaccurate and unstable and if it is not sufficiently large the model remains
+stuck on a suboptimal classification. After this coarse training finds the
+correct classes, it needs to be further trained to improve accuracy and
+reconstruction with decreasing learning rates.
 
-In my experiments, an accuracy of about $0.9$---$0.95$ can be achieved
-however due the micromanagement involved it is hard to make the training fully
-automated. Moreover it may be completely unrealistic to expect the model
-to perform that well in unsupervised exact clustering tasks with harder
-datasets. 
+In my experiments, an accuracy of about $0.9$---$0.95$ can be achieved however
+due the micromanagement involved it is hard to make the training fully
+automated. Moreover it may be completely unrealistic to expect the model to
+perform that well in unsupervised exact clustering tasks with harder datasets. 
 
 \begin{figure}[h]
 %\begin{framed}
@@ -2787,7 +2793,7 @@ methods as reported by~\cite{dilokthanakul2016deep}}
 \chapter{More challenging tests with fashion-MNIST}
 Fashion-MNIST (FMNIST)~\cite{fmnist} is a drop-in replacement for MNIST which
 is a lot more challenging to machine--learn. Instead of digits we are dealing
-here with greyscale images of clothing and accessory items of 10
+here with grayscale images of clothing and accessory items of 10
 classes:~
 \emph{
 T-shirt, trouser, pullover, dress, coat, sandal, shirt, sneaker, bag, boot.
@@ -2802,9 +2808,9 @@ too, but it is much more pronounced in the fashion-MNIST dataset.
 \gmvae achieved an overall $0.75$ accuracy after \emph{a lot} of training epochs.
 It is easier to achieve about $0.67$ accuracy after a quick training (about 10
 epochs).
-Choice of hyperparameters also have significant effect. For example choosing 
-a high dimensional latent space or deepening the networks tend to make the model
-perform to not use all the components of the mixture.
+Choice of hyperparameters also has significant effect. For example choosing 
+a high dimensional latent space or deepening the networks tends to make the model
+to not use all the components of the mixture.
 
 \begin{figure}[h]
 \centering
@@ -2816,13 +2822,13 @@ perform to not use all the components of the mixture.
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.9\textwidth]{images/gmmvae_fmnist_us_20c_umap0.png}
-\caption{UMAP (20 components, MNIST)}
+\caption{UMAP of the FMNIST PCA space (20 mixture components)}
 \label{fig:fmnist_us_20c_latent}
 \end{figure}
 
 Judging from the randomly generated images in
 figure~\ref{fig:fmnist_us_20c_samples}, the model learns to 
-generate what looks like a distinct classes in each of the mixture components.
+generate what looks like a distinct class in each of the mixture components.
 However as far as prediction accuracy, there is a major confusion between
 "shirt", "coat", and "pullover" classes, which is apparent from the UMAP in 
 figure~\ref{fig:fmnist_us_20c_latent}.
@@ -2849,7 +2855,7 @@ fairly well.
 \begin{figure}[h]
 \centering
 \includegraphics[width=1.1\textwidth]{images/gmmvae_fmnist_ss_latent_umap.png}
-\caption{FMNIST, semisupervised. UMAP}
+\caption{FMNIST, semisupervised. UMAP of the latent space}
 \label{fig:fmnist_ss_latent}
 \end{figure}
 
@@ -2933,8 +2939,9 @@ sloppy technicians or what not.
 
 For the above reasons this data requires preprocessing before it can be
 analysed. A good practical guide for for preprocessing and analysis 
-can be found in the Scanpy~\cite{wolf2018scanpy} documentation, a tool which is 
-extensively used with in this thesis.
+can be found in the Scanpy~\cite{wolf2018scanpy} documentation, a software
+package which was 
+extensively used in work on this thesis.
 In short, the data is filtered to get rid of some bad reads, and then it is
 normalized so that each cell gets an equal amount of total counts. This
 normalized  count data than undergoes $log(1+x)$ transformation.
@@ -2972,7 +2979,7 @@ of around 0.92.
 \begin{figure}[h]
 \centering
 \includegraphics[width=1.1\textwidth]{images/gmmvae_zheng_us_9c_umap.png}
-\caption{Zheng dataset, UMAPs. The main issue with \gmvae is it fails to 
+\caption{Zheng dataset, UMAPs on the PCA space. The main issue with \gmvae is it fails to 
 classify the smallest group (Dendritic) in its own cluster.}
 \label{fig:zheng_ss_latent}
 \end{figure}
@@ -3022,6 +3029,7 @@ on the rebalanced and the original data set.
 %necessary so and some of the cells are likely mislabeled.
 
 \chapter{Larger but messier PBMCs data}
+
 This chapter involves an scRNASeq dataset~\cite{kang2018multiplexed} of PBMCs
 (peripheral blood mononuclear cells) of the same $7$ cell types as in Zheng
 dataset.
@@ -3046,7 +3054,7 @@ by~\cite{lotfollahi2019scgen}.
 In this section just the control subset of the Kang dataset is used.
 We first
 test unsupervised learning of \gmvae. Then we try to see if pre-learning the
-Zheng dataset with supervised learning can help classify the Kang dataset.
+Zheng dataset with supervised learning can help to classify the Kang dataset.
 
 When Louvain clustering with default values was performed on the Kang train data,
 it missed the CD8 cell type (which was merged with NK type) as
@@ -3081,14 +3089,14 @@ of the latent space is essentially the same so it is not shown here.
 \centering
 \includegraphics[width=1.1\textwidth]{images/gmmvae_Kang_control_train_us_21c_umap.png}
 \caption{
-UMAP of the Kang train data. It is interesting that the \gmvae "clusters" can be fuzzy,
+UMAP of PCA space of the Kang train data. It is interesting that the \gmvae "clusters" can be fuzzy,
 unlike Louvain clusters which tend to have clear borders.
 }
 \label{fig:kang_control_train_gmvae_us_umap}
 \end{figure}
 
 Perhaps the \gmvae performed essentially as well as Louvain and was even able to
-capture the cell type missed by Louvain because that the Dataset is larger and
+capture the cell type missed by Louvain because the Dataset is larger and
 better balanced than the Zheng data.
 The sample size per cell type in the train set is in the range 500--2000 unlike
 the situation in the Zheng data where one cell type has 37 samples and another
@@ -3139,8 +3147,8 @@ UMAP of the latent space of the Kang validation subset (the holdout).
 
 Figure~\ref{fig:kang_new_latent} shows the result of the semisupervised
 training, where Zheng Louvain clusters were used as the labels. Technically
-speaking this was a form of unsupervised clustering in the sense that the
-use the label information wasn't used in the training at all.
+speaking it is a form of unsupervised clustering because the
+label information wasn't used in the training at all.
 The accuracy was $0.81$ so still
 not great but edging out the unsupervised training from the previous section.
 Moreover a minimal overclustering (just 1 extra component) was used and I 
@@ -3154,16 +3162,18 @@ model, and consequently missed the CD8 class.
 
 \chapter{Testing (conditional) \gmvae on toy data}
 \label{chapter:toydata}
-The conditional variation of \gmvae~\ref{fig:dirgmmcvae} is the most complicated one 
+The conditional version of \gmvae~\ref{fig:dirgmmcvae} is the most complex
+model 
 which was 
 specified in this work. 
-It was decided to first test it on a toy dataset to see if it was worse
-its salt otherwise why bother with it any further.
+It was decided to first test it on a toy dataset to check whether it is worth
+its salt; Otherwise why bother with it any further.
 
-The toy dataset is a synthetic 5-class 2-conditions 16-dimensional Gaussian "blobs".
+The toy dataset is a 16-dimensional synthetic dataset of Gaussian "blobs".
+It comprises from 5-classes, each comes in 2-conditions.  
 Every class at a specific condition is a Gaussian blob. 
-On the same class, the difference in condition is a small random shift plus some
-noise. It was specifically intended for the condition difference effect to be smaller than a
+On the same class, the condition switch effect is a small random shift plus some
+noise. It was specifically intended for the condition effect to be smaller than a
 class switch effect.
 Figure~\ref{fig:blobs_3d} shows the toy dataset (by its 3 major PCA components).
 
@@ -3183,7 +3193,7 @@ stability during training.
 The numerical stability issue is largely solved by constraining $\z$ and $\w$ to
 a bounded domain. Without it, 
 it is much more likely to get a Nan/Inf error during training.
-This constraint was set in all of our testings which are brought
+This constraint was set in all of our testings which are presented
 in this paper.
 
 \subsection{(cond.) \gmvae with learned prior}
@@ -3248,13 +3258,13 @@ Move on to the $\z$ space.
 \end{figure}
 
 We see that in figure~\ref{fig:blobs_lp_muz} the means, and in
-figure\ref{fig:blobs_lp_z} (random samples) that each mixture captures its own
+figure~\ref{fig:blobs_lp_z} (random samples) that each mixture captures its own
 class of the dataset. They are completely separated. When looking at the means
 plot, within a class, we
 see some hardly visible subdivision based on conditions.
 Ideally we may want a model that doesn't encode condition-difference into the
 $\z$ space, because such a model 
-suggests that the decoder is able to reconstruct from the same input in $\z$,
+suggests that the decoder is able to reconstruct both conditions from the same input in $\z$,
 A good thing if we want to use such a
 model to predict treatment effect.
 
@@ -3393,8 +3403,7 @@ a narrow diagonal strip. It looks like the means are encoded pretty much one
 dimensionally. It suggests that the variance will be working on the other
 dimension \dots which is confirmed by
 figure~\ref{fig:Kang_val_w_labels}. When we take samples from the encoded
-distribution we get a Jackson Pollock like picture.  Everything is
-mixed in in space.
+distribution we get a Jackson Pollock like picture.
 
 \begin{figure}[h]
 \centering
@@ -3417,10 +3426,10 @@ samples from the encoded distribution.
 
 \section{Supervised training (full Kang dataset)}
 
-The main purpose here is to see by supervised training on
-this dataset \gmvae learns something meaningful and potentially useful.
-It was specifically intended here to use the version with standard normal prior on the $w$
-space (aka no learned prior). We want the conditions and the labels to be deliberately mixed in by the encoder
+The main purpose here is to see whether \gmvae learns something meaningful by
+supervised learning of this dataset. It was specifically intended here to use
+the version with standard normal prior on the $w$ space (aka no learned prior).
+We want the conditions and the labels to be deliberately mixed in by the encoder
 into the $w$ space. Then we can sample from it and from one sample in this
 latent space, generate every class and in both conditions.
 
@@ -3455,6 +3464,10 @@ to the real labels (see previous image)
 When we move to the $w$ space (figure\ref{fig:Kang_super_val_w}), we see everything
 is nicely mixed together and normally distributed, which is what we aimed for.
 
+And finally figure~\ref{fig:Kang_super_val_umap}
+Shows again the UMAP of the PCA space but this time includes the model predicted
+class, which can be seen to match the true labels very well.
+
 \begin{figure}[h]
 \centering
 \includegraphics[width=1.1\textwidth]{images/Kang_super_val_w.png}
@@ -3479,8 +3492,7 @@ In this section it is tested whether the supervised trained model can
 realistically convert cells from the control group to the treatment group.
 Specifically we take cells from the control group, and encode them into the $w$
 latent space, using the real label and condition information.
-
-We take this encoding, keep the correct label but flip the condition and decode
+We then take this encoding, keep the correct label but flip the condition and decode
 it into the $z$ latent space and then back to the input/reconstruction $x$ space.
 We want that the reconstructed data will look more like the stimulated group
 than the control group it was mapped from. We also want that cells of the same
@@ -3501,13 +3513,13 @@ Figure~\ref{fig:Kang_super_val_umap_converted_control} shows a UMAP of the $x$
 subset remapped into stimulated state by the \gmvae. We can see that the decoder
 learned to preserve batch effect in the $x$ space just by using the condition
 information, since in the latent $w$ space the batch effect was deliberately
-erased. Moreover, we see that cells of different types map close to each other,
-so for example the B-cells from the control group are mapped (after condition
+erased. Moreover, we see that cells of the same type map close to each other.
+For example the B-cells from the control group are mapped (after condition
 flipping) to B cells of the stimulated group.
 The mapping though appear somewhat one dimensional. Especially the CD14 cells
 end up in a long "chain". If we used sampling instead of taking means we would
 end up with a graph that has more volume to it but we chose to take the mean as
-they are the best approximation that the model can give us.
+they are the best approximation which the model can offer us.
 
 Gene ranking was performed to see if the genes that are good markers for control
 vs stimulated are also good at marking control vs the cells converted to
@@ -3529,14 +3541,15 @@ top 10 marker genes in the two cases, there are many that are common.
 \label{fig:Kang_super_gene_markers}
 \end{figure}
 
-A single cell class was picked (B cells) and regression comparison was performed,
+A single cell class was arbitrarily chosen (B cells) and regression comparison was performed,
 using the same method (in fact the same function) as
-in~\cite{lotfollahi2019scgen}. This method comparing mean expression of genes
+in~\cite{lotfollahi2019scgen}. This method compares mean expression of genes
 between 2 groups (again only for one cell type).
 As~\cref{fig:Kang_bcells_ctrl_stim,fig:Kang_bcells_ctrl_converted,fig:Kang_bcells_stimulated_converted} show,
 Stimulated and converted--to--stimulated have a very close to perfect
-correlation correlation, whereas comparing control vs. either one of them yields 
-equally "bad" regressions.
+correlation, whereas comparing control vs. either one of them yields 
+equally "bad" regressions ("bad" regression is actually good in this case because it indicates
+real treatment effect).
 
 \begin{figure}[h]
 \centering
@@ -3562,7 +3575,9 @@ control--converted--to--stimulated.
 \includegraphics[width=1.1\textwidth]{images/Kang_bcells_stimulated_converted.png}
 \caption{
 B Cells mean expression regression, stimulated vs
-control--converted--to--stimulated.
+control--converted--to--stimulated. Very high correlation between
+stimulated cells, and the control cells which were converted to stimulated state 
+by \gmvae.
 }
 \label{fig:Kang_bcells_stimulated_converted}
 \end{figure}
@@ -3603,10 +3618,10 @@ control--converted--to--stimulated.
 \section{Generating data}
 
 What was done in the previous section didn't require us to use \gmvae because we
-kept the cell type information known anyone. A conditional VAE might produce
+kept the cell type information known. A conditional VAE might have produced
 similar results.
 In this section it was attempted to generate data that looks like the original Kang dataset.
-In order to generate cells of specific type "on demand" that we need the mixture model of the \gmvae.
+In order to generate cells of specific type "on demand" we need the mixture model of the \gmvae.
 
 The process goes as follows:
 \begin{itemize}
@@ -3654,7 +3669,55 @@ appears close together with real data of the same label and condition.
 
 \chapter{Discussion, some remarks and conclusions}
 
-The tests with synthetic conditional-mixture dataset~\ref{chapter:toydata}
+\subsection*{Why bother with Dirichlet prior}
+%\begin{framed}
+\begin{remark}
+\label{remark:tractable}
+%\begin{mydef}
+In the original GMVAE paper~\cite{dilokthanakul2016deep}, they don't use a neural
+network to define the encoder's classifier $q(\y|\z)$. Actually their factorization is
+given as $q(\y|\z,\w)$ but more importantly they they define
+$q(\y|\z, \w) \triangleq p(\y | \z, \w)$ 
+because in the GMVAE probabilistic model this posterior is tractable 
+(it has no Dirichlet $\dd$ random vector):
+$$p(\y=i | \z, \w) = 
+\frac{p(\y=i)p(\z | \w, \y=i)}{\sum_{j=1}^Kp(\y=j)p(\z | \w, \y=j)}
+$$
+There is at least one implementation~\cite{martinunsupervised} of GMVAE which
+doesn't use this tractability for factorizing $q$.
+
+In \gmvae the addition of a Dirichlet prior $q(\dd | \z)$ is specifically
+there to estimate a better prior distribution $p(\y | \dd)$ for $\y$.
+It isn't possible, or at least not immediately obvious, how to use $p(\y | \w, \z)$
+in the $q$ factorization and still use this Dirichlet prior.
+Moreover $p$ and $q$ are two separate distributions,
+and although $p(\y | \w, \z)$ is tractable when $\y$ happens to have discrete
+distribution, it doesn't mean we must use it in the factorization of $q$. We are
+doing variational inference and from that perspective it is theoretically purer
+to not "mix in" any $p$ posterior in the factorization of $q$.
+
+Also in that paper, GMVAE failed to cluster some simple synthetic data and
+instead it made all the mixture component a replication of each other making
+cluster assignment arbitrary and the mixture completely uninformative. To fix
+this issue the authors forced the $y$-loss component to stay above some positive
+level $\lambda$. When I first tried to implement GMVAE I also encountered this
+issue and at first I tried another heuristic to help the model optimize
+$q(\y|\z)$ to be close to constant for individual samples but that the average
+over all the samples will be uniform categorical. This actually worked ok and
+that model is still present in the Python module which was written in
+conjunction with this thesis. Still, I always prefer an implementation that is
+faithful to the underlying theory and that's how I came to try the Dirichlet
+prior. I think the main thing that this Dirichlet prior does, is enabling \gmvae
+to not get stuck in the state where $q(\y|\z)$ becomes uniform categorical
+(where all the clusters are the same) but also not to get stuck in a state where
+$q(\y|\z)$ is always the same category, where there is just one non-degenerate
+mixture component.
+\end{remark}
+
+\subsection*{Ideas towards further development}
+
+The tests with synthetic conditional-mixture dataset (chapter
+~\ref{chapter:toydata})
 suggest that \gmvae is a correct VAE model for such distribution.
 With "real world" data, it gets more difficult. Is the model too "weak" or
 is the underlying distribution of the real data not sufficiently
@@ -3666,6 +3729,12 @@ doesn't scale well. Using proven convolution networks (Resnets and the likes)
 should improve performance on image datasets but probably not so as much on
 scRNASeq data where the gene order is arbitrary unlike in images. There may be
 better suited architectures for scRNASeq or a need to invent such.
+
+Perhaps there is room for improvement by a more sophisticated training
+procedure and by data augmentation. Data augmentation is very common with image
+datasets. This often involves transformations that preserve the class identity
+(crops, horizontal/vertical flips etc.). It's worth finding 
+comparable type-preserving transformations that can be applied to scRNASeq data.
 
 Changing the distribution model is another thing that may be worth trying. I am
 thinking of a distribution type that is "transition--mixture", meaning that the
@@ -3681,13 +3750,17 @@ data there is. There is an interesting use case called
 VADEERS~\cite{koras2022generative} which is a "drug recommender system" where 
 the GMVAE is a subsystem of a larger neural network.
 
+\subsection*{(non) comparison with scGen}
+
 In the last chapter, the section about simulating treatment effects is based
 on similar things that are shown with scGen~\cite{lotfollahi2019scgen} using
 their mean-expression regression plot function on one of
-the datasets they used. Unfortunately due to time troubles I couldn't
+the datasets they used. Unfortunately due to time constraints I couldn't
 present an apples to apples comparison with scGen. In that paper, they show
 that scGen beats a conditional VAE which they compared with scGen. I am quite
 confident \gmvae will perform better.
+
+\subsection*{Open Source}
 
 The code written for this project and all software tools which were used are
 free and open source (FOSS).
