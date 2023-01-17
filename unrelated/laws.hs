@@ -206,6 +206,7 @@ killRight (Root x p l r) = Root x p l Nil
 
 
 
+main :: IO ()
 main = do {
           print "Functors:";
           print $ show <$> Just 11;
