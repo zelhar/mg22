@@ -1,8 +1,10 @@
 --import Data.Functor
+-- chekc out hackage.haskell.org
 import Control.Monad
 import Control.Applicative
 import Language.Haskell.TH (thisModule)
-
+import Data.Typeable
+import Data.Data
 
 
 
@@ -76,8 +78,43 @@ res = bar <*> [1]
 
 {-
 ## Monad
+class Applicative m => Monad m where...
+Monad laws:
+Left identity:
+return a >>= k == k a
+Right identity:
+m >>= return == m
+Associativity:
+m >>= (\x -> k x >>= h) == (m >>= k) >>= h
+pure == return
+m1 <*> m2 == m1 >>= (\x1 -> m1 >>== (\x2 -> return (x1 x2)))
+fmap f xs = xs >>= return . f
+(>>) = (*>)
 
+return :: a -> m a
+(>>=) :: m a -> (a -> m b) -> m b
+(>>=) as bs == do {a <-as; bs a;}
+(>>) :: m a -> m b -> m b
+(>>) as bs == do {as; bs;}
+
+class (Monad m, alternative m) => MonadPlus m where ...
+monad that supports choice and failure
+mzero :: m a
+mzero >>= f = mzero
+v >> mzero = mzero
+mzero == empty (defauly)
+mplus :: m a -> m a -> m a
+mplus == (<|>)
 -}
+
+test1 ls = ls >>= \x -> [show x]
+test1a ls = do {x <- ls; [show x];}
+
+test2 ls = ls >>= \x -> [show x] >>= \x -> [(++ "foo") x]
+test2a ls = do { x<- ls
+               ; let y = show x
+               ; [(++ "foo") y]
+               }
 
 divisors :: Integer -> [Integer]
 divisors n = [k | k<-[1..l], n `mod` k == 0] 
@@ -113,6 +150,59 @@ isit x =
   if x == 0
     then 0
     else 2
+
+talkit :: IO String
+talkit = do {
+            print "give me a line";
+            getLine
+            }
+
+talkit2 :: IO String
+talkit2 = do {
+             print "give me a line";
+             putStrLn "asshole!";
+             x <- getLine;
+             if x=="" then return x
+                        else do {putStrLn x; talkit2;}
+             }
+
+--data Tree a = Nil | Node a (Tree a) (Tree a) deriving (Typeable, Data, Show)
+
+--data Tree a = Nil | node parent leftsub rightsub
+data Tree a = Nil | Root a (Tree a) (Tree a) (Tree a) deriving (Typeable, Data, Show)
+
+
+data Foo = NulF | B Bar deriving (Typeable, Data, Show)
+data Bar = NulB | F Foo deriving (Typeable, Data, Show)
+
+data BList a = Non | Link a [a] [a] deriving (Show)
+
+
+
+root :: Tree a -> Maybe a
+root Nil = Nothing
+root (Root a _ _ _) = Just a
+
+parent :: Tree a -> Maybe a
+parent Nil = Nothing
+parent (Root _ p _ _) = root p
+
+lchild :: Tree a -> Maybe a
+lchild Nil = Nothing
+lchild (Root _ _ l _) = root l
+
+rchild :: Tree a -> Maybe a
+rchild Nil = Nothing
+rchild (Root _ _ _ r) = root r
+
+killLeft :: Tree a -> Tree a
+killLeft Nil = Nil
+killLeft (Root x p l r) = Root x p Nil r
+
+killRight :: Tree a -> Tree a
+killRight Nil =Nil
+killRight (Root x p l r) = Root x p l Nil
+
 
 
 
