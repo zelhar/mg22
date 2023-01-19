@@ -1,17 +1,19 @@
-%\documentclass[final]{beamer}
+\documentclass[final]{beamer}
 %\documentclass[10pt, handout]{beamer}
 %\mode<presentation>{\usetheme{Berlin}}
 %\usepackage[orientation=portrait, size=a0, scale=1.25, debug]{beamerposter}
-\documentclass[a4paper,]{article}
+%\documentclass[a4paper,]{article}
 \usepackage[utf8]{inputenc}
 \usepackage{multicol}
-\usepackage{hyperref}
+%\usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{color}
 \usepackage{framed}
 \usepackage{subcaption}
 \usepackage{float}
 \graphicspath{ {images/} }
+\usepackage{svg}
+\usepackage{pdfpages}
 \usepackage{blindtext}
 \usepackage{mathtools}
 \usepackage{amssymb}
@@ -19,13 +21,21 @@
 \usepackage{amsthm}
 \usepackage[backend=biber]{biblatex}
 \addbibresource{mybib.bib}
-
+\usepackage{bm} %\bm
+\usepackage{IEEEtrantools}
+\usepackage[section]{placeins} %\Floatbarrier
+\usepackage{float}
+\usepackage{verbatim}
+\usepackage{cleveref}
 %\usepackage[a4paper, width=150mm, top=25mm, bottom=25mm]{geometry}
-%\usepackage{fancyhdr}
-%\setlength{\headheight}{12pt}
-%\pagestyle{fancy}
-%\pagestyle{empty}
+%\hypersetup{linktocpage,
+%            linktoc=all,
+%            %colorlinks=true,
+%            %linkcolor=blue,
+%}
 \usepackage{lipsum}
+\setlength{\parskip}{1.0em}
+\setlength{\parindent}{1em}
 
 
 %newcommands
@@ -59,10 +69,19 @@
 \newcommand{\lt}{<}
 \newcommand{\tuple}[1]{\langle #1 \rangle}
 
-\title{Spam Beamer}
-%\subtitle{boring slides about spam}
+%\newcommand{\gmvaec}{$\mathrm{sc}{\ast}\mathrm{GM\Delta}$V\AE}
+%\newcommand{\scgmvae}{$\mathrm{c}{\ast}\mathrm{GM\Delta}$V\AE$\mathrm{sc}$}
+\newcommand{\scgmvae}{$\mathrm{c}{\ast}\mathrm{GM\Delta}$V{\AE}s---q}
+%\newcommand{\gmvae}{$\mathrm{c}{\ast}\mathrm{GM\Delta}$V\AE}
+\newcommand{\gmvae}{c$\ast$GM$\mathrm{\Delta}$V\AE~}
+
+\title{\scgmvae}{}
 \author{Kolb, Yiftach}
 %\institute[FU and MPG]{
+%  \inst{1} \includegraphics[width=0.3\linewidth]{images/MPIMG_RGB_gruen.png}
+%  \and
+%  \inst{2} \includegraphics[width=0.2\linewidth]{images/fu-logo_bildschirm_RGB1.jpg}
+%  }
 %\centering
 %\vfill
 %{\includegraphics[width=0.3\linewidth]{images/MPIMG_RGB_gruen.png}} 
@@ -72,13 +91,58 @@
 %
 
 \begin{document}
+\maketitle
 
+\section{\scgmvae}
 
+%\begin{titlepage}
+\begin{frame}
+\frametitle{}
+\begin{center}
+{\includegraphics[width=0.5\textwidth]{images/MPIMG_RGB_gruen.png}}\\
+\vspace*{1cm}
+\large
+\scgmvae
+
+\normalsize
+%\large
+a Master Thesis in Bioinformatics
+\vspace{0.2cm}
+
+Advisor / Reviewer: Professor Martin Vingron\\
+Reviewer: Professor Tim Conrad
+
+\vfill
+
+%Yiftach Josef Kolb
+%\normalsize{(Matrikelnummer 5195763)}
+
+%Berlin, \today
+
+\vfill
+{\includegraphics[width=0.4\textwidth]{images/fu-logo_bildschirm_RGB1.jpg}}
+\end{center}
+\normalsize
+%\end{titlepage}
+\end{frame}
+
+\section{Introduction}
+
+\begin{frame}
+\frametitle{Autoencoders}
+Why turbolence
+\end{frame}
+
+\begin{frame}
+\frametitle{VAEs}
+Why turbolence
+\end{frame}
 
 
 
 \section{bigass equation}
 
+\begin{frame}
 {\tiny
 \begin{equation}
 \label{eq:elbo}
@@ -100,12 +164,16 @@
 \end{aligned}
 \end{equation}
 }
+\end{frame}
 
+\begin{frame}
 normal text
 \tiny
 tiny text
 \normalsize
 normal text
+And now to something~\cite{guo2017improved} completely different \dots
+\end{frame}
 
 %\begin{frame}
 %\frametitle{Spam}
@@ -131,9 +199,9 @@ normal text
 %And now to something~\cite{guo2017improved} completely different \dots
 %\end{frame}
 
-%\section{Reference}
-%\begin{frame}
-%\printbibliography
-%\end{frame}
+\section{Reference}
+\begin{frame}
+\printbibliography
+\end{frame}
 
 \end{document}
