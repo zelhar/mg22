@@ -130,21 +130,21 @@ justifyText n txt =
       
 
 --generateRandomPerm' :: (R.RandomGen g) => g -> Int -> Int -> [Int]
---generateRandomPerm' :: RS.StdGen -> Int -> Int -> [Int]
---generateRandomPerm' g n m =
---  let f = (`mod` n)
---      l::[Int] = nub $ map f (take m (R.randoms g))
---      new_g = snd (R.uniform g :: (Bool, R.StdGen))
---   in if length l == n then l 
---                       else generateRandomPerm' new_g n (2*m) 
+generateRandomPerm' :: RS.StdGen -> Int -> Int -> [Int]
+generateRandomPerm' g n m =
+  let f = (`mod` n)
+      l = nub $ map f (take m (R.randoms g))
+      new_g = snd (R.uniform g :: (Bool, R.StdGen))
+   in if length l == n then l 
+                       else generateRandomPerm' new_g n (2*m) 
 
---generateRandomPerm :: Int -> Int -> [Int]
---generateRandomPerm n m =
---  let gen = R.mkStdGen (42*m)
---      f = (`mod` n)
---      l::[Int] = nub $ map f (take m (R.randoms gen))
---   in if length l == n then l
---                       else generateRandomPerm n (2*m)
+generateRandomPerm :: Int -> Int -> [Int]
+generateRandomPerm n m =
+  let gen = R.mkStdGen (42*m)
+      f = (`mod` n)
+      l = nub $ map f (take m (R.randoms gen))
+   in if length l == n then l
+                       else generateRandomPerm n (2*m)
       
 
 testRandom :: Int -> [Word]
