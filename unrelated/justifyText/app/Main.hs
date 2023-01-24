@@ -17,12 +17,13 @@ import qualified System.Random as R
 import qualified System.Random.Stateful as RS
 import Data.Tuple
 
-main :: IO ()
-main = someFunc
+--main :: IO ()
+--main = someFunc
 
 getRequiredSpaces ∷ Int → Int → Int → [Int]
 getRequiredSpaces justWidth lineWidth numWords
-  | justWidth <= lineWidth = []
+  | justWidth <= lineWidth = [0 | i <- [1..numWords]]
+  | numWords <= 1 = [0]
   | otherwise = let numGaps = justWidth - lineWidth
                     a = numGaps `div` numWords
                     b = numGaps `mod` numWords
@@ -79,7 +80,7 @@ chip n w (x:xs)
 
 -- right justrify text to <=n line width
 chipChop :: Int -> T.Text -> T.Text -> [T.Text] -> T.Text
-chipChop _ w txt [] = txt
+chipChop _ w txt [] = T.concat [txt, "\n", w]
 chipChop n "" txt (x:xs) = chipChop n x txt xs
 chipChop n w txt (x:xs)
   | T.length w + 1 + T.length x > n = chipChop n "" (T.concat [txt, "\n", w]) (x:xs)
@@ -97,6 +98,14 @@ justifyLine n ln =
       newWords = zipWith T.append ws gaps
    in T.unwords newWords
 
+wrapText :: Int -> T.Text -> T.Text
+wrapText _ "" = ""
+wrapText n txt =
+  let text = prepText txt
+      ps = paragraphs text
+      pss = map ((chipChop n "" "") . (T.words)) ps
+   in (T.unlines pss)
+      
 justifyText :: Int -> T.Text -> T.Text
 justifyText _ "" = ""
 justifyText n txt = 
@@ -117,21 +126,21 @@ justifyText n txt =
       
 
 --generateRandomPerm' :: (R.RandomGen g) => g -> Int -> Int -> [Int]
-generateRandomPerm' :: RS.StdGen -> Int -> Int -> [Int]
-generateRandomPerm' g n m =
-  let f = (`mod` n)
-      l::[Int] = nub $ map f (take m (R.randoms g))
-      new_g = snd (R.uniform g :: (Bool, R.StdGen))
-   in if length l == n then l 
-                       else generateRandomPerm' new_g n (2*m) 
+--generateRandomPerm' :: RS.StdGen -> Int -> Int -> [Int]
+--generateRandomPerm' g n m =
+--  let f = (`mod` n)
+--      l::[Int] = nub $ map f (take m (R.randoms g))
+--      new_g = snd (R.uniform g :: (Bool, R.StdGen))
+--   in if length l == n then l 
+--                       else generateRandomPerm' new_g n (2*m) 
 
-generateRandomPerm :: Int -> Int -> [Int]
-generateRandomPerm n m =
-  let gen = R.mkStdGen (42*m)
-      f = (`mod` n)
-      l::[Int] = nub $ map f (take m (R.randoms gen))
-   in if length l == n then l
-                       else generateRandomPerm n (2*m)
+--generateRandomPerm :: Int -> Int -> [Int]
+--generateRandomPerm n m =
+--  let gen = R.mkStdGen (42*m)
+--      f = (`mod` n)
+--      l::[Int] = nub $ map f (take m (R.randoms gen))
+--   in if length l == n then l
+--                       else generateRandomPerm n (2*m)
       
 
 testRandom :: Int -> [Word]
@@ -149,6 +158,68 @@ getOutputFile path = do { hand <- openFile path WriteMode
                         ; if and [isOK, path /= "-"]  then return hand else return stdout
                         }
 
-textt = do TIO.readFile "pg22367.txt"
 
+main :: IO ()
+main = do { sample <- TIO.readFile "sample.txt"
+          ; TIO.putStrLn sample
+          ; let text = prepText sample
+          ; TIO.putStrLn text
+          }
+
+test :: IO T.Text
+test = do { sample <- TIO.readFile "sample.txt"
+          --; TIO.putStrLn sample
+          ; let text = prepText sample
+          --; TIO.putStrLn text
+          ; let pars = paragraphs text
+          ; TIO.putStrLn (pars !! 2)
+          ; return $ pars !! 2
+          }
+
+test2 :: IO T.Text
+test2 = do { sample <- TIO.readFile "sample.txt"
+          --; TIO.putStrLn sample
+          ; let text = prepText sample
+          --; TIO.putStrLn text
+          ; let pars = paragraphs text
+          ; TIO.putStrLn (pars !! 2)
+          ; let text2 =  pars !! 2
+          ; let text3 = justifyText 48 text2
+          ; TIO.putStrLn text3
+          ; return text3
+          }
+
+test3 n = do
+  sample <- TIO.readFile "sample.txt"
+  let text = prepText sample
+  let pars = paragraphs text
+  let parpars = map (T.words) pars
+  let wpars = map (chipChop n "" "") parpars
+  --return wpars
+  TIO.putStrLn (T.unlines wpars)
+  let wtext = (T.unlines wpars)
+  return (T.intercalate "\n" wpars)
+
+test4 n = do
+  sample <- TIO.readFile "sample.txt"
+  let text = wrapText n sample
+  TIO.putStrLn text
+  let mylines = map (justifyLine n) (T.lines text)
+  let jtext = T.unlines mylines
+  TIO.putStrLn jtext
+  return jtext
+
+
+
+textt = do TIO.readFile "pg22367.txt"
 sampleio = do TIO.readFile "sample.txt"
+
+foo = do { txt <- sampleio
+         ; let mytext = justifyText 48 txt
+         ; return mytext
+         }
+
+--sample <- sampleio
+--txt = prepText sample
+--TIO.putStrLn sample
+--TIO.putStrLn txt
