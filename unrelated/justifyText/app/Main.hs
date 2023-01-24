@@ -1,24 +1,24 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE UnicodeSyntax     #-}
-import           Control.Applicative
-import           Control.Monad
-import           Data.Char
-import           Data.List
-import           Data.Semigroup
-import qualified Data.Text           as T
-import qualified Data.Text.IO        as TIO
-import           System.Environment
-import           System.IO
 
-import qualified System.Randoms R
+module Main ( main) where
 
+import Control.Applicative
+import Control.Monad
+import Data.Char
+import Data.List
+import Data.Semigroup
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
+import Lib
+import System.Environment
+import System.IO
+import qualified System.Random as R
+import qualified System.Random.Stateful as RS
+import Data.Tuple
 
-
--- The plan:
--- strip white space
--- split lines
--- take paragraph, justify, repeat
-
+main :: IO ()
+main = someFunc
 
 getRequiredSpaces ∷ Int → Int → Int → [Int]
 getRequiredSpaces justWidth lineWidth numWords
@@ -82,7 +82,7 @@ chipChop :: Int -> T.Text -> T.Text -> [T.Text] -> T.Text
 chipChop _ w txt [] = txt
 chipChop n "" txt (x:xs) = chipChop n x txt xs
 chipChop n w txt (x:xs)
-  | T.length w + 1 + T.length x > n = chipChop n "" (T.concat [txt, "\n", w]) xs
+  | T.length w + 1 + T.length x > n = chipChop n "" (T.concat [txt, "\n", w]) (x:xs)
   | otherwise = chipChop n (T.concat [w, " ", x]) txt xs
 
 
@@ -97,26 +97,51 @@ justifyLine n ln =
       newWords = zipWith T.append ws gaps
    in T.unwords newWords
 
---paragraphs :: T.Text -> [T.Text]
---paragraphs [] = []
---paragraphs xs =
---  let ls = lines xs
---      p = (=="\n")
---      q = (isPrefixOf "  ")
---      s = \l -> (p l) || (q l)
+justifyText :: Int -> T.Text -> T.Text
+justifyText _ "" = ""
+justifyText n txt = 
+  let text = prepText txt
+      ps = paragraphs text
+      pss = map ((chipChop n "" "").(T.words)) ps
+      ls = map (justifyLine n) (T.lines (T.unlines pss))
+      rjtxt = (T.unlines pss)
+      cjtxt = T.unlines $ map (justifyLine n) (T.lines rjtxt)
+      --pss = do { p <- ps
+      --         ; let pp = chipChop n "" "" (T.words p)
+      --         ; let ls = map (justifyLine n) (T.lines pp)
+      --         ; [T.unlines ls]
+      --         }
+  --in (T.unlines ls)
+  --in (T.unlines pss)
+   in cjtxt
+      
 
-extractParagraph ∷ [T.Text] → [T.Text]
-extractParagraph [] = []
-extractParagraph ls = takeWhile (/="") (map T.strip ls)
+--generateRandomPerm' :: (R.RandomGen g) => g -> Int -> Int -> [Int]
+generateRandomPerm' :: RS.StdGen -> Int -> Int -> [Int]
+generateRandomPerm' g n m =
+  let f = (`mod` n)
+      l::[Int] = nub $ map f (take m (R.randoms g))
+      new_g = snd (R.uniform g :: (Bool, R.StdGen))
+   in if length l == n then l 
+                       else generateRandomPerm' new_g n (2*m) 
 
-extractParagraphs ∷ T.Text → [[T.Text]]
-extractParagraphs text =
-  let ls = map T.strip (T.lines text)
-      ws = map T.words ls
-      wss = do { l <- ws
-               ; [map T.strip l]
-               }
-   in wss
+generateRandomPerm :: Int -> Int -> [Int]
+generateRandomPerm n m =
+  let gen = R.mkStdGen (42*m)
+      f = (`mod` n)
+      l::[Int] = nub $ map f (take m (R.randoms gen))
+   in if length l == n then l
+                       else generateRandomPerm n (2*m)
+      
+
+testRandom :: Int -> [Word]
+testRandom n = 
+  let rollsM :: RS.StatefulGen g m => Int -> g -> m [Word]
+      rollsM n = replicateM n . RS.uniformRM (1,6)
+      pureGen = R.mkStdGen 42
+   in RS.runStateGen_ pureGen (rollsM n) :: [Word]
+
+
 
 getOutputFile ∷ String → IO Handle
 getOutputFile path = do { hand <- openFile path WriteMode
@@ -127,54 +152,3 @@ getOutputFile path = do { hand <- openFile path WriteMode
 textt = do TIO.readFile "pg22367.txt"
 
 sampleio = do TIO.readFile "sample.txt"
-
---text <- textt
---ts = extractParagraphs text
---tss = map T.unwords ts
---tsss = T.unlines tss
-
-
---paragraphs :: T.Text -> [T.Text]
---paragraphs text = let ls = T.lines text
---                  in ...
-
-main =
-  do { args <- getArgs
-     ; text <- TIO.getContents
-     ; let minitext = T.takeWhile (/='ü') text
-     ; TIO.putStrLn $ T.strip $ T.toUpper minitext
-     ; let myLines = map T.strip (T.lines text)
-     ; TIO.putStrLn $ T.unlines myLines
-     }
-
-mainOld =
- do { args <- getArgs
-    ; let path = if null args then "-" else head args
-    ; hand <- getOutputFile path
-    --; hand <- openFile (head args) AppendMode
-    --; hPutStrLn hand "fuck off!"
-    ; print hand
-    ; do { test <- hIsWritable hand
-         ; print "is writeable?"
-         ; print test
-         }
-    ; do { test <- hIsReadable hand
-         ; print "is readable?"
-         ; print test
-         }
-    ; print "is handle stdout?"
-    ; print (stdout == hand)
-    ; hPutStrLn stdout (show args)
-    ; name <- getLine
-    ; let loudName = map toUpper name
-    ; putStrLn ("Hello " ++ loudName ++ "!")
-    ; putStrLn ("Oh boy! Am I excited to meet you, " ++ loudName)
-    ;hClose hand
-    }
-
---mainss = do { name <- getLine
---            ; let loudName = map toUpper name
---            ; putStrLn ("Hello " ++ loudName ++ "!");
---            }
-
-
