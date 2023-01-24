@@ -83,7 +83,10 @@ chipChop :: Int -> T.Text -> T.Text -> [T.Text] -> T.Text
 chipChop _ w txt [] = T.concat [txt, "\n", w]
 chipChop n "" txt (x:xs) = chipChop n x txt xs
 chipChop n w txt (x:xs)
-  | T.length w + 1 + T.length x > n = chipChop n "" (T.concat [txt, "\n", w]) (x:xs)
+  -- | T.length w + 1 + T.length x > n = chipChop n "" (T.concat [txt, "\n", w]) (x:xs)
+  | T.length w + 1 + T.length x > n = 
+    if T.null txt then chipChop n "" w (x:xs)
+                  else chipChop n "" (T.concat [txt, "\n", w]) (x:xs)
   | otherwise = chipChop n (T.concat [w, " ", x]) txt xs
 
 
@@ -104,7 +107,8 @@ wrapText n txt =
   let text = prepText txt
       ps = paragraphs text
       pss = map ((chipChop n "" "") . (T.words)) ps
-   in (T.unlines pss)
+   in (T.intercalate "\n\n" pss)
+   --in (T.unlines pss)
       
 justifyText :: Int -> T.Text -> T.Text
 justifyText _ "" = ""
@@ -112,8 +116,8 @@ justifyText n txt =
   let text = prepText txt
       ps = paragraphs text
       pss = map ((chipChop n "" "").(T.words)) ps
-      ls = map (justifyLine n) (T.lines (T.unlines pss))
-      rjtxt = (T.unlines pss)
+      --rjtxt = (T.unlines pss)
+      rjtxt = (T.intercalate "\n\n" pss)
       cjtxt = T.unlines $ map (justifyLine n) (T.lines rjtxt)
       --pss = do { p <- ps
       --         ; let pp = chipChop n "" "" (T.words p)
