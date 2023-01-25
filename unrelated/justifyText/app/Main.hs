@@ -100,6 +100,17 @@ justifyLine n ln =
       newWords = zipWith T.append ws gaps
    in T.unwords newWords
 
+justifyLineR :: RS.StdGen -> Int -> T.Text -> T.Text
+justifyLineR n _ "" = ""
+justifyLineR g n ln =
+  let ws = T.words ln
+      numWords = length ws - 1
+      lineWidth = (sum (map T.length ws)) + (length ws) - 1
+      gapToAddList = permute g $ getRequiredSpaces n lineWidth numWords
+      gaps = [ T.replicate i " " | i <- gapToAddList ] ++ [""]
+      newWords = zipWith T.append ws gaps
+   in T.unwords newWords
+
 wrapText :: Int -> T.Text -> T.Text
 wrapText _ "" = ""
 wrapText n txt =
@@ -128,24 +139,41 @@ justifyText n txt =
   --in (T.unlines pss)
    in cjtxt
       
-
---generateRandomPerm' :: (R.RandomGen g) => g -> Int -> Int -> [Int]
---generateRandomPerm' :: RS.StdGen -> Int -> Int -> [Int]
---generateRandomPerm' g n m =
---  let f = (`mod` n)
---      l::[Int] = nub $ map f (take m (R.randoms g))
---      new_g = snd (R.uniform g :: (Bool, R.StdGen))
---   in if length l == n then l 
---                       else generateRandomPerm' new_g n (2*m) 
-
---generateRandomPerm :: Int -> Int -> [Int]
---generateRandomPerm n m =
---  let gen = R.mkStdGen (42*m)
---      f = (`mod` n)
---      l::[Int] = nub $ map f (take m (R.randoms gen))
---   in if length l == n then l
---                       else generateRandomPerm n (2*m)
+justifyTextR :: RS.StdGen -> Int -> T.Text -> T.Text
+justifyTextR _ _ "" = ""
+justifyTextR g n txt = 
+  let text = prepText txt
+      ps = paragraphs text
+      pss = map ((chipChop n "" "").(T.words)) ps
+      rjtxt = (T.intercalate "\n\n" pss)
+      cjtxt = T.unlines $ map (justifyLineR g n) (T.lines rjtxt)
+      --pss = do { p <- ps
+      --         ; let pp = chipChop n "" "" (T.words p)
+      --         ; let ls = map (justifyLine n) (T.lines pp)
+      --         ; [T.unlines ls]
+      --         }
+  --in (T.unlines ls)
+  --in (T.unlines pss)
+   in cjtxt
       
+
+generateRandomPerm :: RS.StdGen -> Int -> Int -> [Int]
+generateRandomPerm g n m =
+  let f = (`mod` n)
+      l = nub $ map f (take m (R.randoms g)::[Int])
+      new_g = snd (R.uniform g :: (Bool, R.StdGen))
+   in if length l == n then l 
+                       else generateRandomPerm new_g n (2*m) 
+
+permute :: RS.StdGen -> [a] -> [a]      
+permute g [] = []
+permute g (x:[]) = (x:[])
+permute g xs = 
+  let n = length xs
+      p = generateRandomPerm g n (2*n)
+   in [xs!!i | i <- p]
+
+
 
 testRandom :: Int -> [Word]
 testRandom n = 
@@ -167,11 +195,14 @@ main :: IO ()
 main = do { 
           ; args <- getArgs
           ; text <- TIO.getContents
+          ; g <- R.newStdGen
+          ; g <- R.newStdGen
           --; text <- TIO.hGetLine stdin
           --; text <- TIO.readFile "sample.txt"
           ; let n = if null args then 68::Int
                                  else read (head args) :: Int
-          ; let jtext = justifyText n text
+          ; let jtext = justifyTextR g n text
+          --; let jtext = justifyText n text
           --; TIO.putStrLn "hello!"
           --; TIO.hPutStr stdout "good bye!"
           ; TIO.hPutStr stdout jtext
@@ -231,13 +262,3 @@ test4 n = do
 
 textt = do TIO.readFile "pg22367.txt"
 sampleio = do TIO.readFile "sample.txt"
-
-foo = do { txt <- sampleio
-         ; let mytext = justifyText 48 txt
-         ; return mytext
-         }
-
---sample <- sampleio
---txt = prepText sample
---TIO.putStrLn sample
---TIO.putStrLn txt
