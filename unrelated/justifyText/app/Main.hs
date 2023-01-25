@@ -51,14 +51,15 @@ import qualified System.Random as R
 import qualified System.Random.Stateful as RS
 
 getRequiredSpaces :: Int -> Int -> Int -> [Int]
-getRequiredSpaces justWidth lineWidth numWords
-  | justWidth <= lineWidth = [0 | i <- [1 .. numWords]]
-  | numWords <= 1 = [0]
+getRequiredSpaces justWidth lineWidth numPlaces
+  | justWidth <= lineWidth = [0 | i <- [1 .. numPlaces]]
+  | numPlaces == 1 = [justWidth - lineWidth]
+  | numPlaces < 1 = [0]
   | otherwise =
-    let numGaps = justWidth - lineWidth
-        a = numGaps `div` numWords
-        b = numGaps `mod` numWords
-     in [a + 1 | i <- [1 .. b]] ++ [a | i <- [1 .. (numWords - b)]]
+    let spacesToFill = justWidth - lineWidth
+        a = spacesToFill `div` numPlaces
+        b = spacesToFill `mod` numPlaces
+     in [a + 1 | i <- [1 .. b]] ++ [a | i <- [1 .. (numPlaces - b)]]
 
 split :: (a -> Bool) -> [a] -> [[a]]
 split p [] = []
@@ -242,5 +243,22 @@ testmain = do
                                   else (wrapText n jtext)
   TIO.hPutStr stdout output
   --TIO.hPutStr stdout jtext
+
+{- | 1-indexed swap operation on lists
+- -}
+swapTwo :: Int -> Int -> [a] -> [a]
+swapTwo i j xs
+  | i < 1 = xs
+  | j > length xs = xs
+  | i == j = xs
+  | i > j = swapTwo j i xs
+  | otherwise =
+    let prefix = take (i - 1) xs
+        (li:taili) = drop (i - 1) xs
+        midfix = take (j - i - 1) taili
+        (lj:suffix) = drop (j - 1) xs
+     in prefix ++ [lj] ++ midfix ++ [li] ++ suffix
+
+
 --textt = do TIO.readFile "pg22367.txt"
 --sampleio = do TIO.readFile "sample.txt"
