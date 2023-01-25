@@ -147,7 +147,7 @@ wrapText n txt =
       ps = paragraphs text
       pss = map ((chipChop n "" "") . (T.words)) ps
    --in (T.unlines pss)
-   in (T.intercalate "\n\n" pss)
+   in T.append (T.intercalate "\n\n" pss) "\n"
 
 justifyText :: Int -> T.Text -> T.Text
 justifyText _ "" = ""
@@ -219,7 +219,7 @@ main = do
   let output =
         if length args <= 1
           then jtext
-          else (wrapText n jtext)
+          else wrapText n text
   --TIO.hPutStr stdout jtext
   TIO.hPutStr stdout output
 
