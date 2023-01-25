@@ -15,6 +15,10 @@
       In case of words longer than the desired linewidth, such words make 
       their own line, and will not be broken or hyphenated.
 
+      If the program is given additional arguments other than linewidth,
+      the output will be righ-justified text to the specification of the
+      first argument (wrapped text) with no extra space padding
+
       ==== __Examples__
       use from the linux command line:
       `cat mytext.txt | justifyText-exe 80 > output.txt`
@@ -152,16 +156,8 @@ justifyText n txt =
       ps = paragraphs text
       pss = map ((chipChop n "" "") . (T.words)) ps
       ls = map (justifyLine n) (T.lines (T.unlines pss))
-      --rjtxt = (T.unlines pss)
       rjtxt = (T.intercalate "\n\n" pss)
       cjtxt = T.unlines $ map (justifyLine n) (T.lines rjtxt)
-      --pss = do { p <- ps
-      --         ; let pp = chipChop n "" "" (T.words p)
-      --         ; let ls = map (justifyLine n) (T.lines pp)
-      --         ; [T.unlines ls]
-      --         }
-  --in (T.unlines ls)
-  --in (T.unlines pss)
    in cjtxt
 
 {- | randomized version of justifyText
@@ -174,13 +170,6 @@ justifyTextR g n txt =
       pss = map ((chipChop n "" "") . (T.words)) ps
       rjtxt = (T.intercalate "\n\n" pss)
       cjtxt = T.unlines $ map (justifyLineR g n) (T.lines rjtxt)
-      --pss = do { p <- ps
-      --         ; let pp = chipChop n "" "" (T.words p)
-      --         ; let ls = map (justifyLine n) (T.lines pp)
-      --         ; [T.unlines ls]
-      --         }
-  --in (T.unlines ls)
-  --in (T.unlines pss)
    in cjtxt
 
 generateRandomPerm :: RS.StdGen -> Int -> Int -> [Int]
@@ -220,7 +209,6 @@ main = do
   args <- getArgs
   text <- TIO.getContents
   g <- R.newStdGen
-  g <- R.newStdGen
           --; text <- TIO.hGetLine stdin
           --; text <- TIO.readFile "sample.txt"
   let n =
@@ -228,11 +216,12 @@ main = do
           then 68 :: Int
           else read (head args) :: Int
   let jtext = justifyTextR g n text
-          --; let jtext = justifyText n text
-          --; TIO.putStrLn "hello!"
-          --; TIO.hPutStr stdout "good bye!"
-  TIO.hPutStr stdout jtext
-          --; TIO.hPutStrLn stdout "\ndone"
+  let output =
+        if length args <= 1
+          then jtext
+          else (wrapText n jtext)
+  --TIO.hPutStr stdout jtext
+  TIO.hPutStr stdout output
 
 testmain :: IO ()
 testmain = do
@@ -249,6 +238,9 @@ testmain = do
           --; let jtext = justifyText n text
           --; TIO.putStrLn "hello!"
           --; TIO.hPutStr stdout "good bye!"
-  TIO.hPutStr stdout jtext
+  let output = if length args > 1 then jtext
+                                  else (wrapText n jtext)
+  TIO.hPutStr stdout output
+  --TIO.hPutStr stdout jtext
 --textt = do TIO.readFile "pg22367.txt"
 --sampleio = do TIO.readFile "sample.txt"
