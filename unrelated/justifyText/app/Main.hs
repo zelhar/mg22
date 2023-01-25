@@ -83,10 +83,6 @@ chipChop :: Int -> T.Text -> T.Text -> [T.Text] -> T.Text
 chipChop _ w txt [] = T.concat [txt, "\n", w]
 chipChop n "" txt (x:xs) = chipChop n x txt xs
 chipChop n w txt (x:xs)
-<<<<<<< HEAD
-=======
-  -- | T.length w + 1 + T.length x > n = chipChop n "" (T.concat [txt, "\n", w]) (x:xs)
->>>>>>> 605a250365fce7b3dc0ab1ac7c32b1632044e3b5
   | T.length w + 1 + T.length x > n = 
     if T.null txt then chipChop n "" w (x:xs)
                   else chipChop n "" (T.concat [txt, "\n", w]) (x:xs)
@@ -110,13 +106,8 @@ wrapText n txt =
   let text = prepText txt
       ps = paragraphs text
       pss = map ((chipChop n "" "") . (T.words)) ps
-<<<<<<< HEAD
    --in (T.unlines pss)
    in (T.intercalate "\n\n" pss)
-=======
-   in (T.intercalate "\n\n" pss)
-   --in (T.unlines pss)
->>>>>>> 605a250365fce7b3dc0ab1ac7c32b1632044e3b5
       
 justifyText :: Int -> T.Text -> T.Text
 justifyText _ "" = ""
@@ -124,10 +115,7 @@ justifyText n txt =
   let text = prepText txt
       ps = paragraphs text
       pss = map ((chipChop n "" "").(T.words)) ps
-<<<<<<< HEAD
       ls = map (justifyLine n) (T.lines (T.unlines pss))
-=======
->>>>>>> 605a250365fce7b3dc0ab1ac7c32b1632044e3b5
       --rjtxt = (T.unlines pss)
       rjtxt = (T.intercalate "\n\n" pss)
       cjtxt = T.unlines $ map (justifyLine n) (T.lines rjtxt)
@@ -142,21 +130,21 @@ justifyText n txt =
       
 
 --generateRandomPerm' :: (R.RandomGen g) => g -> Int -> Int -> [Int]
-generateRandomPerm' :: RS.StdGen -> Int -> Int -> [Int]
-generateRandomPerm' g n m =
-  let f = (`mod` n)
-      l = nub $ map f (take m (R.randoms g))
-      new_g = snd (R.uniform g :: (Bool, R.StdGen))
-   in if length l == n then l 
-                       else generateRandomPerm' new_g n (2*m) 
+--generateRandomPerm' :: RS.StdGen -> Int -> Int -> [Int]
+--generateRandomPerm' g n m =
+--  let f = (`mod` n)
+--      l::[Int] = nub $ map f (take m (R.randoms g))
+--      new_g = snd (R.uniform g :: (Bool, R.StdGen))
+--   in if length l == n then l 
+--                       else generateRandomPerm' new_g n (2*m) 
 
-generateRandomPerm :: Int -> Int -> [Int]
-generateRandomPerm n m =
-  let gen = R.mkStdGen (42*m)
-      f = (`mod` n)
-      l = nub $ map f (take m (R.randoms gen))
-   in if length l == n then l
-                       else generateRandomPerm n (2*m)
+--generateRandomPerm :: Int -> Int -> [Int]
+--generateRandomPerm n m =
+--  let gen = R.mkStdGen (42*m)
+--      f = (`mod` n)
+--      l::[Int] = nub $ map f (take m (R.randoms gen))
+--   in if length l == n then l
+--                       else generateRandomPerm n (2*m)
       
 
 testRandom :: Int -> [Word]
