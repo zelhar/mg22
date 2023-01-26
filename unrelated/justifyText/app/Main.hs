@@ -161,6 +161,24 @@ justifyText n txt =
       cjtxt = T.unlines $ map (justifyLine n) (T.lines rjtxt)
    in cjtxt
 
+
+{- | a variation which leaves the last line of a paragraph left justified.
+- -}
+--justifyText' :: Int -> T.Text -> T.Text
+--justifyText' _ "" = ""
+--justifyText' n txt =
+--  let text = prepText txt
+--      ps = paragraphs text
+--      pss = map ((chipChop n "" "") . (T.words)) ps
+--      lss = map T.lines pss
+--      f s = if T.last s /= '\n' then (justifyLine n s)
+--                                    else s
+--      lsss = map (map f) lss
+--      lssss = map T.unlines lsss
+--      cjtxt = T.unlines lssss
+--   in cjtxt
+
+
 -- | randomized version of justifyText
 justifyTextR :: RS.StdGen -> Int -> T.Text -> T.Text
 justifyTextR _ _ "" = ""
@@ -171,6 +189,7 @@ justifyTextR g n txt =
       rjtxt = (T.intercalate "\n\n" pss)
       cjtxt = T.unlines $ map (justifyLineR g n) (T.lines rjtxt)
    in cjtxt
+
 
 generateRandomPerm :: RS.StdGen -> Int -> Int -> [Int]
 generateRandomPerm g n m =
@@ -278,5 +297,5 @@ permute' g i xs
 
 
 
--- textt = do TIO.readFile "pg22367.txt"
--- sampleio = do TIO.readFile "sample.txt"
+--textt = do TIO.readFile "pg22367.txt"
+sampleio = do TIO.readFile "sample.txt"
