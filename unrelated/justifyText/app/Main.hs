@@ -1,8 +1,10 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE UnicodeSyntax #-}
+{-# LANGUAGE ImportQualifiedPost #-}
 {-# OPTIONS_HADDOCK show-extensions #-}
-  {- | Justify Text app/module.
-      
+
+{- | Justify Text app/module.
+
       reads text from stdin.
       takes 1 optional argument - desired linewidth.
       if not provided it defaults to 68.
@@ -12,7 +14,7 @@
 
       Each paragraphs is center-justified to the desired linewidth by adding spaces.
       The spaces are randomly distributed between the words of the line.
-      In case of words longer than the desired linewidth, such words make 
+      In case of words longer than the desired linewidth, such words make
       their own line, and will not be broken or hyphenated.
 
       If the program is given additional arguments other than linewidth,
@@ -27,28 +29,26 @@
       `:'<,'>!justifyLine-exe 72`
 
       also can set in vim equalprg or formatprg,
-      e.g 
+      e.g
       `:set equalprg=justifyLine-exe\ 58`
-
-      -}
-
-module Main
-  ( main
-  ) where
+-}
+module Main (
+  main,
+) where
 
 import Control.Applicative
 import Control.Monad
 import Data.Char
 import Data.List
 import Data.Semigroup
-import qualified Data.Text as T
-import qualified Data.Text.IO as TIO
+import Data.Text qualified as T
+import Data.Text.IO qualified as TIO
 import Data.Tuple
 import Lib
 import System.Environment
 import System.IO
-import qualified System.Random as R
-import qualified System.Random.Stateful as RS
+import System.Random qualified as R
+import System.Random.Stateful qualified as RS
 
 getRequiredSpaces :: Int -> Int -> Int -> [Int]
 getRequiredSpaces justWidth lineWidth numPlaces
@@ -56,10 +56,10 @@ getRequiredSpaces justWidth lineWidth numPlaces
   | numPlaces == 1 = [justWidth - lineWidth]
   | numPlaces < 1 = [0]
   | otherwise =
-    let spacesToFill = justWidth - lineWidth
-        a = spacesToFill `div` numPlaces
-        b = spacesToFill `mod` numPlaces
-     in [a + 1 | i <- [1 .. b]] ++ [a | i <- [1 .. (numPlaces - b)]]
+      let spacesToFill = justWidth - lineWidth
+          a = spacesToFill `div` numPlaces
+          b = spacesToFill `mod` numPlaces
+       in [a + 1 | i <- [1 .. b]] ++ [a | i <- [1 .. (numPlaces - b)]]
 
 split :: (a -> Bool) -> [a] -> [[a]]
 split p [] = []
@@ -93,26 +93,25 @@ paragraphs text =
       mylines = T.lines text'
       mypars = split (== "") mylines
       mypars' = map (T.unlines) mypars
-      --mypars' = map (T.intercalate "\n") mypars
-   in mypars'
+   in -- mypars' = map (T.intercalate "\n") mypars
+      mypars'
 
 chip :: Int -> T.Text -> [T.Text] -> T.Text
 chip _ w [] = w
-chip n "" (x:xs) = chip n x xs
-chip n w (x:xs)
+chip n "" (x : xs) = chip n x xs
+chip n w (x : xs)
   | T.length w + 1 + T.length x <= n = chip n (T.concat [w, " ", x]) xs
   | otherwise = w
 
-{- | right justrify [textWords] to <=n line width
-    -}
+-- | right justrify [textWords] to <=n line width
 chipChop :: Int -> T.Text -> T.Text -> [T.Text] -> T.Text
 chipChop _ w txt [] = T.concat [txt, "\n", w]
-chipChop n "" txt (x:xs) = chipChop n x txt xs
-chipChop n w txt (x:xs)
+chipChop n "" txt (x : xs) = chipChop n x txt xs
+chipChop n w txt (x : xs)
   | T.length w + 1 + T.length x > n =
-    if T.null txt
-      then chipChop n "" w (x : xs)
-      else chipChop n "" (T.concat [txt, "\n", w]) (x : xs)
+      if T.null txt
+        then chipChop n "" w (x : xs)
+        else chipChop n "" (T.concat [txt, "\n", w]) (x : xs)
   | otherwise = chipChop n (T.concat [w, " ", x]) txt xs
 
 justifyLine :: Int -> T.Text -> T.Text
@@ -126,29 +125,30 @@ justifyLine n ln =
       newWords = zipWith T.append ws gaps
    in T.unwords newWords
 
-{- | randomized version of justifyLine -}
+-- | randomized version of justifyLine
 justifyLineR :: RS.StdGen -> Int -> T.Text -> T.Text
 justifyLineR n _ "" = ""
 justifyLineR g n ln =
   let ws = T.words ln
       numWords = length ws - 1
       lineWidth = (sum (map T.length ws)) + (length ws) - 1
-      gapToAddList = permute g $ getRequiredSpaces n lineWidth numWords
+      -- gapToAddList = permute g $ getRequiredSpaces n lineWidth numWords
+      gapToAddList = permute' g 1 $ getRequiredSpaces n lineWidth numWords
       gaps = [T.replicate i " " | i <- gapToAddList] ++ [""]
       newWords = zipWith T.append ws gaps
    in T.unwords newWords
 
 {- | wraps text so that each line is at most linewidth wide.
       doesn't add padding space.e
-      -}
+-}
 wrapText :: Int -> T.Text -> T.Text
 wrapText _ "" = ""
 wrapText n txt =
   let text = prepText txt
       ps = paragraphs text
       pss = map ((chipChop n "" "") . (T.words)) ps
-   --in (T.unlines pss)
-   in T.append (T.intercalate "\n\n" pss) "\n"
+   in -- in (T.unlines pss)
+      T.append (T.intercalate "\n\n" pss) "\n"
 
 justifyText :: Int -> T.Text -> T.Text
 justifyText _ "" = ""
@@ -161,8 +161,7 @@ justifyText n txt =
       cjtxt = T.unlines $ map (justifyLine n) (T.lines rjtxt)
    in cjtxt
 
-{- | randomized version of justifyText
-    -}
+-- | randomized version of justifyText
 justifyTextR :: RS.StdGen -> Int -> T.Text -> T.Text
 justifyTextR _ _ "" = ""
 justifyTextR g n txt =
@@ -184,7 +183,7 @@ generateRandomPerm g n m =
 
 permute :: RS.StdGen -> [a] -> [a]
 permute g [] = []
-permute g (x:[]) = (x : [])
+permute g (x : []) = (x : [])
 permute g xs =
   let n = length xs
       p = generateRandomPerm g n (2 * n)
@@ -210,8 +209,8 @@ main = do
   args <- getArgs
   text <- TIO.getContents
   g <- R.newStdGen
-          --; text <- TIO.hGetLine stdin
-          --; text <- TIO.readFile "sample.txt"
+  -- ; text <- TIO.hGetLine stdin
+  -- ; text <- TIO.readFile "sample.txt"
   let n =
         if null args
           then 68 :: Int
@@ -221,31 +220,35 @@ main = do
         if length args <= 1
           then jtext
           else wrapText n text
-  --TIO.hPutStr stdout jtext
+  -- TIO.hPutStr stdout jtext
   TIO.hPutStr stdout output
 
 testmain :: IO ()
 testmain = do
   args <- getArgs
-          --; text <- TIO.getContents
+  -- ; text <- TIO.getContents
   text <- TIO.readFile "sample.txt"
   g <- R.newStdGen
-          --; text <- TIO.hGetLine stdin
+  -- ; text <- TIO.hGetLine stdin
   let n =
         if null args
           then 68 :: Int
           else read (head args) :: Int
   let jtext = justifyTextR g n text
-          --; let jtext = justifyText n text
-          --; TIO.putStrLn "hello!"
-          --; TIO.hPutStr stdout "good bye!"
-  let output = if length args > 1 then jtext
-                                  else (wrapText n jtext)
+  -- ; let jtext = justifyText n text
+  -- ; TIO.putStrLn "hello!"
+  -- ; TIO.hPutStr stdout "good bye!"
+  let output =
+        if length args > 1
+          then jtext
+          else (wrapText n jtext)
   TIO.hPutStr stdout output
-  --TIO.hPutStr stdout jtext
+
+-- TIO.hPutStr stdout jtext
 
 {- | 1-indexed swap operation on lists
-- -}
+-
+-}
 swapTwo :: Int -> Int -> [a] -> [a]
 swapTwo i j xs
   | i < 1 = xs
@@ -253,12 +256,27 @@ swapTwo i j xs
   | i == j = xs
   | i > j = swapTwo j i xs
   | otherwise =
-    let prefix = take (i - 1) xs
-        (li:taili) = drop (i - 1) xs
-        midfix = take (j - i - 1) taili
-        (lj:suffix) = drop (j - 1) xs
-     in prefix ++ [lj] ++ midfix ++ [li] ++ suffix
+      let prefix = take (i - 1) xs
+          (li : taili) = drop (i - 1) xs
+          midfix = take (j - i - 1) taili
+          (lj : suffix) = drop (j - 1) xs
+       in prefix ++ [lj] ++ midfix ++ [li] ++ suffix
+
+permute' :: RS.StdGen -> Int -> [a] -> [a]
+permute' _ _ [] = []
+permute' g i (x : []) = x : []
+permute' g i xs
+  | i <= 0 = xs
+  | i >= length xs = xs
+  | otherwise =
+      let n = length xs
+          (j, g') = R.randomR (i, n) g
+          ys = swapTwo i j xs
+       in permute' g' (i + 1) ys
 
 
---textt = do TIO.readFile "pg22367.txt"
---sampleio = do TIO.readFile "sample.txt"
+
+
+
+-- textt = do TIO.readFile "pg22367.txt"
+-- sampleio = do TIO.readFile "sample.txt"
