@@ -3,7 +3,7 @@
 %\mode<presentation>{\usetheme{Berlin}}
 %\usepackage[orientation=portrait, size=a0, scale=1.25, debug]{beamerposter}
 %\documentclass[a4paper,]{article}
-\usepackage[utf8]{inputenc}
+%\usepackage[utf8]{inputenc}
 \usepackage{multicol}
 %\usepackage{hyperref}
 \usepackage{graphicx}
@@ -139,12 +139,67 @@ Reviewer: Professor Tim Conrad
 \item{} example use of \gmvae on synthetic conditional-categorical data
 \item{} examples on MNIST
 \item{} examples on scRNAseq
+\end{itemize}
 \end{frame}
 
 \begin{frame}
 \frametitle{Autoencoders}
-Why turbolence
+
+A "vanilla" autoencoder is a neural networks that "learns" the identity (subject
+to dimensional restriction).
+
+\begin{figure}[h]
+%\begin{framed}
+\centering
+\includegraphics[width=0.9\textwidth]{./plots/autoencoderNN.gv.png}
+%\label{fig:neuron1}
+\caption{Autoencoder}
+\label{fig:autoencoder}
+%\end{framed}
+\end{figure}
+
 \end{frame}
+
+
+\begin{frame}
+\frametitle{Autoencoders and PCA}
+
+(On centered data\cite{plaut2018principal})
+
+PCA
+{\small
+\begin{equation}
+\label{eqn:pca}
+\bv{\tilde{V}} = \text{argmin}_{\W} \{
+\|\X - \X \bv{W}\bv{W}^T\|_F^2 \quad : \quad \bv{W} \in \R^{n \times l}, \bv{W}^T \bv{W} =
+\bv{I}_l\}
+\end{equation} 
+}
+
+Linear AE
+{\small
+\begin{IEEEeqnarray}{C}
+\label{eqn:pca2}
+%\begin{aligned}
+\text{argmin}_{\bv{E,D}}\{\|\X - \X \bv{E}\bv{D}\|_F^2 \quad : 
+\quad \bv{E,D^T} \in \R^{n \times
+l},\} \\
+\label{eqn:pca3}
+\bv{\tilde{W}}
+\in \text{argmin}_{\W}\{\|\X - \X \bv{W}\bv{W}^{\dagger}\|_F^2 \quad : 
+\quad \bv{W} \in \R^{n \times
+l},\}
+%\end{aligned}
+\end{IEEEeqnarray}
+}
+
+$
+\text{span}\{\bv{\tilde{W}}\} = \text{span}\{\bv{\tilde{V}}\}
+$
+
+
+\end{frame}
+
 
 \begin{frame}
 \frametitle{VAEs}
@@ -156,6 +211,7 @@ Why turbolence
 \section{bigass equation}
 
 \begin{frame}
+
 {\tiny
 \begin{equation}
 \label{eq:elbo}
@@ -216,5 +272,8 @@ And now to something~\cite{guo2017improved} completely different \dots
 \begin{frame}
 \printbibliography
 \end{frame}
+
+\begin{comment}
+\end{comment}
 
 \end{document}
