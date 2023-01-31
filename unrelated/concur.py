@@ -136,6 +136,14 @@ def primeTest(n=10000000, threads=8, chunksize=1000,):
     timer.stop()
     print("took it {} time".format(timer.getCount()))
 
+def foo(x,y,z):
+    return x+y+z
+f = toolz.partial(foo, y=1,z=2)
+mylist = [i for i in range(10)]
+nums = list(map(f, mylist))
+executor = concurrent.futures.ProcessPoolExecutor(max_workers=4,)
+nums = list(executor.map(f, mylist))
+
 if __name__ == "__main__":
     n = 1000000
     chunksize = 10000
