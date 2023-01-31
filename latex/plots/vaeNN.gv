@@ -22,10 +22,11 @@ digraph {
             y6 [shape=none, label=""];
         }
         subgraph cluster_layer_e2 {
-            label="latent space"; labeljust=r; labelloc=t;
+            label="distribution\n over latent space"; labeljust=r; labelloc=t;
             rank=same;
-            z1 [shape=none, label="z"];
-            z2 [shape=none, label=""];
+            z1 [shape=none, label="μ"];
+            z2 [shape=none, label="σ"];
+            z3 [shape=none, label="q(z|x)"];
         }
     }
 	subgraph clusterDecoder0 {
@@ -33,7 +34,7 @@ digraph {
         subgraph cluster_layer_d0 {
             label="latent space"; labeljust=r; labelloc=t;
             rank=same;
-            dz1 [shape=none, label="z"];
+            dz1 [shape=none, label="ẑ"];
             dz2 [shape=none, label=""];
         }
         subgraph cluster_layer_d1 {
@@ -47,19 +48,20 @@ digraph {
             dy6 [shape=none, label=""];
         }
         subgraph cluster_layer_d2 {
-            label="reconstruction"; labeljust=r; labelloc=t;
+            label="distribution over\n input space"; labeljust=r; labelloc=t;
             rank=same;
-            dx1 [shape=none, label=""];
-            dx2 [shape=none, label="x̂"];
+            dx1 [shape=none, label="μ"];
+            dx2 [shape=none, label="σ"];
             dx3 [shape=none, label=""];
-            dx4 [shape=none, label=""];
+            dx4 [shape=none, label="p(x|z)"];
         }
     }
+    z [shape=none, label="ẑ ∼\n q(z|x)"];
+    //z2 -> z [ltail=cluster_layer_e2, style=dotted, arrowhead=dot, label="sample"];
+    z2 -> z [style=dotted, arrowhead=dot, label="sample"];
+    z -> dz2 [lhead=cluster_layer_d0,style=dotted, arrowhead=dot,];
     x2 -> y2 [ltail=cluster_layer_e0, lhead=cluster_layer_e1];
     y2 -> z2 [ltail=cluster_layer_e1, lhead=cluster_layer_e2];
-    z2 -> dz2 [lhead=cluster_layer_d0, style=dotted,
-    arrowhead=dot,
-    label="id"];
     //z2 -> dz2 [ltail=cluster_layer_e2, lhead=cluster_layer_d0, style=dotted,
     //arrowhead=dot,
     //label="id"];
