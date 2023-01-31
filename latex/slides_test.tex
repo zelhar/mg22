@@ -3,7 +3,7 @@
 %\mode<presentation>{\usetheme{Berlin}}
 %\usepackage[orientation=portrait, size=a0, scale=1.25, debug]{beamerposter}
 %\documentclass[a4paper,]{article}
-%\usepackage[utf8]{inputenc}
+\usepackage[utf8]{inputenc}
 \usepackage{multicol}
 %\usepackage{hyperref}
 \usepackage{graphicx}
@@ -15,10 +15,12 @@
 \usepackage{svg}
 \usepackage{pdfpages}
 \usepackage{blindtext}
+\usepackage{amsbsy}
 \usepackage{mathtools}
 \usepackage{amssymb}
 \usepackage{amsfonts}
 \usepackage{amsthm}
+\usepackage{amsmath}
 \usepackage[backend=biber]{biblatex}
 \addbibresource{mybib.bib}
 \usepackage{bm} %\bm
@@ -69,11 +71,10 @@
 \newcommand{\lt}{<}
 \newcommand{\tuple}[1]{\langle #1 \rangle}
 
-%\newcommand{\gmvaec}{$\mathrm{sc}{\ast}\mathrm{GM\Delta}$V\AE}
-%\newcommand{\scgmvae}{$\mathrm{c}{\ast}\mathrm{GM\Delta}$V\AE$\mathrm{sc}$}
-\newcommand{\scgmvae}{$\mathrm{c}{\ast}\mathrm{GM\Delta}$V{\AE}s---q}
-%\newcommand{\gmvae}{$\mathrm{c}{\ast}\mathrm{GM\Delta}$V\AE}
-\newcommand{\gmvae}{c$\ast$GM$\mathrm{\Delta}$V\AE~}
+%\newcommand{\gmvae}{c$\ast$GM$\mathrm{\Delta}$V\AE~}
+\newcommand{\gmvae}{c$\ast$GM$\Delta$V\AE~}
+\newcommand{\scgmvae}{$\mathrm{c}{\ast}\mathrm{GM}\Delta$V{\AE}s---q}
+%\newcommand{\scgmvae}{$\mathrm{c}{\ast}\mathrm{GM\Delta}$V{\AE}s---q}
 
 \title{\scgmvae}{}
 \author{Kolb, Yiftach}
@@ -93,7 +94,8 @@
 \begin{document}
 \maketitle
 
-\section{\scgmvae}
+%\section{\scgmvae}
+\section{Frontmatter}
 
 %\begin{titlepage}
 \begin{frame}
@@ -126,7 +128,7 @@ Reviewer: Professor Tim Conrad
 %\end{titlepage}
 \end{frame}
 
-\section{Introduction}
+\section{Content}
 
 \begin{frame}
 \frametitle{Topics to cover}
@@ -144,6 +146,11 @@ Reviewer: Professor Tim Conrad
 
 \begin{frame}
 \frametitle{Autoencoders}
+
+$$\Delta \mathrm{abc}abc$$
+
+c$\ast$GM$\mathrm{\Delta}$V\AE~
+c$\ast$GM$\Delta$V\AE~
 
 A "vanilla" autoencoder is a neural networks that "learns" the identity (subject
 to dimensional restriction).
@@ -214,11 +221,51 @@ $
 \end{figure}
 \end{frame}
 
+\begin{frame}
+\frametitle{VAE: encoding}
+Instead of deterministic mapping, define distribution.
 
+Define distribution on the laten space ($\z$) by mapping $x$ into the
+distribution parameters e.g. $\mu(\x),\Sigma(\x)$ when we use Gaussian $q(\z|\x)
+= \NN(\z |
+\mu, \Sigma)$.
 
-\section{bigass equation}
+\end{frame}
 
 \begin{frame}
+\frametitle{VAE: decoding}
+sample from the latent space $\z \sim \NN(\cdot | \mu, \Sigma)$
+
+map $\z$ to a distribution on the input space
+$p(\x | \z)$
+\end{frame}
+
+\begin{frame}
+\frametitle{VAE: loss function}
+The \emph{evidence lower bound (ELBO)} with respect to $p,q$ is:
+\begin{IEEEeqnarray}{C}
+\label{def:elbo}
+-\mathcal{L}(q,p,\x) \triangleq
+\int \log \frac{p(\bv{x},\bv{z})}{q(\bv{z})} d q(\bv{z}) \\
+\label{def:elboX}
+-\LL(q,p) \triangleq 
+-\LL(q,p, \X) 
+= \frac{1}{N} \sum_1^N (-\LL(q,p,\x_i) \\ 
+\approx
+\E_{\x} [-\LL (q,p, \x)]
+\end{IEEEeqnarray}
+We minimize the minus ELBO function:
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{VAE: log evidence}
+
+It can be shown that maximizing the ELBO is equivalent to 
+maximinizing the "log evidence" $\log p(\X)$
 
 {\tiny
 \begin{equation}
@@ -244,13 +291,131 @@ $
 \end{frame}
 
 \begin{frame}
-normal text
-\tiny
-tiny text
-\normalsize
-normal text
-And now to something~\cite{guo2017improved} completely different \dots
+\frametitle{VAE: compounding the latent distribution}
+More complicated distributions such as mixture distribution
+can be modelled by "unpacking" the latent $\z$ and the observed $\x$
+%into several random variables, each with different type of distribution.
+%We can describe a more complex distribution by unpacking them and describe the
+%dependencies between them.
+%This is done in the following way:
+\label{VAE-specs}
+\begin{enumerate}
+\item{} Define the set of observed random vectors $\x_1, \x_2, \dots \x_k$, and 
+the set of latent random vectors and stochastic parameters $\z_1, \dots \z_l$.
+\item{} Specify how to factor the generative model $p(\x_1,\dots, \x_k| \z_1
+\dots , \z_l)$
+\item{} Specify how to factor the inference model $q(\z_1 \dots \z_l | \x1,
+\dots \x_k)$
+\item{} Choose appropriate priors $p(\z_i)$ and
+\item{} Choose appropriate distribution families for the $\x_i$ and $\z_i$,
+and choose priors $p(\z_i)$.
+\end{enumerate}
+
+%This is easiest to show graphically.
 \end{frame}
+
+\begin{frame}
+\frametitle{VAE: Graphical representation}
+Evry distribution can be represented by a DAG. Nodes represent random variables
+(and also priors), and directed arrows represent conditional dependency.
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{VAE: base case}
+
+\begin{figure}[h]
+%\begin{framed}
+\centering
+\begin{subfigure}[b]{0.2\textwidth}
+\includegraphics[width=\textwidth]{plots/vae_p.gv.png}
+\caption{generative model $p(x,z)$}
+\end{subfigure}
+\begin{subfigure}[b]{0.2\textwidth}
+\includegraphics[width=\textwidth]{plots/vae_q.gv.png}
+\caption{inference model $q(z|x)$}
+\end{subfigure}
+\begin{subfigure}[b]{0.2\textwidth}
+\includegraphics[width=\textwidth]{plots/vae.gv.png}
+\caption{the combined graphical model}
+\end{subfigure}
+\caption{VAE graphical model}
+\label{fig:vae_model}
+%\end{framed}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{VAE: patholocigacl case}
+
+\begin{figure}[h]
+\centering
+\begin{subfigure}[b]{0.2\textwidth}
+\includegraphics[width=\textwidth]{plots/dirichlet_gmm_p.gv.png}
+\caption{generative model $p(x,z)$}
+\end{subfigure}
+\begin{subfigure}[b]{0.2\textwidth}
+\includegraphics[width=\textwidth]{plots/dirichlet_gmm_q.gv.png}
+\caption{inference model $q(z|x)$}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\textwidth}
+\includegraphics[width=\textwidth]{plots/dirichlet_gmm.gv.png}
+\caption{the combined graphical model}
+\end{subfigure}
+\caption{\gmvae graphical model}
+\label{fig:gmvae_model}
+\end{figure}
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{\gmvae generative model}
+
+\begin{columns}[T]
+%\begin{column}{5cm}
+\begin{column}{0.5\linewidth}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.4\textwidth]{plots/dirichlet_gmm_p.gv.png}
+%\caption{\gmvae: generative model}
+\end{figure}
+\end{column}
+
+%\begin{column}{5cm}
+\begin{column}{0.5\linewidth}
+{\tiny
+\begin{equation}
+\begin{aligned}
+&p(\x, \y, \z, \w, \dd) &=\quad& 
+p(\x | \z) p(\z | \w, \y) p(\y | \dd) p(\dd) p(\w) \\
+&p(\w) &=\quad& \NN(\w | \bv{0},\bv{1}) \\
+&p(\dd) &=\quad& \text{Dir}(\dd | \alpha) \\
+&p(\y | \dd) &=\quad& \text{Cat}(\y | \dd) \\
+&p(\z | \w, \y) &=\quad& \NN(\z | \mu(\w)_{\y}, \sigma(\w)_{\y})) \\
+&p(\x | \z) &=\quad& \NN(\x | \mu(\z), \sigma(\z))
+\label{eq:gmmfact}
+\end{aligned}
+\end{equation}
+}
+\end{column}
+
+\end{columns}
+\end{frame}
+
+
+
+
+%\begin{frame}
+%normal text
+%\tiny
+%tiny text
+%\normalsize
+%normal text
+%And now to something~\cite{guo2017improved} completely different \dots
+%\end{frame}
 
 %\begin{frame}
 %\frametitle{Spam}
@@ -277,9 +442,17 @@ And now to something~\cite{guo2017improved} completely different \dots
 %\end{frame}
 
 \section{Reference}
-\begin{frame}
+%\begin{frame}
+\nocite{bishop2006pattern}
+\nocite{bishop2006pattern}
+\nocite{kingma2014semi}
+\nocite{dilokthanakul2016deep}
+\nocite{lotfollahi2019scgen}
+\nocite{mg22Repo}
+\nocite{mpgvaeRepo}
+\nocite{kingma2013auto}
 \printbibliography
-\end{frame}
+%\end{frame}
 
 \begin{comment}
 \end{comment}
