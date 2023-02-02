@@ -91,6 +91,8 @@
 %}
 %
 
+\definecolor{beamerbg}{rgb}{0.96, 0.96, 0.86}
+\setbeamercolor{background canvas}{bg=beamerbg}
 \begin{document}
 \maketitle
 
@@ -146,12 +148,6 @@ Reviewer: Professor Tim Conrad
 
 \begin{frame}
 \frametitle{Autoencoders}
-
-$$\Delta \mathrm{abc}abc$$
-
-c$\ast$GM$\mathrm{\Delta}$V\AE~
-c$\ast$GM$\Delta$V\AE~
-
 A "vanilla" autoencoder is a neural networks that "learns" the identity (subject
 to dimensional restriction).
 
@@ -388,6 +384,7 @@ Evry distribution can be represented by a DAG. Nodes represent random variables
 \begin{column}{0.5\linewidth}
 {\tiny
 \begin{equation}
+\label{eq:gmmfact}
 \begin{aligned}
 &p(\x, \y, \z, \w, \dd) &=\quad& 
 p(\x | \z) p(\z | \w, \y) p(\y | \dd) p(\dd) p(\w) \\
@@ -396,26 +393,93 @@ p(\x | \z) p(\z | \w, \y) p(\y | \dd) p(\dd) p(\w) \\
 &p(\y | \dd) &=\quad& \text{Cat}(\y | \dd) \\
 &p(\z | \w, \y) &=\quad& \NN(\z | \mu(\w)_{\y}, \sigma(\w)_{\y})) \\
 &p(\x | \z) &=\quad& \NN(\x | \mu(\z), \sigma(\z))
-\label{eq:gmmfact}
 \end{aligned}
 \end{equation}
 }
 \end{column}
+\end{columns}
+\end{frame}
 
+\begin{frame}
+\frametitle{\gmvae inference model}
+\begin{columns}[T]
+\begin{column}{0.5\linewidth}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.4\textwidth]{plots/dirichlet_gmm_q.gv.png}
+%\caption{\gmvae: generative model}
+\end{figure}
+\end{column}
+
+\begin{column}{0.5\linewidth}
+{\tiny
+\begin{equation}
+\label{eq:gmmqfact}
+\begin{aligned}
+&q(\y, \z, \w, \dd | \x) &=& 
+&q(\z | \x) q(\w | \x) q(\y | \z) q(\dd | \z) \\
+&q(\z | \x) &=& &\NN(\z | \mu_z(\x), \sigma_z(\x)) \\
+&q(\w | \x) &=& &\NN(\w | \mu_w(\x), \sigma_w(\x)) \\
+&q(\y | \z) &=& &\text{Cat}(\y | f(\z)) \\
+&q(\dd | \z) &=& &\text{Dir}(\dd | g(\z))
+\end{aligned}
+\end{equation}
+}
+\end{column}
 \end{columns}
 \end{frame}
 
 
+\begin{frame}
+\frametitle{\gmvae loss function}
+The loss function remains the -ELBO and we can break it into
+different terms:
 
+{\tiny
+\begin{IEEEeqnarray}{lC}
+\LL(p,q,\x) &= 
+\int - \log \frac{p(\x,\y,\z,\w,\dd)}{q(\z,\y,\w,\dd | \x)} dq(\z,\y,\w,\dd |
+\x) \\ 
+&= \int - \log 
+\frac{p(\x | \z) p(\z | \w, \y) p(\y | \dd) p(\w) p(\dd)}
+{q(\z | \x) q(\w | \x) q(\y | \z) q(\dd | \z)} dq \\
+&= \int - \log p(\x | \z) dq \\
+\label{dgmmrecloss}
+&+ \int \log \frac{q(\z | \x)}{p(\z | \w, \y)}dq \\
+\label{dgmmzloss}
+&+ \int \log \frac{q(\w | \x)}{p(\w)}dq \\
+\label{dgmmwloss}
+&+ \int \log \frac{q(\y | \z)}{p(\y | \dd)}dq \\
+\label{dgmmyloss}
+&+ \int \log \frac{q(\dd | \z)}{p(\dd)}dq
+\label{dgmmdloss}
+\end{IEEEeqnarray}
+}
+\end{frame}
 
-%\begin{frame}
-%normal text
-%\tiny
-%tiny text
-%\normalsize
-%normal text
-%And now to something~\cite{guo2017improved} completely different \dots
-%\end{frame}
+\begin{frame}
+\frametitle{Monte Carlo integration}
+As you can see we the loss function requires us to compute an integral, which
+usually cannot be done analytically.
+
+Instead the integral is approximated by Monte Carlo integration.
+
+{\small
+\begin{equation}
+\begin{aligned}
+\text{sample  } \z_i \sim q(\z | \x) \text{   then :}\\
+\LL(p,q,\x) = 
+\int - \log \frac{p(\x|\z)p(\z)}{q(\z|\x)}dq(\z|\x) \\
+= \int -\log p(\x|\z)dq(\z|\x) + 
+\int \log \frac{q(\z|\x)}{p(\z)}dq(\z|\x) \\
+\approx \frac{1}{k} \sum_{i=1}^k [-\log p(\x|\z_i)
++ \log \frac{q(\z_i|\x)}{p(\z_i)} ]
+\label{eq:elbomc}
+\end{aligned}
+\end{equation}
+}
+
+\end{frame}
 
 %\begin{frame}
 %\frametitle{Spam}

@@ -5,8 +5,8 @@ digraph {
         //{rank = same; y; w; }
         x -> z [style=dotted, arrowhead=dot,];
         x -> w [style=dotted, arrowhead=dot,];
-        z -> y
-        z -> d;
+        z -> y [style=dotted, arrowhead=dot,];
+        z -> d [style=dotted, arrowhead=dot,];
 		//n [label="(µ,σ)" shape=ellipse];
 		d [label="d" shape=ellipse];
 		w [label="w" shape=ellipse];
