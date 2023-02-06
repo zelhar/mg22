@@ -190,6 +190,11 @@ justifyTextR g n txt =
       cjtxt = T.unlines $ map (justifyLineR g n) (T.lines rjtxt)
    in cjtxt
 
+fixParEnd :: Int -> T.Text -> T.Text
+fixParEnd n myline
+  | (T.length myline == 0) = myline
+  | T.length myline == n = myline
+  | otherwise = T.unwords $ T.words myline
 
 generateRandomPerm :: RS.StdGen -> Int -> Int -> [Int]
 generateRandomPerm g n m =
