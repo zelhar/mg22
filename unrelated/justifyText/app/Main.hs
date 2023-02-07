@@ -188,13 +188,26 @@ justifyTextR g n txt =
       pss = map ((chipChop n "" "") . (T.words)) ps
       rjtxt = (T.intercalate "\n\n" pss)
       cjtxt = T.unlines $ map (justifyLineR g n) (T.lines rjtxt)
-   in cjtxt
+      pars = paragraphs cjtxt
+      pars2 = map fixPar pars
+      output = T.append (T.intercalate "\n\n" pars2) "\n"
+      --output = T.unlines pars2
+   --in cjtxt
+   in output
 
-fixParEnd :: Int -> T.Text -> T.Text
-fixParEnd n myline
-  | (T.length myline == 0) = myline
-  | T.length myline == n = myline
-  | otherwise = T.unwords $ T.words myline
+fixLastLine :: Int -> T.Text -> T.Text
+fixLastLine n myline
+  | n<=0 = T.unwords $ T.words myline
+  | otherwise = myline
+
+fixPar :: T.Text -> T.Text
+fixPar par = 
+  let ls = T.lines par
+      n = length ls
+      ns = [(n-1),(n-2)..0]
+      lss = zipWith fixLastLine ns ls
+    --in T.intercalate ("\n") lss
+    in T.init $ T.unlines lss
 
 generateRandomPerm :: RS.StdGen -> Int -> Int -> [Int]
 generateRandomPerm g n m =
