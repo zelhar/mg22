@@ -287,6 +287,31 @@ maximinizing the "log evidence" $\log p(\X)$
 \end{frame}
 
 \begin{frame}
+\frametitle{Monte Carlo integration}
+As you can see we the loss function requires us to compute an integral, which
+usually cannot be done analytically.
+
+Instead the integral is approximated by Monte Carlo integration.
+
+{\small
+\begin{equation}
+\begin{aligned}
+\text{sample  } \z_i \sim q(\z | \x) \text{   then :}\\
+\LL(p,q,\x) = 
+\int - \log \frac{p(\x|\z)p(\z)}{q(\z|\x)}dq(\z|\x) \\
+= \int -\log p(\x|\z)dq(\z|\x) + 
+\int \log \frac{q(\z|\x)}{p(\z)}dq(\z|\x) \\
+\approx \frac{1}{k} \sum_{i=1}^k [-\log p(\x|\z_i)
++ \log \frac{q(\z_i|\x)}{p(\z_i)} ]
+\label{eq:elbomc}
+\end{aligned}
+\end{equation}
+}
+
+\end{frame}
+
+
+\begin{frame}
 \frametitle{VAE: compounding the latent distribution}
 More complicated distributions such as mixture distribution
 can be modelled by "unpacking" the latent $\z$ and the observed $\x$
@@ -458,28 +483,136 @@ different terms:
 \end{frame}
 
 \begin{frame}
-\frametitle{Monte Carlo integration}
-As you can see we the loss function requires us to compute an integral, which
-usually cannot be done analytically.
+\frametitle{\gmvae: supervised case}
 
-Instead the integral is approximated by Monte Carlo integration.
-
-{\small
-\begin{equation}
-\begin{aligned}
-\text{sample  } \z_i \sim q(\z | \x) \text{   then :}\\
-\LL(p,q,\x) = 
-\int - \log \frac{p(\x|\z)p(\z)}{q(\z|\x)}dq(\z|\x) \\
-= \int -\log p(\x|\z)dq(\z|\x) + 
-\int \log \frac{q(\z|\x)}{p(\z)}dq(\z|\x) \\
-\approx \frac{1}{k} \sum_{i=1}^k [-\log p(\x|\z_i)
-+ \log \frac{q(\z_i|\x)}{p(\z_i)} ]
-\label{eq:elbomc}
-\end{aligned}
-\end{equation}
+\begin{figure}[h]
+%\begin{framed}
+\centering
+\includegraphics[width=0.5\textwidth]{plots/dirichlet_gmm_supervised.gv.png}
+\caption{\gmvae: the supervised case, where $\y$ is an observed variable.
 }
+\label{fig:dirgmm_sup}
+%\end{framed}
+\end{figure}
 
 \end{frame}
+
+\begin{frame}
+\frametitle{the conditional flavor of \gmvae}
+\begin{figure}[h]
+\centering
+\begin{subfigure}[b]{0.45\textwidth}
+\includegraphics[width=0.99\textwidth]{plots/dirichlet_gmm_cvae.v2.gv.png}
+\caption{\gmvae (cond.), unsupervised case. Sorry for the arrow clutter}
+\label{fig:dirgmmcvae}
+\end{subfigure}
+\begin{subfigure}[b]{0.45\textwidth}
+\includegraphics[width=0.99\textwidth]{plots/dirichlet_gmm_cvae_supervised.v2.gv.png}
+\caption{\gmvae (cond.), supervised case}
+\label{fig:dirgmmcvae_super}
+\end{subfigure}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Tests on MNIST}
+\begin{figure}[h]
+%\begin{framed}
+\centering
+\begin{subfigure}[b]{0.80\textwidth}
+\includegraphics[width=\textwidth]{images/gmmvae_mnist_us_latent_umap.png}
+\caption{UMAP of the latent space}
+\label{fig:mnist_us_latent}
+\end{subfigure}
+\begin{subfigure}[b]{0.3\textwidth}
+\includegraphics[width=\textwidth]{images/gmmvae_mnist_us_samples2.png}
+\caption{Randomly generated samples}
+\label{fig:mnist_us_samples}
+\end{subfigure}
+\caption{\gmvae: unsupervised learning of MNIST. This particular model
+achieved 0.93 accuracy which probably could be a little bit further
+improved with fine-tune training. The Louvain clustering of the latent space is even better
+than the prediction.}
+\label{fig:mnist_us_10}
+%\end{framed}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Testing on synthetic conditional-categorical "blobs" dataset}
+\begin{figure}[h]
+\centering
+\includesvg [width=0.9\textwidth]{images/blobs3d_pca.svg}
+\caption{The toy dataset, showing a 3d plot of its 3 major PCA components.
+}
+\label{fig:blobs_3d}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{$\w$ embeding}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{images/blobs_cgmvae_learnedprior_w.png}
+\caption{Random sampling from the encoded distribution of the $\w$ space. 
+}
+\label{fig:blobs_lp_w}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{$\z$ embeding}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{images/blobs_cgmvae_stdprior_z.png}
+\caption{Sampling from encoded $\z$ space, fixed standard normal prior case.
+}
+\label{fig:blobs_nop_z}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Transfer learning}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{images/gmmvae_Kang_control_train_us_21c_umap.png}
+\caption{
+UMAP of PCA space of the Kang train data. 
+}
+\label{fig:kang_control_train_gmvae_us_umap}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Transfer learning}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{images/gmmvae_zheng_new_louvain_umap1.png}
+\caption{
+UMAP of the Zheng dataset.
+}
+\label{fig:zheng_pca_umap_new}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Transfer learning}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{images/gmmvae_kang_new_latent_louvain_pred_umap1.png}
+\caption{
+UMAP of the latent space of the Kang validation subset (the holdout).
+}
+\label{fig:kang_new_latent}
+\end{figure}
+\end{frame}
+
+
 
 %\begin{frame}
 %\frametitle{Spam}
