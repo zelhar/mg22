@@ -604,7 +604,7 @@ UMAP of the Zheng dataset.
 \frametitle{Transfer learning}
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.8\textwidth]{images/gmmvae_kang_new_latent_louvain_pred_umap1.png}
+\includegraphics[width=0.7\textwidth]{images/gmmvae_kang_new_latent_louvain_pred_umap1.png}
 \caption{
 UMAP of the latent space of the Kang validation subset (the holdout).
 }
@@ -612,6 +612,71 @@ UMAP of the latent space of the Kang validation subset (the holdout).
 \end{figure}
 \end{frame}
 
+\begin{frame}
+\frametitle{converting treatment effect}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{images/Kang_super_val_umap.png}
+\caption{UMAP of the Kang validation dataset
+}
+\label{fig:Kang_super_val_umap}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{converting treatment effect}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{images/Kang_super_val_umap_converted_control.png}
+\caption{
+UMAP of the combined validation subset with its control group remapped into
+stimulated state.
+}
+\label{fig:Kang_super_val_umap_converted_control}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{converting treatment effect}
+\begin{figure}[h]
+\centering
+\begin{subfigure}[b]{0.49\textwidth}
+\includegraphics[width=0.7\textwidth]{images/Kang_bcells_ctrl_stim.png}
+%\caption{
+%B Cells mean expression regression, control vs stimulated.
+%}
+\label{fig:Kang_bcells_ctrl_stim}
+\end{subfigure}
+\begin{subfigure}[b]{0.49\textwidth}
+\includegraphics[width=0.7\textwidth]{images/Kang_bcells_ctrl_converted.png}
+%\caption{
+%B Cells mean expression regression, control vs
+%control--converted--to--stimulated.
+%}
+\label{fig:Kang_bcells_ctrl_converted}
+\end{subfigure}
+\begin{subfigure}[b]{0.49\textwidth}
+\includegraphics[width=0.7\textwidth]{images/Kang_bcells_stimulated_converted.png}
+%\caption{
+%B Cells mean expression regression, stimulated vs
+%control--converted--to--stimulated.
+%}
+\label{fig:Kang_bcells_stimulated_converted}
+\end{subfigure}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Generating data}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.85\textwidth]{images/Kang_generated_data.png}
+\caption{
+The Kang UMAP of real data combined with randomly generated data.
+}
+\label{fig:Kang_generated_data}
+\end{figure}
+\end{frame}
 
 
 %\begin{frame}
