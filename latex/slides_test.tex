@@ -40,6 +40,16 @@
 \setlength{\parindent}{1em}
 
 
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}[section]
+%\newtheorem{lemma}[thm]{Lemma}
+
+\theoremstyle{definition}
+\newtheorem{mydef}{}[section]
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}[section]
+
 %newcommands
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\C}{\mathbb{C}}
@@ -92,7 +102,13 @@
 %
 
 \definecolor{beamerbg}{rgb}{0.96, 0.96, 0.86}
+\definecolor{beamerfg}{rgb}{0.23, 0.27, 0.29}
+\definecolor{beamerfg2}{rgb}{0.13, 0.17, 0.49}
 \setbeamercolor{background canvas}{bg=beamerbg}
+%\setbeamercolor{normal text}{fg=beamerfg}
+%\setbeamercolor{alerted text}{fg=beamerfg2}
+\setbeamercolor{structure}{fg=beamerfg2}
+%\setbeamercolor{frametitle}{fg=beamerfg}
 \begin{document}
 \maketitle
 
@@ -131,6 +147,19 @@ Reviewer: Professor Tim Conrad
 \end{frame}
 
 \section{Content}
+
+\begin{frame}
+\frametitle{Glossary}
+\begin{mydef}{\gmvae}
+(maybe Conditional) Gaussian Mixture with Dirichlet
+prior Variational Auto Encoder
+\end{mydef}
+
+\begin{mydef}{\scgmvae}
+\gmvae (for) s(ingle--cell-RNA--Se)q.
+\end{mydef}
+\end{frame}
+
 
 \begin{frame}
 \frametitle{Topics to cover}
