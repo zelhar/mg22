@@ -161,6 +161,7 @@ prior Variational Auto Encoder
 \end{frame}
 
 
+\begin{comment}
 \begin{frame}
 \frametitle{Topics to cover}
 \begin{itemize}
@@ -174,6 +175,7 @@ prior Variational Auto Encoder
 \item{} examples on scRNAseq
 \end{itemize}
 \end{frame}
+\end{comment}
 
 \begin{frame}
 \frametitle{Autoencoders}
@@ -248,9 +250,9 @@ $
 
 \begin{frame}
 \frametitle{VAE: encoding}
-Instead of deterministic mapping, define distribution.
-
-Define distribution on the laten space ($\z$) by mapping $x$ into the
+Instead of deterministic mapping \dots 
+%define distribution.
+define distribution over the laten space ($\z$) by mapping $\x$ into the
 distribution parameters e.g. $\mu(\x),\Sigma(\x)$ when we use Gaussian $q(\z|\x)
 = \NN(\z |
 \mu, \Sigma)$.
@@ -279,7 +281,7 @@ The \emph{evidence lower bound (ELBO)} with respect to $p,q$ is:
 \approx
 \E_{\x} [-\LL (q,p, \x)]
 \end{IEEEeqnarray}
-We minimize the minus ELBO function:
+(we want to minimize the minus ELBO function)
 
 \end{frame}
 
