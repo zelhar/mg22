@@ -1,0 +1,149 @@
+\documentclass[a4paper,10pt]{article}
+
+%\usepackage[utf8]{inputenc} 
+%\usepackage[square,sort,comma,numbers]{natbib}
+%\usepackage[backend=biber,autocite=inline]{biblatex}
+%\addbibresource{mybib.bib}
+\usepackage{a4wide}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{enumerate}
+%\usepackage{IEEEtrantools}
+%\usepackage[redeflists]{IEEEtrantools}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage[section]{placeins} %no trans-sectional figures!
+\usepackage{wrapfig, framed, caption}
+\usepackage{slashbox}
+\usepackage{tikz}
+
+\usepackage{booktabs} % For \toprule, \midrule and \bottomrule
+\usepackage{siunitx} % Formats the units and values
+\usepackage{pgfplotstable} % Generates table from .csv
+% Setup siunitx:
+\sisetup{
+  round-mode          = places, % Rounds numbers
+  round-precision     = 2, % to 2 places
+}
+
+\usepackage{hyperref}
+\hypersetup{linktocpage,
+            linktoc=all,
+            colorlinks=true,
+            linkcolor=blue,
+            }
+
+\usepackage{lipsum}
+%\usepackage[onehalfspace]{setspace}
+\usepackage{setspace}
+
+% Basic data
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\ASSIGNMENT}{2}
+\newcommand{\B}{\{-1,1\}}
+\newcommand{\E}{\mathbf{E}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\Inf}{\textbf{Inf}}
+\newcommand{\I}{\mathbf{I}}
+\newcommand{\NS}{\textbf{NS}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\aufgabe}[1]{\item{\bf #1}}
+\newcommand{\bvec}[1]{\mathbf{#1}}
+\newcommand{\bv}[1]{\mathbf{#1}}
+\newcommand{\ceil}[1]{\lceil{#1}\rceil}
+\newcommand{\floor}[1]{\lfloor{#1}\rfloor}
+\newcommand{\gt}{>}
+\newcommand{\half}[1]{\frac{#1}{2}}
+\newcommand{\lt}{<}
+\newcommand{\tuple}[1]{\langle #1 \rangle}
+
+\newcommand{\suftab}{\text{suftab}}
+
+\setlength{\parskip}{1.0em}
+\setlength{\parindent}{1em}
+
+
+\lstset{
+%basicstyle=\footnotesize,
+%basicstyle=\ttfamily\footnotesize,
+%basicstyle=\ttfamily\small,
+%basicstyle=\ttfamily\scriptsize,
+frame=single,
+%numbers=none,
+%numbersep=5pt,
+numberstyle=\tiny,
+showspaces=false,
+showstringspaces=false,
+tabsize=2,
+breaklines=true,
+%escapeinside={#*}{*#},
+escapeinside={$}{$},
+%escapeinside={*\&}{\&*},% if you want to add LaTeX within your code
+%mathescape=true,
+%language=C++
+}
+
+\def\shrug{\texttt{\raisebox{0.75em}{\char`\_}\char`\\\char`\_\kern-0.5ex(\kern-0.25ex\raisebox{0.25ex}{\rotatebox{45}{\raisebox{-.75ex}"\kern-1.5ex\rotatebox{-90})}}\kern-0.5ex)\kern-0.5ex\char`\_/\raisebox{0.75em}{\char`\_}}}
+
+\begin{document}
+\renewcommand{\thesubsection}{\thesection.\alph{subsection}}\renewcommand{\thesubsection}{\thesection.\alph{subsection}}
+% Document title
+% \newpage\input{titlepage.tex}
+
+
+%\doublespacing
+% or:
+%\onehalfspacing
+% or :
+\setstretch{1.2}
+
+\title{
+Yiftach Kolb \\
+--CV--
+}
+
+%\author{Yiftach Kolb}
+\date{\today}
+
+\maketitle
+
+\section*{Formal Education and Career}
+
+\begin{itemize}
+\item{1999} Graduated Highschool (Kiryat Hayim high school).
+\item{2005} Graduated from the Technion, Haifa with BA in Mathematics
+\item{2006-2016} Odd jobs.
+\subitem{Last job:}
+worked for a 3D printer startup (O-Machine).
+\item{2017-2020} Studied for BSc in Bioinformatics at the FU Berlin.
+\item{2020 - } Began master's program in Bioinformatics at the FU Berlin.
+\item{2021} Stuedent intern at Max Planck institute for molecular genetics (group Vingron).
+\end{itemize}
+
+\section*{Skills}
+\begin{itemize}
+\item{Mathematics}
+\item{Programming}
+\subitem{} Python, R, Haskell, C++
+\item{Language}
+\subitem{} Hebrew, English, German
+\item{Nonskills}
+\subitem{}
+\normalsize\shrug
+%I am somewhat autistic but I don't think it should matter for this job.
+
+
+\end{itemize}
+
+
+
+
+
+\end{document}
+
