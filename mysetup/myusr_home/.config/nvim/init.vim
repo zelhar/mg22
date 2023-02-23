@@ -37,8 +37,9 @@ Plug 'jpalardy/vim-slime'
 Plug 'neoclide/coc.nvim', {'branch': 'release'} "not just haskell.
 
 "haskell plugins
-Plug 'Twinside/vim-hoogle' "haskell hoogle plgin
-Plug 'neovimhaskell/haskell-vim' "syntax highlighter
+"Plug 'Twinside/vim-hoogle' "haskell hoogle plgin
+"Plug 'neovimhaskell/haskell-vim' "syntax highlighter
+Plug 'itchyny/vim-haskell-indent'
 
 "snakemake
 "Plug 'snakemake/snakefmt'
@@ -61,6 +62,7 @@ set termguicolors
 "filetype plugin indent on
 if !exists("syntax_on")
     syntax on
+    syntax sync minlines=500
 endif
 
 set nocompatible
@@ -138,7 +140,6 @@ set clipboard+=unnamed
 set clipboard+=unnamedplus
 
 "Compile a Latex File with xelatex
-nnoremap <Leader>xe :!xelatex -synctex=1 -interaction=nonstopmode -shell-escape
 vnoremap <Leader>l :!pandoc -f latex -t plain<CR>
 
 "wraps selected text in ()
@@ -161,7 +162,9 @@ nnoremap <A-l> <C-w>l
 
 " see :h coc-completion
 inoremap <expr> <Esc> pumvisible() ? "\<C-y>\<C-c>" : "\<Esc>"
-inoremap <expr> <cr> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
+"inoremap <expr> <cr> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
+inoremap <expr> <cr> coc#pum#visible() ?  "\<C-e>\<CR>" : "\<CR>"
+"inoremap <expr> <cr> coc#pum#visible() ?  "\<C-y>\<CR>" : "\<CR>"
 "inoremap <expr> <Esc> coc#pum#visible() ? "\<C-y>\<C-c>" : "\<Esc>"
 "inoremap <expr> <cr> coc#pum#visible() ? coc#_select_confirm() : "\<CR>"
 "inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
@@ -362,7 +365,8 @@ if !has("gui_running")
      "colorscheme bushfire
      "colorscheme zelhar-darkblue
      "colorscheme afterglow
-     colorscheme ayu
+     "colorscheme ayu
+     colorscheme PaperColor
 endif
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -395,7 +399,8 @@ endfunction
 augroup mygroup
   autocmd!
   " Setup formatexpr specified filetype(s).
-  autocmd FileType typescript,json,python setl formatexpr=CocAction('formatSelected')
+  autocmd FileType typescript,json,python,r setl formatexpr=CocAction('formatSelected')
+  "autocmd FileType typescript,json,python,r,haskell setl formatexpr=CocAction('formatSelected')
   " Update signature help on jump placeholder.
   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 augroup end

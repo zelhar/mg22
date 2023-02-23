@@ -1,100 +1,100 @@
 :q
+:hdoc >=>
+:hdoc >>=
+:hdoc <=<
+:hoogle (<=<)
+:hdoc <==<
+Right (1::Int)
+Right 1::Int
+Right 1
+many []
+some []
+zip [1,2,3] (many [1])
+(Just 1, 1)
+many 1
+zip (many [1]) [[1]]
+zip (many [1]) [[]]
+zip [1,2..] [1,2]
+zip (many [1]) [1..10]
+some (Just 1) >>= (\x -> Just $ take 1 (take 1 x))
+some (Just 1) >>= (\x -> Just (take 1 x))
+some (Just 1) >>= (\x -> Just (head x))
+some (Just 1) >>= (return head)
+Nothing <|> pure []
+many Nothing
+some Nothing
+Just 1 <|> Just 2
+Just 1 <|> Nothing
+some $ Just 1
+:t some
+:hdoc many
+[1..10] <|> [1,2]
+:hdoc <|>
+:hdoc Alternative
+:hdoc Applicative
+:hdoc Aplicative
+:t some
+liftA2 (+) [1..4] [5..7]
+liftA2 (+) [1..4]
+:t liftA2
+liftM (+1) [1..5]
+liftA (+1) [1..5]
+liftA (+!) [1..5]
+:t liftM
+:t liftA
+:t lift
+:hdoc liftWith
+:hfoc liftWith
+many [1..10]
+(:) <$> [1,2,3] <*> [[]]
+(:) <$> [1,2,3] <*> []
+(:) <$> [1,2,3]
+:hdoc Alternative
+:hdoc many
+:hdoc some
+:t many
+:t (<$>)
+(+1) <$> (1,2,3)
+(+1) <$> (1,2)
+:hdoc (<$>)
+:hdoc Alternative
+:hdoc many
+[1..10] <* "foo"
+:hoogle (<*)
+:hoogle parseTest
 :q
-swap (+) 1 2
-(+)
-swap add 1 2
-\x,y->x+y
-\x\y->x+y
-swap = \f\x\y->(f y x)
-\x->x+1
-swap = \f\x\y:(f y x)
-:q
-Node { "5", []}
-Node { 5, []}
-:info rootLabel 
-:info Node
-Node 4
-:info Tree
-:m Data.Tree 
-:browse System.IO
-:m System.IO
-:browse System.IO
-:browse Data.Tree
-:browse Data.Map
-getCPUTime 
-getCPUTime 
-getCPUTime 
-:m System.CPUTime 
-:browse System.CPUTime 
-os
-arch
-:info Info
-Info
-:browse! System.Info 
-CPUTime
-:m System.Info 
-:browse! System.Info 
-:browse! Control.Category 
-:browse! Control.
-:browse! Control
-:help
-main
+g<-R.newStdGen 
 :r
-main
-:q
-:m MyMain
-Main
-main
-:info (<<*)
-:info (<*>)
-:info (<+>)
-:info (>>)
-:info (+)
->>
-:t >>
-:t <<
-:t <+>
-:info <+>
-:?
-:q
-MyMain
+TIO.putStr $ txt
+TIO.putStr $ T.unlines $ T.lines txt
+txt = justifyText 62 sample
+TIO.putStr $ T.unlines $ T.lines sample
+TIO.putStr sample
+TIO.putStr $ T.unlines $ T.lines sample
+sample
+TIO.putStr txt
+txt = justifyTextR g 62 sample
+sample <- sampleio 
+g<-R.newStdGen 
 :r
+paragraphs txt
+TIO.putStr txt
+TIO.putStr txt
+txt = justifyTextR g 62 sample
+TIO.putStr txt
+txt = justifyText 62 sample
+TIO.putStr txt
+txt = justifyTextR g 62 sample
+txt = justifyTextR g 62 ssample
+:t justifyTextR
+txt = justifyTextR 62 g sample
+g<-R.newStdGen 
+txt = justifyTextR 62 sample
+sample <- sampleio 
 :r
-:l MyMain
-sayHi 
-:load Foo.hs
-:m MyMain
-:m Foo
-:q
-:help Monad
-:kind Monad
-:kind (>>=)
-:type (>>=)
-:type >>=
-:type xs
-xs
-:kind xs
-:kind >>=
-:t
-type (>>=)
-(>>=)?
-(>>=)
-xs >>= f
-f = \x -> [x, x*5, x*10]
-xs >>= f
-f = \x -> [x*10]
-xs
-xs = [1 .. 10]
-:q
-:q
-:q
-:q
-:q
-:q
-:q
-:q
-:t Map.fromList [(1,'2')]
-:t fromList [(1,'2')]
-Map 1 2
-import qualified Data.Map as Map
-:q
+:t zipWith
+:hdoc liftA2
+TIO.putStr $ fixPar p
+fixPar p
+length $ T.lines p
+T.lines p

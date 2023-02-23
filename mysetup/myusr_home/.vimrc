@@ -5,8 +5,8 @@ autocmd!
 " Specify a directory for plugins (for Neovim: ~/.local/share/nvim/plugged)
 call plug#begin('~/.local/share/vim/plugged')
 "Plug 'dhruvasagar/vim-table-mode'
-Plug 'godlygeek/tabular'
-Plug 'vim-scripts/TextFormat'
+"Plug 'godlygeek/tabular'
+"Plug 'vim-scripts/TextFormat'
 
 "Color Themes
 Plug 'robertmeta/nofrils'
@@ -20,28 +20,28 @@ Plug 'chriskempson/base16-vim'
 Plug 'rafi/awesome-vim-colorschemes'
 
 "Plugins I am testing to see if they are worth using
-Plug 'bling/vim-bufferline'
-Plug 'junegunn/fzf'
-Plug 'mileszs/ack.vim'
+"Plug 'bling/vim-bufferline'
+"Plug 'junegunn/fzf'
+"Plug 'mileszs/ack.vim'
 
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-Plug 'tpope/vim-surround'
-Plug 'vim-scripts/loremipsum'
-Plug 'echuraev/translate-shell.vim'
-Plug 'vim-pandoc/vim-pandoc-syntax'
+"Plug 'vim-airline/vim-airline'
+"Plug 'vim-airline/vim-airline-themes'
+"Plug 'tpope/vim-surround'
+"Plug 'vim-scripts/loremipsum'
+"Plug 'echuraev/translate-shell.vim'
+"Plug 'vim-pandoc/vim-pandoc-syntax'
 "vim-slime
-Plug 'jpalardy/vim-slime'
+"Plug 'jpalardy/vim-slime'
 "coc-nvim
-Plug 'neoclide/coc.nvim', {'branch': 'release'} "not just haskell.
+"Plug 'neoclide/coc.nvim', {'branch': 'release'} "not just haskell.
 
 "haskell plugins
-Plug 'Twinside/vim-hoogle' "haskell hoogle plgin
-Plug 'neovimhaskell/haskell-vim' "syntax highlighter
+"Plug 'Twinside/vim-hoogle' "haskell hoogle plgin
+"Plug 'neovimhaskell/haskell-vim' "syntax highlighter
 
 "snakemake
-Plug 'snakemake/snakefmt'
-Plug 'snakemake/snakemake', {'rtp': 'misc/vim'}
+"Plug 'snakemake/snakefmt'
+"Plug 'snakemake/snakemake', {'rtp': 'misc/vim'}
 
 "" Initialize plugin system
 call plug#end()
@@ -57,7 +57,6 @@ if !exists("syntax_on")
     syntax on
 endif
 
-set nocompatible
 "make backspace function like normal apps in insert mode
 set backspace=indent,eol,start
 
@@ -136,19 +135,9 @@ tnoremap <C-Tab> <C-\><C-n>:tabnext<Cr>
 nnoremap <Leader><Enter> o<Esc>
 nnoremap <M-Enter> i<Enter><Esc>
 
-" yank/paste to/from PRIMARY (selection) clipboard
-vnoremap <Leader>y  "*y
-nnoremap <Leader>y  "*yy
-nnoremap <Leader>p  "*p
-nnoremap <Leader>P  "*P
-" can also simply use the unnamed register by default
 set clipboard+=unnamed
+set clipboard+=unnamedplus
 
-"Compile a Latex File with xelatex
-nnoremap <Leader>xe :!xelatex -synctex=1 -interaction=nonstopmode -shell-escape
-
-"wraps selected text in ()
-vnoremap <Leader>0 di()<Esc>hpe
 
 "clear forgotten popup windows
 nnoremap <Leader>p :call popup_clear()<Cr>
@@ -167,25 +156,6 @@ nnoremap <A-h> <C-w>h
 nnoremap <A-j> <C-w>j
 nnoremap <A-k> <C-w>k
 nnoremap <A-l> <C-w>l
-
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <Esc> pumvisible() ? "\<C-y>\<C-c>" : "\<Esc>"
-"inoremap jj <Esc>
-"inoremap kj <Esc>
-"inoremap jk <Esc>
-"vnoremap kj <Esc>
-"vnoremap jk <Esc>
-
-
-"autoclose pairs no plugin
-"inoremap "  ""<left>
-"inoremap (  ()<left>
-"inoremap [  []<left>
-"inoremap {  {}<left>
-"inoremap {<CR>  {<CR>}<Esc>O
-"inoremap {;<CR>  {<CR>};<Esc>O
-inoremap <C-l> <right>
-inoremap <C-]> <Esc>ea
 
 "highlight all matches to search results
 set hlsearch
@@ -251,8 +221,8 @@ set cursorline
 " Setting scrolloff so cursor alsways stays inside that range except the top/bot
 set scrolloff=5
 "set a shorter timeout for key-combs and commands (default=1000)
-"set timeoutlen=1200
-set timeoutlen=700
+set timeoutlen=1200
+"set timeoutlen=700
 set showcmd
 "set position for new split windows:
 set splitbelow
@@ -273,51 +243,9 @@ if !has('nvim')
     imap <Esc>[D <Left>
 endif
 
-"airline stuff
-let g:airline_powerline_fonts = 1
-if !exists('g:airline_symbols')
-  let g:airline_symbols = {}
-endif
-let g:airline_symbols.space = "\ua0"
-
-let g:bufferline_echo = 1
-let g:bufferline_rotate = 1
-let g:bufferline_fname_mod = ':t'
-let g:bufferline_fixed_index =  1
-let g:airline_extensions = ['tabline', 'bufferline', 'whitespace']
-
-
-"text formatting stuff
-set nojoinspaces
-"my own plugins' settings
-"defaults for my zelharbackup plugin:
-let g:myfileslist = '/run/media/zelhar/yjk-16g-msd/original_paths_list.txt'
-let g:mybackupdir=  '/run/media/zelhar/yjk-16g-msd/'
-
-"vim-slime
-"let g:slime_target = "neovim"
-let g:slime_target = "tmux"
-let g:slime_paste_file = "$HOME/.slime_paste"
-"let g:slime_python_ipython = 1
-
-if executable('ag')
-  let g:ackprg = 'ag --vimgrep'
-endif
 
 "setting colorscheme variables
-if !has("gui_running")
-     colorscheme zelhar-darkblue
-     colorscheme ayu
-endif
-
-"coc-nvim
-" Use <c-space> to trigger completion.
-inoremap <silent><expr> <c-space> coc#refresh()
-inoremap <silent><expr> <NUL> coc#refresh()
-"inoremap <silent><expr> <space><space> coc#refresh()
-" Formatting selected code.
-xmap <leader>f  <Plug>(coc-format-selected)
-nmap <leader>f  <Plug>(coc-format-selected)
+colorscheme zelhar-darkblue
 
 " Don't pass messages to |ins-completion-menu|.
 set shortmess+=c
@@ -339,36 +267,7 @@ function! s:show_documentation()
   endif
 endfunction
 
-augroup mygroup
-  autocmd!
-  " Setup formatexpr specified filetype(s).
-  "autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
-  autocmd FileType typescript,json,python,r,haskell setl formatexpr=CocAction('formatSelected')
-  " Update signature help on jump placeholder.
-  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-augroup end
-
-if has('nvim-0.4.0') || has('patch-8.2.0750')
-  nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-  nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-  inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
-  inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
-  vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-  vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-endif
-
-nnoremap <silent> Z :HoogleInfo<CR>
-"nnoremap <silent> Z :call <SID>hoogle_info()<CR>
-"function! s:hoogle_info()
-"    "execute '!' . &keywordprg . " " . expand('<cword>')
-"    call HoogleLookup('', ' --info')
-"endfunction
-
-" Highlight the symbol and its references when holding the cursor.
-autocmd CursorHold * silent call CocActionAsync('highlight')
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.
 set updatetime=300
 "snakefmt
-au BufNewFile,BufRead Snakefile,*.smk set filetype=snakemake
-"au FileType snakemake autocmd BufWritePre <buffer> execute ':Snakefmt'

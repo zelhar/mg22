@@ -15,9 +15,13 @@
         ",,",
         "."
     ],
+    "pyright.completion.snippetSupport": false,
+    "jedi.completion.disableSnippets": false,
+    "pyright.inlayHints.variableTypes": true,
+    "pyright.inlayHints.functionReturnTypes": true,
     "jedi.enable": true,
     "jedi.startupMessage": true,
-    "jedi.markupKindPreferred": "markdown",
+    //"jedi.markupKindPreferred": "markdown",
     "r.lsp.path": "/home/ykolb/miniconda3/envs/mgen/bin/R",
     "languageserver": {
         "haskell": {
@@ -38,8 +42,23 @@
                 "lhaskell",
                 "haskell"
             ],
-            "initializationOptions": {
-                "languageServerHaskell": {}
+            //"initializationOptions": {
+            //    "languageServerHaskell": {}
+            //},
+            "settings": {
+                "haskell": {
+                    "checkParents": "CheckOnSave",
+                    "checkProject": true,
+                    "maxCompletions": 20,
+                    //"formattingProvider": one of: "ormolu","floskell", "fourmolu", "stylish-haskell",
+                    "formattingProvider": "ormolu",
+                    "plugin": {
+                        "stan": { "globalOn": true },
+                        "ghcide-completions" : {
+                            "config" : {"snippetsOn" : false }
+                        }
+                    }
+                }
             }
         }
     },
