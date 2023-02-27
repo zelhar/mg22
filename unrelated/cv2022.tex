@@ -20,6 +20,10 @@
 %\usepackage{wrapfig, framed, caption}
 %\usepackage{slashbox}
 %\usepackage{tikz}
+\usepackage[backend=biber]{biblatex}
+\addbibresource{bibfile.bib}
+\usepackage{hyperref}
+\usepackage{graphicx}
 
 \usepackage{booktabs} % For \toprule, \midrule and \bottomrule
 \usepackage{siunitx} % Formats the units and values
@@ -60,12 +64,9 @@
 % or :
 \setstretch{1.2}
 
-\title{
-Yiftach Kolb \\
---CV--
-}
 
-%\author{Yiftach Kolb}
+\title{---CV---}
+\author{Yiftach Kolb}
 \date{\today}
 
 \maketitle
@@ -90,7 +91,8 @@ worked for a 3D printer startup (O-Machine).
 \subitem{} Python, Haskell, C++, R
 \item{Language}
 \subitem{} Hebrew, English, German
-\item{Nonskills}
+%\item{Nonskills}
+\item{}
 \subitem{}
 \normalsize\shrug
 %I am somewhat autistic but I don't think it should matter for this job.
@@ -100,6 +102,9 @@ worked for a 3D printer startup (O-Machine).
 
 
 
+\nocite{mpgvaeRepo}
+\nocite{mg22Repo}
+\printbibliography
 
 
 \end{document}
