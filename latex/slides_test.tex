@@ -310,29 +310,35 @@ The \emph{evidence lower bound (ELBO)} with respect to $p,q$ is:
 \frametitle{VAE: log evidence}
 
 It can be shown that maximizing the ELBO is equivalent to 
-maximinizing the "log evidence" $\log p(\X)$
+maximinizing the "log evidence" $\log p(\x)$
 
-{\tiny
-\begin{equation}
-\label{eq:elbo}
-\begin{aligned}
-\frac{1}{N} \log p(\bv{X}) &= \frac{1}{N} \log \int p(\bv{X},\bv{Z}) d\bv{Z} 
-& \text{taking marginal} \\
-& = \frac{1}{N} \log \int \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})} q(\bv{Z})d\bv{Z} 
-& \text{multiplying by 1 inside}\\
-&=  \frac{1}{N} \log \int \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})}dq(\bv{Z}) 
-& \text{definition of } dq(\Z)\\
-&\geq  \frac{1}{N} \int \log \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})}dq(\bv{Z}) 
-& \text{Jensen inequality}\\
-&= \frac{1}{N} \int \sum_1^N \log \frac{p(\x_i, \z_i)}{q(\z_i)}dq(\z_i) 
-& \text{using the iid property}\\
-&= \frac{1}{N} \sum_1^N - \LL(q,p,\x_i)
-& \text{definition of } \LL(q,p,\x_i)\\
-& = -\mathcal{L}(q,p,X) \triangleq -\mathcal{L}(q,p)
-& \text{again definition of } \LL(p,q) \qed
-\end{aligned}
+{
+%\tiny
+%\begin{equation}
+%\label{eq:elbo}
+%\begin{aligned}
+%\frac{1}{N} \log p(\bv{X}) &= \frac{1}{N} \log \int p(\bv{X},\bv{Z}) d\bv{Z} 
+%& \text{taking marginal} \\
+%& = \frac{1}{N} \log \int \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})} q(\bv{Z})d\bv{Z} 
+%& \text{multiplying by 1 inside}\\
+%&=  \frac{1}{N} \log \int \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})}dq(\bv{Z}) 
+%& \text{definition of } dq(\Z)\\
+%&\geq  \frac{1}{N} \int \log \frac{p(\bv{X},\bv{Z})}{q(\bv{Z})}dq(\bv{Z}) 
+%& \text{Jensen inequality}\\
+%&= \frac{1}{N} \int \sum_1^N \log \frac{p(\x_i, \z_i)}{q(\z_i)}dq(\z_i) 
+%& \text{using the iid property}\\
+%&= \frac{1}{N} \sum_1^N - \LL(q,p,\x_i)
+%& \text{definition of } \LL(q,p,\x_i)\\
+%& = -\mathcal{L}(q,p,X) \triangleq -\mathcal{L}(q,p)
+%& \text{again definition of } \LL(p,q) \qed
+%\end{aligned}
+%\end{equation}
+\begin{equation}\label{eq:elbokl}
+\log p(\bv{x}) = -\mathcal{L}(q,p,\x) - KL(q(\bv{z}) \| p(\bv{z}|\bv{x}))
 \end{equation}
 }
+
+
 \end{frame}
 
 \begin{frame}
