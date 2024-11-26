@@ -316,4 +316,4 @@ permute' g i xs
 
 
 --textt = do TIO.readFile "pg22367.txt"
-sampleio = do TIO.readFile "sample.txt"
+--sampleio = do TIO.readFile "sample.txt"
